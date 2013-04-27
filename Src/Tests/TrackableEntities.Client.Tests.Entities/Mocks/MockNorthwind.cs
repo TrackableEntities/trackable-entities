@@ -1,0 +1,124 @@
+﻿using System;
+using System.Linq;
+using TrackableEntities.Client.Tests.Entities.NorthwindModels;
+
+namespace TrackableEntities.Client.Tests.Entities.Mocks
+{
+    public class MockNorthwind
+    {
+        public ChangeTrackingCollection<Category> Categories { get; private set; }
+        public ChangeTrackingCollection<Product> Products { get; private set; }
+        public ChangeTrackingCollection<Customer> Customers { get; private set; }
+        public ChangeTrackingCollection<Order> Orders { get; private set; }
+
+        public MockNorthwind()
+        {
+            Categories = new ChangeTrackingCollection<Category>
+                {
+                    new Category { CategoryId = 1, CategoryName = "Beverages" },
+                    new Category { CategoryId = 2, CategoryName = "Condiments" },
+                    new Category { CategoryId = 3, CategoryName = "Confections" },
+                    new Category { CategoryId = 4, CategoryName = "Dairy Products" },
+                    new Category { CategoryId = 5, CategoryName = "Grains/Cereals" },
+                    new Category { CategoryId = 6, CategoryName = "Meat/Poultry" },
+                    new Category { CategoryId = 7, CategoryName = "Produce" },
+                    new Category { CategoryId = 8, CategoryName = "Seafood" }
+                };
+            Products = new ChangeTrackingCollection<Product>
+                {
+                    new Product { ProductId = 1, ProductName = "Chai", UnitPrice = 21.0000M, Discontinued = false, CategoryId = 1, Category = Categories[0] },
+                    new Product { ProductId = 2, ProductName = "Chang", UnitPrice = 20.0000M, Discontinued = false, CategoryId = 1, Category = Categories[0] },
+                    new Product { ProductId = 3, ProductName = "Aniseed Syrup", UnitPrice = 10.0000M, Discontinued = false, CategoryId = 2, Category = Categories[1] },
+                    new Product { ProductId = 4, ProductName = "Chef Anton's Cajun Seasoning", UnitPrice = 22.0000M, Discontinued = false, CategoryId = 2, Category = Categories[1] },
+                    new Product { ProductId = 5, ProductName = "Chef Anton's Gumbo Mix", UnitPrice = 21.3500M, Discontinued = true, CategoryId = 2, Category = Categories[1] },
+                    new Product { ProductId = 6, ProductName = "Grandma's Boysenberry Spread", UnitPrice = 27.0000M, Discontinued = false, CategoryId = 2, Category = Categories[1] },
+                    new Product { ProductId = 7, ProductName = "Uncle Bob's Organic Dried Pears", UnitPrice = 30.0000M, Discontinued = false, CategoryId = 7, Category = Categories[6] },
+                    new Product { ProductId = 8, ProductName = "Northwoods Cranberry Sauce", UnitPrice = 40.0000M, Discontinued = false, CategoryId = 2, Category = Categories[1] },
+                    new Product { ProductId = 9, ProductName = "Mishi Kobe Niku", UnitPrice = 97.0000M, Discontinued = true, CategoryId = 6, Category = Categories[5] },
+                    new Product { ProductId = 10, ProductName = "Ikura", UnitPrice = 31.0000M, Discontinued = false, CategoryId = 8, Category = Categories[7] },
+                    new Product { ProductId = 11, ProductName = "Queso Cabrales", UnitPrice = 21.0000M, Discontinued = false, CategoryId = 4, Category = Categories[3] },
+                    new Product { ProductId = 12, ProductName = "Queso Manchego La Pastora", UnitPrice = 38.0000M, Discontinued = false, CategoryId = 4, Category = Categories[3] },
+                    new Product { ProductId = 13, ProductName = "Konbu", UnitPrice = 6.0000M, Discontinued = false, CategoryId = 8, Category = Categories[7] },
+                    new Product { ProductId = 14, ProductName = "Tofu", UnitPrice = 23.2500M, Discontinued = false, CategoryId = 7, Category = Categories[6] },
+                    new Product { ProductId = 15, ProductName = "Genen Shouyu", UnitPrice = 15.5000M, Discontinued = false, CategoryId = 2, Category = Categories[1] },
+                    new Product { ProductId = 16, ProductName = "Pavlova", UnitPrice = 17.4500M, Discontinued = false, CategoryId = 3, Category = Categories[2] },
+                    new Product { ProductId = 17, ProductName = "Alice Mutton", UnitPrice = 39.0000M, Discontinued = true, CategoryId = 6, Category = Categories[5] },
+                    new Product { ProductId = 18, ProductName = "Carnarvon Tigers", UnitPrice = 62.5000M, Discontinued = false, CategoryId = 8, Category = Categories[7] },
+                    new Product { ProductId = 19, ProductName = "Teatime Chocolate Biscuits", UnitPrice = 9.2000M, Discontinued = false, CategoryId = 3, Category = Categories[2] },
+                    new Product { ProductId = 20, ProductName = "Sir Rodney's Marmalade", UnitPrice = 81.0000M, Discontinued = false, CategoryId = 3, Category = Categories[2] },
+                    new Product { ProductId = 22, ProductName = "Gustaf's Knäckebröd", UnitPrice = 21.0000M, Discontinued = false, CategoryId = 5, Category = Categories[4] },
+                    new Product { ProductId = 33, ProductName = "Geitost", UnitPrice = 2.50M, Discontinued = false, CategoryId = 4, Category = Categories[3] },
+                    new Product { ProductId = 41, ProductName = "Jack's New England Clam Chowder", UnitPrice = 9.65M, Discontinued = false, CategoryId = 8, Category = Categories[7] },
+                    new Product { ProductId = 42, ProductName = "Singaporean Hokkien Fried Mee", UnitPrice = 14.0000M, Discontinued = true, CategoryId = 5, Category = Categories[4] },
+                    new Product { ProductId = 51, ProductName = "Manjimup Dried Apples", UnitPrice = 53.00M, Discontinued = false, CategoryId = 4, Category = Categories[3] },
+                    new Product { ProductId = 57, ProductName = "Ravioli Angelo", UnitPrice = 19.50M, Discontinued = false, CategoryId = 5, Category = Categories[4] },
+                    new Product { ProductId = 60, ProductName = "Camembert Pierrot", UnitPrice = 34.50M, Discontinued = false, CategoryId = 4, Category = Categories[3] },
+                    new Product { ProductId = 65, ProductName = "Louisiana Fiery Hot Pepper Sauce", UnitPrice = 21.05M, Discontinued = false, CategoryId = 2, Category = Categories[1] },
+                    new Product { ProductId = 72, ProductName = "Mozzarella di Giovanni", UnitPrice = 34.80M, Discontinued = false, CategoryId = 4, Category = Categories[3] },
+                };
+            Categories[0].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 1), true);
+            Categories[1].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 2), true);
+            Categories[2].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 2), true);
+            Categories[3].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 4), true);
+            Categories[4].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 5), true);
+            Categories[5].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 6), true);
+            Categories[6].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 7), true);
+            Categories[7].Products = new ChangeTrackingCollection<Product>(Products.Where(p => p.CategoryId == 8), true);
+            Customers = new ChangeTrackingCollection<Customer>
+                {
+                    new Customer { CustomerId = "ALFKI", CustomerName = "Alfreds Futterkiste"},
+                    new Customer { CustomerId = "ANATR", CustomerName = "Ana Trujillo Emparedados y helados"},
+                    new Customer { CustomerId = "ANTON", CustomerName = "Antonio Moreno Taquería"},
+                    new Customer { CustomerId = "AROUT", CustomerName = "Around the Horn"},
+                    new Customer { CustomerId = "BERGS", CustomerName = "Berglunds snabbköp"},
+                    new Customer { CustomerId = "BLAUS", CustomerName = "Blauer See Delikatessen"},
+                    new Customer { CustomerId = "BLONP", CustomerName = "Blondesddsl père et fils"},
+                    new Customer { CustomerId = "BOLID", CustomerName = "Bólido Comidas preparadas"},
+                    new Customer { CustomerId = "BONAP", CustomerName = "Bon app"},
+                    new Customer { CustomerId = "BOTTM", CustomerName = "Bottom-Dollar Markets"},
+                    new Customer { CustomerId = "HANAR", CustomerName = "Hanari Carnes"},
+                    new Customer { CustomerId = "SUPRD", CustomerName = "Suprêmes délices"},
+                    new Customer { CustomerId = "TOMSP", CustomerName = "Toms Spezialitäten"},
+                    new Customer { CustomerId = "VICTE", CustomerName = "Victuailles en stock"},
+                    new Customer { CustomerId = "VINET", CustomerName = "Vins et alcools Chevalier"}
+                };
+            Orders = new ChangeTrackingCollection<Order>
+                {
+                    new Order { OrderId = 10248, OrderDate = DateTime.Parse("1996-07-04"), CustomerId = "VINET", Customer = Customers[14],
+                        OrderDetails = new ChangeTrackingCollection<OrderDetail>
+                            {
+                                new OrderDetail{ ProductId = 11, OrderId = 10248, Quantity = 12, UnitPrice = 14.0000M, Product = Products[10] },
+                                new OrderDetail{ ProductId = 42, OrderId = 10248, Quantity = 10, UnitPrice = 9.8000M, Product = Products[23] },
+                                new OrderDetail{ ProductId = 72, OrderId = 10248, Quantity = 5, UnitPrice = 34.8000M, Product = Products[28] }
+                            }},
+                    new Order { OrderId = 10249, OrderDate = DateTime.Parse("1996-07-05"), CustomerId = "TOMSP", Customer = Customers[12],
+                        OrderDetails = new ChangeTrackingCollection<OrderDetail>
+                            {
+                                new OrderDetail{ ProductId = 14, OrderId = 10249, Quantity = 9, UnitPrice = 18.6000M, Product = Products[13] },
+                                new OrderDetail{ ProductId = 51, OrderId = 10249, Quantity = 40, UnitPrice = 42.4000M, Product = Products[24] }
+                            }},
+                    new Order { OrderId = 10250, OrderDate = DateTime.Parse("1996-07-08"), CustomerId = "HANAR", Customer = Customers[10],
+                        OrderDetails = new ChangeTrackingCollection<OrderDetail>
+                            {
+                                new OrderDetail{ ProductId = 41, OrderId = 10250, Quantity = 10, UnitPrice = 7.7000M, Product = Products[22] },
+                                new OrderDetail{ ProductId = 51, OrderId = 10250, Quantity = 12, UnitPrice = 42.4000M, Product = Products[24] },
+                                new OrderDetail{ ProductId = 65, OrderId = 10250, Quantity = 12, UnitPrice = 16.8000M, Product = Products[27] }
+                            }},
+                    new Order { OrderId = 10251, OrderDate = DateTime.Parse("1996-07-08"), CustomerId = "VICTE", Customer = Customers[14],
+                        OrderDetails = new ChangeTrackingCollection<OrderDetail>
+                            {
+                                new OrderDetail{ ProductId = 22, OrderId = 10251, Quantity = 6, UnitPrice = 16.8000M, Product = Products[20] },
+                                new OrderDetail{ ProductId = 57, OrderId = 10251, Quantity = 15, UnitPrice = 15.6000M, Product = Products[25] },
+                                new OrderDetail{ ProductId = 65, OrderId = 10251, Quantity = 20, UnitPrice = 16.8000M, Product = Products[27] }
+                            }},
+                    new Order { OrderId = 10252, OrderDate = DateTime.Parse("1996-07-09"), CustomerId = "SUPRD", Customer = Customers[11],
+                        OrderDetails = new ChangeTrackingCollection<OrderDetail>
+                            {
+                                new OrderDetail{ ProductId = 20, OrderId = 10252, Quantity = 40, UnitPrice = 64.8000M, Product = Products[19] },
+                                new OrderDetail{ ProductId = 33, OrderId = 10252, Quantity = 25, UnitPrice = 2.0000M, Product = Products[21] },
+                                new OrderDetail{ ProductId = 60, OrderId = 10252, Quantity = 40, UnitPrice = 27.2000M, Product = Products[26] },
+                            }},
+                };
+        }
+    }
+}

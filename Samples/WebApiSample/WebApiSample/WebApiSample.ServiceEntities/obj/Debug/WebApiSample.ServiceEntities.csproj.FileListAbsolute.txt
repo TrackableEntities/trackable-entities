@@ -1,0 +1,16 @@
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\WebApiSample.ServiceEntities.dll.config
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\WebApiSample.ServiceEntities.dll
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\WebApiSample.ServiceEntities.pdb
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\EntityFramework.dll
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\Newtonsoft.Json.dll
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\TrackableEntities.Common.dll
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\TrackableEntities.EF.dll
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\EntityFramework.xml
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\Newtonsoft.Json.xml
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\TrackableEntities.Common.pdb
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\TrackableEntities.Common.xml
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\TrackableEntities.EF.pdb
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\bin\Debug\TrackableEntities.EF.xml
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\obj\Debug\WebApiSample.ServiceEntities.dll
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\obj\Debug\WebApiSample.ServiceEntities.pdb
+X:\TrackableEntities\Samples\WebApiSample\WebApiSample\WebApiSample.ServiceEntities\obj\Debug\WebApiSample.ServiceEntities.csprojResolveAssemblyReference.cache

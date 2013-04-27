@@ -1,0 +1,3 @@
+NorthwindSlim Database ReadMe
+
+First create the NorthwindSlim database, then run the NorthwindSlim.sql script.

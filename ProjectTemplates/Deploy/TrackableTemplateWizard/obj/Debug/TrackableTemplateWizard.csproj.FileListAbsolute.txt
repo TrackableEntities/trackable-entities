@@ -1,0 +1,10 @@
+X:\EF\TrackableEntities\ProjectTemplates\Deploy\TrackableTemplateWizard\bin\Debug\TrackableTemplateWizard.dll
+X:\EF\TrackableEntities\ProjectTemplates\Deploy\TrackableTemplateWizard\bin\Debug\TrackableTemplateWizard.pdb
+X:\EF\TrackableEntities\ProjectTemplates\Deploy\TrackableTemplateWizard\obj\Debug\TrackableTemplateWizard.dll
+X:\EF\TrackableEntities\ProjectTemplates\Deploy\TrackableTemplateWizard\obj\Debug\TrackableTemplateWizard.pdb
+X:\EF\TrackableEntities\ProjectTemplates\Deploy\TrackableTemplateWizard\obj\Debug\TrackableTemplateWizard.csprojResolveAssemblyReference.cache
+X:\TrackableEntities\ProjectTemplates\Deploy\TrackableTemplateWizard\bin\Debug\TrackableTemplateWizard.dll
+X:\TrackableEntities\ProjectTemplates\Deploy\TrackableTemplateWizard\bin\Debug\TrackableTemplateWizard.pdb
+X:\TrackableEntities\ProjectTemplates\Deploy\TrackableTemplateWizard\obj\Debug\TrackableTemplateWizard.csprojResolveAssemblyReference.cache
+X:\TrackableEntities\ProjectTemplates\Deploy\TrackableTemplateWizard\obj\Debug\TrackableTemplateWizard.dll
+X:\TrackableEntities\ProjectTemplates\Deploy\TrackableTemplateWizard\obj\Debug\TrackableTemplateWizard.pdb

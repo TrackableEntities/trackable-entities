@@ -1,0 +1,24 @@
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <Identity Id="TrackableEntities..151fea10-328f-45bf-92ee-d83a8a2182b0" Version="0.9.0" Language="en-US" Publisher="Tony Sneed" />
+    <DisplayName>Trackable Entities Beta 1</DisplayName>
+    <Description xml:space="preserve">Client and server project templates with NuGet packages for reverse engineering trackable entitites.</Description>
+    <MoreInfo>http://trackable.codeplex.com</MoreInfo>
+    <License>License.txt</License>
+    <Icon>tracking-small.png</Icon>
+    <PreviewImage>tracking.png</PreviewImage>
+    <Tags>change-tracking entity-framework n-tier wcf web-api</Tags>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="11.0" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" Version="4.5" />
+    <Dependency Id="2b119c79-9836-46e2-b5ed-eb766cebbf7c" DisplayName="Entity Framework Power Tools Beta 3" Version="[0.7,1.0)" Location="http://visualstudiogallery.msdn.microsoft.com/72a60b14-1581-4b9b-89f2-846072eff19d/file/51005/3/EFPowerTools.vsix" />
+    <Dependency Id="NuPackToolsVsix.Microsoft.67e54e40-0ae3-42c5-a949-fddf5739e7a5" DisplayName="NuGet Package Manager" Version="[2.2.40116.9051,3.0)" Location="http://visualstudiogallery.msdn.microsoft.com/27077b70-9dad-4c64-adcf-c7cf6bc9970c/file/37502/29/NuGet.Tools.vsix" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" Path="ProjectTemplates" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" Path="TemplateWizard\TrackableTemplateWizard.dll" AssemblyName="TrackableTemplateWizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e" />
+  </Assets>
+</PackageManifest>

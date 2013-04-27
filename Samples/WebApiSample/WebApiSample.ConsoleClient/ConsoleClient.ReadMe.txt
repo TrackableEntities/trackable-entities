@@ -1,0 +1,8 @@
+Trackable Entities Console Client ReadMe
+
+This project template provides an example for using trackable client entities
+with a Web API service.
+
+The project references the ClientEntities project and uses HttpClient for
+invoking controller actions in the Web API service.
+

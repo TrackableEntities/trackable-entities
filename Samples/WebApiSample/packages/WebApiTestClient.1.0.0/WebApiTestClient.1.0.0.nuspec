@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>WebApiTestClient</id>
+    <version>1.0.0</version>
+    <title>A Simple Test Client for ASP.NET Web API</title>
+    <authors>yaohuang</authors>
+    <owners>yaohuang</owners>
+    <licenseUrl>https://github.com/yaohuang/WebApiTestClient/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/yaohuang/WebApiTestClient</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>A simple Test Client built on top of ASP.NET Web API Help Page.</description>
+    <summary>A simple Test Client built on top of ASP.NET Web API Help Page.</summary>
+    <language>en-US</language>
+    <tags>ASP.NET Web API Test Client</tags>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.WebApi.HelpPage" version="4.0.0" />
+    </dependencies>
+  </metadata>
+</package>
