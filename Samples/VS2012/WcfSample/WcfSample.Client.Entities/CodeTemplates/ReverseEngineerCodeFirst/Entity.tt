@@ -1,0 +1,120 @@
+<#@ template hostspecific="true" language="C#" #>
+<#@ include file="EF.Utility.CS.ttinclude" #><#@
+ output extension=".cs" #><#
+
+    var efHost = (EfTextTemplateHost)Host;
+    var code = new CodeGenerationTools(this);
+    var collectionNavigations = efHost.EntityType.NavigationProperties.Where(
+        np => np.DeclaringType == efHost.EntityType
+            && np.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many);
+#>
+using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using TrackableEntities;
+using TrackableEntities.Client;
+
+namespace <#= code.EscapeNamespace(efHost.Namespace) #>
+{
+    [JsonObject(IsReference = true)]
+    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
+    public partial class <#= efHost.EntityType.Name #> : ModelBase<<#= efHost.EntityType.Name #>>, ITrackable
+    {
+<#
+
+    // Add a ctor to initialize any collections
+    if (collectionNavigations.Any())
+    {
+#>
+        public <#= code.Escape(efHost.EntityType) #>()
+        {
+<#
+        foreach (var navProperty in collectionNavigations)
+        {
+#>
+            this.<#= code.Escape(navProperty) #> = new ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>>();
+<#
+        }
+#>
+        }
+
+<#
+    }
+        
+    foreach (var property in efHost.EntityType.Properties)
+    {
+        var typeUsage = code.Escape(property.TypeUsage);
+
+        // Fix-up spatial types for EF6
+        if (efHost.EntityFrameworkVersion >= new Version(6, 0)
+            && typeUsage.StartsWith("System.Data.Spatial."))
+        {
+            typeUsage = typeUsage.Replace(
+                "System.Data.Spatial.",
+                "System.Data.Entity.Spatial.");
+        }
+#>
+        [DataMember]
+        <#= Accessibility.ForProperty(property) #> <#= typeUsage #> <#= code.Escape(property) #>
+		{ 
+		    get { return _<#= code.Escape(property) #>; }
+			set
+			{
+			    if (value == _<#= code.Escape(property) #>) return;
+				_<#= code.Escape(property) #> = value;
+				NotifyPropertyChanged(m => m.<#= code.Escape(property) #>);
+			}
+		}
+        private <#= typeUsage #> _<#= code.Escape(property) #>;
+
+<#
+    }
+
+    foreach (var navProperty in efHost.EntityType.NavigationProperties.Where(np => np.DeclaringType == efHost.EntityType))
+    {
+        if (navProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
+        {
+#>
+        [DataMember]
+        public ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> <#= code.Escape(navProperty) #>
+		{
+		    get { return _<#= code.Escape(navProperty) #>; }
+			set
+			{
+			    if (Equals(value, _<#= code.Escape(navProperty) #>)) return;
+				_<#= code.Escape(navProperty) #> = value;
+				NotifyPropertyChanged(m => m.<#= code.Escape(navProperty) #>);
+			}
+		}
+        private ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> _<#= code.Escape(navProperty) #>;
+
+<#
+        }
+        else
+        {
+#>
+        [DataMember]
+        public <#= code.Escape(navProperty.ToEndMember.GetEntityType()) #> <#= code.Escape(navProperty) #>
+		{
+		    get { return _<#= code.Escape(navProperty) #>; }
+			set
+			{
+			    if (value == _<#= code.Escape(navProperty) #>) return;
+				_<#= code.Escape(navProperty) #> = value;
+				NotifyPropertyChanged(m => m.<#= code.Escape(navProperty) #>);
+			}
+		}
+        private <#= code.Escape(navProperty.ToEndMember.GetEntityType()) #> _<#= code.Escape(navProperty) #>;
+
+<#
+        }
+    }
+#>
+        [DataMember]
+        public ICollection<string> ModifiedProperties { get; set; }
+
+        [DataMember]
+        public TrackingState TrackingState { get; set; }
+    }
+}

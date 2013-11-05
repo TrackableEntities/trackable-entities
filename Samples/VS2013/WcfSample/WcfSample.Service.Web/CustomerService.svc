@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Service="WcfSample.Service.Core.CustomerService" %>
