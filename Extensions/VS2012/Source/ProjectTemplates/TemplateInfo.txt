@@ -1,0 +1,22 @@
+Icon: C:\Source\TrackableEntities2\Misc\Images\tracking-small.png
+Image: C:\Source\TrackableEntities2\Misc\Images\tracking.png
+Description Suffix: Created by Tony Sneed. For more information visit http://trackable.codeplex.com.
+
+Project Templates:
+
+Name: TrackableClientEntities
+Description: Portable class library with templates for reverse engineering trackable client entitites.
+
+Name: TrackableServiceEntities
+Description: Class library with templates for reverse engineering trackable service entitites and EF DbContext.
+
+Name: TrackableMvcWebApi
+Description: Solution containing Web API, trackable entities and client projects, with templates for creating Api Controllers that use trackable entities.
+
+Name: TrackableWcfServiceCore
+Description: Solution containing WCF service, web host, trackable entities and client projects.
+
+Item Templates:
+
+Name: TrackableWcfServiceType
+Description: WCF service with scaffolding for CRUD operations using Trackable Entities and Entity Framework.

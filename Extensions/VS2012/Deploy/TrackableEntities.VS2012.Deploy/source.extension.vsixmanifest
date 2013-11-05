@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="TrackableEntities.VS2012..151fea10-328f-45bf-92ee-d83a8a2182b0" Version="1.0" Language="en-US" Publisher="Tony Sneed" />
+    <DisplayName>Trackable Entities for Visual Studio 2012</DisplayName>
+    <Description xml:space="preserve">Client and server project templates with NuGet packages for reverse engineering trackable entitites.</Description>
+    <MoreInfo>http://trackable.codeplex.com</MoreInfo>
+    <License>License.txt</License>
+    <Icon>tracking-small.png</Icon>
+    <PreviewImage>tracking.png</PreviewImage>
+    <Tags>change-tracking entity-framework n-tier wcf web-api</Tags>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[11.0]" />
+    <InstallationTarget Version="[11.0]" Id="Microsoft.VisualStudio.Premium" />
+    <InstallationTarget Version="[11.0]" Id="Microsoft.VisualStudio.Ultimate" />
+    <InstallationTarget Version="[11.0]" Id="Microsoft.VisualStudio.VSWinExpress" />
+    <InstallationTarget Version="[11.0]" Id="Microsoft.VisualStudio.VPDExpress" />
+    <InstallationTarget Version="[11.0]" Id="Microsoft.VisualStudio.VWDExpress" />
+    <InstallationTarget Version="[11.0]" Id="Microsoft.VisualStudio.VSWinDesktopExpress" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    <Dependency d:Source="Installed" Id="2b119c79-9836-46e2-b5ed-eb766cebbf7c" DisplayName="Entity Framework Power Tools Beta 4" Version="[0.9,1.0)" d:InstallSource="Download" Location="http://visualstudiogallery.msdn.microsoft.com/72a60b14-1581-4b9b-89f2-846072eff19d/file/51005/4/EFPowerTools.vsix" />
+    <Dependency d:Source="Manual" DisplayName="NuGet Package Manager for Visual Studio 2012" d:InstallSource="Download" Location="http://visualstudiogallery.msdn.microsoft.com/27077b70-9dad-4c64-adcf-c7cf6bc9970c/file/37502/34/NuGet.Tools.vsix" Id="NuPackToolsVsix.Microsoft.67e54e40-0ae3-42c5-a949-fddf5739e7a5" Version="[2.7.40911.225,)" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableClientEntities.zip" />
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableServiceEntities.zip" />
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableServiceEntities.zip" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="TrackableEntities.TemplateWizard" d:VsixSubPath="Wizards" Path="|TrackableEntities.TemplateWizard|" AssemblyName="|TrackableEntities.TemplateWizard;AssemblyName|" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="TrackableEntities.WcfItemWizard" d:VsixSubPath="Wizards" Path="|TrackableEntities.WcfItemWizard|" AssemblyName="|TrackableEntities.WcfItemWizard;AssemblyName|" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\TrackableWcfServiceType.zip" />
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableWcfService.zip" />
+  </Assets>
+</PackageManifest>

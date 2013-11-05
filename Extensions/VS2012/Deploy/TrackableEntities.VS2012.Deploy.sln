@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.VS2012.Deploy", "TrackableEntities.VS2012.Deploy\TrackableEntities.VS2012.Deploy.csproj", "{A1F9A45C-C2A3-4129-ACD6-824A3214E4F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.TemplateWizard", "TrackableEntities.TemplateWizard\TrackableEntities.TemplateWizard.csproj", "{C9646BE1-E999-47BD-8A9D-083017E6269A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.WcfItemWizard", "TrackableEntities.WcfItemWizard\TrackableEntities.WcfItemWizard.csproj", "{8E21F5FD-3941-45A6-B8F8-9628B8A58594}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{153FAAB1-E5DB-492A-929D-7808DD2F7CBD}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1F9A45C-C2A3-4129-ACD6-824A3214E4F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1F9A45C-C2A3-4129-ACD6-824A3214E4F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1F9A45C-C2A3-4129-ACD6-824A3214E4F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1F9A45C-C2A3-4129-ACD6-824A3214E4F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9646BE1-E999-47BD-8A9D-083017E6269A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9646BE1-E999-47BD-8A9D-083017E6269A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9646BE1-E999-47BD-8A9D-083017E6269A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9646BE1-E999-47BD-8A9D-083017E6269A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E21F5FD-3941-45A6-B8F8-9628B8A58594}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E21F5FD-3941-45A6-B8F8-9628B8A58594}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E21F5FD-3941-45A6-B8F8-9628B8A58594}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E21F5FD-3941-45A6-B8F8-9628B8A58594}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
