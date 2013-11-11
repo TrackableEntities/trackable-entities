@@ -121,11 +121,19 @@ namespace WebApiSample.Service.WebApi.Controllers
                 .SingleOrDefaultAsync(o => o.OrderId == id);
 	        if (order == null)
             {
-                return NotFound();
+                return Ok();
             }
 
+            // First remove order
             _dbContext.Orders.Attach(order);
             _dbContext.Orders.Remove(order);
+
+            // Then remove order details
+            foreach (var detail in order.OrderDetails)
+            {
+                _dbContext.OrderDetails.Attach(detail);
+                _dbContext.OrderDetails.Remove(detail);
+            }
 
             try
             {

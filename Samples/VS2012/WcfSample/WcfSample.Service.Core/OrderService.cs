@@ -94,8 +94,17 @@ namespace WcfSample.Service.Core
 
             try
             {
+                // First remove order
                 _dbContext.Orders.Attach(order);
                 _dbContext.Orders.Remove(order);
+
+                // Then remove order details
+                foreach (var detail in order.OrderDetails)
+                {
+                    _dbContext.OrderDetails.Attach(detail);
+                    _dbContext.OrderDetails.Remove(detail);
+                }
+
                 await _dbContext.SaveChangesAsync();
                 return true;
             }

@@ -226,7 +226,7 @@ namespace <#= Namespace #>
 <# } #>
         if (<#= ModelVariable #> == null)
             {
-                return NotFound();
+                return Ok();
             }
 
             _dbContext.<#= entitySetName #>.Attach(<#= ModelVariable #>);
