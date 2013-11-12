@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using System.Runtime.Serialization;
 
 namespace TrackableEntities.Client
 {
@@ -230,6 +230,62 @@ namespace TrackableEntities.Client
 
             // Return a new generic tracking collection
             return new ChangeTrackingCollection<T>(changes, true);
+        }
+
+        /// <summary>
+        /// Merge changed child items into the original trackable entity. 
+        /// This assumes GetChanges was called to update only changed items. 
+        /// Non-recursive - only direct children will be merged. 
+        /// Usage: MergeChanges(ref originalItem, updatedItem);
+        /// </summary>
+        /// <param name="originalItem">Local entity containing unchanged child items.</param>
+        /// <param name="updatedItem">Entity returned by an update operation.</param>
+        public void MergeChanges(ref T originalItem, T updatedItem)
+        {
+            // Get unchanged child entities
+            foreach (var prop in typeof(T).GetProperties())
+            {
+                var updatedItems = prop.GetValue(updatedItem, null) as IList;
+                var originalItems = prop.GetValue(originalItem, null) as IList;
+                if (originalItems != null && updatedItems != null)
+                {
+                    foreach (object item in originalItems)
+                    {
+                        var origTrackable = item as ITrackable;
+                        if (origTrackable != null && origTrackable.TrackingState == TrackingState.Unchanged)
+                        {
+                            // Add unchanged original item to updated items
+                            updatedItems.Add(origTrackable);
+                            FixUpParentReference(origTrackable, updatedItem);
+                        }
+                    }
+                }
+            }
+
+            // Track updated item
+            bool tracking = Tracking;
+            Tracking = false;
+            Remove(originalItem);
+            Add(updatedItem);
+            Tracking = tracking;
+
+            // Set original item to updated item with unchagned items merged in
+            originalItem = updatedItem;
+        }
+
+        private void FixUpParentReference(object child, object parent)
+        {
+            foreach (var prop in child.GetType().GetProperties())
+            {
+                if (prop.PropertyType == parent.GetType())
+                {
+                    var childParent = prop.GetValue(child, null);
+                    if (childParent != null && !ReferenceEquals(childParent, parent))
+                    {
+                        prop.SetValue(child, parent, null);
+                    }
+                }
+            }
         }
     }
 }

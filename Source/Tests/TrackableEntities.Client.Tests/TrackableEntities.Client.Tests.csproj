@@ -78,6 +78,10 @@
       <Project>{3b2f4216-9993-40f0-93a1-7fa18e3a78dd}</Project>
       <Name>TrackableEntities.Client.Tests.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TrackableEntities.Client.Tests.Harness\TrackableEntities.Client.Tests.Harness.csproj">
+      <Project>{3f1a6b7d-3e89-40dc-9b73-94c1feb5c669}</Project>
+      <Name>TrackableEntities.Client.Tests.Harness</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

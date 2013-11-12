@@ -292,5 +292,44 @@ namespace TrackableEntities.Client.Tests
         */
 
         #endregion
+
+        #region MergeChangesTests
+
+        [Test]
+        public void Updated_Parent_With_Children_Should_Merge_Unchanged_Children()
+        {
+            // Arrange
+            // Clone orig order
+            var origOrder = _database.Orders[0];
+            var updatedOrder = origOrder.Clone<Order>();
+
+            // Set state on orig order details
+            origOrder.OrderDetails[0].TrackingState = TrackingState.Added;
+            origOrder.OrderDetails[1].TrackingState = TrackingState.Modified;
+            origOrder.OrderDetails[2].TrackingState = TrackingState.Deleted;
+
+            // Add detail to orig order
+            origOrder.OrderDetails.Add(new OrderDetail
+            {
+                ProductId = 1,
+                Product = _database.Products[0],
+                Quantity = 10,
+                UnitPrice = 20M
+            });
+
+            // Act
+            // Merge updates into orig order
+            var changeTracker = new ChangeTrackingCollection<Order>(origOrder);
+            changeTracker.MergeChanges(ref origOrder, updatedOrder);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, origOrder.OrderDetails[0].TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, origOrder.OrderDetails[1].TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, origOrder.OrderDetails[2].TrackingState);
+            Assert.AreEqual(4, updatedOrder.OrderDetails.Count);
+            Assert.IsTrue(ReferenceEquals(origOrder, updatedOrder));
+        }
+
+        #endregion
     }
 }

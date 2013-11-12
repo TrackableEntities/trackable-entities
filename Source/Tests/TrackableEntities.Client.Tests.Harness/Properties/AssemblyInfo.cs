@@ -36,4 +36,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 // Testability
+[assembly: InternalsVisibleTo("TrackableEntities.Client.Tests")]
 [assembly: InternalsVisibleTo("TrackableEntities.Client.Tests.Extensions")]
