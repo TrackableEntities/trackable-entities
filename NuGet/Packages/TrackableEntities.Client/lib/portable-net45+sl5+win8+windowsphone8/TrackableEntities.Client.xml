@@ -96,6 +96,16 @@
             </summary>
             <returns>Collection containing only changed entities</returns>
         </member>
+        <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.MergeChanges(`0@,`0)">
+            <summary>
+            Merge changed child items into the original trackable entity. 
+            This assumes GetChanges was called to update only changed items. 
+            Non-recursive - only direct children will be merged. 
+            Usage: MergeChanges(ref originalItem, updatedItem);
+            </summary>
+            <param name="originalItem">Local entity containing unchanged child items.</param>
+            <param name="updatedItem">Entity returned by an update operation.</param>
+        </member>
         <member name="E:TrackableEntities.Client.ChangeTrackingCollection`1.EntityChanged">
             <summary>
             Event for when an entity in the collection has changed its tracking state.

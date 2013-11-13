@@ -114,10 +114,10 @@
       <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.Common">
-      <HintPath>..\..\packages\TrackableEntities.Common.1.0.0.0\lib\portable-net45+sl5+win8+windowsphone8\TrackableEntities.Common.dll</HintPath>
+      <HintPath>..\..\packages\TrackableEntities.Common.1.0.1.0\lib\portable-net45+sl5+win8+windowsphone8\TrackableEntities.Common.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.EF.6">
-      <HintPath>..\..\packages\TrackableEntities.EF.6.1.0.0.0\lib\net45\TrackableEntities.EF.6.dll</HintPath>
+      <HintPath>..\..\packages\TrackableEntities.EF.6.1.0.1.0\lib\net45\TrackableEntities.EF.6.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>

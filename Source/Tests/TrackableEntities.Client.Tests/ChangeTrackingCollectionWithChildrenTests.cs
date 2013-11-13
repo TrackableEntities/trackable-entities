@@ -299,35 +299,63 @@ namespace TrackableEntities.Client.Tests
         public void Updated_Parent_With_Children_Should_Merge_Unchanged_Children()
         {
             // Arrange
-            // Clone orig order
+
+            // Get order, fix up details, clone
             var origOrder = _database.Orders[0];
+            foreach (var detail in origOrder.OrderDetails)
+                detail.Order = origOrder;
             var updatedOrder = origOrder.Clone<Order>();
 
-            // Set state on orig order details
-            origOrder.OrderDetails[0].TrackingState = TrackingState.Added;
-            origOrder.OrderDetails[1].TrackingState = TrackingState.Modified;
-            origOrder.OrderDetails[2].TrackingState = TrackingState.Deleted;
-
-            // Add detail to orig order
+            // Add unchanged detail to orig order
             origOrder.OrderDetails.Add(new OrderDetail
             {
                 ProductId = 1,
                 Product = _database.Products[0],
                 Quantity = 10,
-                UnitPrice = 20M
+                UnitPrice = 20M,
+                OrderId = origOrder.OrderId,
+                Order = origOrder
             });
 
-            // Act
-            // Merge updates into orig order
+            // Replicate changes in updated order
+            updatedOrder.OrderDetails[0].UnitPrice++;
+            updatedOrder.OrderDetails.RemoveAt(1);
+
+            // Remove 3rd detail so it can be re-added
+            var addedDetail = origOrder.OrderDetails[2];
+            origOrder.OrderDetails.Remove(addedDetail);
+
+            // Clone orig order and start tracking
             var changeTracker = new ChangeTrackingCollection<Order>(origOrder);
+
+            // Set state on orig order details
+            origOrder.OrderDetails[0].UnitPrice++;
+            origOrder.OrderDetails.RemoveAt(1);
+            origOrder.OrderDetails.Add(addedDetail);
+
+            // Act
+
+            // Merge updates into orig order
             changeTracker.MergeChanges(ref origOrder, updatedOrder);
 
             // Assert
+            // Orig reference pointed to updated
+            Assert.IsTrue(ReferenceEquals(origOrder, updatedOrder));
+
+            // Tracking states set to unchanged
             Assert.AreEqual(TrackingState.Unchanged, origOrder.OrderDetails[0].TrackingState);
             Assert.AreEqual(TrackingState.Unchanged, origOrder.OrderDetails[1].TrackingState);
             Assert.AreEqual(TrackingState.Unchanged, origOrder.OrderDetails[2].TrackingState);
-            Assert.AreEqual(4, updatedOrder.OrderDetails.Count);
-            Assert.IsTrue(ReferenceEquals(origOrder, updatedOrder));
+
+            // Modified properties set to null
+            Assert.IsNull(origOrder.OrderDetails[0].ModifiedProperties);
+            Assert.IsNull(origOrder.OrderDetails[1].ModifiedProperties);
+            Assert.IsNull(origOrder.OrderDetails[2].ModifiedProperties);
+
+            // Detail orders fixed up
+            Assert.IsTrue(ReferenceEquals(origOrder, origOrder.OrderDetails[0].Order));
+            Assert.IsTrue(ReferenceEquals(origOrder, origOrder.OrderDetails[1].Order));
+            Assert.IsTrue(ReferenceEquals(origOrder, origOrder.OrderDetails[2].Order));
         }
 
         #endregion

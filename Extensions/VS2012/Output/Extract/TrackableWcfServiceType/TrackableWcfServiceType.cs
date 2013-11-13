@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -61,6 +62,7 @@ namespace $rootnamespace$
             {
                 _dbContext.ApplyChanges(entity);
                 await _dbContext.SaveChangesAsync();
+                entity.AcceptChanges();
                 return entity;
             }
             catch (DbUpdateConcurrencyException updateEx)
@@ -73,10 +75,10 @@ namespace $rootnamespace$
         {
             _dbContext.$entitySetName$.Add(entity);
             await _dbContext.SaveChangesAsync();
+            entity.AcceptChanges();
             return entity;
         }
 
-        // TODO: Accept entity concurrency property (rowversion)
         public async Task<bool> Delete$entityName$(int id)
         {
             $entityName$ entity = await _dbContext.$entitySetName$

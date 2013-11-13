@@ -14,7 +14,7 @@ namespace WebApiSample.Service.WebApi.Controllers
     {
         private readonly NorthwindSlimContext _dbContext = new NorthwindSlimContext();
 
-        // GET api/Customers
+        // GET api/Customer
         public IEnumerable<Customer> GetCustomers()
         {
             IEnumerable<Customer> customers = _dbContext.Customers
@@ -22,7 +22,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             return customers;
         }
 
-        // GET api/Customers/5
+        // GET api/Customer/5
         public Customer GetCustomer(string id)
         {
             Customer customer = _dbContext.Customers
@@ -34,7 +34,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             return customer;
         }
 
-        // PUT api/Customers
+        // PUT api/Customer
         public HttpResponseMessage PutCustomer(Customer customer)
         {
             if (!ModelState.IsValid)
@@ -47,6 +47,7 @@ namespace WebApiSample.Service.WebApi.Controllers
 				// Update object graph entity state
                 _dbContext.ApplyChanges(customer);
                 _dbContext.SaveChanges();
+                customer.AcceptChanges();
 
                 HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, customer);
                 return response;
@@ -57,13 +58,14 @@ namespace WebApiSample.Service.WebApi.Controllers
             }
         }
 
-        // POST api/Customers
+        // POST api/Customer
         public HttpResponseMessage PostCustomer(Customer customer)
         {
             if (ModelState.IsValid)
             {
 				_dbContext.Customers.Add(customer);
                 _dbContext.SaveChanges();
+                customer.AcceptChanges();
 
                 HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, customer);
                 response.Headers.Location = new Uri(Url.Link("DefaultApi", new { id = customer.CustomerId }));
@@ -73,8 +75,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
         }
 
-        // DELETE api/Customers/5
-		// TODO: Accept entity concurrency property (rowversion)
+        // DELETE api/Customer/5
         public HttpResponseMessage DeleteCustomer(string id)
         {
             Customer customer = _dbContext.Customers

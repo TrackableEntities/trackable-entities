@@ -68,10 +68,11 @@ namespace $safeprojectname$
                         OrderDate = DateTime.Today,
                         ShippedDate = DateTime.Today.AddDays(1),
                         OrderDetails = new ChangeTrackingCollection<OrderDetail>
-                        {
-                            new OrderDetail {ProductId = 1, Quantity = 5, UnitPrice = 10},
-                            new OrderDetail {ProductId = 2, Quantity = 10, UnitPrice = 20}
-                        }
+                            {
+                                new OrderDetail { ProductId = 1, Quantity = 5, UnitPrice = 10 },
+                                new OrderDetail { ProductId = 2, Quantity = 10, UnitPrice = 20 },
+                                new OrderDetail { ProductId = 4, Quantity = 40, UnitPrice = 40 }
+                            }
                     };
                     var createdOrder = orderService.CreateOrderAsync(newOrder).Result;
                     PrintOrderWithDetails(createdOrder);
@@ -97,16 +98,19 @@ namespace $safeprojectname$
                     // Submit changes
                     Order changedOrder = changeTracker.GetChanges().SingleOrDefault();
                     Order updatedOrder = orderService.UpdateOrderAsync(changedOrder).Result;
+
+                    // Merge changes
+                    changeTracker.MergeChanges(ref createdOrder, updatedOrder);
                     Console.WriteLine("Updated order:");
-                    PrintOrderWithDetails(updatedOrder);
+                    PrintOrderWithDetails(createdOrder);
 
                     // Delete the order
                     Console.WriteLine("\nPress Enter to delete the order");
                     Console.ReadLine();
-                    bool deleted = orderService.DeleteOrderAsync(updatedOrder.OrderId).Result;
+                    bool deleted = orderService.DeleteOrderAsync(createdOrder.OrderId).Result;
 
                     // Verify order was deleted
-                    Order deletedOrder = orderService.GetOrderAsync(updatedOrder.OrderId).Result;
+                    Order deletedOrder = orderService.GetOrderAsync(createdOrder.OrderId).Result;
                     Console.WriteLine(deleted && deletedOrder == null
                         ? "Order was successfully deleted"
                         : "Order was not deleted");

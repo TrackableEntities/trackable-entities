@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>TrackableEntities.EF.6</id>
-    		<version>1.0.0.0</version>
+    	<version>1.0.1.0</version>
         <title>Trackable Entities for EF6</title>
         <authors>Tony Sneed</authors>
         <owners />

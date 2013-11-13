@@ -41,6 +41,8 @@ namespace TrackableEntities.EF.Tests
             // Assert
             IEnumerable<TrackingState> states = parent.GetTrackingStates(TrackingState.Unchanged);
             Assert.AreEqual(40, states.Count());
+            IEnumerable<IEnumerable<string>> modifiedProps = parent.GetModifiedProperties();
+            Assert.IsFalse(modifiedProps.Any(p => p != null));
         }
     }
 }

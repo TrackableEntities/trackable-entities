@@ -33,8 +33,9 @@ namespace TrackableEntities.EF5
                 }
             }
 
-            // Set tracking state
+            // Set tracking state and clear modified properties
             item.TrackingState = TrackingState.Unchanged;
+            item.ModifiedProperties = null;
         }
     }
 }

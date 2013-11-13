@@ -17,7 +17,7 @@ namespace WebApiSample.Service.WebApi.Controllers
     {
         private readonly NorthwindSlimContext _dbContext = new NorthwindSlimContext();
 
-        // GET api/Orders
+        // GET api/Order
         public IEnumerable<Order> GetOrders()
         {
             IEnumerable<Order> orders = _dbContext.Orders
@@ -27,7 +27,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             return orders;
         }
 
-        // GET api/Orders?customerId=ABCD
+        // GET api/Order?customerId=ABCD
         public IEnumerable<Order> GetOrders(string customerId)
         {
             IEnumerable<Order> orders = _dbContext.Orders
@@ -38,7 +38,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             return orders;
         }
 
-        // GET api/Orders/5
+        // GET api/Order/5
         public Order GetOrder(int id)
         {
             Order order = _dbContext.Orders
@@ -52,7 +52,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             return order;
         }
 
-        // PUT api/Orders
+        // PUT api/Order
         public HttpResponseMessage PutOrder(Order order)
         {
             if (!ModelState.IsValid)
@@ -65,12 +65,11 @@ namespace WebApiSample.Service.WebApi.Controllers
 				// Update object graph entity state
                 _dbContext.ApplyChanges(order);
                 _dbContext.SaveChanges();
+                order.AcceptChanges();
 
                 // Load Products into added order details
                 var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
-                var added = order.OrderDetails
-                    .Where(od => od.TrackingState == TrackingState.Added);
-                foreach (var detail in added)
+                foreach (var detail in order.OrderDetails)
                     ctx.LoadProperty(detail, od => od.Product);
 
                 HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, order);
@@ -82,7 +81,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             }
         }
 
-        // POST api/Orders
+        // POST api/Order
         public HttpResponseMessage PostOrder(Order order)
         {
             if (ModelState.IsValid)
@@ -90,6 +89,7 @@ namespace WebApiSample.Service.WebApi.Controllers
                 // Save new order
 				_dbContext.Orders.Add(order);
                 _dbContext.SaveChanges();
+                order.AcceptChanges();
 
                 // Load related entities
                 var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
@@ -106,8 +106,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
         }
 
-        // DELETE api/Orders/5
-		// TODO: Accept entity concurrency property (rowversion)
+        // DELETE api/Order/5
         public HttpResponseMessage DeleteOrder(int id)
         {
             // Get order to be deleted
@@ -118,8 +117,17 @@ namespace WebApiSample.Service.WebApi.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
+
+            // First remove order
             _dbContext.Orders.Attach(order);
             _dbContext.Orders.Remove(order);
+
+            // Then remove order details
+            foreach (var detail in order.OrderDetails)
+            {
+                _dbContext.OrderDetails.Attach(detail);
+                _dbContext.OrderDetails.Remove(detail);
+            }
 
             try
             {

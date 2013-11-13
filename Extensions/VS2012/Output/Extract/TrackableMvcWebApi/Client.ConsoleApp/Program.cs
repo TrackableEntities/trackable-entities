@@ -21,7 +21,7 @@ namespace $safeprojectname$
 
             // Create http client
             // TODO: Replace with port from web project
-            const string serviceBaseAddress = "http://localhost:" + "12345 + /";
+            const string serviceBaseAddress = "http://localhost:" + "12345" + "/";
             var client = new HttpClient { BaseAddress = new Uri(serviceBaseAddress) };
 
             // Get customers
@@ -65,10 +65,11 @@ namespace $safeprojectname$
                 OrderDate = DateTime.Today,
                 ShippedDate = DateTime.Today.AddDays(1),
                 OrderDetails = new ChangeTrackingCollection<OrderDetail>
-                        {
-                            new OrderDetail { ProductId = 1, Quantity = 5, UnitPrice = 10 },
-                            new OrderDetail { ProductId = 2, Quantity = 10, UnitPrice = 20 }
-                        }
+                    {
+                        new OrderDetail { ProductId = 1, Quantity = 5, UnitPrice = 10 },
+                        new OrderDetail { ProductId = 2, Quantity = 10, UnitPrice = 20 },
+                        new OrderDetail { ProductId = 4, Quantity = 40, UnitPrice = 40 }
+                    }
             };
             var createdOrder = CreateOrder(client, newOrder);
             PrintOrderWithDetails(createdOrder);
@@ -94,16 +95,19 @@ namespace $safeprojectname$
             // Submit changes
             var changedOrder = changeTracker.GetChanges().SingleOrDefault();
             var updatedOrder = UpdateOrder(client, changedOrder);
+
+            // Merge changes
+            changeTracker.MergeChanges(ref createdOrder, updatedOrder);
             Console.WriteLine("Updated order:");
-            PrintOrderWithDetails(updatedOrder);
+            PrintOrderWithDetails(createdOrder);
 
             // Delete the order
             Console.WriteLine("\nPress Enter to delete the order");
             Console.ReadLine();
-            DeleteOrder(client, updatedOrder);
+            DeleteOrder(client, createdOrder);
 
             // Verify order was deleted
-            var deleted = VerifyOrderDeleted(client, updatedOrder.OrderId);
+            var deleted = VerifyOrderDeleted(client, createdOrder.OrderId);
             Console.WriteLine(deleted ?
                 "Order was successfully deleted" :
                 "Order was not deleted");
@@ -118,7 +122,7 @@ namespace $safeprojectname$
          
         private static IEnumerable<Customer> GetCustomers(HttpClient client)
         {
-            const string request = "api/Customers";
+            const string request = "api/Customer";
             var response = client.GetAsync(request).Result;
             response.EnsureSuccessStatusCode();
             var result = response.Content.ReadAsAsync<IEnumerable<Customer>>().Result;
@@ -128,7 +132,7 @@ namespace $safeprojectname$
         private static IEnumerable<Order> GetCustomerOrders
             (HttpClient client, string customerId)
         {
-            string request = "api/Orders?customerId=" + customerId;
+            string request = "api/Order?customerId=" + customerId;
             var response = client.GetAsync(request).Result;
             response.EnsureSuccessStatusCode();
             var result = response.Content.ReadAsAsync<IEnumerable<Order>>().Result;
@@ -137,7 +141,7 @@ namespace $safeprojectname$
 
         private static Order GetOrder(HttpClient client, int orderId)
         {
-            string request = "api/Orders/" + orderId;
+            string request = "api/Order/" + orderId;
             var response = client.GetAsync(request).Result;
             response.EnsureSuccessStatusCode();
             var result = response.Content.ReadAsAsync<Order>().Result;
@@ -146,7 +150,7 @@ namespace $safeprojectname$
 
         private static Order CreateOrder(HttpClient client, Order order)
         {
-            string request = "api/Orders";
+            string request = "api/Order";
             var response = client.PostAsJsonAsync(request, order).Result;
             response.EnsureSuccessStatusCode();
             var result = response.Content.ReadAsAsync<Order>().Result;
@@ -155,7 +159,7 @@ namespace $safeprojectname$
 
         private static Order UpdateOrder(HttpClient client, Order order)
         {
-            string request = "api/Orders";
+            string request = "api/Order";
             var response = client.PutAsJsonAsync(request, order).Result;
             response.EnsureSuccessStatusCode();
             var result = response.Content.ReadAsAsync<Order>().Result;
@@ -164,14 +168,14 @@ namespace $safeprojectname$
 
         private static void DeleteOrder(HttpClient client, Order order)
         {
-            string request = "api/Orders/" + order.OrderId;
+            string request = "api/Order/" + order.OrderId;
             var response = client.DeleteAsync(request);
             response.Result.EnsureSuccessStatusCode();
         }
 
         private static bool VerifyOrderDeleted(HttpClient client, int orderId)
         {
-            string request = "api/Orders/" + orderId;
+            string request = "api/Order/" + orderId;
             var response = client.GetAsync(request).Result;
             if (response.IsSuccessStatusCode) return false;
             return true;

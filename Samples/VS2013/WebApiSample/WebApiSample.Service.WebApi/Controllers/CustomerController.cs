@@ -51,6 +51,7 @@ namespace WebApiSample.Service.WebApi.Controllers
 				// Update object graph entity state
                 _dbContext.ApplyChanges(customer);
                 await _dbContext.SaveChangesAsync();
+                customer.AcceptChanges();
 	            return Ok(customer);
             }
             catch (DbUpdateConcurrencyException)
@@ -77,6 +78,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             try
             {
                 await _dbContext.SaveChangesAsync();
+                customer.AcceptChanges();
             }
             catch (DbUpdateException)
             {

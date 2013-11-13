@@ -59,7 +59,7 @@ namespace WebApiSample.Service.Entities.Models
             context.Orders.Add(new Order
             {
                 CustomerId = "ANATR",
-                OrderId = 2,
+                OrderId = 3,
                 OrderDate = DateTime.Today,
                 ShippedDate = DateTime.Today,
                 Freight = 41.34M,
@@ -76,7 +76,7 @@ namespace WebApiSample.Service.Entities.Models
             context.Orders.Add(new Order
             {
                 CustomerId = "ANTON",
-                OrderId = 2,
+                OrderId = 4,
                 OrderDate = DateTime.Today,
                 ShippedDate = DateTime.Today,
                 Freight = 41.34M,
@@ -141,6 +141,13 @@ namespace WebApiSample.Service.Entities.Models
                 ProductId = 3,
                 CategoryId = 2,
                 ProductName = "Aniseed Syrup",
+                UnitPrice = 23M
+            });
+            context.Products.Add(new Product
+            {
+                ProductId = 4,
+                CategoryId = 2,
+                ProductName = "Chef Anton's Cajun Seasoning",
                 UnitPrice = 23M
             });
         }

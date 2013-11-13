@@ -39,6 +39,7 @@ namespace WcfSample.Service.Core
             {
                 _dbContext.ApplyChanges(customer);
                 await _dbContext.SaveChangesAsync();
+                customer.AcceptChanges();
                 return customer;
             }
             catch (DbUpdateConcurrencyException updateEx)
@@ -51,10 +52,10 @@ namespace WcfSample.Service.Core
         {
             _dbContext.Customers.Add(customer);
             await _dbContext.SaveChangesAsync();
+            customer.AcceptChanges();
             return customer;
         }
 
-        // TODO: Accept entity concurrency property (rowversion)
         public async Task<bool> DeleteCustomer(string id)
         {
             Customer customer = await _dbContext.Customers

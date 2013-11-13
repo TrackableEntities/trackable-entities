@@ -66,6 +66,26 @@ namespace TrackableEntities.EF.Tests
             yield return item.TrackingState;
         }
 
+        // Recursively get modified properties
+        public static IEnumerable<IEnumerable<string>> GetModifiedProperties(this ITrackable item)
+        {
+            foreach (var prop in item.GetType().GetProperties())
+            {
+                var trackingColl = prop.GetValue(item, null) as ICollection;
+                if (trackingColl != null)
+                {
+                    foreach (ITrackable child in trackingColl)
+                    {
+                        foreach (var modifiedProps in child.GetModifiedProperties())
+                        {
+                                yield return modifiedProps;
+                        }
+                    }
+                }
+            }
+            yield return item.ModifiedProperties;
+        }
+
         // Recursively get entity states
         public static IEnumerable<EntityState> GetEntityStates(this DbContext context, ITrackable item,
             EntityState? entityState = null)

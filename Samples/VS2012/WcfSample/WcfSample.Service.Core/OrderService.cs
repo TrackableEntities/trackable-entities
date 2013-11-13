@@ -55,6 +55,7 @@ namespace WcfSample.Service.Core
                 // Update object graph entity state
                 _dbContext.ApplyChanges(order);
                 await _dbContext.SaveChangesAsync();
+                order.AcceptChanges();
 
                 // Load order details
                 var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
@@ -73,6 +74,7 @@ namespace WcfSample.Service.Core
             // Save new order
             _dbContext.Orders.Add(order);
             await _dbContext.SaveChangesAsync();
+            order.AcceptChanges();
 
             // Load order details
             var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
@@ -83,7 +85,6 @@ namespace WcfSample.Service.Core
             return order;
         }
 
-        // TODO: Accept entity concurrency property (rowversion)
         public async Task<bool> DeleteOrder(int id)
         {
             Order order = await _dbContext.Orders

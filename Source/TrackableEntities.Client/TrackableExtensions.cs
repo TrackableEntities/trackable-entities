@@ -142,7 +142,7 @@ namespace TrackableEntities.Client
                         child.RemoveDeletes(enableTracking);
                     }
 
-                    // Restore deletes on collection
+                    // Remove deletes on collection
                     trackingColl.RemoveDeletes(enableTracking);
                 }
             }

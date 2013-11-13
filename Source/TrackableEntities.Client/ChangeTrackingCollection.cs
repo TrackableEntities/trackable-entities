@@ -256,7 +256,7 @@ namespace TrackableEntities.Client
                         {
                             // Add unchanged original item to updated items
                             updatedItems.Add(origTrackable);
-                            FixUpParentReference(origTrackable, updatedItem);
+                            FixUpParentReference(origTrackable, updatedItem, Tracking);
                         }
                     }
                 }
@@ -273,7 +273,7 @@ namespace TrackableEntities.Client
             originalItem = updatedItem;
         }
 
-        private void FixUpParentReference(object child, object parent)
+        private void FixUpParentReference(object child, object parent, bool isTracking)
         {
             foreach (var prop in child.GetType().GetProperties())
             {
@@ -282,7 +282,9 @@ namespace TrackableEntities.Client
                     var childParent = prop.GetValue(child, null);
                     if (childParent != null && !ReferenceEquals(childParent, parent))
                     {
+                        Tracking = false;
                         prop.SetValue(child, parent, null);
+                        Tracking = isTracking;
                     }
                 }
             }

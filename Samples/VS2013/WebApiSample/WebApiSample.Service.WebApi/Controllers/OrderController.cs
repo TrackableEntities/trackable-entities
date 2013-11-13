@@ -71,12 +71,12 @@ namespace WebApiSample.Service.WebApi.Controllers
 				// Update object graph entity state
                 _dbContext.ApplyChanges(order);
                 await _dbContext.SaveChangesAsync();
+                order.AcceptChanges();
 
                 // Load Products into added order details
                 var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
-                var added = order.OrderDetails
-                    .Where(od => od.TrackingState == TrackingState.Added);
-                foreach (var detail in added)
+                ctx.LoadProperty(order, o => o.Customer);
+                foreach (var detail in order.OrderDetails)
                     ctx.LoadProperty(detail, od => od.Product);
 
                 return Ok(order);
@@ -102,6 +102,7 @@ namespace WebApiSample.Service.WebApi.Controllers
 
             _dbContext.Orders.Add(order);
             await _dbContext.SaveChangesAsync();
+            order.AcceptChanges();
 
             // Load related entities
             var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;

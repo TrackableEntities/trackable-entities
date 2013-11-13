@@ -131,13 +131,21 @@ namespace <#= Namespace #>
 
             try
             {
-				// Update object graph entity state
                 _dbContext.ApplyChanges(<#= ModelVariable #>);
 <# if (UseAsync) { #>
                 await _dbContext.SaveChangesAsync();
 <# } else { #>
                 _dbContext.SaveChanges();
 <# } #>
+                <#= ModelVariable #>.AcceptChanges();
+<# if(!String.IsNullOrEmpty(includeExpressions)) { #>
+
+                var ctx = ((IObjectContextAdapter) _dbContext).ObjectContext;
+<# foreach(var prop in ModelMetadata.RelatedEntities) {
+		var propName = prop.AssociationPropertyName;
+#>                ctx.LoadProperty(<#= ModelVariable #>, <#= lambdaVar #> => <#= lambdaVar #>.<#= propName #>);
+<# } } #>
+
 	            return Ok(<#= ModelVariable #>);
             }
             catch (DbUpdateConcurrencyException)
@@ -170,6 +178,7 @@ namespace <#= Namespace #>
 <#		} else { #>
             _dbContext.SaveChanges();
 <#		} #>
+            <#= ModelVariable #>.AcceptChanges();
 <# } else { #>
 
             try
@@ -179,6 +188,7 @@ namespace <#= Namespace #>
 <#		} else { #>
                 _dbContext.SaveChanges();
 <#		} #>
+                <#= ModelVariable #>.AcceptChanges();
             }
             catch (DbUpdateException)
             {
@@ -207,24 +217,14 @@ namespace <#= Namespace #>
         public IHttpActionResult Delete<#= ModelTypeName #>(<#= primaryKeyShortTypeName #> id)
 <# } #>
         {
-<# if(!String.IsNullOrEmpty(includeExpressions)) { #>
-	<# if (UseAsync) { #>
-        <#= ModelTypeName #> <#= ModelVariable #> = await _dbContext.<#= entitySetName #>
-				<#= includeExpressions #>
+<# if (UseAsync) { #>
+			<#= ModelTypeName #> <#= ModelVariable #> = await _dbContext.<#= entitySetName #>
 				.SingleOrDefaultAsync(<#= lambdaVar #> => <#= lambdaVar #>.<#= primaryKeyName #> == id);
-	<# } else { #>
-        <#= ModelTypeName #> <#= ModelVariable #> = _dbContext.<#= entitySetName #>
-				<#= includeExpressions #>
-				.SingleOrDefault(<#= lambdaVar #> => <#= lambdaVar #>.<#= primaryKeyName #> == id);
-	<# } #>
 <# } else { #>
-	<# if (UseAsync) { #>
-        <#= ModelTypeName #> <#= ModelVariable #> = await _dbContext.<#= entitySetName #>.SingleOrDefaultAsync(<#= lambdaVar #> => <#= lambdaVar #>.<#= primaryKeyName #> == id);
-	<# } else { #>
-        <#= ModelTypeName #> <#= ModelVariable #> = _dbContext.<#= entitySetName #>.SingleOrDefault(<#= lambdaVar #> => <#= lambdaVar #>.<#= primaryKeyName #> == id);
-	<# } #>
+			<#= ModelTypeName #> <#= ModelVariable #> = _dbContext.<#= entitySetName #>
+				.SingleOrDefault(<#= lambdaVar #> => <#= lambdaVar #>.<#= primaryKeyName #> == id);
 <# } #>
-        if (<#= ModelVariable #> == null)
+			if (<#= ModelVariable #> == null)
             {
                 return Ok();
             }

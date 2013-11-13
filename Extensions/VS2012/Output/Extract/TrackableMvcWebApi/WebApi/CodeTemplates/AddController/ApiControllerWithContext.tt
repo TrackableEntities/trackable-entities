@@ -47,7 +47,8 @@ namespace <#= Model.Namespace #>
 <#  var includeExpressions = String.Join("", Model.RelatedProperties.Values.Select(property => String.Format(".Include({0} => {0}.{1})", lambdaVar, property.PropertyName)));
 #>
 <# if(!String.IsNullOrEmpty(includeExpressions)) { #>
-            IEnumerable<<#= modelName #>> <#= entitySetVariable #> = _dbContext.<#= entitySetName #><#= includeExpressions #>
+            IEnumerable<<#= modelName #>> <#= entitySetVariable #> = _dbContext.<#= entitySetName #>
+			    <#= includeExpressions #>
 				.ToList();
 <# } else { #>
             IEnumerable<<#= modelName #>> <#= entitySetVariable #> = _dbContext.<#= entitySetName #>
@@ -59,7 +60,8 @@ namespace <#= Model.Namespace #>
         // GET <#= routePrefix #>/5
         public <#= modelName #> Get<#= modelName #>(<#= primaryKey.ShortTypeName #> id)
         {
-            <#= modelName #> <#= modelVariable #> = _dbContext.<#= entitySetName #><#= includeExpressions #>
+            <#= modelName #> <#= modelVariable #> = _dbContext.<#= entitySetName #>
+			    <#= includeExpressions #>
                 .SingleOrDefault(<#= lambdaVar #> => <#= lambdaVar #>.<#= primaryKey.Name #> == id);
             if (<#= modelVariable #> == null)
             {
@@ -80,6 +82,14 @@ namespace <#= Model.Namespace #>
             {
                 _dbContext.ApplyChanges(<#= modelVariable #>);
                 _dbContext.SaveChanges();
+				<#= modelVariable #>.AcceptChanges();
+<# if(!String.IsNullOrEmpty(includeExpressions)) { #>
+
+                var ctx = ((IObjectContextAdapter) _dbContext).ObjectContext;
+<# foreach(var prop in Model.RelatedProperties.Values) {
+		var propName = prop.PropertyName;
+#>                ctx.LoadProperty(<#= modelVariable #>, <#= lambdaVar #> => <#= lambdaVar #>.<#= propName #>);
+<# } } #>
 
                 HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, <#= modelVariable #>);
                 return response;
@@ -97,6 +107,7 @@ namespace <#= Model.Namespace #>
             {
 				_dbContext.<#= entitySetName #>.Add(<#= modelVariable #>);
                 _dbContext.SaveChanges();
+                <#= modelVariable #>.AcceptChanges();
 <# if(!String.IsNullOrEmpty(includeExpressions)) { #>
 
                 var ctx = ((IObjectContextAdapter) _dbContext).ObjectContext;
@@ -113,7 +124,6 @@ namespace <#= Model.Namespace #>
         }
 
         // DELETE <#= routePrefix #>/5
-		// TODO: Accept entity concurrency property (rowversion)
         public HttpResponseMessage Delete<#= modelName #>(<#= primaryKey.ShortTypeName #> id)
         {
             <#= modelName #> <#= modelVariable #> = _dbContext.<#= entitySetName #>
@@ -122,6 +132,7 @@ namespace <#= Model.Namespace #>
             {
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
+
             _dbContext.<#= entitySetName #>.Attach(<#= modelVariable #>);
             _dbContext.<#= entitySetName #>.Remove(<#= modelVariable #>);
 

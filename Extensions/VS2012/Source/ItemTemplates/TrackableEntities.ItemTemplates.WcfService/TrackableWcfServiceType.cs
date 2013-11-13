@@ -62,6 +62,7 @@ namespace $rootnamespace$
             {
                 _dbContext.ApplyChanges(entity);
                 await _dbContext.SaveChangesAsync();
+                entity.AcceptChanges();
                 return entity;
             }
             catch (DbUpdateConcurrencyException updateEx)
