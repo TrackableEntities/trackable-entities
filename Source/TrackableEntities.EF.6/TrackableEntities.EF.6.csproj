@@ -56,11 +56,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyVersion.cs">
+      <Link>Properties\AssemblyVersion.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5\DbContextExtensions.cs">
       <Link>DbContextExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\TrackableEntities.EF.5\TrackableExtensions.cs">
-      <Link>TrackableExtensions.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>TrackableEntities.EF.5</id>
-    	<version>1.0.2.0</version>
+    	<version>1.0.3.0</version>
         <title>Trackable Entities for EF5</title>
         <authors>Tony Sneed</authors>
         <owners />
@@ -17,12 +17,7 @@
             <group targetFramework="net45">
                 <dependency id="EntityFramework" version="[5.0.0]" />
                 <dependency id="Newtonsoft.Json" version="5.0.8" />
-                <dependency id="TrackableEntities.Common" version="1.0.0.0" />
-            </group>
-            <group targetFramework="net40">
-                <dependency id="EntityFramework" version="[5.0.0]" />
-                <dependency id="Newtonsoft.Json" version="5.0.8" />
-                <dependency id="TrackableEntities.Common" version="1.0.2.0" />
+                <dependency id="TrackableEntities.Common" version="1.0.3.0" />
             </group>
         </dependencies>
     </metadata>

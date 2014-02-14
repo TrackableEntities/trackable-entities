@@ -70,6 +70,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyVersion.cs">
+      <Link>Properties\AssemblyVersion.cs</Link>
+    </Compile>
     <Compile Include="ChangeTrackingCollection.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ITrackingCollection.cs" />

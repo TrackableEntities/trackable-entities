@@ -19,6 +19,17 @@
             Properties on an entity that have been modified.
             </summary>
         </member>
+        <member name="T:TrackableEntities.Common.TrackableExtensions">
+            <summary>
+            Extension methods for entities that implement ITrackable.
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.AcceptChanges(TrackableEntities.ITrackable)">
+            <summary>
+            Set tracking state to Unchanged on an entity and its child collections.
+            </summary>
+            <param name="item">Trackable object</param>
+        </member>
         <member name="T:TrackableEntities.TrackingState">
             <summary>
             Change-tracking state of an entity.

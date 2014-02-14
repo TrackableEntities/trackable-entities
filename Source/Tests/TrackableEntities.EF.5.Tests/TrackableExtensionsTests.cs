@@ -1,11 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-#if EF_6
-using TrackableEntities.EF6;
-#else
-using TrackableEntities.EF5;
-#endif
+using TrackableEntities.Common;
 using TrackableEntities.EF.Tests.Mocks;
 
 namespace TrackableEntities.EF.Tests

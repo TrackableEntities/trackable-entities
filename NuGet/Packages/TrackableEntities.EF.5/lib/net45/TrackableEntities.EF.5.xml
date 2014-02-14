@@ -16,16 +16,5 @@
             <param name="context">Used to query and save changes to a database</param>
             <param name="item">Object that implements ITrackable</param>
         </member>
-        <member name="T:TrackableEntities.EF5.TrackableExtensions">
-            <summary>
-            Extension methods for entities that implement ITrackable.
-            </summary>
-        </member>
-        <member name="M:TrackableEntities.EF5.TrackableExtensions.AcceptChanges(TrackableEntities.ITrackable)">
-            <summary>
-            Set tracking state to Unchanged on an entity and its child collections.
-            </summary>
-            <param name="item">Trackable object</param>
-        </member>
     </members>
 </doc>
