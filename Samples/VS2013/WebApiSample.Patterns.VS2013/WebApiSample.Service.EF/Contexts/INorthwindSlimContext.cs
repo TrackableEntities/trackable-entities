@@ -1,6 +1,6 @@
+using System;
 using System.Data.Entity;
 using WebApiSample.Service.Entities.Models;
-using WebApiSample.Service.Entities.Models.Mapping;
 
 namespace WebApiSample.Service.EF.Contexts
 {

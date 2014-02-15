@@ -1,0 +1,19 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Item">
+  <TemplateData>
+    <DefaultName>IEntityRepository.cs</DefaultName>
+    <Name>Entity Repository Interface</Name>
+    <Description>Entity Repository Interface for Service.Persistence project. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>10</SortOrder>
+    <Icon>__TemplateIcon.png</Icon>
+    <PreviewImage>__PreviewImage.png</PreviewImage>
+  </TemplateData>
+  <TemplateContent>
+    <References />
+    <ProjectItem SubType="" TargetFileName="$fileinputname$.cs" ReplaceParameters="true">IEntityRepository.cs</ProjectItem>
+  </TemplateContent>
+  <WizardExtension>
+    <Assembly>TrackableEntities.PatternItemsWizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e</Assembly>
+    <FullClassName>TrackableEntities.PatternItemsWizard.EntityRepoInterfaceWizard</FullClassName>
+  </WizardExtension>
+</VSTemplate>

@@ -166,6 +166,26 @@
     <Content Include="Packages\TrackableEntities.Patterns.EF.6.1.0.3.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="ItemTemplates\Trackable\EntityRepository.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ItemTemplates\Trackable\ExampleUnitOfWork.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ItemTemplates\Trackable\IDatabaseContext.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ItemTemplates\Trackable\IEntityRepository.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ItemTemplates\Trackable\IExampleUnitOfWork.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -205,6 +225,13 @@
     <Folder Include="Wizards\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TrackableEntities.PatternItemsWizard\TrackableEntities.PatternItemsWizard.csproj">
+      <Project>{27AB923B-2E8D-4CDC-AB5D-D0EF1948A793}</Project>
+      <Name>TrackableEntities.PatternItemsWizard</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+      <VSIXSubPath>Wizards</VSIXSubPath>
+    </ProjectReference>
     <ProjectReference Include="..\TrackableEntities.TemplateWizard\TrackableEntities.TemplateWizard.csproj">
       <Project>{c9646be1-e999-47bd-8a9d-083017e6269a}</Project>
       <Name>TrackableEntities.TemplateWizard</Name>

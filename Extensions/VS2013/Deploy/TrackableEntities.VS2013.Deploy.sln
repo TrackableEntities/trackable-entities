@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{153FAA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.VS2013.Deploy", "TrackableEntities.VS2013.Deploy\TrackableEntities.VS2013.Deploy.csproj", "{A1F9A45C-C2A3-4129-ACD6-824A3214E4F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.PatternItemsWizard", "TrackableEntities.PatternItemsWizard\TrackableEntities.PatternItemsWizard.csproj", "{27AB923B-2E8D-4CDC-AB5D-D0EF1948A793}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{A1F9A45C-C2A3-4129-ACD6-824A3214E4F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1F9A45C-C2A3-4129-ACD6-824A3214E4F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1F9A45C-C2A3-4129-ACD6-824A3214E4F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27AB923B-2E8D-4CDC-AB5D-D0EF1948A793}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27AB923B-2E8D-4CDC-AB5D-D0EF1948A793}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27AB923B-2E8D-4CDC-AB5D-D0EF1948A793}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27AB923B-2E8D-4CDC-AB5D-D0EF1948A793}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

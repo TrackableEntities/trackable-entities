@@ -30,5 +30,11 @@
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="TrackableEntities.WcfItemWizard" d:VsixSubPath="Wizards" Path="|TrackableEntities.WcfItemWizard|" AssemblyName="|TrackableEntities.WcfItemWizard;AssemblyName|" />
     <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\TrackableWcfServiceType.zip" />
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableWcfService.zip" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="TrackableEntities.PatternItemsWizard" Path="|TrackableEntities.PatternItemsWizard|" AssemblyName="|TrackableEntities.PatternItemsWizard;AssemblyName|" d:VsixSubPath="Wizards" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\EntityRepository.zip" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\ExampleUnitOfWork.zip" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\IDatabaseContext.zip" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\IEntityRepository.zip" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\IExampleUnitOfWork.zip" />
   </Assets>
 </PackageManifest>

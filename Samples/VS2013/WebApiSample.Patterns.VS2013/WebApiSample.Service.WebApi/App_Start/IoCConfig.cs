@@ -17,7 +17,7 @@ namespace WebApiSample.Service.WebApi
             // Get IoC container
             var container = TinyIoCContainer.Current;
 
-            // Register unit of work with per request lifetime
+            // Register context, unit of work and repos with per request lifetime
             container.Register<INorthwindSlimContext, NorthwindSlimContext>().AsPerRequestSingleton();
             container.Register<INorthwindUnitOfWork, NorthwindUnitOfWork>().AsPerRequestSingleton();
             container.Register<ICustomerRepository, CustomerRepository>().AsPerRequestSingleton();
