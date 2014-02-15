@@ -68,9 +68,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Packages\EntityFramework.6.0.1.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Packages\jQuery.1.8.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -181,16 +178,22 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Packages\TrackableEntities.Client.1.0.1.0.nupkg">
+    <Content Include="Packages\EntityFramework.6.0.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Packages\TrackableEntities.Common.1.0.1.0.nupkg">
+    <Content Include="Packages\TrackableEntities.Client.1.0.3.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Packages\TrackableEntities.EF.5.1.0.1.0.nupkg">
+    <Content Include="Packages\TrackableEntities.Client.Net4.1.0.3.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Packages\TrackableEntities.EF.6.1.0.1.0.nupkg">
+    <Content Include="Packages\TrackableEntities.Common.1.0.3.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.EF.5.1.0.3.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.EF.6.1.0.3.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="source.extension.vsixmanifest">

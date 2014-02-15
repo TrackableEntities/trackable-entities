@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7" Version="1.0.1" Language="en-US" Publisher="Tony Sneed" />
+    <Identity Id="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7" Version="1.0.3" Language="en-US" Publisher="Tony Sneed" />
     <DisplayName>Trackable Entities for Visual Studio 2013</DisplayName>
     <Description xml:space="preserve">Client and server project templates with NuGet packages for reverse engineering trackable entitites.</Description>
     <MoreInfo>http://trackable.codeplex.com</MoreInfo>

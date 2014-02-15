@@ -68,9 +68,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Packages\EntityFramework.6.0.1.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Packages\Microsoft.Web.Infrastructure.1.0.0.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -151,13 +148,22 @@
     <Content Include="Packages\WebGrease.1.5.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Packages\TrackableEntities.Client.1.0.1.0.nupkg">
+    <Content Include="Packages\EntityFramework.6.0.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Packages\TrackableEntities.Common.1.0.1.0.nupkg">
+    <Content Include="Packages\TrackableEntities.Client.1.0.3.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Packages\TrackableEntities.EF.6.1.0.1.0.nupkg">
+    <Content Include="Packages\TrackableEntities.Common.1.0.3.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.EF.6.1.0.3.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.Patterns.1.0.3.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.Patterns.EF.6.1.0.3.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="source.extension.vsixmanifest">
