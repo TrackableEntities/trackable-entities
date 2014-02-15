@@ -4,7 +4,7 @@ using WebApiSample.Service.Entities.Models.Mapping;
 
 namespace WebApiSample.Service.EF.Contexts
 {
-    public partial class NorthwindSlimContext : DbContext
+    public partial class NorthwindSlimContext : DbContext, INorthwindSlimContext
     {
         static NorthwindSlimContext()
         {
@@ -18,11 +18,11 @@ namespace WebApiSample.Service.EF.Contexts
             this.Configuration.ProxyCreationEnabled = false;
         }
 
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
-        public DbSet<Product> Products { get; set; }
+        public IDbSet<Category> Categories { get; set; }
+        public IDbSet<Customer> Customers { get; set; }
+        public IDbSet<Order> Orders { get; set; }
+        public IDbSet<OrderDetail> OrderDetails { get; set; }
+        public IDbSet<Product> Products { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

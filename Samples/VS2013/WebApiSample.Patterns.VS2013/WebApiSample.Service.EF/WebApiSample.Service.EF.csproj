@@ -60,11 +60,13 @@
     <Reference Include="TrackableEntities.Patterns">
       <HintPath>..\packages\TrackableEntities.Patterns.1.0.3.0\lib\net45\TrackableEntities.Patterns.dll</HintPath>
     </Reference>
-    <Reference Include="TrackableEntities.Patterns.EF.6">
+    <Reference Include="TrackableEntities.Patterns.EF.6, Version=1.0.3.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\TrackableEntities.Patterns.EF.6.1.0.3.0\lib\net45\TrackableEntities.Patterns.EF.6.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contexts\INorthwindSlimContext.cs" />
     <Compile Include="Contexts\NorthwindSlimContext.cs" />
     <Compile Include="Contexts\NorthwindSlimDatabaseInitializer.cs" />
     <Compile Include="UnitsOfWork\NorthwindUnitOfWork.cs" />

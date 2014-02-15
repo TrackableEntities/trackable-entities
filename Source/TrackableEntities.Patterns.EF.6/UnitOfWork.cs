@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Data.Entity;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TrackableEntities.Patterns.EF6
@@ -10,8 +11,10 @@ namespace TrackableEntities.Patterns.EF6
     /// Inherit from this class to supply a specific DbContext. 
     /// Add a property for each respository for which unit of work must be done.
     /// </summary>
-    public abstract class UnitOfWork : IUnitOfWork, IDisposable
+    public abstract class UnitOfWork : IUnitOfWork, IUnitOfWorkAsync, IDisposable
     {
+        private bool _disposed;
+
         /// <summary>
         /// Constructs a new general unit of work.
         /// </summary>
@@ -32,15 +35,6 @@ namespace TrackableEntities.Patterns.EF6
         protected DbContext Context { get; set; }
 
         /// <summary>
-        /// Asynchronously saves all changes made to one or more repositories.
-        /// </summary>
-        /// <returns>A task that represents the asynchronous save operation. The task result contains the number of objects saved.</returns>
-        public virtual async Task<int> Save()
-        {
-            return await Context.SaveChangesAsync();
-        }
-
-        /// <summary>
         /// Disposes the DbContext.
         /// </summary>
         public void Dispose()
@@ -55,10 +49,43 @@ namespace TrackableEntities.Patterns.EF6
         /// <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                Context.Dispose();
-            }
+            if (_disposed) return;
+            if (disposing) Context.Dispose();
+            _disposed = true;
+        }
+
+        /// <summary>
+        /// Saves changes made to one or more repositories.
+        /// </summary>
+        /// <returns>The number of objects saved.</returns>
+        public virtual int SaveChanges()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException("UnitOfWork");
+            return Context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Saves changes made to one or more repositories.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous save operation. The task result contains the number of objects saved.</returns>
+        public virtual async Task<int> SaveChangesAsync()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException("UnitOfWork");
+            return await SaveChangesAsync(CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Saves changes made to one or more repositories.
+        /// </summary>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <returns>A task that represents the asynchronous save operation. The task result contains the number of objects saved.</returns>
+        public virtual async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            if (_disposed)
+                throw new ObjectDisposedException("UnitOfWork");
+            return await Context.SaveChangesAsync(cancellationToken);
         }
     }
 }

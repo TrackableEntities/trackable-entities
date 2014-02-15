@@ -52,7 +52,9 @@
     <Compile Include="..\AssemblyVersion.cs">
       <Link>Properties\AssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="IRepositoryAsync.cs" />
     <Compile Include="IRepository.cs" />
+    <Compile Include="IUnitOfWorkAsync.cs" />
     <Compile Include="IUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

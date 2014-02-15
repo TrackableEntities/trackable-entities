@@ -26,7 +26,7 @@
             Finds an entity with the given primary key values. If no entity is found, then null is returned.
             </summary>
             <param name="keyValues">The values of the primary key for the entity to be found.</param>
-            <returns>A task that represents the asynchronous find operation. The task result contains the entity found, or null.</returns>
+            <returns>The entity found, or null.</returns>
         </member>
         <member name="M:TrackableEntities.Patterns.EF6.Repository`1.Insert(`0)">
             <summary>
@@ -45,7 +45,37 @@
             Removes an entity from the respository.
             </summary>
             <param name="keyValues">The values of the primary key for the entity to be found.</param>
-            <returns>A task that represents the asynchronous delete operation. The task result will be alse if the entity does not exist in the repository, or true if successfully deleted.</returns>
+            <returns>False if the entity does not exist in the repository, or true if successfully deleted.</returns>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.Repository`1.FindAsync(System.Object[])">
+            <summary>
+            Finds an entity with the given primary key values. If no entity is found, then null is returned.
+            </summary>
+            <param name="keyValues">The values of the primary key for the entity to be found.</param>
+            <returns>A task that represents the asynchronous find operation. The task result contains the entity found, or null.</returns>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.Repository`1.FindAsync(System.Threading.CancellationToken,System.Object[])">
+            <summary>
+            Finds an entity with the given primary key values. If no entity is found, then null is returned.
+            </summary>
+            <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+            <param name="keyValues">The values of the primary key for the entity to be found.</param>
+            <returns>A task that represents the asynchronous find operation. The task result contains the entity found, or null.</returns>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.Repository`1.DeleteAsync(System.Object[])">
+            <summary>
+            Removes an entity from the respository.
+            </summary>
+            <param name="keyValues">The values of the primary key for the entity to be found.</param>
+            <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.Repository`1.DeleteAsync(System.Threading.CancellationToken,System.Object[])">
+            <summary>
+            Removes an entity from the respository.
+            </summary>
+            <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+            <param name="keyValues">The values of the primary key for the entity to be found.</param>
+            <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
         </member>
         <member name="P:TrackableEntities.Patterns.EF6.Repository`1.Context">
             <summary>
@@ -75,12 +105,6 @@
             </summary>
             <param name="context">Entity Framework DbContext-derived class.</param>
         </member>
-        <member name="M:TrackableEntities.Patterns.EF6.UnitOfWork.Save">
-            <summary>
-            Asynchronously saves all changes made to one or more repositories.
-            </summary>
-            <returns>A task that represents the asynchronous save operation. The task result contains the number of objects saved.</returns>
-        </member>
         <member name="M:TrackableEntities.Patterns.EF6.UnitOfWork.Dispose">
             <summary>
             Disposes the DbContext.
@@ -91,6 +115,25 @@
             Disposes the DbContext.
             </summary>
             <param name="disposing">True to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.UnitOfWork.SaveChanges">
+            <summary>
+            Saves changes made to one or more repositories.
+            </summary>
+            <returns>The number of objects saved.</returns>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.UnitOfWork.SaveChangesAsync">
+            <summary>
+            Saves changes made to one or more repositories.
+            </summary>
+            <returns>A task that represents the asynchronous save operation. The task result contains the number of objects saved.</returns>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.UnitOfWork.SaveChangesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Saves changes made to one or more repositories.
+            </summary>
+            <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+            <returns>A task that represents the asynchronous save operation. The task result contains the number of objects saved.</returns>
         </member>
         <member name="P:TrackableEntities.Patterns.EF6.UnitOfWork.Context">
             <summary>

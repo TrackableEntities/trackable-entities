@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -52,13 +51,13 @@ namespace WebApiSample.Service.WebApi.Controllers
 			try
 			{
 				_unitOfWork.CustomerRepository.Update(customer);
-				await _unitOfWork.Save();
+				await _unitOfWork.SaveChangesAsync();
 				customer.AcceptChanges();
 				return Ok(customer);
 			}
 			catch (UpdateConcurrencyException)
 			{
-				if (_unitOfWork.CustomerRepository.Find(customer.CustomerId) == null)
+				if (_unitOfWork.CustomerRepository.FindAsync(customer.CustomerId) == null)
 				{
 					return NotFound();
 				}
@@ -79,7 +78,7 @@ namespace WebApiSample.Service.WebApi.Controllers
 
 			try
 			{
-				await _unitOfWork.Save();
+				await _unitOfWork.SaveChangesAsync();
 				customer.AcceptChanges();
 			}
 			catch (UpdateException)
@@ -97,12 +96,12 @@ namespace WebApiSample.Service.WebApi.Controllers
 		// DELETE api/Customer/5
 		public async Task<IHttpActionResult> DeleteCustomer(string id)
 		{
-			bool exists = await _unitOfWork.CustomerRepository.Delete(id);
+			bool exists = await _unitOfWork.CustomerRepository.DeleteAsync(id);
 			if (!exists) return Ok();
 
 			try
 			{
-				await _unitOfWork.Save();
+				await _unitOfWork.SaveChangesAsync();
 				return Ok();
 			}
 			catch (UpdateConcurrencyException)

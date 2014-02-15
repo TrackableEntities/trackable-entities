@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Threading;
 using System.Threading.Tasks;
 using TrackableEntities.EF6;
 
@@ -8,8 +9,7 @@ namespace TrackableEntities.Patterns.EF6
     /// Generic repository with basic operations.
     /// </summary>
     /// <typeparam name="TEntity">Entity type for the repository.</typeparam>
-    public abstract class Repository<TEntity> : IRepository<TEntity>
-        where TEntity : class, ITrackable
+    public abstract class Repository<TEntity> : IRepository<TEntity>, IRepositoryAsync<TEntity> where TEntity : class, ITrackable
     {
         /// <summary>
         /// Creates a new Repository.
@@ -45,10 +45,10 @@ namespace TrackableEntities.Patterns.EF6
         /// Finds an entity with the given primary key values. If no entity is found, then null is returned.
         /// </summary>
         /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
-        /// <returns>A task that represents the asynchronous find operation. The task result contains the entity found, or null.</returns>
-        public virtual async Task<TEntity> Find(params object[] keyValues)
+        /// <returns>The entity found, or null.</returns>
+        public virtual TEntity Find(params object[] keyValues)
         {
-            return await Set.FindAsync(keyValues);
+            return Set.Find(keyValues);
         }
 
         /// <summary>
@@ -73,10 +73,57 @@ namespace TrackableEntities.Patterns.EF6
         /// Removes an entity from the respository.
         /// </summary>
         /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
-        /// <returns>A task that represents the asynchronous delete operation. The task result will be alse if the entity does not exist in the repository, or true if successfully deleted.</returns>
-        public virtual async Task<bool> Delete(params object[] keyValues)
+        /// <returns>False if the entity does not exist in the repository, or true if successfully deleted.</returns>
+        public virtual bool Delete(params object[] keyValues)
         {
-            var entity = await Find(keyValues);
+            var entity = Find(keyValues);
+            if (entity == null) return false;
+
+            Set.Attach(entity);
+            Set.Remove(entity);
+            return true;
+        }
+
+        /// <summary>
+        /// Finds an entity with the given primary key values. If no entity is found, then null is returned.
+        /// </summary>
+        /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
+        /// <returns>A task that represents the asynchronous find operation. The task result contains the entity found, or null.</returns>
+        public virtual async Task<TEntity> FindAsync(params object[] keyValues)
+        {
+            return await FindAsync(CancellationToken.None, keyValues);
+        }
+
+        /// <summary>
+        /// Finds an entity with the given primary key values. If no entity is found, then null is returned.
+        /// </summary>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
+        /// <returns>A task that represents the asynchronous find operation. The task result contains the entity found, or null.</returns>
+        public virtual async Task<TEntity> FindAsync(CancellationToken cancellationToken, params object[] keyValues)
+        {
+            return await Set.FindAsync(cancellationToken, keyValues);
+        }
+
+        /// <summary>
+        /// Removes an entity from the respository.
+        /// </summary>
+        /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
+        /// <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
+        public virtual async Task<bool> DeleteAsync(params object[] keyValues)
+        {
+            return await DeleteAsync(CancellationToken.None, keyValues);
+        }
+
+        /// <summary>
+        /// Removes an entity from the respository.
+        /// </summary>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
+        /// <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
+        public virtual async Task<bool> DeleteAsync(CancellationToken cancellationToken, params object[] keyValues)
+        {
+            var entity = await FindAsync(cancellationToken, keyValues);
             if (entity == null) return false;
 
             Set.Attach(entity);

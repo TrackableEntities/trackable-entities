@@ -13,15 +13,10 @@ namespace WebApiSample.Service.EF.Repositories
 {
     public class OrderRepository : Repository<Order>, IOrderRepository
     {
-        private readonly NorthwindSlimContext _context;
+        private readonly INorthwindSlimContext _context;
 
-        public OrderRepository()
-        {
-            _context = new NorthwindSlimContext();
-            Context = _context;
-        }
-
-        public OrderRepository(NorthwindSlimContext context) : base(context)
+        public OrderRepository(INorthwindSlimContext context) : 
+            base(context as DbContext)
         {
             _context = context;
         }
@@ -72,11 +67,19 @@ namespace WebApiSample.Service.EF.Repositories
             return true;
         }
 
-        public void LoadRelated(Order order)
+        public void LoadRelatedEntities(Order order)
         {
             var ctx = ((IObjectContextAdapter)_context).ObjectContext;
             ctx.LoadProperty(order, o => o.Customer);
             ctx.LoadProperty(order, o => o.OrderDetails);
+            foreach (var detail in order.OrderDetails)
+                ctx.LoadProperty(detail, od => od.Product);
+        }
+
+        public void LoadProductsOnAddedDetails(Order order)
+        {
+            var ctx = ((IObjectContextAdapter)_context).ObjectContext;
+            ctx.LoadProperty(order, o => o.Customer);
             foreach (var detail in order.OrderDetails)
                 ctx.LoadProperty(detail, od => od.Product);
         }

@@ -11,22 +11,17 @@ namespace WebApiSample.Service.EF.Repositories
 {
     public class CustomerRepository : Repository<Customer>, ICustomerRepository
     {
-        private readonly NorthwindSlimContext _context;
+        private readonly INorthwindSlimContext _context;
 
-        public CustomerRepository()
-        {
-            _context = new NorthwindSlimContext();
-            Context = _context;
-        }
-
-        public CustomerRepository(NorthwindSlimContext context) : base(context)
+        public CustomerRepository(INorthwindSlimContext context) :
+            base(context as DbContext)
         {
             _context = context;
         }
 
         public async Task<Customer> GetCustomer(string id)
         {
-            Customer customer = await Find(id);
+            Customer customer = await FindAsync(id);
             return customer;
         }
 

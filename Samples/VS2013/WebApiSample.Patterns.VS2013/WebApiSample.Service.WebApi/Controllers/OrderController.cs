@@ -10,128 +10,123 @@ using WebApiSample.Service.Persistence.UnitsOfWork;
 
 namespace WebApiSample.Service.WebApi.Controllers
 {
-    public class OrderController : ApiController
-    {
-        private readonly INorthwindUnitOfWork _unitOfWork;
+	public class OrderController : ApiController
+	{
+		private readonly INorthwindUnitOfWork _unitOfWork;
 
-        public OrderController(INorthwindUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
+		public OrderController(INorthwindUnitOfWork unitOfWork)
+		{
+			_unitOfWork = unitOfWork;
+		}
 
-        // GET api/Order
-        [ResponseType(typeof(IEnumerable<Order>))]
-        public async Task<IHttpActionResult> GetOrders()
-        {
-	        IEnumerable<Order> orders = await _unitOfWork.OrderRepository.GetOrders();	
-            return Ok(orders);
-        }
+		// GET api/Order
+		[ResponseType(typeof(IEnumerable<Order>))]
+		public async Task<IHttpActionResult> GetOrders()
+		{
+			IEnumerable<Order> orders = await _unitOfWork.OrderRepository.GetOrders();	
+			return Ok(orders);
+		}
 
-        // GET api/Order?customerId=ABCD
-        [ResponseType(typeof(IEnumerable<Order>))]
-        public async Task<IHttpActionResult> GetOrders(string customerId)
-        {
-            IEnumerable<Order> orders = await _unitOfWork.OrderRepository.GetOrders(customerId);
-            return Ok(orders);
-        }
+		// GET api/Order?customerId=ABCD
+		[ResponseType(typeof(IEnumerable<Order>))]
+		public async Task<IHttpActionResult> GetOrders(string customerId)
+		{
+			IEnumerable<Order> orders = await _unitOfWork.OrderRepository.GetOrders(customerId);
+			return Ok(orders);
+		}
 
-        // GET api/Order/5
-        [ResponseType(typeof(Order))]
-        public async Task<IHttpActionResult> GetOrder(int id)
-        {
-            Order order = await _unitOfWork.OrderRepository.GetOrder(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-            return Ok(order);
-        }
+		// GET api/Order/5
+		[ResponseType(typeof(Order))]
+		public async Task<IHttpActionResult> GetOrder(int id)
+		{
+			Order order = await _unitOfWork.OrderRepository.GetOrder(id);
+			if (order == null)
+			{
+				return NotFound();
+			}
+			return Ok(order);
+		}
 
-        // PUT api/Order
-        [ResponseType(typeof(Order))]
-        public async Task<IHttpActionResult> PutOrder(Order order)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+		// PUT api/Order
+		[ResponseType(typeof(Order))]
+		public async Task<IHttpActionResult> PutOrder(Order order)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
 
-            try
-            {
+			try
+			{
 				// Update order
-                _unitOfWork.OrderRepository.Update(order);
-                await _unitOfWork.Save();
-                order.AcceptChanges();
+				_unitOfWork.OrderRepository.Update(order);
+				await _unitOfWork.SaveChangesAsync();
+				order.AcceptChanges();
 
-                // Load Products into added order details
-                _unitOfWork.OrderRepository.LoadRelated(order);
-                //var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
-                //ctx.LoadProperty(order, o => o.Customer);
-                //foreach (var detail in order.OrderDetails)
-                //    ctx.LoadProperty(detail, od => od.Product);
+				// Load Products into added order details
+				_unitOfWork.OrderRepository.LoadProductsOnAddedDetails(order);
+				return Ok(order);
+			}
+			catch (UpdateConcurrencyException)
+			{
+				if (_unitOfWork.OrderRepository.Find(order.OrderId) == null)
+				{
+					return NotFound();
+				}
+				throw;
+			}
+		}
 
-                return Ok(order);
-            }
-            catch (UpdateConcurrencyException)
-            {
-                if (_unitOfWork.OrderRepository.Find(order.OrderId) == null)
-                {
-                    return NotFound();
-                }
-                throw;
-            }
-        }
+		// POST api/Order
+		[ResponseType(typeof(Order))]
+		public async Task<IHttpActionResult> PostOrder(Order order)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
 
-        // POST api/Order
-        [ResponseType(typeof(Order))]
-        public async Task<IHttpActionResult> PostOrder(Order order)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+			// Insert order
+			_unitOfWork.OrderRepository.Insert(order);
+			await _unitOfWork.SaveChangesAsync();
+			order.AcceptChanges();
 
-            // Insert order
-            _unitOfWork.OrderRepository.Insert(order);
-            await _unitOfWork.Save();
-            order.AcceptChanges();
+			// Load related entities
+			_unitOfWork.OrderRepository.LoadRelatedEntities(order);
 
-            // Load related entities
-            _unitOfWork.OrderRepository.LoadRelated(order);
+			return CreatedAtRoute("DefaultApi", new { id = order.OrderId }, order);
+		}
 
-            return CreatedAtRoute("DefaultApi", new { id = order.OrderId }, order);
-        }
+		// DELETE api/Order/5
+		public async Task<IHttpActionResult> DeleteOrder(int id)
+		{
+			bool exists = await _unitOfWork.OrderRepository.DeleteOrder(id);
+			if (!exists) return Ok();
 
-        // DELETE api/Order/5
-        public async Task<IHttpActionResult> DeleteOrder(int id)
-        {
-            bool exists = await _unitOfWork.OrderRepository.DeleteOrder(id);
-            if (!exists) return Ok();
+			try
+			{
+				await _unitOfWork.SaveChangesAsync();
+				return Ok();
+			}
+			catch (UpdateConcurrencyException)
+			{
+				if (_unitOfWork.OrderRepository.Find(id) == null)
+				{
+					return NotFound();
+				}
+				throw;
+			}
+		}
 
-            try
-            {
-	            await _unitOfWork.Save();
-                return Ok();
-            }
-            catch (UpdateConcurrencyException)
-            {
-                if (_unitOfWork.OrderRepository.Find(id) == null)
-                {
-                    return NotFound();
-                }
-                throw;
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                var disposable = _unitOfWork as IDisposable;
-                if (disposable != null)
-                    disposable.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-    }
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				var disposable = _unitOfWork as IDisposable;
+				if (disposable != null)
+					disposable.Dispose();
+			}
+			base.Dispose(disposing);
+		}
+	}
 }
