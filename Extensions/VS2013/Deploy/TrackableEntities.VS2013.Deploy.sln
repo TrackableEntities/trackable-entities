@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.TemplateWizard", "TrackableEntities.TemplateWizard\TrackableEntities.TemplateWizard.csproj", "{C9646BE1-E999-47BD-8A9D-083017E6269A}"
 EndProject
@@ -17,6 +17,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.VS2013.Deploy", "TrackableEntities.VS2013.Deploy\TrackableEntities.VS2013.Deploy.csproj", "{A1F9A45C-C2A3-4129-ACD6-824A3214E4F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.PatternItemsWizard", "TrackableEntities.PatternItemsWizard\TrackableEntities.PatternItemsWizard.csproj", "{27AB923B-2E8D-4CDC-AB5D-D0EF1948A793}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableItemTemplateWizard", "..\..\Common\TrackableItemTemplateWizard\TrackableItemTemplateWizard.csproj", "{046940FE-CC75-43E2-9C41-346AEBBBB03B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +42,10 @@ Global
 		{27AB923B-2E8D-4CDC-AB5D-D0EF1948A793}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27AB923B-2E8D-4CDC-AB5D-D0EF1948A793}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27AB923B-2E8D-4CDC-AB5D-D0EF1948A793}.Release|Any CPU.Build.0 = Release|Any CPU
+		{046940FE-CC75-43E2-9C41-346AEBBBB03B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{046940FE-CC75-43E2-9C41-346AEBBBB03B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{046940FE-CC75-43E2-9C41-346AEBBBB03B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{046940FE-CC75-43E2-9C41-346AEBBBB03B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

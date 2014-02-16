@@ -7,7 +7,7 @@ using System.ServiceModel;
 using System.Threading.Tasks;
 using TrackableEntities.EF6;
 using TrackableEntities.Common;
-using $rootNamespace$.Models;
+using $entityNamespace$;
 
 // NOTE: Add Trackable Entities EF Nuget package, then reference 
 //       Trackable Service Entities project and System.ServiceModel.
