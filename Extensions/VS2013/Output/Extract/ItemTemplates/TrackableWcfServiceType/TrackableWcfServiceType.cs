@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using TrackableEntities.EF6;
+using TrackableEntities.Common;
 using $rootNamespace$.Models;
 
 // NOTE: Add Trackable Entities EF Nuget package, then reference 

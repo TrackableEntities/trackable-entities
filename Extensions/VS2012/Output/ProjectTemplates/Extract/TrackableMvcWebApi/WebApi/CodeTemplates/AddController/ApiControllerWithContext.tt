@@ -17,6 +17,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using TrackableEntities.EF5;
+using TrackableEntities.Common;
 <# if (MvcTextTemplateHost.NamespaceNeeded(Model.Namespace, Model.ModelType.Namespace))
  { #>
 using <#= Model.ModelType.Namespace #>;

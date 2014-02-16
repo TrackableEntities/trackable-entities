@@ -5,6 +5,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using TrackableEntities.Common;
 using TrackableEntities.EF6;
 using WcfSample.Service.Entities.Models;
 

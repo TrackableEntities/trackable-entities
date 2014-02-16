@@ -49,13 +49,13 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TrackableEntities.Common, Version=1.0.1.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
+    <Reference Include="TrackableEntities.Common, Version=1.0.3.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\TrackableEntities.Common.1.0.1.0\lib\portable-net45+sl5+win8+windowsphone8\TrackableEntities.Common.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.Common.1.0.3.0\lib\portable-net40+sl5+win8+windowsphone8\TrackableEntities.Common.dll</HintPath>
     </Reference>
-    <Reference Include="TrackableEntities.EF.5, Version=1.0.1.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
+    <Reference Include="TrackableEntities.EF.5, Version=1.0.3.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\TrackableEntities.EF.5.1.0.1.0\lib\net45\TrackableEntities.EF.5.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.EF.5.1.0.3.0\lib\net45\TrackableEntities.EF.5.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

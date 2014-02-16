@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using TrackableEntities;
+using TrackableEntities.Common;
 using TrackableEntities.EF5;
 using WebApiSample.Service.Entities.Models;
 
