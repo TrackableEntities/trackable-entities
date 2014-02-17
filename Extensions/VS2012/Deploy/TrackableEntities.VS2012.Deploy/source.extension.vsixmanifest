@@ -6,6 +6,7 @@
     <Description xml:space="preserve">Client and server project templates with NuGet packages for reverse engineering trackable entitites.</Description>
     <MoreInfo>http://trackable.codeplex.com</MoreInfo>
     <License>License.txt</License>
+    <ReleaseNotes>ReleaseNotes-v1.0.3.txt</ReleaseNotes>
     <Icon>tracking-small.png</Icon>
     <PreviewImage>tracking.png</PreviewImage>
     <Tags>change-tracking entity-framework n-tier wcf web-api</Tags>

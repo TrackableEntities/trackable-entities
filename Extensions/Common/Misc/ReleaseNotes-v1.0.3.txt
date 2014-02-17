@@ -1,0 +1,37 @@
+﻿Release Notes for Trackable Entities v1.0.3
+
+1. Limited support for .NET 4.0 has been added
+   - Trackable Entities Common NuGet package now supports .NET 4.0
+   - There is a new Trackable Entities Client for .NET 4.0 NuGet package,
+     which targets the .NET 4.0 client profile
+
+2. ITrackable.AcceptChanges method has been moved from the service-side EF
+   NuGet packages to the Trackable Entities Common NuGet package
+   - This enables calling AcceptChanges on both the client and service sides,
+     in order to traverse an object graph setting TrackingState to Unchanged.
+	 > This will usually only be called on the service side, but it might be
+	   useful to call on the client side when entities are not returned from
+	   service operations.
+   - This is a breaking change from the prior release, but existing projects
+     only need to add a using directive for TrackableEntities.Common.
+
+3. The VSIX installer and all project templates have been updated with v1.0.3
+   of all the Trackable Entities NuGet packages, as well as Entity Framework
+   v6.0.2 (except for Web API template which uses EF 5.0).
+
+4. The WCF Service Type item template has been updated to display drop down lists
+   for trackable entities and DbContext classes in the Service.Entities project.
+
+5. Support for Repository and Unit of Work patterns has been added.
+   - There are two new NuGet packages:
+     TrackableEntities.Patterns
+	 > This contains generic Repository and Unit of Work interfaces
+	 TrackableEntities.Patterns.EF.6
+	 > Generic Repository and Unit of Work classes with EF6 implementations
+   - Both sync and async operations are supported
+   - The NuGet packages are compatible with .NET 4.5 and higher and may be
+     used with both VS 2012 and 2013
+   - A set of new VS 2013 item and project templates
+     > Available for VS 2013 only - not currently supported for VS 2012
+   - A VS 2013 Patterns sample solution showing the entire implementation
+     with a Web API service

@@ -68,6 +68,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\..\Common\Misc\ReleaseNotes-v1.0.3.txt">
+      <Link>ReleaseNotes-v1.0.3.txt</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Packages\jQuery.1.8.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>

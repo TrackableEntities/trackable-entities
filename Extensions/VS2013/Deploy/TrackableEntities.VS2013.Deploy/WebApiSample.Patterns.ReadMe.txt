@@ -1,0 +1,75 @@
+Web API Patterns Sample ReadMe
+
+This solutions demonstrates using Trackable Entities with the Repository
+and Unit of Work patterns to abstract away the underlying data access
+technology.  This allows for greater flexibility and the ability to switch
+from one data provider to another without re-writing application code.
+
+1. Add Repository and Unit of Work Interfaces to the Service.Persistence project.
+   - Right-click the Repositories folder, Add New Item, Trackable category,
+     select "Entity Repository Interface"
+	 > Enter an interface name, for example: IProductRepository
+	 > Select a trackable entity from the drop down in wizard, 
+	   for example: Product
+	 > Enter the entity set name for the entity, for example: Products
+     > Add other entity repository interfaces as needed
+   - Right-click the UnitsOfWork folder, Add New Item, Trackable category,
+     select "Example Unit of Work Interface"
+	 > Enter a name, for example: INorthwindUnitOfWork
+	 > Add read-only properties for each entity repository interface,
+	   for example: IProductRepository ProductRepository { get; }
+	 > Add using directives for the entity repository interface
+
+2. Add a Database Context Interface to the Service.EF project
+   - Right-click the Contexts folder, Add New Item, Trackable category,
+     select "Database Context Interface"
+	 > Enter an interface name, for example: INorthwindContext
+	 > Add IDbSet<Entity> properties for each entity set on the DbContext class
+	 > For example: IDbSet<Product> Products { get; set; }
+   - Alter DbContext class to implement this interface
+     > Open the DbContext-derived class added by the EF Power Tools,
+	   for example: NorthwindDataContext
+	 > Implement the Database Context Interface you added,
+	   for example: public partial class NorthwindSlimContext : DbContext, INorthwindContext
+	 > Change each DbSet property to IDbSet
+
+3. Add Entity Repository Classes to the Service.EF project
+   - Right-click the Repositories folder, Add New Item, Trackable category,
+     select "Entity Repository Class"
+	 > Enter an class name, for example: ProductRepository
+     > Select a trackable entity from the drop down list in the wizard
+	   and enter an entity set name, for example: Product, Products
+	 > Change IDatabaseContext to match the name of the Database Context Interface
+	   you added earlier, for example: INorthwindContext
+	 > Add Include statements as needed to the Get methods for including
+	   related entities
+	 > If the entity has child entities, remove them in the Delete method
+
+4. Add a Unit of Work class to the Service.EF project
+   - Right-click the UnitsOfWork folder, Add New Item, Trackable category,
+     select "Example Unit of Work Class"
+	 > Enter a class name that matches the Unit of Work Interface added earlier
+	   to the Service.Persistence project, for example: NorthwindUnitOfWork
+   - Add read-only fields for each entity repository interface, for example:
+     private readonly IProductRepository _productRepository
+   - Update the class ctor by renaming IDatabaseContext to match the context
+     interface you added earlier, for example: INorthwindContext
+	 > Then add repository interface parameters for each field you added,
+	   for example: IProductRepository productRepository
+	 > Initialize each entity repository field using the ctor parameters,
+	   for example: _productRepository = productRepository;
+   - Next add read-only property for each entity repository interface, for example:
+     public IProductRepository ProductRepository
+     {
+         get { return _productRepository; }
+     }
+   - Lastly add a using directive to resolve the Exception classes namespace:
+     using WebApiSample.Service.Persistence.Exceptions
+	 > Also resolve any another namespaces as needed
+
+5. Add Entity Web API Controllers to the Service.WebApi project
+   - Right-click the Controllers folder, Add New Item, Trackable category,
+     select "Entity Web API Controller"
+	 > Enter a name that matches an entity, for example: ProductController
+   - Rename IExampleUnitOfWork to match Unit of Work Interface added to Persistence project
+   - Likewise Rename IExampleUnitOfWork parameter of class ctor
