@@ -7,17 +7,16 @@ using TrackableEntities.Patterns.EF6;
 
 namespace $rootnamespace$
 {
-    // TODO: Rename ExampleUnitOfWork and IExampleUnitOfWork
-    public class ExampleUnitOfWork : UnitOfWork, IExampleUnitOfWork
+    // Implements I$safeitemname$ in the Persistence project
+    public class $safeitemname$ : UnitOfWork, I$safeitemname$
     {
         // TODO: Add read-only fields for each entity repository interface
         //private readonly IEntityRepository _entityRepository;
 
-		// TODO: Rename IDatabaseContext
+		// TODO: Rename IDatabaseContext to match context interface
 		// TODO: Add parameters for each repository interface
-        public ExampleUnitOfWork(IDatabaseContext context,
-            /* TODO: Add parameters for each repository interface */
-            /*IEntityRepository entityRepository,*/) :
+        public $safeitemname$(IDatabaseContext context
+            /* , IEntityRepository entityRepository */) :
             base(context as DbContext)
         {
 		    // TODO: Initizlialize each entity repository field

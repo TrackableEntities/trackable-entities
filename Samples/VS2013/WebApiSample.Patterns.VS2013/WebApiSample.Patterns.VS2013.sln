@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Service.Entities", "WebApiSample.Service.Entities\WebApiSample.Service.Entities.csproj", "{8556C7C8-72A6-4857-BAFD-489E42A2A453}"
 EndProject
@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Client.Console
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{093E7A13-ACA9-42CC-92F3-54E93452141D}"
 	ProjectSection(SolutionItems) = preProject
-		WebApiSample.ReadMe.txt = WebApiSample.ReadMe.txt
+		WebApiSample.Patterns.ReadMe.txt = WebApiSample.Patterns.ReadMe.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E54A2C50-EC6D-476E-B411-6A13F7F6BE57}"

@@ -48,10 +48,11 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\..\..\Program Files %28x86%29\Microsoft Visual Studio 12.0\Common7\IDE\PrivateAssemblies\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -186,6 +187,10 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ItemTemplates\Trackable\EntityController.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -225,23 +230,23 @@
     <Folder Include="Wizards\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TrackableEntities.PatternItemsWizard\TrackableEntities.PatternItemsWizard.csproj">
-      <Project>{27AB923B-2E8D-4CDC-AB5D-D0EF1948A793}</Project>
-      <Name>TrackableEntities.PatternItemsWizard</Name>
+    <ProjectReference Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ItemTemplateParametersWizard.csproj">
+      <Project>{046940fe-cc75-43e2-9c41-346aebbbb03b}</Project>
+      <Name>ItemTemplateParametersWizard</Name>
+      <VSIXSubPath>Wizards</VSIXSubPath>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\TrackableEntities.ItemWizard.csproj">
+      <Project>{68806a44-8d64-4e20-9438-c618e33459c1}</Project>
+      <Name>TrackableEntities.ItemWizard</Name>
       <VSIXSubPath>Wizards</VSIXSubPath>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
     <ProjectReference Include="..\TrackableEntities.TemplateWizard\TrackableEntities.TemplateWizard.csproj">
       <Project>{c9646be1-e999-47bd-8a9d-083017e6269a}</Project>
       <Name>TrackableEntities.TemplateWizard</Name>
-      <VSIXSubPath>Wizards</VSIXSubPath>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-    </ProjectReference>
-    <ProjectReference Include="..\TrackableEntities.WcfItemWizard\TrackableEntities.WcfItemWizard.csproj">
-      <Project>{8E21F5FD-3941-45A6-B8F8-9628B8A58594}</Project>
-      <Name>TrackableEntities.WcfItemWizard</Name>
       <VSIXSubPath>Wizards</VSIXSubPath>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>

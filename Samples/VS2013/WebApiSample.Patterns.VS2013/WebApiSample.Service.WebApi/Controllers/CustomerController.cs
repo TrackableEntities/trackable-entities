@@ -57,7 +57,7 @@ namespace WebApiSample.Service.WebApi.Controllers
 			}
 			catch (UpdateConcurrencyException)
 			{
-				if (_unitOfWork.CustomerRepository.FindAsync(customer.CustomerId) == null)
+				if (_unitOfWork.CustomerRepository.Find(customer.CustomerId) == null)
 				{
 					return NotFound();
 				}

@@ -66,9 +66,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contexts\INorthwindContext.cs" />
     <Compile Include="Contexts\INorthwindSlimContext.cs" />
     <Compile Include="Contexts\NorthwindSlimContext.cs" />
     <Compile Include="Contexts\NorthwindSlimDatabaseInitializer.cs" />
+    <Compile Include="Repositories\ProductRepository.cs" />
+    <Compile Include="UnitsOfWork\NorthwindSlimUnitOfWork.cs" />
     <Compile Include="UnitsOfWork\NorthwindUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />

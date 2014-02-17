@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Threading.Tasks;
-using TrackableEntities.Patterns;
-using $entitiesNamespace$.Models;
+using TrackableEntities.Patterns.EF6;
+using $baseNamespace$.EF.Contexts;
+using $baseNamespace$.Entities.Models;
+using $baseNamespace$.Persistence.Repositories;
 
 namespace $rootnamespace$
 {
-    // NOTE: First add Entity Repository Interface in Service.Persistence project
+    // NOTE: First add $entityName$ Repository Interface in Service.Persistence project
     
-    public class $entityName$Repository : Repository<$entityName$>, I$entityName$Repository
+    public class $safeitemname$ : Repository<$entityName$>, I$entityName$Repository
     {
         // TODO: Match Database Context Interface type
         private readonly IDatabaseContext _context;
 
         // TODO: Match Database Context Interface type
-        public OrderRepository(IDatabaseContext context) : 
+        public $safeitemname$(IDatabaseContext context) : 
             base(context as DbContext)
         {
             _context = context;
@@ -32,7 +35,7 @@ namespace $rootnamespace$
         {
             // TODO: Add Includes for related entities if needed
             $entityName$ entity = await _context.$entitySetName$
-                 .SingleOrDefaultAsync(t => t.Id == id); // TODO: Use primary key
+                 .SingleOrDefaultAsync(t => t.$entityName$Id == id);
             return entity;
         }
 
