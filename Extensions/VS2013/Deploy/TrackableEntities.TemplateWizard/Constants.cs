@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TrackableEntities.TemplateWizard
 {
@@ -10,9 +6,9 @@ namespace TrackableEntities.TemplateWizard
     {
         public static class ProjectTemplates
         {
-            public const string TrackableMvcWebApi = "TrackableMvcWebApi";
+            public const string TrackableWebApi = "TrackableWebApi";
             public const string TrackableWcfService = "TrackableWcfService";
-            public const string TrackablePatternsWebApi = "TrackablePatternsWebApi";
+            public const string TrackableWebApiPatterns = "TrackableWebApiPatterns";
         }
 
         public static class ReadMeFiles

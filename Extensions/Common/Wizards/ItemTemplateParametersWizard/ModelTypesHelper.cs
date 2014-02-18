@@ -9,7 +9,7 @@ namespace ItemTemplateParametersWizard
 {
     internal static class ModelTypesHelper
     {
-        public static bool SetupUserInterface(List<Type> modelTypes,
+        public static bool SetupUserInterface(List<ModelTypeInfo> modelTypes,
             string dialogTitle, string dialogMessage, Form dialog,
             Label descLabel, ComboBox entityComboBox, ComboBox contextComboBox)
         {
@@ -18,8 +18,8 @@ namespace ItemTemplateParametersWizard
             descLabel.Text = dialogMessage;
 
             // Get trackable and context types
-            List<TypeInfo> entityTypes = FilterModelTypes
-                (modelTypes, typeof(ITrackable));
+            List<ModelTypeInfo> entityTypes = FilterModelTypes
+                (modelTypes, ModelType.Trackable);
 
             // Populate entity combo
             entityComboBox.DataSource = entityTypes;
@@ -27,14 +27,14 @@ namespace ItemTemplateParametersWizard
             // Get dbContext types
             if (contextComboBox != null)
             {
-                List<TypeInfo> contextTypes = FilterModelTypes
-                        (modelTypes, typeof(DbContext));
+                List<ModelTypeInfo> contextTypes = FilterModelTypes
+                    (modelTypes, ModelType.DbContext);
                 contextComboBox.DataSource = contextTypes;
             }
             return true;
         }
 
-        public static ModelTypesInfo GetModelTypesInfo(TextBox entitySetTextBox,
+        public static ModelTypesDialogInfo GetModelTypesInfo(TextBox entitySetTextBox,
             ComboBox entityComboBox, ComboBox contextComboBox)
         {
             // Validate info
@@ -42,16 +42,16 @@ namespace ItemTemplateParametersWizard
                 contextComboBox)) return null;
 
             // Get info
-            string entityNamespace = ((Type) entityComboBox.SelectedValue).Namespace;
+            string entityNamespace = ((ModelTypeInfo) entityComboBox.SelectedItem).Namespace;
             string baseNamespace = entityNamespace.Substring(0, entityNamespace.IndexOf(".Entities.Models"));
-            string entityName = ((Type)entityComboBox.SelectedValue).Name;
+            string entityName = ((ModelTypeInfo)entityComboBox.SelectedItem).Name;
             string entitySetName = entitySetTextBox.Text;
             string dbContextName = null;
             if (contextComboBox != null)
             {
-                dbContextName = ((Type) contextComboBox.SelectedValue).Name;
+                dbContextName = ((ModelTypeInfo) contextComboBox.SelectedItem).Name;
             }
-            var info = new ModelTypesInfo
+            var info = new ModelTypesDialogInfo
             {
                 BaseNamespace = baseNamespace,
                 EntityName = entityName,
@@ -84,17 +84,12 @@ namespace ItemTemplateParametersWizard
             return true;
         }
 
-        private static List<TypeInfo> FilterModelTypes
-            (IEnumerable<Type> modelTypes, Type canAssignTo)
+        private static List<ModelTypeInfo> FilterModelTypes
+            (IEnumerable<ModelTypeInfo> modelTypes, ModelType modelType)
         {
             var trackableTypes = from t in modelTypes
-                where canAssignTo.IsAssignableFrom(t)
-                select new TypeInfo
-                {
-                    DisplayName = string.Format("{0} ({1})",
-                        t.Name, t.Namespace),
-                    Type = t
-                };
+                where t.ModelType == modelType
+                select t;
             return trackableTypes.ToList();
         }
     }

@@ -28,11 +28,11 @@
   <Assets>
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableClientEntities.zip" />
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableServiceEntities.zip" />
-    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableServiceEntities.zip" />
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="TrackableEntities.TemplateWizard" d:VsixSubPath="Wizards" Path="|TrackableEntities.TemplateWizard|" AssemblyName="|TrackableEntities.TemplateWizard;AssemblyName|" />
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="TrackableEntities.ItemWizard" d:VsixSubPath="Wizards" Path="|TrackableEntities.ItemWizard|" AssemblyName="|TrackableEntities.ItemWizard;AssemblyName|" />
     <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\TrackableWcfServiceType.zip" />
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableWcfService.zip" />
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="ItemTemplateParametersWizard" d:VsixSubPath="Wizards" Path="|ItemTemplateParametersWizard|" AssemblyName="|ItemTemplateParametersWizard;AssemblyName|" />
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableWebApi.zip" />
   </Assets>
 </PackageManifest>

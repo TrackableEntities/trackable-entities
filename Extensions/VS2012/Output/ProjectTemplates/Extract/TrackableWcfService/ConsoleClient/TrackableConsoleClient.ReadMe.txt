@@ -1,0 +1,23 @@
+Trackable Console WCF Client ReadMe
+
+This is a client Console application which uses a channel
+factory to communicate with a WCF service. It references the
+Client.Entities project uses the the TrackableEntities.Client
+NuGet package to perform change-tracking on the client without
+any knowledge of how the service will persist changes.
+
+The client project includes copies of the service contracts.
+Operation contract names must match the service operation
+names, although the method names each have the Async suffix.
+In a console client, we simply get the task Result property
+so that the main thread waits for the operation to complete.
+In a GUI client, we would instead use async/await.
+
+To start change-tracking, a ChangeTrackingCollection<T> is
+created, passing one or more entities to the constructor.
+Inserts, updates and deletes are automatically tracked.
+Calling GetChanges returns only the items that have been
+modified, which can then be passes to the service Update
+operation, where all changes are persisted in one round trip
+and in a single transaction.
+

@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{68806A44-8D64-4E20-9438-C618E33459C1}</ProjectGuid>
+    <ProjectGuid>{8E21F5FD-3941-45A6-B8F8-9628B8A58594}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TrackableEntities.ItemWizard</RootNamespace>
     <AssemblyName>TrackableEntities.ItemWizard</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\VS2013\Deploy\</SolutionDir>
@@ -81,6 +81,7 @@
     <Compile Include="EntityControllerWizard.cs" />
     <Compile Include="EntityRepoClassWizard.cs" />
     <Compile Include="EntityRepoInterfaceWizard.cs" />
+    <Compile Include="ModelReflectionHelper.cs" />
     <Compile Include="WizardHelper.cs" />
     <Compile Include="WcfServiceTypeWizard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

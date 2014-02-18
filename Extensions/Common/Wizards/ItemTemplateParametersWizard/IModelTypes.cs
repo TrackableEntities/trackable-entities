@@ -4,6 +4,6 @@ namespace ItemTemplateParametersWizard
 {
     public interface IModelTypes
     {
-        ModelTypesInfo ModelTypesInfo { get; }
+        ModelTypesDialogInfo ModelTypesDialogInfo { get; }
     }
 }

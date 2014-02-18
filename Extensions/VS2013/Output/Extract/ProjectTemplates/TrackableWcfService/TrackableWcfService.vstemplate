@@ -30,8 +30,8 @@
       <ProjectTemplateLink ProjectName="$safeprojectname$.Client.Entities">
         Client.Entities\Client.Entities.vstemplate
       </ProjectTemplateLink>
-      <ProjectTemplateLink ProjectName="$safeprojectname$.Client.ConsoleApp">
-        Client.ConsoleApp\Client.ConsoleApp.vstemplate
+      <ProjectTemplateLink ProjectName="$safeprojectname$.ConsoleClient">
+        ConsoleClient\ConsoleClient.vstemplate
       </ProjectTemplateLink>
     </ProjectCollection>
   </TemplateContent>

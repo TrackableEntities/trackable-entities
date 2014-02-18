@@ -20,10 +20,10 @@ namespace TrackableEntities.ItemWizard
         {
             // Get referenced types
             var dte2 = (DTE2)automationObject;
-            List<Type> modelTypes = GetReferencedTypes(dte2).ToList();
+            List<ModelTypeInfo> modelTypes = GetReferencedTypes(dte2).ToList();
 
             // Check for trackable entities in referenced projects
-            if (FilterModelTypes(modelTypes, typeof(ITrackable)).Count == 0)
+            if (modelTypes.Count(t => t.ModelType == ModelType.Trackable) == 0)
             {
                 MessageBox.Show("Referenced projects do not contain any trackable entities." +
                     "\r\nAdd service entities using EF Power Tools then build the solution.",
@@ -32,7 +32,7 @@ namespace TrackableEntities.ItemWizard
             }
 
             // Check for DbContext types in referenced projects
-            if (getDbContextName && FilterModelTypes(modelTypes, typeof(DbContext)).Count == 0)
+            if (getDbContextName && modelTypes.Count(t => t.ModelType == ModelType.DbContext) == 0)
             {
                 MessageBox.Show("Referenced projects do not contain any DbContext classes." +
                     "\r\nAdd service entities using EF Power Tools then build the solution.",
@@ -50,10 +50,10 @@ namespace TrackableEntities.ItemWizard
                 throw new WizardBackoutException();
 
             var modelTypesDialog = ((IModelTypes) dialog);
-            string baseNamespace = modelTypesDialog.ModelTypesInfo.BaseNamespace;
-            string entityName = modelTypesDialog.ModelTypesInfo.EntityName;
-            string entitySetName = modelTypesDialog.ModelTypesInfo.EntitySetName;
-            string dbContextName = modelTypesDialog.ModelTypesInfo.DbContextName;
+            string baseNamespace = modelTypesDialog.ModelTypesDialogInfo.BaseNamespace;
+            string entityName = modelTypesDialog.ModelTypesDialogInfo.EntityName;
+            string entitySetName = modelTypesDialog.ModelTypesDialogInfo.EntitySetName;
+            string dbContextName = modelTypesDialog.ModelTypesDialogInfo.DbContextName;
 
             replacementsDictionary.Add("$baseNamespace$", baseNamespace);
             replacementsDictionary.Add("$entityName$", entityName);
@@ -61,19 +61,8 @@ namespace TrackableEntities.ItemWizard
             replacementsDictionary.Add("$dbContextName$", dbContextName);
         }
 
-        private static List<Type> FilterModelTypes
-            (IEnumerable<Type> modelTypes, Type canAssignTo)
+        private static IEnumerable<ModelTypeInfo> GetReferencedTypes(DTE2 dte2)
         {
-            var trackableTypes = from t in modelTypes
-                                 where canAssignTo.IsAssignableFrom(t)
-                                 select t;
-            return trackableTypes.ToList();
-        }
-
-        private static IEnumerable<Type> GetReferencedTypes(DTE2 dte2)
-        {
-            const string efFileName = "EntityFramework.dll";
-            const string comFileName = "TrackableEntities.Common.dll";
             Project activeProject = dte2.ActiveSolutionProjects[0];
             var project = activeProject.Object as VSLangProj.VSProject;
             if (project != null)
@@ -86,43 +75,14 @@ namespace TrackableEntities.ItemWizard
                         {
                             continue;
                         }
-                        string destDir = null;
-                        string entDestPath = CopyFileToTemp(reference.Path, ref destDir);
-                        string sourceDir = Path.GetDirectoryName(reference.Path);
-                        string efDestPath = CopyFileToTemp(Path.Combine(sourceDir, efFileName), ref destDir);
-                        string comDestPath = CopyFileToTemp(Path.Combine(sourceDir, comFileName), ref destDir);
 
-                        Assembly assembly;
-                        try
+                        // Get type info from assembly
+                        List<ModelTypeInfo> modelTypes = ModelReflectionHelper.GetModelTypes
+                            (new FileInfo(reference.Path));
+                        foreach (var modelType in modelTypes)
                         {
-                            assembly = Assembly.LoadFrom(entDestPath);
+                            yield return modelType;
                         }
-                        catch (FileNotFoundException)
-                        {
-                            continue;
-                        }
-
-                        // Get types
-                        Type[] types;
-                        try
-                        {
-                            types = assembly.GetTypes();
-                        }
-                        catch (ReflectionTypeLoadException)
-                        {
-                            continue;
-                        }
-
-                        // Return types
-                        foreach (Type type in types)
-                        {
-                            yield return type;
-                        }
-
-                        // Clean up
-                        DeleteFileFromTemp(efDestPath);
-                        DeleteFileFromTemp(comDestPath);
-                        DeleteFileFromTemp(entDestPath);
                     }
                 }
             }
@@ -140,14 +100,13 @@ namespace TrackableEntities.ItemWizard
             return destPath;
         }
 
-        private static void DeleteFileFromTemp(string destPath)
+        private static void DeleteFilesFromTemp(string destDir)
         {
             try
             {
-                if (!string.IsNullOrWhiteSpace(destPath) && File.Exists(destPath))
+                if (!string.IsNullOrWhiteSpace(destDir) && Directory.Exists(destDir))
                 {
-                    File.SetAttributes(destPath, FileAttributes.Normal);
-                    File.Delete(destPath);
+                    Directory.Delete(destDir);
                 }
             }
             catch (Exception) { } // Just go on if there's an error

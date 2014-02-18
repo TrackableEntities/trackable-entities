@@ -19,7 +19,7 @@ namespace TrackableEntities.TemplateWizard
         public static Dictionary<string, string> GlobalDictionary =
             new Dictionary<string, string>();
 
-        // DTE
+        // Fields
         private DTE2 _dte2;
         private string _templateName;
 
@@ -63,9 +63,10 @@ namespace TrackableEntities.TemplateWizard
             // Set startup project
             string extension = null;
             if (_templateName == Constants.ProjectTemplates.TrackableWcfService)
-                extension = "Web";
-            else if (_templateName == Constants.ProjectTemplates.TrackablePatternsWebApi)
-                extension = "WebApi";
+                extension = ".Service.Web";
+            else if (_templateName == Constants.ProjectTemplates.TrackableWebApi ||
+                _templateName == Constants.ProjectTemplates.TrackableWebApiPatterns)
+                extension = ".WebApi";
             if (extension != null)
             {
                 Project startupProject = GetProject(extension);
@@ -90,7 +91,7 @@ namespace TrackableEntities.TemplateWizard
 
         private Project GetProject(string extension)
         {
-            string projectName = GlobalDictionary["$saferootprojectname$"] + ".Service." + extension;
+            string projectName = GlobalDictionary["$saferootprojectname$"] + extension;
             foreach (Project project in _dte2.Solution.Projects)
             {
                 if (Path.GetFileNameWithoutExtension(project.FullName).Equals(projectName))
@@ -107,9 +108,9 @@ namespace TrackableEntities.TemplateWizard
             {
                 case Constants.ProjectTemplates.TrackableWcfService:
                     return GetTextFilePath(Constants.ReadMeFiles.WcfSample);
-                case Constants.ProjectTemplates.TrackableMvcWebApi:
+                case Constants.ProjectTemplates.TrackableWebApi:
                     return GetTextFilePath(Constants.ReadMeFiles.WebApiSample);
-                case Constants.ProjectTemplates.TrackablePatternsWebApi:
+                case Constants.ProjectTemplates.TrackableWebApiPatterns:
                     return GetTextFilePath(Constants.ReadMeFiles.WebApiPatternsSample);
                 default:
                     return null;

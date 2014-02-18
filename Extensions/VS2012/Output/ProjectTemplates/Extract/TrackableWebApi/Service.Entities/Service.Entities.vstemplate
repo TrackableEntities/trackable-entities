@@ -1,0 +1,50 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>Trackable Service Entities</Name>
+    <Description>Class library with templates for reverse engineering trackable service entitites and EF DbContext.</Description>
+    <ProjectType>CSharp</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>Trackable.Service.Entities</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <Icon>__TemplateIcon.png</Icon>
+    <PreviewImage>__PreviewImage.png</PreviewImage>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="Service.Entities.csproj" File="Service.Entities.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="App.config">App.config</ProjectItem>
+      <Folder Name="CodeTemplates" TargetFolderName="CodeTemplates">
+        <Folder Name="ReverseEngineerCodeFirst" TargetFolderName="ReverseEngineerCodeFirst">
+          <ProjectItem ReplaceParameters="false" TargetFileName="Context.tt">Context.tt</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Entity.tt">Entity.tt</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Mapping.tt">Mapping.tt</ProjectItem>
+        </Folder>
+      </Folder>
+      <Folder Name="Models" TargetFolderName="Models">
+        <Folder Name="Mapping" TargetFolderName="Mapping" />
+      </Folder>
+      <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
+      <Folder Name="Properties" TargetFolderName="Properties">
+        <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+      </Folder>
+      <ProjectItem ReplaceParameters="true" TargetFileName="TrackableServiceEntities.ReadMe.txt">TrackableServiceEntities.ReadMe.txt</ProjectItem>
+    </Project>
+  </TemplateContent>
+  <WizardExtension>
+    <Assembly>TrackableEntities.TemplateWizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e</Assembly>
+    <FullClassName>TrackableEntities.TemplateWizard.ChildWizard</FullClassName>
+  </WizardExtension>
+  <WizardData>
+    <packages repository="extension"
+              repositoryId="TrackableEntities.VS2012..151fea10-328f-45bf-92ee-d83a8a2182b0">
+		<package id="Newtonsoft.Json" version="5.0.8" />
+		<package id="EntityFramework" version="5.0.0" />
+		<package id="TrackableEntities.Common" version="1.0.3.0" />
+		<package id="TrackableEntities.EF.5" version="1.0.3.0" />
+    </packages>
+  </WizardData>	
+</VSTemplate>

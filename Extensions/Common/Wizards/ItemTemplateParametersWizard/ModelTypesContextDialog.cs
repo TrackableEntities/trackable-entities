@@ -6,11 +6,11 @@ namespace ItemTemplateParametersWizard
 {
     public partial class ModelTypesContextDialog : IModelTypes
     {
-        private readonly List<Type> _modelTypes;
+        private readonly List<ModelTypeInfo> _modelTypes;
         private readonly string _dialogTitle;
         private readonly string _dialogMessage;
 
-        public ModelTypesContextDialog(List<Type> modelTypes, 
+        public ModelTypesContextDialog(List<ModelTypeInfo> modelTypes, 
             string dialogTitle, string dialogMessage)
         {
             Application.EnableVisualStyles();
@@ -20,13 +20,13 @@ namespace ItemTemplateParametersWizard
             _dialogMessage = dialogMessage;
         }
 
-        public ModelTypesInfo ModelTypesInfo { get; private set; }
+        public ModelTypesDialogInfo ModelTypesDialogInfo { get; private set; }
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            ModelTypesInfo = ModelTypesHelper.GetModelTypesInfo(entitySetTextBox,
+            ModelTypesDialogInfo = ModelTypesHelper.GetModelTypesInfo(entitySetTextBox,
                 entityNameComboBox, dbContextComboBox);
-            if (ModelTypesInfo == null) return;
+            if (ModelTypesDialogInfo == null) return;
             DialogResult = DialogResult.OK;
         }
 

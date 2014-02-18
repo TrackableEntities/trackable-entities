@@ -106,7 +106,6 @@
             this.entityNameComboBox.Name = "entityNameComboBox";
             this.entityNameComboBox.Size = new System.Drawing.Size(282, 21);
             this.entityNameComboBox.TabIndex = 0;
-            this.entityNameComboBox.ValueMember = "Type";
             // 
             // ModelTypesDialog
             // 

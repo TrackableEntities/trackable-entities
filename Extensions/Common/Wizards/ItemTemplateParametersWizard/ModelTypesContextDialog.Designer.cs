@@ -119,7 +119,6 @@ namespace ItemTemplateParametersWizard
             this.entityNameComboBox.Name = "entityNameComboBox";
             this.entityNameComboBox.Size = new System.Drawing.Size(282, 21);
             this.entityNameComboBox.TabIndex = 0;
-            this.entityNameComboBox.ValueMember = "Type";
             // 
             // dbContextComboBox
             // 
@@ -131,9 +130,8 @@ namespace ItemTemplateParametersWizard
             this.dbContextComboBox.Name = "dbContextComboBox";
             this.dbContextComboBox.Size = new System.Drawing.Size(282, 21);
             this.dbContextComboBox.TabIndex = 2;
-            this.dbContextComboBox.ValueMember = "Type";
             // 
-            // ModelTypesDialog
+            // ModelTypesContextDialog
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -152,7 +150,7 @@ namespace ItemTemplateParametersWizard
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "ModelTypesDialog";
+            this.Name = "ModelTypesContextDialog";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Model Types";

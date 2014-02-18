@@ -1,0 +1,45 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="ProjectGroup">
+  <TemplateData>
+    <Name>Trackable Web Api with Repository and Unit of Work Patterns</Name>
+    <Description>Solution containing Web API, trackable entities and client projects, using Repository and Unit of Work patterns with an IoC container. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
+    <ProjectType>CSharp</ProjectType>
+    <TemplateGroupID>Trackable</TemplateGroupID>
+    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>TrackableWebApiPatterns</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <Icon>__TemplateIcon.png</Icon>
+    <PreviewImage>__PreviewImage.png</PreviewImage>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <PromptForSaveOnCreation>true</PromptForSaveOnCreation>
+    <RequiredFrameworkVersion>4.0</RequiredFrameworkVersion>
+  </TemplateData>
+  <TemplateContent>
+    <ProjectCollection>
+      <ProjectTemplateLink ProjectName="$safeprojectname$.WebApi">
+        WebApi\WebApi.vstemplate
+      </ProjectTemplateLink>
+      <ProjectTemplateLink ProjectName="$safeprojectname$.Service.Persistence">
+        Service.Persistence\Service.Persistence.vstemplate
+      </ProjectTemplateLink>
+      <ProjectTemplateLink ProjectName="$safeprojectname$.Service.EF">
+        Service.EF\Service.EF.vstemplate
+      </ProjectTemplateLink>
+      <ProjectTemplateLink ProjectName="$safeprojectname$.Service.Entities">
+        Service.Entities\Service.Entities.vstemplate
+      </ProjectTemplateLink>
+      <ProjectTemplateLink ProjectName="$safeprojectname$.Client.Entities">
+        Client.Entities\Client.Entities.vstemplate
+      </ProjectTemplateLink>
+      <ProjectTemplateLink ProjectName="$safeprojectname$.ConsoleClient">
+        ConsoleClient\ConsoleClient.vstemplate
+      </ProjectTemplateLink>
+    </ProjectCollection>
+  </TemplateContent>
+  <WizardExtension>
+    <Assembly>TrackableEntities.TemplateWizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e</Assembly>
+    <FullClassName>TrackableEntities.TemplateWizard.RootWizard</FullClassName>
+  </WizardExtension>
+</VSTemplate>

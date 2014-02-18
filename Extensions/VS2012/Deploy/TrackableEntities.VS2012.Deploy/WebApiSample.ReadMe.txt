@@ -1,0 +1,99 @@
+Web API Sample ReadMe
+
+This sample demonstrates how to create an ASP.NET Web API service
+that uses trackable entities. At this time only C# is supported
+using Visual Studio 2012 or 2013.
+
+NOTE: You must first install the Entity Framework Power Tools.
+By default LocalDb is used and the NorthwindSlim databased is
+created and seeded with a small amount of data when you first
+run the WebApi service. Optionally, you can use SQL Express (or
+another edition), create NorthwindSlim manually and run the
+SQL script in the Data folder to create and populate the tables.
+
+Before starting the client Console app, build the solution, then
+right-click on the Web Api project and select View in Browser.
+This will start the service using the development web server.
+
+To replicate this sample follow these steps:
+
+1. Start by adding a new Trackable Web Api project.
+   - Click on the Trackable category under Visual C#
+   - Select the Trackable Web Api template
+     > For the project name, enter the solution name
+   - Two projects will be added:
+     WebApi, Service.Entities
+
+2. Reverse engineer a database for the Service.Entities project
+   - Right-click on the project, select Entity Framework,
+     Reverse Engineer Code First.
+	 > Enter the connection information: server, database name
+	 > For this sample we are using the NorthwindSlim database
+   - Build the solution
+
+3. Copy the connection string from App.config in Service.Entities
+   - Past it into the connectionStrings section of the web.config
+     file in the Service.WebApi project
+
+4. Add a new Web API controller using Entity Framework
+   - Right-click the Controllers folder in the Web Api project
+     and select Add, Controller
+   - Enter Orders for the contoller name
+     > For Template: select API controller with read/write actions,
+       using Entity Framework
+     > For Model class: select the Order class
+     > For Data context class: select NorthwindSlimContext
+   - The code-generated API controller class is only slightly different
+     than the standard version.
+	 > The Put action calls db.ApplyChanges, which applies entity state
+	   from trackable entities in the Order's object graph. The updated 
+	   entity is returned so as to include a possible concurrency field.
+     > The delete method has also been altered to accept an entity
+	   parameter and use it to create a dummy entity for deletion. There
+	   is a TODO item for setting the concurrency field if there is one.
+   - Modify the GetOrders method to include related OrderDetails and Products:
+        IEnumerable<Order> orders = await db.Orders.Include(o => o.Customer)
+            .Include("OrderDetails.Product")
+            .Where(o => o.CustomerId == customerId)
+            .ToListAsync();
+     > Do the same for the GetOrder method:
+        Order order = await db.Orders.Include(o => o.Customer)
+            .Include("OrderDetails.Product")
+            .SingleOrDefaultAsync(o => o.OrderId == id);
+   - Add a GetOrders method that accepts a customerId:
+		// GET api/Orders?customerId=ABCD
+		public async Task<IEnumerable<Order>> GetOrders(string customerId)
+		{
+			IEnumerable<Order> orders = await db.Orders.Include(o => o.Customer)
+				.Include("OrderDetails.Product")
+				.Where(o => o.CustomerId == customerId)
+				.ToListAsync();
+			return orders;
+		}
+   - Add code to the PutOrder and PostOrder method for loading related entities:
+        // Load order details
+        ctx.LoadProperty(order, o => o.OrderDetails);
+        foreach (var detail in order.OrderDetails)
+            ctx.LoadProperty(detail, od => od.Product);
+   - Add code to DeleteOrder to include order details:
+        // Include order details
+        Order order = db.Orders
+        .Include(o => o.OrderDetails)
+        .SingleOrDefaultAsync(o => o.OrderId == id);
+
+5. Run the Web Api project to test the controller
+    - Click the API link on the home page
+	- Select an operation, such as GetOrders or GetOrder
+	- Click the Test API button, fill out the form and click Send
+	  > You should see Json for the response body
+
+6. Reverse engineer trackable entities for Client.Entities project
+   - Right-click, Entity Framework, Reverse Engineer Code First
+	 > Enter the connection information: server, database name
+	 > For this sample we are using the NorthwindSlim database
+   - Delete the Mapping folder
+   - Delete the data context class: NorthwindSlimContext
+   - Build the solution
+
+7. Lastly, flesh out code in the Client.ConsoleApp project to invoke
+   controller actions for the Web API service.
