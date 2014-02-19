@@ -107,9 +107,9 @@ namespace TrackableEntities.TemplateWizard
             switch (templateName)
             {
                 case Constants.ProjectTemplates.TrackableWcfService:
-                    return GetTextFilePath(Constants.ReadMeFiles.WcfSample);
+                    return GetTextFilePath(Constants.ReadMeFiles.TrackableWcf);
                 case Constants.ProjectTemplates.TrackableWebApi:
-                    return GetTextFilePath(Constants.ReadMeFiles.WebApiSample);
+                    return GetTextFilePath(Constants.ReadMeFiles.TrackableWebApi);
                 case Constants.ProjectTemplates.TrackableWebApiPatterns:
                     return GetTextFilePath(Constants.ReadMeFiles.WebApiPatternsSample);
                 default:

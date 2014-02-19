@@ -13,7 +13,7 @@ namespace TrackableEntities.ItemWizard
             // Add custom parameters
             WizardHelper.AddCustomParameters(automationObject, replacementsDictionary,
                 "Entity API Controller",
-                "Add an Entity API Controller to the Trackable Service.WebApi project.",
+                "Add an Entity API Controller to the Trackable WebApi project.",
                 false);
         }
 

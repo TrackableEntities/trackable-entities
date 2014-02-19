@@ -13,9 +13,9 @@ namespace TrackableEntities.TemplateWizard
 
         public static class ReadMeFiles
         {
-            public const string WcfSample = "WcfSample.ReadMe.txt";
-            public const string WebApiSample = "WebApiSample.ReadMe.txt";
-            public const string WebApiPatternsSample = "WebApiSample.Patterns.ReadMe.txt";
+            public const string TrackableWcf = "TrackableWcf.ReadMe.txt";
+            public const string TrackableWebApi = "TrackableWebApi.ReadMe.txt";
+            public const string WebApiPatternsSample = "TrackableWebApi.Patterns.ReadMe.txt";
         }
     }
 }

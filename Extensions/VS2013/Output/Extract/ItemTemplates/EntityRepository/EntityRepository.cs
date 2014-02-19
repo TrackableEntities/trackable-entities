@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ using $baseNamespace$.Persistence.Repositories;
 
 namespace $rootnamespace$
 {
-    // NOTE: First add $entityName$ Repository Interface in Service.Persistence project
+    // NOTE: I$entityName$Repository will need to have been added to the Service.Persistence project
     
     public class $safeitemname$ : Repository<$entityName$>, I$entityName$Repository
     {
