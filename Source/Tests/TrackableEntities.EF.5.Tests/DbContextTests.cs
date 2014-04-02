@@ -11,7 +11,8 @@ namespace TrackableEntities.EF.Tests
     [TestFixture]
     public class DbContextTests
     {
-        // Recreate database for each test
+        // Recreate database if model changed.
+        // Specify CreateDbOptions.DropCreateDatabaseSeed to seed with real data.
         const CreateDbOptions CreateNorthwindDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
 
         #region Update Parent State

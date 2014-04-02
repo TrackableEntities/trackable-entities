@@ -26,6 +26,14 @@ namespace TrackableEntities.EF.Tests
             {
                 context.Orders.Add(order);
             }
+            foreach (var territory in model.Territories)
+            {
+                context.Territories.Add(territory);
+            }
+            foreach (var employee in model.Employees)
+            {
+                context.Employees.Add(employee);
+            }
             context.SaveChanges();
         }
     }

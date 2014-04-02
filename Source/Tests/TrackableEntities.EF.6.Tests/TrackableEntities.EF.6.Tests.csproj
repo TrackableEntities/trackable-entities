@@ -33,11 +33,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\..\packages\EntityFramework.6.0.1\lib\net45\EntityFramework.dll</HintPath>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\..\packages\EntityFramework.6.0.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
@@ -94,6 +96,9 @@
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Customer.cs">
       <Link>NorthwindModels\Customer.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Employee.cs">
+      <Link>NorthwindModels\Employee.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Order.cs">
       <Link>NorthwindModels\Order.cs</Link>
     </Compile>
@@ -102,6 +107,9 @@
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Product.cs">
       <Link>NorthwindModels\Product.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Territory.cs">
+      <Link>NorthwindModels\Territory.cs</Link>
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\TestsHelper.cs">
       <Link>TestsHelper.cs</Link>

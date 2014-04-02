@@ -15,6 +15,12 @@ namespace TrackableEntities.Common
         public static void AcceptChanges(this ITrackable item)
         {
             // Recursively set tracking state for child collections
+            item.AcceptChanges(null);
+        }
+
+        private static void AcceptChanges(this ITrackable item, ITrackable parent)
+        {
+            // Set tracking state for child collections
             foreach (var prop in item.GetType().GetProperties())
             {
                 var items = prop.GetValue(item, null) as IList;
@@ -22,9 +28,18 @@ namespace TrackableEntities.Common
                 {
                     for (int i = items.Count - 1; i > -1; i--)
                     {
+                        // Stop recursion if trackable is same type as parent
                         var trackable = items[i] as ITrackable;
-                        if (trackable != null)
-                            trackable.AcceptChanges();
+                        if (trackable != null 
+                            && (parent == null || trackable.GetType() != parent.GetType()))
+                        {
+                            if (trackable.TrackingState == TrackingState.Deleted)
+                                // Remove items marked as deleted
+                                items.RemoveAt(i);
+                            else
+                                // Recursively accept changes on trackable
+                                trackable.AcceptChanges(item);
+                        }
                     }
                 }
             }

@@ -23,11 +23,6 @@ namespace TrackableEntities.EF.Tests.Contexts
                     Database.SetInitializer(new DropCreateDatabaseAlways<NorthwindDbContext>());
                     break;
             }
-            //Categories = Set<Category>();
-            //Products = Set<Product>();
-            //Customers = Set<Customer>();
-            //Orders = Set<Order>();
-            //OrderDetails = Set<OrderDetail>();
         }
         
         public DbSet<Category> Categories { get; set; }
@@ -35,5 +30,7 @@ namespace TrackableEntities.EF.Tests.Contexts
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Territory> Territories { get; set; }
     }
 }

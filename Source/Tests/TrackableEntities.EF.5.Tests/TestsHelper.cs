@@ -28,7 +28,8 @@ namespace TrackableEntities.EF.Tests
         }
 
         // Recursively set tracking state
-        public static void SetTrackingState(this ITrackable item, TrackingState state)
+        public static void SetTrackingState(this ITrackable item,
+            TrackingState state, ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
@@ -37,8 +38,11 @@ namespace TrackableEntities.EF.Tests
                 {
                     foreach (ITrackable child in trackingColl)
                     {
-                        child.SetTrackingState(state);
-                        child.TrackingState = state;
+                        if (parent == null || child.GetType() != parent.GetType())
+                        {
+                            child.SetTrackingState(state, parent);
+                            child.TrackingState = state; 
+                        }
                     }
                 }
             }
@@ -46,7 +50,8 @@ namespace TrackableEntities.EF.Tests
 
         // Recursively get tracking states
         public static IEnumerable<TrackingState> GetTrackingStates
-            (this ITrackable item, TrackingState? trackingState = null)
+            (this ITrackable item, TrackingState? trackingState = null, 
+            ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
@@ -55,10 +60,13 @@ namespace TrackableEntities.EF.Tests
                 {
                     foreach (ITrackable child in trackingColl)
                     {
-                        foreach (var state in child.GetTrackingStates())
+                        if (parent == null || child.GetType() != parent.GetType())
                         {
-                            if (trackingState == null || state == trackingState)
-                                yield return state;
+                            foreach (var state in child.GetTrackingStates(parent: item))
+                            {
+                                if (trackingState == null || state == trackingState)
+                                    yield return state;
+                            } 
                         }
                     }
                 }
@@ -67,7 +75,8 @@ namespace TrackableEntities.EF.Tests
         }
 
         // Recursively get modified properties
-        public static IEnumerable<IEnumerable<string>> GetModifiedProperties(this ITrackable item)
+        public static IEnumerable<IEnumerable<string>> GetModifiedProperties
+            (this ITrackable item, ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
@@ -76,9 +85,12 @@ namespace TrackableEntities.EF.Tests
                 {
                     foreach (ITrackable child in trackingColl)
                     {
-                        foreach (var modifiedProps in child.GetModifiedProperties())
+                        if (parent == null || child.GetType() != parent.GetType())
                         {
+                            foreach (var modifiedProps in child.GetModifiedProperties(item))
+                            {
                                 yield return modifiedProps;
+                            } 
                         }
                     }
                 }
@@ -87,8 +99,9 @@ namespace TrackableEntities.EF.Tests
         }
 
         // Recursively get entity states
-        public static IEnumerable<EntityState> GetEntityStates(this DbContext context, ITrackable item,
-            EntityState? entityState = null)
+        public static IEnumerable<EntityState> GetEntityStates(this DbContext context, 
+            ITrackable item, EntityState? entityState = null,
+            ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
@@ -97,10 +110,13 @@ namespace TrackableEntities.EF.Tests
                 {
                     foreach (ITrackable child in trackingColl)
                     {
-                        foreach (var state in context.GetEntityStates(child))
+                        if (parent == null || child.GetType() != parent.GetType())
                         {
-                            if (entityState == null || state == entityState)
-                                yield return state;
+                            foreach (var state in context.GetEntityStates(child, parent: item))
+                            {
+                                if (entityState == null || state == entityState)
+                                    yield return state;
+                            } 
                         }
                     }
                 }

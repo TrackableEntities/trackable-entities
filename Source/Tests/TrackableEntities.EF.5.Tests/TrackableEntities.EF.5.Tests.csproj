@@ -63,6 +63,8 @@
     <Compile Include="Mocks\MockFamily.cs" />
     <Compile Include="Mocks\MockNorthwind.cs" />
     <Compile Include="NorthwindDbInitializer.cs" />
+    <Compile Include="NorthwindModels\Territory.cs" />
+    <Compile Include="NorthwindModels\Employee.cs" />
     <Compile Include="NorthwindModels\Category.cs" />
     <Compile Include="NorthwindModels\Customer.cs" />
     <Compile Include="NorthwindModels\Order.cs" />
