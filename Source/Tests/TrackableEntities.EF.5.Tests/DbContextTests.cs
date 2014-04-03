@@ -4,9 +4,14 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Data;
 using NUnit.Framework;
+using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.NorthwindModels;
 
-namespace TrackableEntities.EF.Tests
+#if EF_6
+namespace TrackableEntities.EF6.Tests
+#else
+namespace TrackableEntities.EF5.Tests
+#endif
 {
     [TestFixture]
     public class DbContextTests

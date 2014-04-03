@@ -3,10 +3,15 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using NUnit.Framework;
 using TrackableEntities.Common;
+using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.Mocks;
 using TrackableEntities.EF.Tests.NorthwindModels;
 
-namespace TrackableEntities.EF.Tests
+#if EF_6
+namespace TrackableEntities.EF6.Tests
+#else
+namespace TrackableEntities.EF5.Tests
+#endif
 {
     [TestFixture]
     public class TrackableExtensionsTests
@@ -113,7 +118,7 @@ namespace TrackableEntities.EF.Tests
 
             // Assert
             IEnumerable<TrackingState> states = employee.GetTrackingStates(TrackingState.Unchanged);
-            Assert.AreEqual(4, states.Count());
+            Assert.AreEqual(6, states.Count());
         }
 
         [Test]

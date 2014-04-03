@@ -8,11 +8,16 @@ using TrackableEntities.EF6;
 #else
 using TrackableEntities.EF5;
 #endif
+using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.FamilyModels;
 using TrackableEntities.EF.Tests.Mocks;
 using TrackableEntities.EF.Tests.NorthwindModels;
 
-namespace TrackableEntities.EF.Tests
+#if EF_6
+namespace TrackableEntities.EF6.Tests
+#else
+namespace TrackableEntities.EF5.Tests
+#endif
 {
     [TestFixture]
     public class DbContextExtensionsTests
@@ -194,7 +199,22 @@ namespace TrackableEntities.EF.Tests
         #region NorthwindDbTests
 
         [Test]
-        public void Apply_Changes_Should_Mark_Added_Product()
+        public void Apply_Changes_Should_Mark_Product_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var parent = new Product();
+            parent.TrackingState = TrackingState.Unchanged;
+
+            // Act
+            context.ApplyChanges(parent);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(parent).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Product_Added()
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -209,7 +229,7 @@ namespace TrackableEntities.EF.Tests
         }
 
         [Test]
-        public void Apply_Changes_Should_Mark_Modified_Product()
+        public void Apply_Changes_Should_Mark_Product_Modified()
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -224,7 +244,7 @@ namespace TrackableEntities.EF.Tests
         }
 
         [Test]
-        public void Apply_Changes_Should_Mark_Deleted_Product()
+        public void Apply_Changes_Should_Mark_Product_Deleted()
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -244,13 +264,20 @@ namespace TrackableEntities.EF.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = new MockNorthwind().Orders[0];
+            var detail1 = order.OrderDetails[0];
+            var detail2 = order.OrderDetails[1];
+            var detail3 = order.OrderDetails[2];
+            var detail4 = order.OrderDetails[3];
 
             // Act
             context.ApplyChanges(order);
 
             // Assert
-            IEnumerable<EntityState> states = context.GetEntityStates(order, EntityState.Unchanged);
-            Assert.AreEqual(4, states.Count());
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail3).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail4).State);
         }
 
         [Test]
@@ -259,32 +286,21 @@ namespace TrackableEntities.EF.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = new MockNorthwind().Orders[0];
+            var detail1 = order.OrderDetails[0];
+            var detail2 = order.OrderDetails[1];
+            var detail3 = order.OrderDetails[2];
+            var detail4 = order.OrderDetails[3];
             order.TrackingState = TrackingState.Added;
-            order.SetTrackingState(TrackingState.Added);
 
             // Act
             context.ApplyChanges(order);
 
             // Assert
-            IEnumerable<EntityState> states = context.GetEntityStates(order, EntityState.Added);
-            Assert.AreEqual(4, states.Count());
-        }
-
-        [Test]
-        public void Apply_Changes_Should_Mark_Order_Modified()
-        {
-            // Arrange
-            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
-            var order = new MockNorthwind().Orders[0];
-            order.TrackingState = TrackingState.Modified;
-            order.SetTrackingState(TrackingState.Modified);
-
-            // Act
-            context.ApplyChanges(order);
-
-            // Assert
-            IEnumerable<EntityState> states = context.GetEntityStates(order, EntityState.Modified);
-            Assert.AreEqual(4, states.Count());
+            Assert.AreEqual(EntityState.Added, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(detail1).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(detail2).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(detail3).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(detail4).State);
         }
 
         [Test]
@@ -298,10 +314,8 @@ namespace TrackableEntities.EF.Tests
             var detail1 = order.OrderDetails[0];
             var detail2 = order.OrderDetails[1];
             var detail3 = order.OrderDetails[2];
+            var detail4 = order.OrderDetails[3];
             order.TrackingState = TrackingState.Deleted;
-            detail1.TrackingState = TrackingState.Deleted;
-            detail2.TrackingState = TrackingState.Deleted;
-            detail3.TrackingState = TrackingState.Deleted;
 
             // Act
             context.ApplyChanges(order);
@@ -311,10 +325,11 @@ namespace TrackableEntities.EF.Tests
             Assert.AreEqual(EntityState.Deleted, context.Entry(detail1).State);
             Assert.AreEqual(EntityState.Deleted, context.Entry(detail2).State);
             Assert.AreEqual(EntityState.Deleted, context.Entry(detail3).State);
+            Assert.AreEqual(EntityState.Deleted, context.Entry(detail4).State);
         }
 
         [Test]
-        public void Apply_Changes_Should_Mark_OrderDetails_Added_Modified_Deleted()
+        public void Apply_Changes_Should_Mark_Order_Only_Modified()
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -322,9 +337,87 @@ namespace TrackableEntities.EF.Tests
             var detail1 = order.OrderDetails[0];
             var detail2 = order.OrderDetails[1];
             var detail3 = order.OrderDetails[2];
+            var detail4 = order.OrderDetails[3];
+            order.TrackingState = TrackingState.Modified;
+
+            // Act
+            context.ApplyChanges(order);
+
+            // Assert
+            Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail3).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail4).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Order_Details_Only_Modified()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new MockNorthwind().Orders[0];
+            var detail1 = order.OrderDetails[0];
+            var detail2 = order.OrderDetails[1];
+            var detail3 = order.OrderDetails[2];
+            var detail4 = order.OrderDetails[3];
+            detail1.TrackingState = TrackingState.Modified;
+            detail2.TrackingState = TrackingState.Modified;
+            detail3.TrackingState = TrackingState.Modified;
+            detail4.TrackingState = TrackingState.Modified;
+
+            // Act
+            context.ApplyChanges(order);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(detail1).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(detail2).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(detail3).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(detail4).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Order_With_Details_Modified()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new MockNorthwind().Orders[0];
+            var detail1 = order.OrderDetails[0];
+            var detail2 = order.OrderDetails[1];
+            var detail3 = order.OrderDetails[2];
+            var detail4 = order.OrderDetails[3];
+            order.TrackingState = TrackingState.Modified;
+            detail1.TrackingState = TrackingState.Modified;
+            detail2.TrackingState = TrackingState.Modified;
+            detail3.TrackingState = TrackingState.Modified;
+            detail4.TrackingState = TrackingState.Modified;
+
+            // Act
+            context.ApplyChanges(order);
+
+            // Assert
+            Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(detail1).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(detail2).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(detail3).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(detail4).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_OrderDetails_Added_Modified_Deleted_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new MockNorthwind().Orders[0];
+            var detail1 = order.OrderDetails[0];
+            var detail2 = order.OrderDetails[1];
+            var detail3 = order.OrderDetails[2];
+            var detail4 = order.OrderDetails[3];
             detail1.TrackingState = TrackingState.Added;
             detail2.TrackingState = TrackingState.Modified;
             detail3.TrackingState = TrackingState.Deleted;
+            detail4.TrackingState = TrackingState.Unchanged;
 
             // Act
             context.ApplyChanges(order);
@@ -334,6 +427,81 @@ namespace TrackableEntities.EF.Tests
             Assert.AreEqual(EntityState.Added, context.Entry(detail1).State);
             Assert.AreEqual(EntityState.Modified, context.Entry(detail2).State);
             Assert.AreEqual(EntityState.Deleted, context.Entry(detail3).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail4).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Employee_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var employee = new MockNorthwind().Employees[0];
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            var territory4 = employee.Territories[3];
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory4).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Employee_Added_Territories_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var employee = new MockNorthwind().Employees[0];
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            var territory4 = employee.Territories[3];
+            employee.TrackingState = TrackingState.Added;
+            // Set last two territories to added (leave first two unchanged)
+            territory3.TrackingState = TrackingState.Added;
+            territory4.TrackingState = TrackingState.Added;
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Added, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory4).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Employee_Deleted_Territories_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var employee = new MockNorthwind().Employees[0];
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            var territory4 = employee.Territories[3];
+            employee.TrackingState = TrackingState.Deleted;
+            // Set last two territories to added (leave first two unchanged)
+            territory3.TrackingState = TrackingState.Added;
+            territory4.TrackingState = TrackingState.Added;
+
+            // Act
+            context.ApplyChanges(employee);
+            
+            // Assert
+            Assert.AreEqual(EntityState.Deleted, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory4).State);
         }
 
         #endregion

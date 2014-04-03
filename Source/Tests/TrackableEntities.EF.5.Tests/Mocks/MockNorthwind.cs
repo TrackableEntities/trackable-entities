@@ -92,7 +92,8 @@ namespace TrackableEntities.EF.Tests.Mocks
                             {
                                 new OrderDetail{ ProductId = 11, OrderId = 10248, Quantity = 12, UnitPrice = 14.0000M, Product = Products[10] },
                                 new OrderDetail{ ProductId = 42, OrderId = 10248, Quantity = 10, UnitPrice = 9.8000M, Product = Products[23] },
-                                new OrderDetail{ ProductId = 72, OrderId = 10248, Quantity = 5, UnitPrice = 34.8000M, Product = Products[28] }
+                                new OrderDetail{ ProductId = 72, OrderId = 10248, Quantity = 5, UnitPrice = 34.8000M, Product = Products[28] },
+                                new OrderDetail{ ProductId = 4, OrderId = 10248, Quantity = 4, UnitPrice = 40.0000M, Product = Products[3] }
                             }},
                     new Order { OrderId = 10249, OrderDate = DateTime.Parse("1996-07-05"), CustomerId = "TOMSP", Customer = Customers[12],
                         OrderDetails = new List<OrderDetail>
@@ -148,7 +149,7 @@ namespace TrackableEntities.EF.Tests.Mocks
             Employees = new List<Employee>
             {
                 new Employee { EmployeeId = 1, LastName = "Davolio", FirstName = "Nancy", BirthDate = DateTime.Parse("1948-12-08"), HireDate = DateTime.Parse("1992-05-01"), City = "Seattle", Country = "USA",
-                  Territories = new List<Territory>{ Territories[0], Territories[1] } },
+                  Territories = new List<Territory>{ Territories[0], Territories[1], Territories[2], Territories[3] } },
                 new Employee { EmployeeId = 2, LastName = "Fuller", FirstName = "Andrew", BirthDate = DateTime.Parse("1952-02-19"), HireDate = DateTime.Parse("1992-08-14"), City = "Tacoma", Country = "USA",
                   Territories = new List<Territory>{ Territories[1], Territories[2] } },
                 new Employee { EmployeeId = 3, LastName = "Leverling", FirstName = "Janet", BirthDate = DateTime.Parse("1963-08-30"), HireDate = DateTime.Parse("1992-05-01"), City = "Kirkland", Country = "USA",
