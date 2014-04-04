@@ -63,11 +63,11 @@
     <Compile Include="..\TrackableEntities.EF.5.Tests\CreateDbOptions.cs">
       <Link>CreateDbOptions.cs</Link>
     </Compile>
-    <Compile Include="..\TrackableEntities.EF.5.Tests\DbContextExtensionsTests.cs">
-      <Link>DbContextExtensionsTests.cs</Link>
-    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\DbContextTests.cs">
       <Link>DbContextTests.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyDbContextTests.cs">
+      <Link>FamilyDbContextTests.cs</Link>
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\Child.cs">
       <Link>FamilyModels\Child.cs</Link>
@@ -96,6 +96,9 @@
     <Compile Include="..\TrackableEntities.EF.5.Tests\Mocks\MockNorthwind.cs">
       <Link>Mocks\MockNorthwind.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindDbContextTests.cs">
+      <Link>NorthwindDbContextTests.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindDbInitializer.cs">
       <Link>NorthwindDbInitializer.cs</Link>
     </Compile>
@@ -104,6 +107,9 @@
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Customer.cs">
       <Link>NorthwindModels\Customer.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\CustomerSetting.cs">
+      <Link>NorthwindModels\CustomerSetting.cs</Link>
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Employee.cs">
       <Link>NorthwindModels\Employee.cs</Link>

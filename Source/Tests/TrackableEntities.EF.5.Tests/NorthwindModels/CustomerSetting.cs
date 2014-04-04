@@ -4,14 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrackableEntities.EF.Tests.NorthwindModels
 {
-    public class Customer : ITrackable
+    public class CustomerSetting : ITrackable
     {
-        [Key, ForeignKey("CustomerSetting")]
+        [Key]
         public string CustomerId { get; set; }
-        public string CustomerName { get; set; }
+        public string Setting { get; set; }
 
-        public List<Order> Orders { get; set; }
-        public CustomerSetting CustomerSetting { get; set; }
+        [ForeignKey("CustomerId")]
+        public Customer Customer { get; set; }
 
         [NotMapped]
         public TrackingState TrackingState { get; set; }

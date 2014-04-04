@@ -43,7 +43,8 @@ namespace TrackableEntities.EF5
 
             // If M-M child, set relationship for added or deleted items
             if (parent != null && propertyName != null
-                && (IsManyToManyProperty(context, parent.GetType().Name, propertyName)))
+                && (context.IsRelatedProperty(parent.GetType().Name, 
+                propertyName, RelationshipType.ManyToMany)))
             {
                 // If parent is added set tracking state to match
                 var trackingState = item.TrackingState;
@@ -69,14 +70,27 @@ namespace TrackableEntities.EF5
                 }
 
                 // Set state for child collections
-                context.ApplyChangesToChildren(item, parent);
+                context.ApplyPropertyChanges(item, parent);
                 return;
             }   
 
-            // Exit if parent was added or deleted
-            if (parent != null && (parent.TrackingState == TrackingState.Added
-                || parent.TrackingState == TrackingState.Deleted))
+            // Exit if parent is added or deleted,
+            // and it's not a M-1 relation
+            if (parent != null
+                && (parent.TrackingState == TrackingState.Added
+                    || parent.TrackingState == TrackingState.Deleted)
+                && !context.IsRelatedProperty(parent.GetType().Name,
+                    propertyName, RelationshipType.ManyToOne))
+                return;
+
+            // If it is a M-1 relation and item state is deleted,
+            // set to unchanged and exit
+            if (parent != null
+                && (context.IsRelatedProperty(parent.GetType().Name,
+                    propertyName, RelationshipType.ManyToOne)
+                    && item.TrackingState == TrackingState.Deleted))
             {
+                context.Entry(item).State = EntityState.Unchanged;
                 return;
             }
 
@@ -84,15 +98,15 @@ namespace TrackableEntities.EF5
             if (item.TrackingState == TrackingState.Added)
             {
                 context.Entry(item).State = EntityState.Added;
-                context.ApplyChangesToChildren(item, parent);
+                context.ApplyPropertyChanges(item, parent);
                 return;
             }
 
             // Set state to Deleted on children and parent
             if (item.TrackingState == TrackingState.Deleted)
             {
-                context.SetChanges(item, EntityState.Unchanged);
-                context.SetChanges(item, EntityState.Deleted);
+                context.SetChanges(item, EntityState.Unchanged, parent);
+                context.SetChanges(item, EntityState.Deleted, parent);
                 return;
             }
 
@@ -113,24 +127,33 @@ namespace TrackableEntities.EF5
             }
 
             // Set state for child collections
-            context.ApplyChangesToChildren(item, parent);
+            context.ApplyPropertyChanges(item, parent);
         }
 
-        private static void ApplyChangesToChildren(this DbContext context, 
+        private static void ApplyPropertyChanges(this DbContext context, 
             ITrackable item, ITrackable parent)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
+                // Apply changes to 1-1 and M-1 properties
+                var trackableReference = prop.GetValue(item, null) as ITrackable;
+
+                // Stop recursion if trackable is same type as parent
+                if (trackableReference != null
+                    && (parent == null || trackableReference.GetType() != parent.GetType()))
+                    context.ApplyChanges(trackableReference, item, prop.Name);
+
+                // Apply changes to 1-M and M-M properties
                 var items = prop.GetValue(item, null) as IList;
                 if (items != null)
                 {
                     for (int i = items.Count - 1; i > -1; i--)
                     {
                         // Stop recursion if trackable is same type as parent
-                        var trackable = items[i] as ITrackable;
-                        if (trackable != null
-                            && (parent == null || trackable.GetType() != parent.GetType()))
-                            context.ApplyChanges(trackable, item, prop.Name);
+                        var trackableChild = items[i] as ITrackable;
+                        if (trackableChild != null
+                            && (parent == null || trackableChild.GetType() != parent.GetType()))
+                            context.ApplyChanges(trackableChild, item, prop.Name);
                     }
                 }
             }
@@ -143,23 +166,33 @@ namespace TrackableEntities.EF5
             // Set state for child collections
             foreach (var prop in item.GetType().GetProperties())
             {
+                // Apply changes to 1-1 and M-1 properties
+                var trackableReference = prop.GetValue(item, null) as ITrackable;
+
+                // Stop recursion if trackable is same type as parent
+                if (trackableReference != null
+                    && (parent == null || trackableReference.GetType() != parent.GetType()))
+                    context.ApplyChanges(trackableReference, item, prop.Name);
+
+                // Apply changes to 1-M and M-M properties
                 var items = prop.GetValue(item, null) as IList;
                 if (items != null)
                 {
                     for (int i = items.Count - 1; i > -1; i--)
                     {
                         // Stop recursion if trackable is same type as parent
-                        var trackable = items[i] as ITrackable;
-                        if (trackable != null
-                            && (parent == null || trackable.GetType() != parent.GetType()))
-                            context.SetChanges(trackable, state, item, prop.Name);
+                        var trackableChild = items[i] as ITrackable;
+                        if (trackableChild != null
+                            && (parent == null || trackableChild.GetType() != parent.GetType()))
+                            context.SetChanges(trackableChild, state, item, prop.Name);
                     }
                 }
             }
 
             // If M-M child, set relationship for deleted items
             if (state == EntityState.Deleted && parent != null && propertyName != null
-                && (IsManyToManyProperty(context, parent.GetType().Name, propertyName)))
+                && (context.IsRelatedProperty(parent.GetType().Name, 
+                propertyName, RelationshipType.ManyToMany)))
             {
                 context.Entry(item).State = item.TrackingState == TrackingState.Modified
                     ? EntityState.Modified
@@ -172,24 +205,34 @@ namespace TrackableEntities.EF5
             context.Entry(item).State = state;
         }
 
-        private static bool IsManyToManyProperty(this DbContext dbContext, 
-            string entityTypeName, string propertyName)
+        private static bool IsRelatedProperty(this DbContext dbContext, 
+            string entityTypeName, string propertyName, RelationshipType relationshipType)
         {
-            // Use metadata workspace to see if an entity relationship is M-M
+            // Use metadata workspace to check relationship type
             MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
                 .ObjectContext.MetadataWorkspace;
 
-            var entityType = workspace.GetItems<EntityType>(DataSpace.CSpace)
-                .SingleOrDefault(e => e.Name == entityTypeName);
+            var entityTypes = workspace.GetItems<EntityType>(DataSpace.CSpace);
+            if (entityTypes == null) return false;
+            var entityType = entityTypes.SingleOrDefault(e => e.Name == entityTypeName);
             if (entityType == null) return false;
 
             var navProp = entityType.NavigationProperties
                 .SingleOrDefault(p => p.Name == propertyName);
             if (navProp == null) return false;
 
-            bool isManyToMany = navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many
-                                && navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many;
-            return isManyToMany;
+            switch (relationshipType)
+            {
+                case RelationshipType.ManyToOne:
+                    return navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many
+                           && (navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.ZeroOrOne
+                            || navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One);
+                case RelationshipType.ManyToMany:
+                    return navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many
+                           && navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many;
+                default:
+                    return false;
+            }
         }
 
         private static void SetRelationshipState(this DbContext context,
@@ -213,6 +256,12 @@ namespace TrackableEntities.EF5
                 default:
                     return EntityState.Unchanged;
             }
+        }
+
+        enum RelationshipType
+        {
+            ManyToOne,
+            ManyToMany
         }
     }
 }
