@@ -1,0 +1,13 @@
+Trackable Entities To Do
+
+4-Apr-2014:
+- Add many-to-many support
+  > Common: AcceptChanges
+  > Server: ApplyChanges
+  > Client: Test adding M-M entities
+- Look at implementing M-1 support
+- Update to EF 6.1
+- Use 6.1 new CF designer
+- Mapping.tt: using System.ComponentModel.DataAnnotations.Schema;
+- Fix mod props issue
+- Other isses on codeplex site

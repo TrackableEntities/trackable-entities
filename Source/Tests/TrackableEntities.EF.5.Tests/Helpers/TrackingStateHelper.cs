@@ -1,33 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using NUnit.Framework;
-using TrackableEntities.EF.Tests.Contexts;
 
 namespace TrackableEntities.EF.Tests
 {
-    internal static class TestsHelper
+    internal static class TrackingStateHelper
     {
-        public static FamilyDbContext CreateFamilyDbContext(CreateDbOptions createDbOptions)
-        {
-            // Create new context for all tests
-            var context = new FamilyDbContext(createDbOptions);
-            Assert.GreaterOrEqual(context.Parents.Count(), 0);
-            return context;
-        }
-
-        public static NorthwindDbContext CreateNorthwindDbContext(CreateDbOptions createDbOptions)
-        {
-            // Create new context for all tests
-            var context = new NorthwindDbContext(createDbOptions);
-            Assert.GreaterOrEqual(context.Products.Count(), 0);
-            return context;
-        }
-
         // Recursively set tracking state
         public static void SetTrackingState(this ITrackable item,
             TrackingState state, ITrackable parent = null)
@@ -42,7 +20,7 @@ namespace TrackableEntities.EF.Tests
                         if (parent == null || child.GetType() != parent.GetType())
                         {
                             child.SetTrackingState(state, parent);
-                            child.TrackingState = state; 
+                            child.TrackingState = state;
                         }
                     }
                 }
@@ -51,7 +29,7 @@ namespace TrackableEntities.EF.Tests
 
         // Recursively get tracking states
         public static IEnumerable<TrackingState> GetTrackingStates
-            (this ITrackable item, TrackingState? trackingState = null, 
+            (this ITrackable item, TrackingState? trackingState = null,
             ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
@@ -67,7 +45,7 @@ namespace TrackableEntities.EF.Tests
                             {
                                 if (trackingState == null || state == trackingState)
                                     yield return state;
-                            } 
+                            }
                         }
                     }
                 }
@@ -91,38 +69,12 @@ namespace TrackableEntities.EF.Tests
                             foreach (var modifiedProps in child.GetModifiedProperties(item))
                             {
                                 yield return modifiedProps;
-                            } 
+                            }
                         }
                     }
                 }
             }
             yield return item.ModifiedProperties;
-        }
-
-        // Recursively get entity states
-        public static IEnumerable<EntityState> GetEntityStates(this DbContext context, 
-            ITrackable item, EntityState? entityState = null,
-            ITrackable parent = null)
-        {
-            foreach (var prop in item.GetType().GetProperties())
-            {
-                var trackingColl = prop.GetValue(item, null) as ICollection;
-                if (trackingColl != null)
-                {
-                    foreach (ITrackable child in trackingColl)
-                    {
-                        if (parent == null || child.GetType() != parent.GetType())
-                        {
-                            foreach (var state in context.GetEntityStates(child, parent: item))
-                            {
-                                if (entityState == null || state == entityState)
-                                    yield return state;
-                            } 
-                        }
-                    }
-                }
-            }
-            yield return context.Entry(item).State;
         }
     }
 }

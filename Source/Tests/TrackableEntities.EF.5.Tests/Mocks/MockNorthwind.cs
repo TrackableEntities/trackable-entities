@@ -149,7 +149,7 @@ namespace TrackableEntities.EF.Tests.Mocks
             Employees = new List<Employee>
             {
                 new Employee { EmployeeId = 1, LastName = "Davolio", FirstName = "Nancy", BirthDate = DateTime.Parse("1948-12-08"), HireDate = DateTime.Parse("1992-05-01"), City = "Seattle", Country = "USA",
-                  Territories = new List<Territory>{ Territories[0], Territories[1], Territories[2], Territories[3] } },
+                  Territories = new List<Territory>{ Territories[0], Territories[1], Territories[2] } },
                 new Employee { EmployeeId = 2, LastName = "Fuller", FirstName = "Andrew", BirthDate = DateTime.Parse("1952-02-19"), HireDate = DateTime.Parse("1992-08-14"), City = "Tacoma", Country = "USA",
                   Territories = new List<Territory>{ Territories[1], Territories[2] } },
                 new Employee { EmployeeId = 3, LastName = "Leverling", FirstName = "Janet", BirthDate = DateTime.Parse("1963-08-30"), HireDate = DateTime.Parse("1992-05-01"), City = "Kirkland", Country = "USA",

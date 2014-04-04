@@ -118,7 +118,7 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             IEnumerable<TrackingState> states = employee.GetTrackingStates(TrackingState.Unchanged);
-            Assert.AreEqual(6, states.Count());
+            Assert.AreEqual(5, states.Count());
         }
 
         [Test]

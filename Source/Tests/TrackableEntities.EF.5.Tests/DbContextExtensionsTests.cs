@@ -431,15 +431,65 @@ namespace TrackableEntities.EF5.Tests
         }
 
         [Test]
-        public void Apply_Changes_Should_Mark_Employee_Unchanged()
+        public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Unchanged_Territories_As_Unchanged()
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
-            var employee = new MockNorthwind().Employees[0];
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
             var territory1 = employee.Territories[0];
             var territory2 = employee.Territories[1];
             var territory3 = employee.Territories[2];
-            var territory4 = employee.Territories[3];
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Modified_Territories_As_Modified()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            territory3.TrackingState = TrackingState.Modified;
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(territory3).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Added_Territories_As_Unchanged()
+        {
+            // NOTE: With M-M properties there is no way to tell if the related entity is new or should 
+            // or simply be added to the relationship, because it is an independent association.
+            // Therefore, added children are added to the relationship and marked unchanged.
+
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            var territory4 = nw.Territories[3];
+            territory4.TrackingState = TrackingState.Added;
+            employee.Territories.Add(territory4);
 
             // Act
             context.ApplyChanges(employee);
@@ -450,22 +500,111 @@ namespace TrackableEntities.EF5.Tests
             Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
             Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
             Assert.AreEqual(EntityState.Unchanged, context.Entry(territory4).State);
+            Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory4));
         }
 
         [Test]
-        public void Apply_Changes_Should_Mark_Employee_Added_Territories_Unchanged()
+        public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Deleted_Territories_As_Unchanged()
         {
+            // NOTE: With M-M properties there is no way to tell if the related entity should be deleted
+            // or simply removed from the relationship, because it is an independent association.
+            // Therefore, deleted children are removed from the relationship and marked unchanged.
+
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
-            var employee = new MockNorthwind().Employees[0];
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
             var territory1 = employee.Territories[0];
             var territory2 = employee.Territories[1];
             var territory3 = employee.Territories[2];
-            var territory4 = employee.Territories[3];
+            territory3.TrackingState = TrackingState.Deleted;
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory3));
+            Assert.AreEqual(2, employee.Territories.Count);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Unchanged_Territories_As_Unchanged()
+        {
+            // NOTE: Because parent is added, unchanged children will be added to M-M relation,
+            // even though the entities themselves are unchanged.
+
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
             employee.TrackingState = TrackingState.Added;
-            // Set last two territories to added (leave first two unchanged)
-            territory3.TrackingState = TrackingState.Added;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Added, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
+            Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory1));
+            Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory2));
+            Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory3));
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Modified_Territories_As_Modified()
+        {
+            // NOTE: Modified children of an added parent will remain modified,
+            // but they will be added to the M-M relation.
+
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            employee.TrackingState = TrackingState.Added;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            territory3.TrackingState = TrackingState.Modified;
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Added, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(territory3).State);
+            Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory1));
+            Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory2));
+            Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory3));
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Added_Territories_As_Unchanged()
+        {
+            // NOTE: Because parent is added, added children will be marked as unchanged
+            // but added to the M-M relation
+
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            employee.TrackingState = TrackingState.Added;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            var territory4 = nw.Territories[3];
             territory4.TrackingState = TrackingState.Added;
+            employee.Territories.Add(territory4);
 
             // Act
             context.ApplyChanges(employee);
@@ -476,32 +615,157 @@ namespace TrackableEntities.EF5.Tests
             Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
             Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
             Assert.AreEqual(EntityState.Unchanged, context.Entry(territory4).State);
+            Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory4));
         }
 
         [Test]
-        public void Apply_Changes_Should_Mark_Employee_Deleted_Territories_Unchanged()
+        public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Deleted_Territories_As_Deleted()
         {
+            // NOTE: If a deleted child is assocated with an added parent, 
+            // we will just ignore the delete and add the item, since this is unsupported.
+
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
-            var employee = new MockNorthwind().Employees[0];
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            employee.TrackingState = TrackingState.Added;
             var territory1 = employee.Territories[0];
             var territory2 = employee.Territories[1];
             var territory3 = employee.Territories[2];
-            var territory4 = employee.Territories[3];
-            employee.TrackingState = TrackingState.Deleted;
-            // Set last two territories to added (leave first two unchanged)
-            territory3.TrackingState = TrackingState.Added;
-            territory4.TrackingState = TrackingState.Added;
+            territory3.TrackingState = TrackingState.Deleted;
 
             // Act
             context.ApplyChanges(employee);
-            
+
+            // Assert
+            Assert.AreEqual(EntityState.Added, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
+            Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory3));
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Unchanged_Territories_As_Unchanged()
+        {
+            // NOTE: Because parent is deleted, unchanged children will be deleted from M-M relation,
+            // even though the entities themselves are unchanged.
+
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            employee.TrackingState = TrackingState.Deleted;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Deleted, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory1));
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory2));
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory3));
+            Assert.AreEqual(0, employee.Territories.Count);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Modified_Territories_As_Modified()
+        {
+            // NOTE: Modified children of a deleted parent will remain modified,
+            // but they will be removed from the M-M relation.
+
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            employee.TrackingState = TrackingState.Deleted;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            territory3.TrackingState = TrackingState.Modified;
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Deleted, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(territory3).State);
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory1));
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory2));
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory3));
+            Assert.AreEqual(0, employee.Territories.Count);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Added_Territories_As_Unchanged()
+        {
+            // NOTE: Because parent is deleted, added children will be marked as unchanged
+            // but removed from the M-M relation
+
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            employee.TrackingState = TrackingState.Deleted;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            var territory4 = nw.Territories[3];
+            territory4.TrackingState = TrackingState.Added;
+            employee.Territories.Add(territory4);
+
+            // Act
+            context.ApplyChanges(employee);
+
             // Assert
             Assert.AreEqual(EntityState.Deleted, context.Entry(employee).State);
             Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
             Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
             Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
             Assert.AreEqual(EntityState.Unchanged, context.Entry(territory4).State);
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory1));
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory2));
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory3));
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory4));
+            Assert.AreEqual(0, employee.Territories.Count);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Deleted_Territories_As_Unchanged()
+        {
+            // NOTE: If a deleted child is assocated with a deleted parent, 
+            // it should be set to unchanged and removed from the M-M relation.
+
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            employee.TrackingState = TrackingState.Deleted;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            territory3.TrackingState = TrackingState.Deleted;
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Deleted, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory1));
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory2));
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory3));
+            Assert.AreEqual(0, employee.Territories.Count);
         }
 
         #endregion

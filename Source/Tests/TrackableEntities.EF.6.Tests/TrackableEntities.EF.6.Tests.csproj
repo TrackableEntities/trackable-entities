@@ -81,6 +81,15 @@
     <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\Parent.cs">
       <Link>FamilyModels\Parent.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\Helpers\DbContextHelper.cs">
+      <Link>Helpers\DbContextHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\Helpers\TestsHelper.cs">
+      <Link>Helpers\TestsHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\Helpers\TrackingStateHelper.cs">
+      <Link>Helpers\TrackingStateHelper.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\Mocks\MockFamily.cs">
       <Link>Mocks\MockFamily.cs</Link>
     </Compile>
@@ -110,9 +119,6 @@
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Territory.cs">
       <Link>NorthwindModels\Territory.cs</Link>
-    </Compile>
-    <Compile Include="..\TrackableEntities.EF.5.Tests\TestsHelper.cs">
-      <Link>TestsHelper.cs</Link>
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\TrackableExtensionsTests.cs">
       <Link>TrackableExtensionsTests.cs</Link>

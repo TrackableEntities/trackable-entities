@@ -45,26 +45,33 @@ namespace TrackableEntities.EF5
             if (parent != null && propertyName != null
                 && (IsManyToManyProperty(context, parent.GetType().Name, propertyName)))
             {
-                // If parent is added or deleted, set item state to match
-                if (parent.TrackingState == TrackingState.Added
-                    || parent.TrackingState == TrackingState.Deleted)
-                {
-                    item.TrackingState = parent.TrackingState;
-                }
+                // If parent is added set tracking state to match
+                var trackingState = item.TrackingState;
+                if (parent.TrackingState == TrackingState.Added)
+                    trackingState = parent.TrackingState;
 
-                // Set relationship state
-                if (item.TrackingState == TrackingState.Added
-                    || item.TrackingState == TrackingState.Deleted)
+                // If tracking state is added set entity to unchanged,
+                // then add or delete relation.
+                if (trackingState == TrackingState.Added
+                    || trackingState == TrackingState.Deleted)
                 {
-                    context.Entry(item).State = EntityState.Unchanged;
+                    context.Entry(item).State = item.TrackingState == TrackingState.Modified
+                        ? EntityState.Modified
+                        : EntityState.Unchanged;                    
                     context.SetRelationshipState(item, parent, propertyName,
-                        item.TrackingState.ToEntityState());
+                        trackingState.ToEntityState());
+                }
+                else
+                {
+                    // Set entity state for modified
+                    if (item.TrackingState == TrackingState.Modified)
+                        context.Entry(item).State = EntityState.Modified;
                 }
 
                 // Set state for child collections
                 context.ApplyChangesToChildren(item, parent);
                 return;
-            }
+            }   
 
             // Exit if parent was added or deleted
             if (parent != null && (parent.TrackingState == TrackingState.Added
@@ -154,7 +161,9 @@ namespace TrackableEntities.EF5
             if (state == EntityState.Deleted && parent != null && propertyName != null
                 && (IsManyToManyProperty(context, parent.GetType().Name, propertyName)))
             {
-                context.Entry(item).State = EntityState.Unchanged;
+                context.Entry(item).State = item.TrackingState == TrackingState.Modified
+                    ? EntityState.Modified
+                    : EntityState.Unchanged;
                 context.SetRelationshipState(item, parent, propertyName, EntityState.Deleted);
                 return;
             }

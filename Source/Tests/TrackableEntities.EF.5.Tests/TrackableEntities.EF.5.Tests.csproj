@@ -54,6 +54,7 @@
     <Compile Include="Contexts\NorthwindDbContext.cs" />
     <Compile Include="DbContextExtensionsTests.cs" />
     <Compile Include="Contexts\FamilyDbContext.cs" />
+    <Compile Include="Helpers\DbContextHelper.cs" />
     <Compile Include="DbContextTests.cs" />
     <Compile Include="CreateDbOptions.cs" />
     <Compile Include="FamilyModels\Child.cs" />
@@ -71,10 +72,11 @@
     <Compile Include="NorthwindModels\OrderDetail.cs" />
     <Compile Include="NorthwindModels\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestsHelper.cs">
+    <Compile Include="Helpers\TestsHelper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TrackableExtensionsTests.cs" />
+    <Compile Include="Helpers\TrackingStateHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
