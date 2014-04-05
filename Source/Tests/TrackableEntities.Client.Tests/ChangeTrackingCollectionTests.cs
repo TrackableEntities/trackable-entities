@@ -219,6 +219,24 @@ namespace TrackableEntities.Client.Tests
             Assert.Contains("UnitPrice", (ICollection)product.ModifiedProperties);
         }
 
+        [Test]
+        public void Modified_Existing_Items_Should_Add_Multiples_ModifiedProperties()
+        {
+            // Arrange
+            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            var product = changeTracker[0];
+
+            // Act
+            product.UnitPrice++;
+            product.Discontinued = true;
+            product.ProductName = "xxxxxxxx";
+
+            // Assert
+            Assert.Contains("UnitPrice", (ICollection)product.ModifiedProperties);
+            Assert.Contains("Discontinued", (ICollection)product.ModifiedProperties);
+            Assert.Contains("ProductName", (ICollection)product.ModifiedProperties);
+        }
+        
         #endregion
 
         #region Removed Items Tests

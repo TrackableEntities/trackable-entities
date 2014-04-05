@@ -99,15 +99,21 @@ namespace TrackableEntities.Client
                     && e.PropertyName != Constants.TrackingProperties.TrackingState
                     && e.PropertyName != Constants.TrackingProperties.ModifiedProperties)
                 {
-                    // Mark item as updated, add prop to modified props, and fire EntityChanged event
+                    // If unchanged mark item as modified, fire EntityChanged event
                     if (entity.TrackingState == TrackingState.Unchanged)
                     {
                         entity.TrackingState = TrackingState.Modified;
+                        if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
+                    }
+
+                    // Add prop to modified props, and fire EntityChanged event
+                    if (entity.TrackingState == TrackingState.Unchanged
+                        || entity.TrackingState == TrackingState.Modified)
+                    {
                         if (entity.ModifiedProperties == null)
                             entity.ModifiedProperties = new List<string>();
                         if (!entity.ModifiedProperties.Contains(e.PropertyName))
                             entity.ModifiedProperties.Add(e.PropertyName);
-                        if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
                     }
                 }
             }
