@@ -161,6 +161,79 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Test]
+        public void Existing_Parent_With_Modified_Children_Should_Add_Multiple_ModifiedProperties()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
+            var modifiedDetail = orderDetails[0];
+
+            // Act
+            modifiedDetail.Quantity++;
+            modifiedDetail.UnitPrice++;
+
+            // Assert
+            Assert.Contains("Quantity", (ICollection)modifiedDetail.ModifiedProperties);
+            Assert.Contains("UnitPrice", (ICollection)modifiedDetail.ModifiedProperties);
+        }
+
+        [Test]
+        public void Existing_Parent_With_Excluded_Children_Should_Not_Be_Marked_As_Modified()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var orderDetails = changeTracker[0].OrderDetails;
+            orderDetails.ExcludedProperties.Add("Quantity");
+            var modifiedDetail = orderDetails[0];
+
+            // Act
+            modifiedDetail.Quantity++;
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, modifiedDetail.TrackingState);
+        }
+
+        [Test]
+        public void Existing_Parent_With_Excluded_Children_Should_Not_Add_ModifiedProperty()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var orderDetails = changeTracker[0].OrderDetails;
+            orderDetails.ExcludedProperties.Add("Quantity");
+            var modifiedDetail = orderDetails[0];
+
+            // Act
+            modifiedDetail.Quantity++;
+
+            // Assert
+            Assert.IsTrue(modifiedDetail.ModifiedProperties == null
+                || modifiedDetail.ModifiedProperties.Count == 0);
+        }
+
+        [Test]
+        public void Existing_Parent_With_Mixed_Children_Should_Not_Add_ModifiedProperty()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var orderDetails = changeTracker[0].OrderDetails;
+            orderDetails.ExcludedProperties.Add("Quantity");
+            var modifiedDetail = orderDetails[0];
+
+            // Act
+            modifiedDetail.Quantity++;
+            modifiedDetail.UnitPrice++;
+
+            // Assert
+            Assert.AreEqual(TrackingState.Modified, modifiedDetail.TrackingState);
+            Assert.Contains("UnitPrice", (ICollection)modifiedDetail.ModifiedProperties);
+            Assert.That(modifiedDetail.ModifiedProperties, Has.No.Member("Quantity"));
+        }
+
+        [Test]
         public void Existing_Parent_Removed_With_Modified_Children_Should_Have_Children_Modified_Properties_Cleared()
         {
             // Arrange

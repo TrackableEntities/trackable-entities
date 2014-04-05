@@ -223,8 +223,8 @@ namespace TrackableEntities.Client.Tests
         public void Modified_Existing_Excluded_Items_Should_Not_Be_Marked_As_Modified()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>
-                (new[] { _database.Products[0] }, false, "UnitPrice");
+            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            changeTracker.ExcludedProperties.Add("UnitPrice");
             var product = changeTracker[0];
 
             // Act
@@ -238,8 +238,8 @@ namespace TrackableEntities.Client.Tests
         public void Modified_Existing_Excluded_Items_Should_Not_Add_ModifiedProperty()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>
-                (new[] { _database.Products[0] }, false, "UnitPrice");
+            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            changeTracker.ExcludedProperties.Add("UnitPrice");
             var product = changeTracker[0];
 
             // Act
@@ -272,8 +272,8 @@ namespace TrackableEntities.Client.Tests
         public void Modified_Existing_Mixed_Items_Should_Not_Be_Marked_As_Modified()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>
-                (new[] { _database.Products[0] }, false, "UnitPrice");
+            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            changeTracker.ExcludedProperties.Add("UnitPrice");
             var product = changeTracker[0];
 
             // Act
