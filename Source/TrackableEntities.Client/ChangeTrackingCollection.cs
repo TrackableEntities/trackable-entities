@@ -26,17 +26,34 @@ namespace TrackableEntities.Client
         /// <summary>
         /// Default contstructor with change-tracking disabled
         /// </summary>
-        public ChangeTrackingCollection() : this(false) { }
+        public ChangeTrackingCollection() : this(false, new string[0]) { }
 
         /// <summary>
         /// Change-tracking will not begin after entities are added, 
         /// unless tracking is enabled.
         /// </summary>
         /// <param name="enableTracking">Enable tracking after entities are added</param>
-        public ChangeTrackingCollection(bool enableTracking)
+        /// <param name="excludedProperties">Properties to exclude from change tracking</param>
+        public ChangeTrackingCollection(bool enableTracking, params string[] excludedProperties)
         {
+            // Initialize excluded properties
+            ExcludedProperties = new List<string>(excludedProperties)
+            {
+                Constants.TrackingProperties.TrackingState,
+                Constants.TrackingProperties.ModifiedProperties
+            }.ToArray();
+
+            // Enable or disable tracking
             Tracking = enableTracking;
         }
+
+        /// <summary>
+        /// Constructor that accepts one or more entities.
+        /// Change-tracking will begin after entities are added.
+        /// </summary>
+        /// <param name="entities">Entities being change-tracked</param>
+        public ChangeTrackingCollection(params T[] entities)
+            : this(entities, false, new string[0]) { }
 
         /// <summary>
         /// Constructor that accepts a collection of entities.
@@ -45,8 +62,17 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="entities">Entities being change-tracked</param>
         /// <param name="disableTracking">Disable tracking after entities are added</param>
-        public ChangeTrackingCollection(IEnumerable<T> entities, bool disableTracking = false)
+        /// <param name="excludedProperties">Properties to exclude from change tracking</param>
+        public ChangeTrackingCollection(IEnumerable<T> entities, bool disableTracking = false,
+            params string[] excludedProperties)
         {
+            // Initialize excluded properties
+            ExcludedProperties = new List<string>(excludedProperties)
+            {
+                Constants.TrackingProperties.TrackingState,
+                Constants.TrackingProperties.ModifiedProperties
+            }.ToArray();
+            
             // Add items to the change tracking list
             foreach (T item in entities)
             {
@@ -56,12 +82,10 @@ namespace TrackableEntities.Client
         }
 
         /// <summary>
-        /// Constructor that accepts one or more entities.
-        /// Change-tracking will begin after entities are added.
+        /// Properties to exclude from change tracking.
+        /// Can only be set when initialized.
         /// </summary>
-        /// <param name="entities">Entities being change-tracked</param>
-        public ChangeTrackingCollection(params T[] entities)
-            : this(entities, false) { }
+        public IEnumerable<string> ExcludedProperties { get; private set; } 
 
         /// <summary>
         /// Turn change-tracking on and off.
@@ -95,9 +119,7 @@ namespace TrackableEntities.Client
             if (Tracking)
             {
                 var entity = sender as ITrackable;
-                if (entity != null
-                    && e.PropertyName != Constants.TrackingProperties.TrackingState
-                    && e.PropertyName != Constants.TrackingProperties.ModifiedProperties)
+                if (entity != null && !ExcludedProperties.Contains(e.PropertyName))
                 {
                     // If unchanged mark item as modified, fire EntityChanged event
                     if (entity.TrackingState == TrackingState.Unchanged)

@@ -220,6 +220,37 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Test]
+        public void Modified_Existing_Excluded_Items_Should_Not_Be_Marked_As_Modified()
+        {
+            // Arrange
+            var changeTracker = new ChangeTrackingCollection<Product>
+                (new[] { _database.Products[0] }, false, "UnitPrice");
+            var product = changeTracker[0];
+
+            // Act
+            product.UnitPrice++;
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, product.TrackingState);
+        }
+
+        [Test]
+        public void Modified_Existing_Excluded_Items_Should_Not_Add_ModifiedProperty()
+        {
+            // Arrange
+            var changeTracker = new ChangeTrackingCollection<Product>
+                (new[] { _database.Products[0] }, false, "UnitPrice");
+            var product = changeTracker[0];
+
+            // Act
+            product.UnitPrice++;
+
+            // Assert
+            Assert.IsTrue(product.ModifiedProperties == null
+                || product.ModifiedProperties.Count == 0);
+        }
+
+        [Test]
         public void Modified_Existing_Items_Should_Add_Multiples_ModifiedProperties()
         {
             // Arrange
