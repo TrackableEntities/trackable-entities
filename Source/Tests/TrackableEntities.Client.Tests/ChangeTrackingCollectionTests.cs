@@ -267,7 +267,25 @@ namespace TrackableEntities.Client.Tests
             Assert.Contains("Discontinued", (ICollection)product.ModifiedProperties);
             Assert.Contains("ProductName", (ICollection)product.ModifiedProperties);
         }
-        
+
+        [Test]
+        public void Modified_Existing_Mixed_Items_Should_Not_Be_Marked_As_Modified()
+        {
+            // Arrange
+            var changeTracker = new ChangeTrackingCollection<Product>
+                (new[] { _database.Products[0] }, false, "UnitPrice");
+            var product = changeTracker[0];
+
+            // Act
+            product.UnitPrice++;
+            product.ProductName = "xxxxxxxx";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Modified, product.TrackingState);
+            Assert.Contains("ProductName", (ICollection)product.ModifiedProperties);
+            Assert.That(product.ModifiedProperties, Has.No.Member("UnitPrice"));
+        }
+
         #endregion
 
         #region Removed Items Tests
