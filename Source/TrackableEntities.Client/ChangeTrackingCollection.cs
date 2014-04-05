@@ -73,7 +73,7 @@ namespace TrackableEntities.Client
         /// <summary>
         /// Properties to exclude from change tracking.
         /// </summary>
-        public List<string> ExcludedProperties { get; private set; } 
+        public IList<string> ExcludedProperties { get; private set; } 
 
         /// <summary>
         /// Turn change-tracking on and off.

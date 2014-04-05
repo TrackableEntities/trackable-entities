@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace TrackableEntities.Client
 {
@@ -23,5 +24,10 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <returns>Collection containing only changed entities</returns>
         ITrackingCollection GetChanges();
+
+        /// <summary>
+        /// Properties to exclude from change tracking.
+        /// </summary>
+        IList<string> ExcludedProperties { get; }
     }
 }
