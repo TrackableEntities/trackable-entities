@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Collections;
+using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 
@@ -18,7 +19,8 @@ namespace TrackableEntities.Client
         public static void SetTracking(this ITrackable item, 
             bool enableTracking, ITrackable parent = null)
         {
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
+                | BindingFlags.Public | BindingFlags.NonPublic))
             {
                 var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
                 if (trackingColl != null)
@@ -55,11 +57,18 @@ namespace TrackableEntities.Client
         public static void SetState(this ITrackable item, TrackingState state, 
             ITrackable parent = null)
         {
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
+                | BindingFlags.Public | BindingFlags.NonPublic))
             {
                 var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
                 if (trackingColl != null)
                 {
+                    // Continue if setting reference prop to added or deleted
+                    var propGetter = prop.GetGetMethod(true);
+                    if (propGetter != null && propGetter.IsPrivate
+                        && (state == TrackingState.Added || state == TrackingState.Deleted))
+                        continue;
+
                     // Recursively set state
                     foreach (ITrackable child in trackingColl)
                     {
@@ -82,7 +91,8 @@ namespace TrackableEntities.Client
         public static void SetModifiedProperties(this ITrackable item,
             ICollection<string> modified, ITrackable parent = null)
         {
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
+                | BindingFlags.Public | BindingFlags.NonPublic))
             {
                 var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
                 if (trackingColl != null)
@@ -107,7 +117,8 @@ namespace TrackableEntities.Client
         /// <param name="parent">ITrackable parent of item</param>
         public static void SetChanges(this ITrackable item, ITrackable parent = null)
         {
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
+                | BindingFlags.Public | BindingFlags.NonPublic))
             {
                 var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
                 if (trackingColl != null)
@@ -142,7 +153,8 @@ namespace TrackableEntities.Client
         /// <param name="parent">ITrackable parent of item</param>
         public static void RestoreDeletes(this ITrackable item, ITrackable parent = null)
         {
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
+                | BindingFlags.Public | BindingFlags.NonPublic))
             {
                 var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
                 if (trackingColl != null)
@@ -176,7 +188,8 @@ namespace TrackableEntities.Client
         public static void RemoveDeletes(this ITrackable item, bool enableTracking,
             ITrackable parent = null)
         {
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
+                | BindingFlags.Public | BindingFlags.NonPublic))
             {
                 var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
                 if (trackingColl != null)
@@ -256,7 +269,8 @@ namespace TrackableEntities.Client
         /// <param name="parent">ITrackable parent of item</param>
         public static bool HasChanges(this ITrackable item, ITrackable parent = null)
         {
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
+                | BindingFlags.Public | BindingFlags.NonPublic))
             {
                 var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
                 if (trackingColl != null)

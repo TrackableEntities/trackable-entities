@@ -30,6 +30,34 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             }
         }
 
+        private string _data;
+        public string Data
+        {
+            get { return _data; }
+            set
+            {
+                if (value == _data) return;
+                _data = value;
+                NotifyPropertyChanged(m => m.Data);
+            }
+        }
+
+        // NOTE: Reference properties are change-tracked but do not call 
+        // NotifyPropertyChanged because it is called by foreign key's property setter.
+
+        private CustomerSetting _customerSetting;
+        public CustomerSetting CustomerSetting
+        {
+            get { return _customerSetting; }
+            set
+            {
+                if (value == _customerSetting) return;
+                _customerSetting = value;
+                CustomerSettingChangeTracker = _customerSetting == null ? null
+                    : new ChangeTrackingCollection<CustomerSetting> { _customerSetting };
+            }
+        }
+        private ChangeTrackingCollection<CustomerSetting> CustomerSettingChangeTracker { get; set; }
 
         public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }

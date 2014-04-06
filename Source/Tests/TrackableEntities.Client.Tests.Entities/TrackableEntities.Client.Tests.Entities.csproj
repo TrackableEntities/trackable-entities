@@ -52,6 +52,7 @@
     <Compile Include="FamilyModels\Parent.cs" />
     <Compile Include="Mocks\MockFamily.cs" />
     <Compile Include="Mocks\MockNorthwind.cs" />
+    <Compile Include="NorthwindModels\CustomerSetting.cs" />
     <Compile Include="NorthwindModels\Territory.cs" />
     <Compile Include="NorthwindModels\Employee.cs" />
     <Compile Include="NorthwindModels\Category.cs" />

@@ -598,5 +598,759 @@ namespace TrackableEntities.Client.Tests
         }
 
         #endregion
+
+        #region ManyToOne - Set Status Tests
+
+        [Test]
+        public void Existing_Order_With_Unchanged_Customer_Should_Mark_Customer_As_Unchanged()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            // Act
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.IsFalse(order.HasChanges());
+        }
+
+        [Test]
+        public void Existing_Order_With_Modified_Customer_Should_Mark_Customer_As_Modified()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            // Act
+            order.Customer.CustomerName = "xxx";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
+            Assert.AreEqual(TrackingState.Modified, order.Customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
+        public void Existing_Order_With_New_Customer_Should_Mark_Customer_As_Unchanged()
+        {
+            // NOTE: Setting Order.Customer to a new customer will not automatically
+            // mark it as Added, because Order has no way to tell if customer is new
+            // or already exists.  However, Customer can be marked as Added manually.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            // Act
+            // Because not marked as added, refers to existing customer
+            order.Customer = new Customer
+            {
+                CustomerId = "ABCD",
+                CustomerName = "Test"
+            };
+
+            // NOTE: Reference properties are change-tracked but do not call 
+            // NotifyPropertyChanged because it is called by foreign key's property setter.
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.IsFalse(order.HasChanges());
+        }
+
+        [Test]
+        public void Existing_Order_With_Manually_Added_Customer_Should_Mark_Customer_As_Added()
+        {
+            // NOTE: Manually marking reference as added will create a new entity
+            // when it is saved.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            // Act
+            order.Customer = new Customer
+            {
+                CustomerId = "ABCD",
+                CustomerName = "Test",
+                TrackingState = TrackingState.Added // required to insert new customer
+            };
+
+            // NOTE: Reference properties are change-tracked but do not call 
+            // NotifyPropertyChanged because it is called by foreign key's property setter.
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
+            Assert.AreEqual(TrackingState.Added, order.Customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
+        public void Existing_Order_With_Removed_Customer_Should_Mark_Customer_As_Unchanged()
+        {
+            // NOTE: Setting Order.Customer to null will not automatically
+            // mark it as Deleted. Deleting customer from order is not supported
+            // because it could be related to other entities. However, it is possible
+            // to delete a customer independently.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var customer = order.Customer;
+
+            // Act
+            order.Customer = null;
+
+            // NOTE: Reference properties are change-tracked but do not call 
+            // NotifyPropertyChanged because it is called by foreign key's property setter.
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.IsFalse(order.HasChanges());
+        }
+
+        [Test]
+        public void Added_Order_With_Unchanged_Customer_Should_Mark_Customer_As_Unchanged()
+        {
+            // NOTE: Referenced customer will remain unchanged because Order has no way to  
+            // tell if customer is new or already exists. However, Customer can be marked 
+            // as Added manually. (If it were 1-M or M-M, marking parent as added automatically
+            // marks children as added.)
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(true);
+            changeTracker.Add(order);
+
+            // Act
+
+            // Assert
+            Assert.AreEqual(TrackingState.Added, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
+        public void Added_Order_With_Modified_Customer_Should_Mark_Customer_As_Modified()
+        {
+            // NOTE: Modified reference entity will remain modified if parent is added.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(true);
+            changeTracker.Add(order);
+
+            // Act
+            order.Customer.CustomerName = "xxx";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Added, order.TrackingState);
+            Assert.AreEqual(TrackingState.Modified, order.Customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
+        public void Added_Order_With_New_Customer_Should_Mark_Customer_As_Unchanged()
+        {
+            // NOTE: Setting Order.Customer to a new customer will not automatically
+            // mark it as Added, because Order has no way to tell if customer is new
+            // or already exists.  However, Customer can be marked as Added manually.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(true);
+            changeTracker.Add(order);
+
+            // Act
+            // Because not marked as added, refers to existing customer
+            order.Customer = new Customer
+            {
+                CustomerId = "ABCD",
+                CustomerName = "Test"
+            };
+
+            // Assert
+            Assert.AreEqual(TrackingState.Added, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
+        public void Added_Order_With_Manually_Added_Customer_Should_Mark_Customer_As_Added()
+        {
+            // NOTE: Manually marking reference as added will create a new entity
+            // when it is saved.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(true);
+            changeTracker.Add(order);
+
+            // Act
+            order.Customer = new Customer
+            {
+                CustomerId = "ABCD",
+                CustomerName = "Test",
+                TrackingState = TrackingState.Added // required to insert new customer
+            };
+
+            // Assert
+            Assert.AreEqual(TrackingState.Added, order.TrackingState);
+            Assert.AreEqual(TrackingState.Added, order.Customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
+        public void Added_Order_With_Removed_Customer_Should_Mark_Customer_As_Unchanged()
+        {
+            // NOTE: Removed customer will not be marked as deleted. Instead to be deleted
+            // it must be independently marked as deleted.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(true);
+            changeTracker.Add(order);
+            var customer = order.Customer;
+
+            // Act
+            order.Customer = null;
+
+            // Assert
+            Assert.AreEqual(TrackingState.Added, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
+        public void Removed_Order_With_Unchanged_Customer_Should_Mark_Customer_As_Unchanged()
+        {
+            // NOTE: Removing order will not automatically mark customer as deleted.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var customer = order.Customer;
+
+            // Act
+            changeTracker.Remove(order);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Deleted, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
+        public void Removed_Order_With_Modified_Customer_Should_Mark_Customer_As_Modified()
+        {
+            // NOTE: Modified reference entity will remain modified if parent is deleted.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer.CustomerName = "xxx";
+
+            // Act
+            changeTracker.Remove(order);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Deleted, order.TrackingState);
+            Assert.AreEqual(TrackingState.Modified, order.Customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
+        public void Removed_Order_With_New_Customer_Should_Mark_Customer_As_Unchanged()
+        {
+            // NOTE: Setting Order.Customer to null will not mark customer as deleted.
+            // Because customer not marked as deleted, it refers to an existing customer.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer = new Customer
+            {
+                CustomerId = "ABCD",
+                CustomerName = "Test"
+            };
+
+            // Act
+            changeTracker.Remove(order);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Deleted, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
+        public void Removed_Order_With_Manually_Added_Customer_Should_Mark_Customer_As_Added()
+        {
+            // NOTE: Manually marking reference as added will create a new entity
+            // when it is saved.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer = new Customer
+            {
+                CustomerId = "ABCD",
+                CustomerName = "Test",
+                TrackingState = TrackingState.Added
+            };
+
+            // Act
+            changeTracker.Remove(order);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Deleted, order.TrackingState);
+            Assert.AreEqual(TrackingState.Added, order.Customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
+        public void Removed_Order_With_Removed_Customer_Should_Mark_Customer_As_Unchanged()
+        {
+            // NOTE: Removed customer will not be marked as deleted. Instead to be deleted
+            // it must be independently marked as deleted.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var customer = order.Customer;
+            order.Customer = null;
+
+            // Act
+            changeTracker.Remove(order);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Deleted, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        #endregion
+
+        #region ManyToOne - Modified Properties Tests
+
+        [Test]
+        public void Existing_Order_With_Modified_Customer_Should_Add_ModifiedProperties()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            // Act
+            order.Customer.CustomerName = "xxx";
+
+            // Assert
+            Assert.Contains("CustomerName", (ICollection)order.Customer.ModifiedProperties);
+        }
+
+        [Test]
+        public void Existing_Order_With_Modified_Customer_Should_Add_Multiple_ModifiedProperties()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            // Act
+            order.Customer.CustomerName = "xxx";
+            order.Customer.Data = "xxx";
+
+            // Assert
+            Assert.Contains("CustomerName", (ICollection)order.Customer.ModifiedProperties);
+            Assert.Contains("Data", (ICollection)order.Customer.ModifiedProperties);
+        }
+
+        [Test]
+        public void Existing_Order_Removed_With_Modified_Customer_Has_Children_ModifiedProperties_Cleared()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var modifiedCustomer = order.Customer;
+            modifiedCustomer.CustomerName = "xxx";
+
+            // Act
+            changeTracker.Remove(order);
+
+            // Assert
+            Assert.IsTrue(modifiedCustomer.ModifiedProperties == null
+                || modifiedCustomer.ModifiedProperties.Count == 0);
+        }
+
+        #endregion
+
+        #region ManyToOne - GetChanged Tests
+
+        [Test]
+        public void GetChanges_On_Existing_Order_With_Unchanged_Customer_Should_Return_Empty_Collection()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsEmpty(changes);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Order_With_Modified_Customer_Return_Customer_Marked_As_Modified()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            // Act
+            order.Customer.CustomerName = "xxx";
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsNotEmpty(changes);
+            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.AreEqual(TrackingState.Modified, changes.First().Customer.TrackingState);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Order_With_New_Customer_Return_Empty_Collection()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer = new Customer()
+            {
+                CustomerId = "ABCD",
+                CustomerName = "Test"
+            };
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsEmpty(changes);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Order_With_Manually_Added_Customer_Return_Customer_Marked_As_Added()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer = new Customer()
+            {
+                CustomerId = "ABCD",
+                CustomerName = "Test",
+                TrackingState = TrackingState.Added
+            };
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsNotEmpty(changes);
+            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.AreEqual(TrackingState.Added, changes.First().Customer.TrackingState);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Order_With_Removed_Customer_Return_Empty_Collection()
+        {
+            // NOTE: Reference properties are change-tracked but do not call 
+            // NotifyPropertyChanged because it is called by foreign key's property setter.
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var customer = order.Customer;
+            order.Customer = null;
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsEmpty(changes);
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+        }
+
+        #endregion
+
+        #region OneToOne - Set Status Tests
+
+        [Test]
+        public void Existing_Customer_With_Unchanged_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Unchanged()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            var customerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            customer.CustomerSetting = customerSetting;
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, customerSetting.TrackingState);
+        }
+
+        [Test]
+        public void Existing_Customer_With_Modified_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Modified()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            var customerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            customer.CustomerSetting = customerSetting;
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+            customer.CustomerSetting.Setting = "xxx";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.AreEqual(TrackingState.Modified, customerSetting.TrackingState);
+        }
+
+        [Test]
+        public void Existing_Customer_With_New_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Unchanged()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+            var customerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            customer.CustomerSetting = customerSetting;
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, customerSetting.TrackingState);
+        }
+
+        [Test]
+        public void Existing_Customer_With_Manually_Added_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Added()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+            var customerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer,
+                TrackingState = TrackingState.Added
+            };
+            customer.CustomerSetting = customerSetting;
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.AreEqual(TrackingState.Added, customerSetting.TrackingState);
+        }
+
+        [Test]
+        public void Existing_Customer_With_Removed_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Unchanged()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            var customerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            customer.CustomerSetting = customerSetting;
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+            customer.CustomerSetting = null;
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, customerSetting.TrackingState);
+        }
+
+        #endregion
+
+        #region OneToOne - Modified Properties Tests
+
+        [Test]
+        public void Existing_Customer_With_Modified_CustomerSetting_Should_Add_ModifiedProperties()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+            customer.CustomerSetting.Setting = "xxx";
+
+            // Assert
+            Assert.Contains("Setting", (ICollection)customer.CustomerSetting.ModifiedProperties);
+        }
+
+        [Test]
+        public void Existing_Customer_Removed_With_Modified_CustomerSetting_Has_Children_ModifiedProperties_Cleared()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+            var modifiedSetting = customer.CustomerSetting;
+            modifiedSetting.Setting = "xxx";
+
+            // Act
+            changeTracker.Remove(customer);
+
+            // Assert
+            Assert.IsTrue(modifiedSetting.ModifiedProperties == null
+                || modifiedSetting.ModifiedProperties.Count == 0);
+        }
+        
+        #endregion
+
+        #region OneToOne - GetChangesTests
+
+        [Test]
+        public void GetChanges_On_Existing_Customer_With_Unchanged_CustomerSetting_Should_Return_Empty_Collection()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsEmpty(changes);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Customer_With_Modified_CustomerSetting_Return_CustomerSetting_Marked_As_Modified()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+            customer.CustomerSetting.Setting = "xxx";
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsNotEmpty(changes);
+            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.AreEqual(TrackingState.Modified, changes.First().CustomerSetting.TrackingState);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Customer_With_New_CustomerSetting_Return_Empty_Collection()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+            customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsEmpty(changes);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Customer_With_Manually_Added_CustomerSetting_Return_CustomerSetting_Marked_As_Added()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+            customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer,
+                TrackingState = TrackingState.Added
+            };
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsNotEmpty(changes);
+            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.AreEqual(TrackingState.Added, changes.First().CustomerSetting.TrackingState);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Customer_With_Removed_CustomerSetting_Return_Empty_Collection()
+        {
+            // Arrange
+            var customer = _database.Customers[0];
+            customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            var customerSetting = customer.CustomerSetting;
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+            customer.CustomerSetting = null;
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsEmpty(changes);
+            Assert.AreEqual(TrackingState.Unchanged, customerSetting.TrackingState);
+        }
+
+        #endregion
     }
 }

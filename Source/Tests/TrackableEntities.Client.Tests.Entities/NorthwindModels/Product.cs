@@ -66,6 +66,9 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             }
         }
 
+        // NOTE: Reference properties are change-tracked but do not call 
+        // NotifyPropertyChanged because it is called by foreign key's property setter.
+
         private Category _category;
         public Category Category
         {
@@ -74,9 +77,11 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _category) return;
                 _category = value;
-                NotifyPropertyChanged(m => m.Category);
+                CategoryChangeTracker = _category == null ? null
+                    : new ChangeTrackingCollection<Category> { _category };
             }
         }
+        private ChangeTrackingCollection<Category> CategoryChangeTracker { get; set; }
 
         public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }
