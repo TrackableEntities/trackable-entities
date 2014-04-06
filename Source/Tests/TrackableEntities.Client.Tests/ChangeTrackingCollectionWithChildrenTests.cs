@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using TrackableEntities.Client.Tests.Entities.Mocks;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
@@ -253,116 +254,44 @@ namespace TrackableEntities.Client.Tests
         
         #endregion
 
-        #region EntityChanged Event Tests
-
-        [Ignore] // TODO: Drop
-        public void EntityChanged_Event_Should_Fire_When_Child_Added_Modified_Deleted()
-        {
-            //// Arrange
-            //int changesCount = 0;
-            //var order = _database.Orders[0];
-            //var changeTracker = new ChangeTrackingCollection<Order>(order);
-            //var orderDetails = changeTracker[0].OrderDetails;
-            //var addedDetail = new OrderDetail
-            //{
-            //    ProductId = 1,
-            //    Product = _database.Products[0],
-            //    Quantity = 10,
-            //    UnitPrice = 20M
-            //};
-            //var modifiedDetail = orderDetails[0];
-            //var deletedDetail = orderDetails[1];
-            //changeTracker.EntityChanged += (s, e) => changesCount++;
-
-            //// Act
-            //orderDetails.Add(addedDetail);
-            //modifiedDetail.UnitPrice++;
-            //orderDetails.Remove(deletedDetail);
-
-            //// Assert
-            //Assert.AreEqual(3, changesCount);
-        }
-
-        #endregion
-
         #region GetChanges Tests
 
-        // TODO: Get Changes
-
-        /* [Test]
-        public void GetChanges_Should_Return_Added_Items()
-        {
-            // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>(true);
-            var product = _database.Products[0];
-            changeTracker.Add(product);
-
-            // Act
-            var changes = changeTracker.GetChanges();
-
-            // Assert
-            Assert.AreSame(product, changes[0]);
-            Assert.AreEqual(TrackingState.Added, changes[0].TrackingState);
-        }
-
         [Test]
-        public void GetChanges_Should_Return_Modified_Items()
+        public void GetChanges_On_Existing_Parent_With_Children_Should_Return_Marked_Children()
         {
             // Arrange
-            var product = _database.Products[0];
-            var changeTracker = new ChangeTrackingCollection<Product>(product);
-            product.UnitPrice++;
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
+            var unchangedDetail = orderDetails[0];
+            var modifiedDetail = orderDetails[1];
+            var deletedDetail = orderDetails[2];
+            var addedDetail = new OrderDetail
+            {
+                ProductId = 1,
+                Product = _database.Products[0],
+                Quantity = 10,
+                UnitPrice = 20M
+            };
+            orderDetails.Add(addedDetail);
+            modifiedDetail.UnitPrice++;
+            orderDetails.Remove(deletedDetail);
 
             // Act
             var changes = changeTracker.GetChanges();
+            var changedOrder = changes.First();
+            var changedModifiedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == modifiedDetail.ProductId);
+            var changedAddedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == addedDetail.ProductId);
+            var changedDeletedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == deletedDetail.ProductId);
 
             // Assert
-            Assert.AreSame(product, changes[0]);
-            Assert.AreEqual(TrackingState.Modified, changes[0].TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, changedOrder.TrackingState);
+            Assert.AreEqual(3, changedOrder.OrderDetails.Count);
+            Assert.AreEqual(TrackingState.Modified, changedModifiedDetail.TrackingState);
+            Assert.AreEqual(TrackingState.Added, changedAddedDetail.TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, changedDeletedDetail.TrackingState);
+            Assert.That(changedOrder.OrderDetails, Has.No.Member(unchangedDetail));
         }
-
-        [Test]
-        public void GetChanges_Should_Return_Deleted_Items()
-        {
-            // Arrange
-            var product = _database.Products[0];
-            var changeTracker = new ChangeTrackingCollection<Product>(product);
-            changeTracker.Remove(product);
-
-            // Act
-            var changes = changeTracker.GetChanges();
-
-            // Assert
-            Assert.AreSame(product, changes[0]);
-            Assert.AreEqual(TrackingState.Deleted, changes[0].TrackingState);
-        }
-
-        [Test]
-        public void GetChanges_Should_Return_Added_Modified_Deleted_Items()
-        {
-            // Arrange
-            var addedProduct = _database.Products[0];
-            var updatedProduct = _database.Products[1];
-            var deletedProduct = _database.Products[2];
-
-            var changeTracker = new ChangeTrackingCollection<Product>(updatedProduct, deletedProduct);
-
-            changeTracker.Add(addedProduct);
-            updatedProduct.UnitPrice++;
-            changeTracker.Remove(deletedProduct);
-
-            // Act
-            var changes = changeTracker.GetChanges();
-
-            // Assert
-            Assert.AreSame(addedProduct, changes[1]);
-            Assert.AreEqual(TrackingState.Added, changes[1].TrackingState);
-            Assert.AreSame(updatedProduct, changes[0]);
-            Assert.AreEqual(TrackingState.Modified, changes[0].TrackingState);
-            Assert.AreSame(deletedProduct, changes[2]);
-            Assert.AreEqual(TrackingState.Deleted, changes[2].TrackingState);
-        }
-        */
 
         #endregion
 
@@ -429,6 +358,243 @@ namespace TrackableEntities.Client.Tests
             Assert.IsTrue(ReferenceEquals(origOrder, origOrder.OrderDetails[0].Order));
             Assert.IsTrue(ReferenceEquals(origOrder, origOrder.OrderDetails[1].Order));
             Assert.IsTrue(ReferenceEquals(origOrder, origOrder.OrderDetails[2].Order));
+        }
+
+        #endregion
+
+        #region ManyToMany - Set Status Tests
+
+        [Test]
+        public void Existing_Employee_With_Territories_Should_Have_Territories_Marked()
+        {
+            // Arrange
+            var employee = _database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            var unchangedTerritory = employee.Territories[0];
+            var modifiedTerritory = employee.Territories[1];
+            var deletedTerritory = employee.Territories[2];
+            var addedTerritory = _database.Territories[3];
+
+            // Act
+            modifiedTerritory.TerritoryDescription = "xxx";
+            employee.Territories.Add(addedTerritory);
+            employee.Territories.Remove(deletedTerritory);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, employee.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, unchangedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Modified, modifiedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Added, addedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, deletedTerritory.TrackingState);
+        }
+
+        [Test]
+        public void Added_Employee_With_Territories_Should_Have_Territories_Marked_As_Added()
+        {
+            // NOTE: Removing child from added parent marks child as unchanged.
+            // This is so that GetChanges will not include the removed child.
+
+            // Arrange
+            var changeTracker = new ChangeTrackingCollection<Employee>(true);
+            var employee = _database.Employees[0];
+            var unchangedTerritory = employee.Territories[0];
+            var modifiedTerritory = employee.Territories[1];
+            var deletedTerritory = employee.Territories[2];
+            var addedTerritory = _database.Territories[3];
+            changeTracker.Add(employee);
+
+            // Act
+            modifiedTerritory.TerritoryDescription = "xxx";
+            employee.Territories.Add(addedTerritory);
+            employee.Territories.Remove(deletedTerritory);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Added, employee.TrackingState);
+            Assert.AreEqual(TrackingState.Added, unchangedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Added, modifiedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Added, addedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, deletedTerritory.TrackingState);
+        }
+
+        [Test]
+        public void Added_Employee_Then_Removed_With_Territories_Should_Have_Territories_Marked_As_Unchanged()
+        {
+            // NOTE: Removing an added parent should mark parent and children as unchanged.
+            // This is so that GetChanges will not include parent or children.
+
+            // Arrange
+            var changeTracker = new ChangeTrackingCollection<Employee>(true);
+            var employee = _database.Employees[0];
+            var unchangedTerritory = employee.Territories[0];
+            var modifiedTerritory = employee.Territories[1];
+            var deletedTerritory = employee.Territories[2];
+            var addedTerritory = _database.Territories[3];
+            changeTracker.Add(employee);
+
+            // Act
+            modifiedTerritory.TerritoryDescription = "xxx";
+            employee.Territories.Add(addedTerritory);
+            employee.Territories.Remove(deletedTerritory);
+            changeTracker.Remove(employee);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, employee.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, unchangedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, modifiedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, addedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, deletedTerritory.TrackingState);
+        }
+
+        [Test]
+        public void Removed_Employee_With_Territories_Should_Have_Territories_Marked_As_Deleted()
+        {
+            // NOTE: Removing a parent will mark both parent and children as deleted.
+            // Deleted M-M childen are simply removed from the relation with parent.
+
+            // Arrange
+            var employee = _database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            var unchangedTerritory = employee.Territories[0];
+            var modifiedTerritory = employee.Territories[1];
+            var deletedTerritory = employee.Territories[2];
+            var addedTerritory = _database.Territories[3];
+
+            // Act
+            modifiedTerritory.TerritoryDescription = "xxx";
+            employee.Territories.Add(addedTerritory);
+            employee.Territories.Remove(deletedTerritory);
+            changeTracker.Remove(employee);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Deleted, employee.TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, unchangedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, modifiedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, addedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, deletedTerritory.TrackingState);
+        }
+
+        #endregion
+
+        #region ManyToMany - Modified Properties Tests
+
+        [Test]
+        public void Existing_Employee_With_Modified_Children_Should_Add_ModifiedProperties()
+        {
+            // Arrange
+            var employee = _database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            var modifiedTerritory = employee.Territories[1];
+
+            // Act
+            modifiedTerritory.TerritoryDescription = "xxx";
+
+            // Assert
+            Assert.Contains("TerritoryDescription", (ICollection)modifiedTerritory.ModifiedProperties);
+        }
+
+        [Test]
+        public void Existing_Employee_With_Modified_Children_Should_Add_Multiple_ModifiedProperties()
+        {
+            // Arrange
+            var employee = _database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            var modifiedTerritory = employee.Territories[1];
+
+            // Act
+            modifiedTerritory.TerritoryDescription = "xxx";
+            modifiedTerritory.Data = "xxx";
+
+            // Assert
+            Assert.Contains("TerritoryDescription", (ICollection)modifiedTerritory.ModifiedProperties);
+            Assert.Contains("Data", (ICollection)modifiedTerritory.ModifiedProperties);
+        }
+
+        [Test]
+        public void Existing_Employee_With_Excluded_Children_Should_Not_Be_Marked_As_Modified()
+        {
+            // Arrange
+            var employee = _database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            employee.Territories.ExcludedProperties.Add("TerritoryDescription");
+            var modifiedTerritory = employee.Territories[1];
+
+            // Act
+            modifiedTerritory.TerritoryDescription = "xxx";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, modifiedTerritory.TrackingState);
+            Assert.IsTrue(modifiedTerritory.ModifiedProperties == null
+                || modifiedTerritory.ModifiedProperties.Count == 0);
+        }
+
+        [Test]
+        public void Existing_Employee_With_Mixed_Children_Should_Not_Add_ModifiedProperties()
+        {
+            // Arrange
+            var employee = _database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            employee.Territories.ExcludedProperties.Add("TerritoryDescription");
+            var modifiedTerritory = employee.Territories[1];
+
+            // Act
+            modifiedTerritory.TerritoryDescription = "xxx";
+            modifiedTerritory.Data = "xxx";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Modified, modifiedTerritory.TrackingState);
+            Assert.Contains("Data", (ICollection)modifiedTerritory.ModifiedProperties);
+            Assert.That(modifiedTerritory.ModifiedProperties, Has.No.Member("TerritoryDescription"));
+        }
+
+        [Test]
+        public void Existing_Employee_Removed_With_Modified_Children_Have_Children_ModifiedProperties_Cleared()
+        {
+            // Arrange
+            var employee = _database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            var modifiedTerritory = employee.Territories[1];
+            modifiedTerritory.TerritoryDescription = "xxx";
+
+            // Act
+            changeTracker.Remove(employee);
+
+            // Assert
+            Assert.IsTrue(modifiedTerritory.ModifiedProperties == null
+                || modifiedTerritory.ModifiedProperties.Count == 0);
+        }
+
+        #endregion
+
+        #region ManyToMany - GetChanges Tests
+
+        [Test]
+        public void GetChanges_On_Existing_Employee_With_Territories_Should_Return_Marked_Territories()
+        {
+            // Arrange
+            var employee = _database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            var unchangedTerritory = employee.Territories[0];
+            var modifiedTerritory = employee.Territories[1];
+            var deletedTerritory = employee.Territories[2];
+            var addedTerritory = _database.Territories[3];
+            employee.Territories.Add(addedTerritory);
+            modifiedTerritory.TerritoryDescription = "xxx";
+            employee.Territories.Remove(deletedTerritory);
+
+            // Act
+            var changes = changeTracker.GetChanges();
+            var changedEmployee = changes.First();
+            var changedModifiedTerritory = changedEmployee.Territories.Single(t => t.TerritoryId == modifiedTerritory.TerritoryId);
+            var changedAddedTerritory = changedEmployee.Territories.Single(t => t.TerritoryId == addedTerritory.TerritoryId);
+            var changedDeletedTerritory = changedEmployee.Territories.Single(t => t.TerritoryId == deletedTerritory.TerritoryId);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, changedEmployee.TrackingState);
+            Assert.AreEqual(3, changedEmployee.Territories.Count);
+            Assert.AreEqual(TrackingState.Modified, changedModifiedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Added, changedAddedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, changedDeletedTerritory.TrackingState);
+            Assert.That(changedEmployee.Territories, Has.No.Member(unchangedTerritory));
         }
 
         #endregion

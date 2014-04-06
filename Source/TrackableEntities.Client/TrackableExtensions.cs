@@ -14,7 +14,9 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="item">Trackable object</param>
         /// <param name="enableTracking">Enable or disable change-tracking</param>
-        public static void SetTracking(this ITrackable item, bool enableTracking)
+        /// <param name="parent">ITrackable parent of item</param>
+        public static void SetTracking(this ITrackable item, 
+            bool enableTracking, ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
@@ -22,13 +24,24 @@ namespace TrackableEntities.Client
                 if (trackingColl != null)
                 {
                     // Recursively set change-tracking
+                    bool stopRecursion = false;
                     foreach (ITrackable child in trackingColl)
                     {
-                        child.SetTracking(enableTracking);
+                        // Stop recursion if trackable is same type as parent
+                        if (parent != null && (child.GetType() == parent.GetType()))
+                        {
+                            stopRecursion = true;
+                            break;
+                        }
+                        child.SetTracking(enableTracking, item);
                     }
 
-                    // Set tracking
-                    trackingColl.Tracking = enableTracking;
+                    // Enable tracking if we have not stopped recursion
+                    if (!stopRecursion)
+                    {
+                        trackingColl.Parent = item;
+                        trackingColl.Tracking = enableTracking;
+                    }
                 }
             }
         }
@@ -38,7 +51,9 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="item">Trackable object</param>
         /// <param name="state">Change-tracking state of an entity</param>
-        public static void SetState(this ITrackable item, TrackingState state)
+        /// <param name="parent">ITrackable parent of item</param>
+        public static void SetState(this ITrackable item, TrackingState state, 
+            ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
@@ -48,7 +63,10 @@ namespace TrackableEntities.Client
                     // Recursively set state
                     foreach (ITrackable child in trackingColl)
                     {
-                        child.SetState(state);
+                        // Stop recursion if trackable is same type as parent
+                        if (parent != null && (child.GetType() == parent.GetType()))
+                            break;
+                        child.SetState(state, item);
                         child.TrackingState = state;
                     }
                 }
@@ -60,7 +78,9 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="item">Trackable object</param>
         /// <param name="modified">Properties on an entity that have been modified</param>
-        public static void SetModifiedProperties(this ITrackable item, ICollection<string> modified)
+        /// <param name="parent">ITrackable parent of item</param>
+        public static void SetModifiedProperties(this ITrackable item,
+            ICollection<string> modified, ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
@@ -70,7 +90,10 @@ namespace TrackableEntities.Client
                     // Recursively set modified
                     foreach (ITrackable child in trackingColl)
                     {
-                        child.SetModifiedProperties(modified);
+                        // Stop recursion if trackable is same type as parent
+                        if (parent != null && (child.GetType() == parent.GetType()))
+                            break;
+                        child.SetModifiedProperties(modified, item);
                         child.ModifiedProperties = modified;
                     }
                 }
@@ -81,7 +104,8 @@ namespace TrackableEntities.Client
         /// Recursively set child collections in an object graph to changed items.
         /// </summary>
         /// <param name="item">Trackable object</param>
-        public static void SetChanges(this ITrackable item)
+        /// <param name="parent">ITrackable parent of item</param>
+        public static void SetChanges(this ITrackable item, ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
@@ -89,14 +113,24 @@ namespace TrackableEntities.Client
                 if (trackingColl != null)
                 {
                     // Recursively set changes
+                    bool stopRecursion = false;
                     foreach (ITrackable child in trackingColl)
                     {
-                        child.SetChanges();
+                        // Stop recursion if trackable is same type as parent
+                        if (parent != null && (child.GetType() == parent.GetType()))
+                        {
+                            stopRecursion = true;
+                            break;
+                        }
+                        child.SetChanges(item);
                     }
 
                     // Set collection property on cloned item
-                    ITrackingCollection changes = trackingColl.GetChanges();
-                    prop.SetValue(item, changes, null);
+                    if (!stopRecursion)
+                    {
+                        ITrackingCollection changes = trackingColl.GetChanges();
+                        prop.SetValue(item, changes, null); 
+                    }
                 }
             }
         }
@@ -105,7 +139,8 @@ namespace TrackableEntities.Client
         /// Recursively restore deletes from child collections in an object graph.
         /// </summary>
         /// <param name="item">Trackable object</param>
-        public static void RestoreDeletes(this ITrackable item)
+        /// <param name="parent">ITrackable parent of item</param>
+        public static void RestoreDeletes(this ITrackable item, ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
@@ -113,13 +148,21 @@ namespace TrackableEntities.Client
                 if (trackingColl != null)
                 {
                     // Recursively restore deletes
+                    bool stopRecursion = false;
                     foreach (ITrackable child in trackingColl)
                     {
-                        child.RestoreDeletes();
+                        // Stop recursion if trackable is same type as parent
+                        if (parent != null && (child.GetType() == parent.GetType()))
+                        {
+                            stopRecursion = true;
+                            break;
+                        }
+                        child.RestoreDeletes(item);
                     }
 
                     // Restore deletes on collection
-                    trackingColl.RestoreDeletes();
+                    if (!stopRecursion)
+                        trackingColl.RestoreDeletes();
                 }
             }
         }
@@ -129,7 +172,9 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="item">Trackable object</param>
         /// <param name="enableTracking">Set to true to track removed items</param>
-        public static void RemoveDeletes(this ITrackable item, bool enableTracking)
+        /// <param name="parent">ITrackable parent of item</param>
+        public static void RemoveDeletes(this ITrackable item, bool enableTracking,
+            ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
@@ -137,13 +182,20 @@ namespace TrackableEntities.Client
                 if (trackingColl != null)
                 {
                     // Recursively remove deletes
+                    bool stopRecursion = false;
                     foreach (ITrackable child in trackingColl)
                     {
-                        child.RemoveDeletes(enableTracking);
+                        if (parent != null && (child.GetType() == parent.GetType()))
+                        {
+                            stopRecursion = true;
+                            break;
+                        }
+                        child.RemoveDeletes(enableTracking, item);
                     }
 
                     // Remove deletes on collection
-                    trackingColl.RemoveDeletes(enableTracking);
+                    if (!stopRecursion)
+                        trackingColl.RemoveDeletes(enableTracking);
                 }
             }
         }
@@ -201,7 +253,8 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="item">Trackable object</param>
         /// <returns>True if item has child collections that have changes</returns>
-        public static bool HasChanges(this ITrackable item)
+        /// <param name="parent">ITrackable parent of item</param>
+        public static bool HasChanges(this ITrackable item, ITrackable parent = null)
         {
             foreach (var prop in item.GetType().GetProperties())
             {
@@ -209,15 +262,25 @@ namespace TrackableEntities.Client
                 if (trackingColl != null)
                 {
                     // Recursively check for child collection changes
+                    bool stopRecursion = false;
                     foreach (ITrackable child in trackingColl)
                     {
-                        bool hasChanges = child.HasChanges();
+                        // Stop recursion if trackable is same type as parent
+                        if (parent != null && (child.GetType() == parent.GetType()))
+                        {
+                            stopRecursion = true;
+                            break;
+                        }
+                        bool hasChanges = child.HasChanges(item);
                         if (hasChanges) return true;
                     }
 
                     // Return true if child collection has changes
-                    ITrackingCollection changes = trackingColl.GetChanges();
-                    if (changes.Count > 0) return true;
+                    if (!stopRecursion)
+                    {
+                        ITrackingCollection changes = trackingColl.GetChanges();
+                        if (changes.Count > 0) return true; 
+                    }
                 }
             }
             return false;

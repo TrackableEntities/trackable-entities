@@ -11,7 +11,7 @@ namespace TrackableEntities.Client
     /// Collection responsible for tracking changes to entities.
     /// </summary>
     /// <typeparam name="T">Trackable entity type</typeparam>
-    public class ChangeTrackingCollection<T> : ObservableCollection<T>, 
+    public class ChangeTrackingCollection<T> : ObservableCollection<T>,
         ITrackingCollection<T>, ITrackingCollection
         where T : class, ITrackable, INotifyPropertyChanged
     {
@@ -94,12 +94,17 @@ namespace TrackableEntities.Client
                     else item.PropertyChanged -= OnPropertyChanged;
 
                     // Enable tracking on trackable collection properties
-                    item.SetTracking(value);
+                    item.SetTracking(value, Parent);
                 }
                 _tracking = value;
             }
         }
         private bool _tracking;
+
+        /// <summary>
+        /// ITrackable parent referencing items in this collection.
+        /// </summary>
+        public ITrackable Parent { get; set; }
 
         // Fired when an item in the collection has changed
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -146,10 +151,10 @@ namespace TrackableEntities.Client
                 item.PropertyChanged += OnPropertyChanged;
 
                 // Enable tracking on trackable collection properties
-                item.SetTracking(Tracking);
+                item.SetTracking(Tracking, Parent);
 
                 // Mark items as added in trackable collection properties
-                item.SetState(TrackingState.Added);
+                item.SetState(TrackingState.Added, Parent);
 
                 // Fire EntityChanged event
                 if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
@@ -174,8 +179,8 @@ namespace TrackableEntities.Client
                     item.TrackingState = TrackingState.Unchanged;
                     item.ModifiedProperties = null;
                     item.PropertyChanged -= OnPropertyChanged;
-                    item.SetState(TrackingState.Unchanged);
-                    item.SetModifiedProperties(null);
+                    item.SetState(TrackingState.Unchanged, Parent);
+                    item.SetModifiedProperties(null, Parent);
                     if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
                 }
 
@@ -186,8 +191,8 @@ namespace TrackableEntities.Client
                     item.TrackingState = TrackingState.Deleted;
                     item.ModifiedProperties = null;
                     item.PropertyChanged -= OnPropertyChanged;
-                    item.SetState(TrackingState.Deleted);
-                    item.SetModifiedProperties(null);
+                    item.SetState(TrackingState.Deleted, Parent);
+                    item.SetModifiedProperties(null, Parent);
                     if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
                     _deletedEntities.Add(item);
                 }
@@ -207,13 +212,13 @@ namespace TrackableEntities.Client
             var changes = ((ITrackingCollection)this).GetChanges().Cast<T>()
                 .Union(this.Where(
                        t => t.TrackingState == TrackingState.Unchanged &&
-                       t.HasChanges()))
+                       t.HasChanges(Parent)))
                 .ToList();
 
             // Temporarily restore deletes to changes
             foreach (var change in changes)
             {
-                change.RestoreDeletes();
+                change.RestoreDeletes(Parent);
             }
 
             // Clone changes
@@ -222,13 +227,13 @@ namespace TrackableEntities.Client
             // Remove deletes from changes and re-cache
             foreach (var change in changes)
             {
-                change.RemoveDeletes(true);
+                change.RemoveDeletes(true, Parent);
             }
 
             // Set collection properties to include only changed items
             foreach (T item in items)
             {
-                item.SetChanges();
+                item.SetChanges(Parent);
             }
 
             // Return a new generic tracking collection

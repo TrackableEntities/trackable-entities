@@ -10,6 +10,8 @@ namespace TrackableEntities.Client.Tests.Entities.Mocks
         public ChangeTrackingCollection<Product> Products { get; private set; }
         public ChangeTrackingCollection<Customer> Customers { get; private set; }
         public ChangeTrackingCollection<Order> Orders { get; private set; }
+        public ChangeTrackingCollection<Employee> Employees { get; private set; }
+        public ChangeTrackingCollection<Territory> Territories { get; private set; }
 
         public MockNorthwind()
         {
@@ -119,6 +121,63 @@ namespace TrackableEntities.Client.Tests.Entities.Mocks
                                 new OrderDetail{ ProductId = 60, OrderId = 10252, Quantity = 40, UnitPrice = 27.2000M, Product = Products[26] },
                             }},
                 };
+            Territories = new ChangeTrackingCollection<Territory>
+            {
+                new Territory { TerritoryId = "01581", TerritoryDescription = "Westboro"},
+                new Territory { TerritoryId = "01730", TerritoryDescription = "Bedford"},
+                new Territory { TerritoryId = "01833", TerritoryDescription = "Georgetown"},
+                new Territory { TerritoryId = "02116", TerritoryDescription = "Boston"},
+                new Territory { TerritoryId = "02139", TerritoryDescription = "Cambridge"},
+                new Territory { TerritoryId = "02184", TerritoryDescription = "Braintree"},
+                new Territory { TerritoryId = "02903", TerritoryDescription = "Providence"},
+                new Territory { TerritoryId = "03049", TerritoryDescription = "Hollis"},
+                new Territory { TerritoryId = "03801", TerritoryDescription = "Portsmouth"},
+                new Territory { TerritoryId = "06897", TerritoryDescription = "Wilton"},
+                new Territory { TerritoryId = "07960", TerritoryDescription = "Morristown"},
+                new Territory { TerritoryId = "08837", TerritoryDescription = "Edison"},
+                new Territory { TerritoryId = "10019", TerritoryDescription = "New York"},
+                new Territory { TerritoryId = "11747", TerritoryDescription = "Melville"},
+                new Territory { TerritoryId = "14450", TerritoryDescription = "Fairport"},
+                new Territory { TerritoryId = "19428", TerritoryDescription = "Philadelphia"},
+                new Territory { TerritoryId = "19713", TerritoryDescription = "Neward"},
+                new Territory { TerritoryId = "20852", TerritoryDescription = "Rockville"},
+                new Territory { TerritoryId = "27403", TerritoryDescription = "Greensboro"},
+                new Territory { TerritoryId = "27511", TerritoryDescription = "Cary"},
+            };
+            Employees = new ChangeTrackingCollection<Employee>
+            {
+                new Employee { EmployeeId = 1, LastName = "Davolio", FirstName = "Nancy", BirthDate = DateTime.Parse("1948-12-08"), HireDate = DateTime.Parse("1992-05-01"), City = "Seattle", Country = "USA",
+                  Territories = new ChangeTrackingCollection<Territory>{ Territories[0], Territories[1], Territories[2] } },
+                new Employee { EmployeeId = 2, LastName = "Fuller", FirstName = "Andrew", BirthDate = DateTime.Parse("1952-02-19"), HireDate = DateTime.Parse("1992-08-14"), City = "Tacoma", Country = "USA",
+                  Territories = new ChangeTrackingCollection<Territory>{ Territories[1], Territories[2] } },
+                new Employee { EmployeeId = 3, LastName = "Leverling", FirstName = "Janet", BirthDate = DateTime.Parse("1963-08-30"), HireDate = DateTime.Parse("1992-05-01"), City = "Kirkland", Country = "USA",
+                  Territories = new ChangeTrackingCollection<Territory>{ Territories[2], Territories[3] } },
+                new Employee { EmployeeId = 4, LastName = "Peacock", FirstName = "Margaret", BirthDate = DateTime.Parse("1937-09-19"), HireDate = DateTime.Parse("1993-05-03"), City = "Redmond", Country = "USA",
+                  Territories = new ChangeTrackingCollection<Territory>{ Territories[3], Territories[4] } },
+                new Employee { EmployeeId = 5, LastName = "Buchanan", FirstName = "Steven", BirthDate = DateTime.Parse("1955-03-04"), HireDate = DateTime.Parse("1993-10-17"), City = "London", Country = "UK",
+                  Territories = new ChangeTrackingCollection<Territory>{ Territories[4], Territories[5] } },
+                new Employee { EmployeeId = 6, LastName = "Suyama", FirstName = "Michael", BirthDate = DateTime.Parse("1963-07-02"), HireDate = DateTime.Parse("1993-10-17"), City = "London", Country = "UK",
+                  Territories = new ChangeTrackingCollection<Territory>{ Territories[5], Territories[6] } },
+                new Employee { EmployeeId = 7, LastName = "King", FirstName = "Robert", BirthDate = DateTime.Parse("1960-05-29"), HireDate = DateTime.Parse("1994-01-02"), City = "London", Country = "UK",
+                  Territories = new ChangeTrackingCollection<Territory>{ Territories[6], Territories[7] } },
+                new Employee { EmployeeId = 8, LastName = "Callahan", FirstName = "Laura", BirthDate = DateTime.Parse("1958-01-09"), HireDate = DateTime.Parse("1994-03-05"), City = "Seattle", Country = "USA",
+                  Territories = new ChangeTrackingCollection<Territory>{ Territories[7], Territories[8] } },
+                new Employee { EmployeeId = 9, LastName = "Dodsworth", FirstName = "Anne", BirthDate = DateTime.Parse("1966-01-27"), HireDate = DateTime.Parse("1994-11-15"), City = "London", Country = "UK",
+                  Territories = new ChangeTrackingCollection<Territory>{ Territories[8], Territories[9] } },
+            };
+            FixupEmployeeTerritories();
+        }
+
+        private void FixupEmployeeTerritories()
+        {
+            foreach (var employee in Employees)
+            {
+                foreach (var territory in employee.Territories)
+                {
+                    if (!territory.Employees.Contains(employee))
+                        territory.Employees.Add(employee);
+                }
+            }
         }
     }
 }

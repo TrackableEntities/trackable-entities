@@ -29,5 +29,10 @@ namespace TrackableEntities.Client
         /// Properties to exclude from change tracking.
         /// </summary>
         IList<string> ExcludedProperties { get; }
+
+        /// <summary>
+        /// ITrackable parent referencing items in this collection.
+        /// </summary>
+        ITrackable Parent { get; set; }
     }
 }
