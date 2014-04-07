@@ -12,6 +12,14 @@ namespace TrackableEntities.EF.Tests
         {
             foreach (var prop in item.GetType().GetProperties())
             {
+                var trackableRef = prop.GetValue(item, null) as ITrackable;
+                if (trackableRef != null
+                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                {
+                    trackableRef.SetTrackingState(state, parent);
+                    trackableRef.TrackingState = state;
+                }
+
                 var trackingColl = prop.GetValue(item, null) as ICollection;
                 if (trackingColl != null)
                 {
@@ -34,6 +42,17 @@ namespace TrackableEntities.EF.Tests
         {
             foreach (var prop in item.GetType().GetProperties())
             {
+                var trackableRef = prop.GetValue(item, null) as ITrackable;
+                if (trackableRef != null
+                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                {
+                    foreach (var state in trackableRef.GetTrackingStates(parent: item))
+                    {
+                        if (trackingState == null || state == trackingState)
+                            yield return state;
+                    }
+                }
+
                 var trackingColl = prop.GetValue(item, null) as ICollection;
                 if (trackingColl != null)
                 {
@@ -59,6 +78,16 @@ namespace TrackableEntities.EF.Tests
         {
             foreach (var prop in item.GetType().GetProperties())
             {
+                var trackableRef = prop.GetValue(item, null) as ITrackable;
+                if (trackableRef != null
+                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                {
+                    foreach (var modifiedProps in trackableRef.GetModifiedProperties(item))
+                    {
+                        yield return modifiedProps;
+                    }
+                }
+
                 var trackingColl = prop.GetValue(item, null) as ICollection;
                 if (trackingColl != null)
                 {

@@ -16,6 +16,8 @@ namespace TrackableEntities.EF5.Tests
     [TestFixture]
     public class TrackableExtensionsTests
     {
+        #region OneToMany AcceptChanges Tests
+
         [Test]
         public void Accept_Changes_Should_Mark_Family_Unchanged()
         {
@@ -44,6 +46,24 @@ namespace TrackableEntities.EF5.Tests
             // Assert
             var states = parent.GetTrackingStates(TrackingState.Unchanged).ToList();
             Assert.AreEqual(26, states.Count());
+        }
+
+        [Test]
+        public void Accept_Changes_Should_Remove_ModifiedProperties_From_Family()
+        {
+            // Arrange
+            var parent = new MockFamily().Parent;
+            parent.ModifiedProperties = new List<string> { "Name" };
+            parent.Children[0].ModifiedProperties = new List<string> { "Name" };
+            parent.Children[0].Children[0].ModifiedProperties = new List<string> { "Name" };
+            parent.Children[0].Children[0].Children[1].ModifiedProperties = new List<string> { "Name" };
+
+            // Act
+            parent.AcceptChanges();
+
+            // Assert
+            IEnumerable<IEnumerable<string>> modifiedProps = parent.GetModifiedProperties();
+            Assert.IsFalse(modifiedProps.Any(p => p != null));
         }
 
         [Test]
@@ -76,26 +96,12 @@ namespace TrackableEntities.EF5.Tests
             Assert.AreEqual(2, parent.Children[0].Children[0].Children.Count);
         }
 
-        [Test]
-        public void Accept_Changes_Should_Remove_Family_ModifiedProperties()
-        {
-            // Arrange
-            var parent = new MockFamily().Parent;
-            parent.ModifiedProperties = new List<string> {"Name"};
-            parent.Children[0].ModifiedProperties = new List<string> {"Name"};
-            parent.Children[0].Children[0].ModifiedProperties = new List<string> {"Name"};
-            parent.Children[0].Children[0].Children[1].ModifiedProperties = new List<string> {"Name"};
+        #endregion
 
-            // Act
-            parent.AcceptChanges();
-
-            // Assert
-            IEnumerable<IEnumerable<string>> modifiedProps = parent.GetModifiedProperties();
-            Assert.IsFalse(modifiedProps.Any(p => p != null));
-        }
+        #region ManyToMany AcceptChanges Tests
 
         [Test]
-        public void Accept_Changes_Should_Mark_Employee_Unchanged()
+        public void Accept_Changes_Should_Mark_Employee_With_Territories_Unchanged()
         {
             // Arrange
             var northwind = new MockNorthwind();
@@ -103,13 +109,12 @@ namespace TrackableEntities.EF5.Tests
             employee.TrackingState = TrackingState.Modified;
             employee.Territories[0].TrackingState = TrackingState.Modified;
             employee.Territories[1].TrackingState = TrackingState.Deleted;
-            employee.Territories.Add(northwind.Territories[2]); // unchanged
             var territory = new Territory
             {
                 TerritoryId = "75070",
                 TerritoryDescription = "North Dallas",
                 TrackingState = TrackingState.Added,
-                Employees = new List<Employee> {employee}
+                Employees = new List<Employee> { employee }
             };
             employee.Territories.Add(territory);
 
@@ -118,18 +123,18 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             IEnumerable<TrackingState> states = employee.GetTrackingStates(TrackingState.Unchanged);
-            Assert.AreEqual(5, states.Count());
+            Assert.AreEqual(4, states.Count());
         }
 
         [Test]
-        public void Accept_Changes_Should_Remove_Employee_ModifiedProperties()
+        public void Accept_Changes_Should_Remove_ModifiedProperties_From_Employee_With_Territories()
         {
             // Arrange
             var northwind = new MockNorthwind();
             var employee = northwind.Employees[0];
             employee.TrackingState = TrackingState.Modified;
-            employee.ModifiedProperties = new List<string> {"LastName"};
-            employee.Territories[0].ModifiedProperties = new List<string> {"TerritoryDescription"};
+            employee.ModifiedProperties = new List<string> { "LastName" };
+            employee.Territories[0].ModifiedProperties = new List<string> { "TerritoryDescription" };
 
             // Act
             employee.AcceptChanges();
@@ -138,5 +143,224 @@ namespace TrackableEntities.EF5.Tests
             IEnumerable<IEnumerable<string>> modifiedProps = employee.GetModifiedProperties();
             Assert.IsFalse(modifiedProps.Any(p => p != null));
         }
+
+        [Test]
+        public void Accept_Changes_Should_Remove_Deleted_Territories_From_Employee()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var employee = northwind.Employees[0];
+            employee.TrackingState = TrackingState.Modified;
+            employee.Territories[0].TrackingState = TrackingState.Modified;
+            employee.Territories[1].TrackingState = TrackingState.Deleted;
+            var territory = new Territory
+            {
+                TerritoryId = "75070",
+                TerritoryDescription = "North Dallas",
+                TrackingState = TrackingState.Added,
+                Employees = new List<Employee> { employee }
+            };
+            employee.Territories.Add(territory);
+
+            // Act
+            employee.AcceptChanges();
+
+            // Assert
+            Assert.AreEqual(3, employee.Territories.Count);
+        }
+
+        #endregion
+
+        #region ManyToOne AcceptChanges Tests
+
+        [Test]
+        public void Accept_Changes_Should_Mark_Order_With_Modified_Customer_Unchanged()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var order = northwind.Orders[0];
+            order.TrackingState = TrackingState.Modified;
+            order.Customer.TrackingState = TrackingState.Modified;
+
+            // Act
+            order.AcceptChanges();
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+        }
+
+        [Test]
+        public void Accept_Changes_Should_Mark_Order_With_Added_Customer_Unchanged()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var order = northwind.Orders[0];
+            order.TrackingState = TrackingState.Modified;
+            order.Customer.TrackingState = TrackingState.Added;
+
+            // Act
+            order.AcceptChanges();
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+        }
+
+        [Test]
+        public void Accept_Changes_Should_Mark_Order_With_Deleted_Customer_Unchanged()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var order = northwind.Orders[0];
+            order.TrackingState = TrackingState.Modified;
+            order.Customer.TrackingState = TrackingState.Deleted;
+
+            // Act
+            order.AcceptChanges();
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+        }
+
+        [Test]
+        public void Accept_Changes_Should_Remove_ModifiedProperties_From_Order_With_Customer()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var order = northwind.Orders[0];
+            order.TrackingState = TrackingState.Modified;
+            order.ModifiedProperties = new List<string> { "OrderDate" };
+            order.Customer.TrackingState = TrackingState.Modified;
+            order.Customer.ModifiedProperties = new List<string> { "CustomerName" };
+
+            // Act
+            order.AcceptChanges();
+
+            // Assert
+            Assert.IsFalse(order.GetModifiedProperties().Any(p => p != null));
+            Assert.IsFalse(order.Customer.GetModifiedProperties().Any(p => p != null));
+        }
+
+        [Test]
+        public void Accept_Changes_Should_Not_Remove_Deleted_Customer_From_Order()
+        {
+            // NOTE: Reference entities cannot be deleted from a related entity, because
+            // of possible referential constraints, but they can be deleted independently.
+
+            // Arrange
+            var northwind = new MockNorthwind();
+            var order = northwind.Orders[0];
+            order.TrackingState = TrackingState.Modified;
+            order.Customer.TrackingState = TrackingState.Deleted;
+
+            // Act
+            order.AcceptChanges();
+
+            // Assert
+            Assert.IsNotNull(order.Customer);
+            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+        }
+
+        #endregion
+
+        #region OneToOne AcceptChanges Tests
+
+        [Test]
+        public void Accept_Changes_Should_Mark_Customer_With_Modified_CustomerSetting_Unchanged()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var customer = northwind.Customers[0];
+            customer.TrackingState = TrackingState.Modified;
+            customer.CustomerSetting = new CustomerSetting
+                {TrackingState = TrackingState.Modified};
+
+            // Act
+            customer.AcceptChanges();
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
+        }
+
+        [Test]
+        public void Accept_Changes_Should_Mark_Customer_With_Added_CustomerSetting_Unchanged()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var customer = northwind.Customers[0];
+            customer.TrackingState = TrackingState.Modified;
+            customer.CustomerSetting = new CustomerSetting
+                { TrackingState = TrackingState.Added };
+
+            // Act
+            customer.AcceptChanges();
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
+        }
+
+        [Test]
+        public void Accept_Changes_Should_Mark_Customer_With_Deleted_CustomerSetting_Unchanged()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var customer = northwind.Customers[0];
+            customer.TrackingState = TrackingState.Modified;
+            customer.CustomerSetting = new CustomerSetting
+            { TrackingState = TrackingState.Deleted };
+
+            // Act
+            customer.AcceptChanges();
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
+        }
+
+        [Test]
+        public void Accept_Changes_Should_Remove_ModifiedProperties_From_Customer_With_CustomerSetting()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var customer = northwind.Customers[0];
+            customer.TrackingState = TrackingState.Modified;
+            customer.ModifiedProperties = new List<string> { "CustomerName" };
+            customer.CustomerSetting = new CustomerSetting
+                { TrackingState = TrackingState.Modified };
+            customer.CustomerSetting.ModifiedProperties = new List<string> { "Setting" };
+
+            // Act
+            customer.AcceptChanges();
+
+            // Assert
+            Assert.IsFalse(customer.GetModifiedProperties().Any(p => p != null));
+            Assert.IsFalse(customer.CustomerSetting.GetModifiedProperties().Any(p => p != null));
+        }
+
+        [Test]
+        public void Accept_Changes_Should_Not_Remove_Deleted_CustomerSetting_From_Customer()
+        {
+            // NOTE: Reference entities cannot be deleted from a related entity, because
+            // of possible referential constraints, but they can be deleted independently.
+
+            // Arrange
+            var northwind = new MockNorthwind();
+            var customer = northwind.Customers[0];
+            customer.TrackingState = TrackingState.Modified;
+            customer.CustomerSetting = new CustomerSetting { TrackingState = TrackingState.Deleted };
+
+            // Act
+            customer.AcceptChanges();
+
+            // Assert
+            Assert.IsNotNull(customer.CustomerSetting);
+            Assert.AreEqual(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
+        }
+
+        #endregion
     }
 }
