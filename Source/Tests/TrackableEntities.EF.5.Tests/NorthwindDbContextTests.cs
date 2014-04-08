@@ -9,7 +9,6 @@ using TrackableEntities.EF6;
 using TrackableEntities.EF5;
 #endif
 using TrackableEntities.EF.Tests;
-using TrackableEntities.EF.Tests.FamilyModels;
 using TrackableEntities.EF.Tests.Mocks;
 using TrackableEntities.EF.Tests.NorthwindModels;
 
@@ -22,7 +21,6 @@ namespace TrackableEntities.EF5.Tests
 	[TestFixture]
 	public class NorthwindDbContextTests
 	{
-		const CreateDbOptions CreateFamilyDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
 		const CreateDbOptions CreateNorthwindDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
 
 		#region Product: Single Entity
@@ -85,6 +83,116 @@ namespace TrackableEntities.EF5.Tests
 
 			// Assert
 			Assert.AreEqual(EntityState.Deleted, context.Entry(parent).State);
+		}
+
+		#endregion
+
+		#region Product: Multiple Entities
+
+		[Test]
+		public void Apply_Changes_Should_Mark_Products_Unchanged()
+		{
+			// Arrange
+			var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+			var products = new List<Product>
+			{
+				new Product {ProductId = 1}, 
+				new Product { ProductId = 2}
+			};
+			products.ForEach(p => p.TrackingState = TrackingState.Unchanged);
+
+			// Act
+			context.ApplyChanges(products);
+
+			// Assert
+			Assert.AreEqual(EntityState.Unchanged, context.Entry(products[0]).State);
+			Assert.AreEqual(EntityState.Unchanged, context.Entry(products[1]).State);
+		}
+
+		[Test]
+		public void Apply_Changes_Should_Mark_Products_Added()
+		{
+			// Arrange
+			var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+			var products = new List<Product>
+			{
+				new Product {ProductId = 1}, 
+				new Product { ProductId = 2}
+			};
+			products.ForEach(p => p.TrackingState = TrackingState.Added);
+
+			// Act
+			context.ApplyChanges(products);
+
+			// Assert
+			Assert.AreEqual(EntityState.Added, context.Entry(products[0]).State);
+			Assert.AreEqual(EntityState.Added, context.Entry(products[1]).State);
+		}
+
+		[Test]
+		public void Apply_Changes_Should_Mark_Products_Modified()
+		{
+			// Arrange
+			var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+			var products = new List<Product>
+			{
+				new Product {ProductId = 1}, 
+				new Product { ProductId = 2}
+			};
+			products.ForEach(p => p.TrackingState = TrackingState.Modified);
+
+			// Act
+			context.ApplyChanges(products);
+
+			// Assert
+			Assert.AreEqual(EntityState.Modified, context.Entry(products[0]).State);
+			Assert.AreEqual(EntityState.Modified, context.Entry(products[1]).State);
+		}
+
+		[Test]
+		public void Apply_Changes_Should_Mark_Products_Deleted()
+		{
+			// Arrange
+			var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+			var products = new List<Product>
+			{
+				new Product {ProductId = 1}, 
+				new Product { ProductId = 2}
+			};
+			products.ForEach(p => p.TrackingState = TrackingState.Deleted);
+
+			// Act
+			context.ApplyChanges(products);
+
+			// Assert
+			Assert.AreEqual(EntityState.Deleted, context.Entry(products[0]).State);
+			Assert.AreEqual(EntityState.Deleted, context.Entry(products[1]).State);
+		}
+
+		[Test]
+		public void Apply_Changes_Should_Mark_Products()
+		{
+			// Arrange
+			var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+			var products = new List<Product>
+			{
+				new Product { ProductId = 1}, 
+				new Product { ProductId = 2},
+				new Product { ProductId = 3},
+				new Product { ProductId = 4},
+			};
+			products[1].TrackingState = TrackingState.Modified;
+			products[2].TrackingState = TrackingState.Added;
+			products[3].TrackingState = TrackingState.Deleted;
+
+			// Act
+			context.ApplyChanges(products);
+
+			// Assert
+			Assert.AreEqual(EntityState.Unchanged, context.Entry(products[0]).State);
+			Assert.AreEqual(EntityState.Modified, context.Entry(products[1]).State);
+			Assert.AreEqual(EntityState.Added, context.Entry(products[2]).State);
+			Assert.AreEqual(EntityState.Deleted, context.Entry(products[3]).State);
 		}
 
 		#endregion
@@ -973,7 +1081,7 @@ namespace TrackableEntities.EF5.Tests
 		{
 			// NOTE: We ignore deletes of related M-1 entities to because it may be related
 			// to other entities.
-			
+
 			// Arrange
 			var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
 			var nw = new MockNorthwind();

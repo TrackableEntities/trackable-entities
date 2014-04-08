@@ -5,8 +5,14 @@ namespace TrackableEntities.EF.Tests.Contexts
 {
     public class NorthwindDbContext : DbContext
     {
+#if EF_6
+        private const string TestDbName = "NorthwindTestDbv6";        
+#else
+        private const string TestDbName = "NorthwindTestDbv5";        
+#endif
+
         public NorthwindDbContext(CreateDbOptions createDbOptions = CreateDbOptions.CreateDatabaseIfNotExists)
-            : base("NorthwindTestDb")
+            : base(TestDbName)
         {
             switch (createDbOptions)
             {

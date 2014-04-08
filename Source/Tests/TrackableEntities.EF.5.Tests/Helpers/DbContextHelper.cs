@@ -46,18 +46,22 @@ namespace TrackableEntities.EF.Tests
         public static bool RelatedItemHasBeenAdded(this DbContext context,
             object source, object target)
         {
-            return context.GetAddedRelationships()
-                .Any(r => ReferenceEquals(r.Item1, target)
-                    && ReferenceEquals(r.Item2, source));
+            var addedRels = context.GetAddedRelationships();
+            bool itemAdded = addedRels
+                .Any(r => ReferenceEquals(r.Item1, source)
+                    && ReferenceEquals(r.Item2, target));
+            return itemAdded;
         }
 
         // Returns true if target entity has been removed from relationship with source entity
         public static bool RelatedItemHasBeenRemoved(this DbContext context,
             object source, object target)
         {
-            return context.GetDeletedRelationships()
-                .Any(r => ReferenceEquals(r.Item1, target)
-                    && ReferenceEquals(r.Item2, source));
+            var deletedRels = context.GetDeletedRelationships();
+            bool itemRemoved = deletedRels
+                .Any(r => ReferenceEquals(r.Item1, source)
+                    && ReferenceEquals(r.Item2, target));
+            return itemRemoved;
         }
 
         // Returns tuples with ends for added relationships

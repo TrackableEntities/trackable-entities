@@ -23,7 +23,6 @@ namespace TrackableEntities.EF5.Tests
     public class FamilyDbContextTests
     {
         const CreateDbOptions CreateFamilyDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
-        const CreateDbOptions CreateNorthwindDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
 
         [Test]
         public void Apply_Changes_Should_Mark_Added_Parent()

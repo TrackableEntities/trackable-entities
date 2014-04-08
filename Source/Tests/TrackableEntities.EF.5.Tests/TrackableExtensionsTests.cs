@@ -96,6 +96,37 @@ namespace TrackableEntities.EF5.Tests
             Assert.AreEqual(2, parent.Children[0].Children[0].Children.Count);
         }
 
+        [Test]
+        public void Accept_Changes_Should_Mark_Multiple_Orders_As_Unchanged()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var order1 = northwind.Orders[0];
+            order1.TrackingState = TrackingState.Modified;
+            order1.Customer.TrackingState = TrackingState.Modified;
+            order1.OrderDetails[1].TrackingState = TrackingState.Modified;
+            order1.OrderDetails[2].TrackingState = TrackingState.Added;
+            order1.OrderDetails[3].TrackingState = TrackingState.Deleted;
+
+            var order2 = northwind.Orders[2];
+            order2.Customer.TrackingState = TrackingState.Modified;
+            order2.OrderDetails[0].TrackingState = TrackingState.Modified;
+            order2.OrderDetails[1].TrackingState = TrackingState.Added;
+            order2.OrderDetails[2].TrackingState = TrackingState.Deleted;
+
+            // Act
+            var orders = new List<Order> {order1, order2};
+            orders.AcceptChanges();
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, order1.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, order1.Customer.TrackingState);
+            Assert.IsFalse(order1.OrderDetails.Any(d => d.TrackingState != TrackingState.Unchanged));
+            Assert.AreEqual(TrackingState.Unchanged, order2.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, order2.Customer.TrackingState);
+            Assert.IsFalse(order2.OrderDetails.Any(d => d.TrackingState != TrackingState.Unchanged));
+        }
+
         #endregion
 
         #region ManyToMany AcceptChanges Tests

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace TrackableEntities.Common
 {
@@ -16,6 +17,17 @@ namespace TrackableEntities.Common
         {
             // Recursively set tracking state for child collections
             item.AcceptChanges(null);
+        }
+
+        /// <summary>
+        /// Set tracking state to Unchanged on entities and their child collections.
+        /// </summary>
+        /// <param name="items">Trackable objects</param>
+        public static void AcceptChanges(this IEnumerable<ITrackable> items)
+        {
+            // Recursively set tracking state for child collections
+            foreach (var item in items)
+                item.AcceptChanges(null);
         }
 
         private static void AcceptChanges(this ITrackable item, ITrackable parent)

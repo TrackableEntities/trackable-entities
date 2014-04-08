@@ -90,6 +90,9 @@
     <Compile Include="..\TrackableEntities.EF.5.Tests\Helpers\TrackingStateHelper.cs">
       <Link>Helpers\TrackingStateHelper.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\LoadRelatedEntitiesTests.cs">
+      <Link>LoadRelatedEntitiesTests.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\Mocks\MockFamily.cs">
       <Link>Mocks\MockFamily.cs</Link>
     </Compile>
@@ -101,6 +104,9 @@
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindDbInitializer.cs">
       <Link>NorthwindDbInitializer.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Area.cs">
+      <Link>NorthwindModels\Area.cs</Link>
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Category.cs">
       <Link>NorthwindModels\Category.cs</Link>

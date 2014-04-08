@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contexts\NorthwindDbContext.cs" />
+    <Compile Include="LoadRelatedEntitiesTests.cs" />
     <Compile Include="NorthwindDbContextTests.cs" />
     <Compile Include="FamilyDbContextTests.cs" />
     <Compile Include="Contexts\FamilyDbContext.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Mocks\MockFamily.cs" />
     <Compile Include="Mocks\MockNorthwind.cs" />
     <Compile Include="NorthwindDbInitializer.cs" />
+    <Compile Include="NorthwindModels\Area.cs" />
     <Compile Include="NorthwindModels\CustomerSetting.cs" />
     <Compile Include="NorthwindModels\Territory.cs" />
     <Compile Include="NorthwindModels\Employee.cs" />
