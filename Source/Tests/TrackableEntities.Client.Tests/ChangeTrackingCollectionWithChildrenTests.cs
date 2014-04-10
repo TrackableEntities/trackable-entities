@@ -338,7 +338,9 @@ namespace TrackableEntities.Client.Tests
             // Act
 
             // Merge updates into orig order
+#pragma warning disable 618
             changeTracker.MergeChanges(ref origOrder, updatedOrder);
+#pragma warning restore 618
 
             // Assert
             // Orig reference pointed to updated
