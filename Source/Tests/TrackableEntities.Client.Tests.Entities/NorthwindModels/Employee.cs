@@ -113,7 +113,10 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 
         bool IEquatable<Employee>.Equals(Employee other)
         {
+            if (EntityIdentifier != new Guid())
+                return EntityIdentifier == other.EntityIdentifier;
             return EmployeeId.Equals(other.EmployeeId);
         }
+        private Guid EntityIdentifier { get; set; }
     }
 }

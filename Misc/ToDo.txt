@@ -4,6 +4,12 @@ Release v2.0 Apr-2014:
 
 - Set version to 2.0
 
+- Create integration tests with SpecFlow
+  > Test T4 templates
+  > Test Serialization, Equatability
+  > Test LoadRelatedEntities
+  > Test MergeChanges
+
 - DbContext.LoadRelatedEntities method
   > Make sure no dup id's to entity sql
 
@@ -25,12 +31,21 @@ Release v2.0 Apr-2014:
   > Add M-1 ref props, change tracker
   > Check if 1-M init in ctor
   > Explicitly implement IEquatable
-    - Accommodate multiple keys
+    - Make private EntityIdentifer serializable
+      - Json, DataContract
   > Replace == with value.Equals
     - Use ReferenceEquals for ref props
 
 - Server T4 templates
   > Mapping.tt: using System.ComponentModel.DataAnnotations.Schema;
+  > Add private EntityIdentifer
+    - Make serializable for Json, DataContract
 
 - Bug fixes
   > See codeplex issues
+  
+MergeChanges Feature:
+- Entity sets private EntityIdentifier for Added
+  > On client only
+- MergeChanges reads
+  
