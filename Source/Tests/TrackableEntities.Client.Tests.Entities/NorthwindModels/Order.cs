@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Order : ModelBase<Order>, ITrackable
+    public class Order : ModelBase<Order>, ITrackable, IEquatable<Order>
     {
         private int _orderId;
         public int OrderId
@@ -73,5 +73,10 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 
         public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }
+
+        bool IEquatable<Order>.Equals(Order other)
+        {
+            return OrderId.Equals(other.OrderId);
+        }
     }
 }

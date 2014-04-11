@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Customer : ModelBase<Customer>, ITrackable
+    public class Customer : ModelBase<Customer>, ITrackable, IEquatable<Customer>
     {
         private string _customerId;
         public string CustomerId
@@ -42,6 +43,17 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             }
         }
 
+        private string _territoryId;
+        public string TerritoryId
+        {
+            get { return _territoryId; }
+            set
+            {
+                _territoryId = value;
+                NotifyPropertyChanged(m => m.TerritoryId);
+            }
+        }
+
         // NOTE: Reference properties are change-tracked but do not call 
         // NotifyPropertyChanged because it is called by foreign key's property setter.
 
@@ -59,7 +71,26 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
         }
         private ChangeTrackingCollection<CustomerSetting> CustomerSettingChangeTracker { get; set; }
 
+        private Territory _territory;
+        public Territory Territory
+        {
+            get { return _territory; }
+            set
+            {
+                if (value == _territory) return;
+                _territory = value;
+                TerritoryChangeTracker = _territory == null ? null
+                    : new ChangeTrackingCollection<Territory> { _territory };
+            }
+        }
+        private ChangeTrackingCollection<Territory> TerritoryChangeTracker { get; set; }
+
         public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }
+
+        bool IEquatable<Customer>.Equals(Customer other)
+        {
+            return CustomerId.Equals(other.CustomerId);
+        }
     }
 }

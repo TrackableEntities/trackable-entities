@@ -257,14 +257,14 @@ namespace TrackableEntities.Client
         }
 
         /// <summary>
-        /// Merge changed child items into the original trackable entity. 
+        /// <para>Merge changed child items into the original trackable entity. 
         /// This assumes GetChanges was called to update only changed items. 
-        /// Non-recursive - only direct children will be merged. 
-        /// Usage: MergeChanges(ref originalItem, updatedItem);
+        /// Non-recursive - only direct children will be merged.</para> 
+        /// <code>Usage: MergeChanges(ref originalItem, updatedItem);</code>
         /// </summary>
         /// <param name="originalItem">Local entity containing unchanged child items.</param>
         /// <param name="updatedItem">Entity returned by an update operation.</param>
-        [Obsolete("ChangeTrackingCollection.MergeChanges has been deprecated. Instead use extension method for ITrackable.MergeChanges or IEnumerable<ITrackable>.MergeChanges.")]
+        [Obsolete("ChangeTrackingCollection.MergeChanges has been deprecated. Instead use ITrackable.MergeChanges or IEnumerable<ITrackable>.MergeChanges.")]
         public void MergeChanges(ref T originalItem, T updatedItem)
         {
             // Get unchanged child entities
@@ -294,7 +294,7 @@ namespace TrackableEntities.Client
             Add(updatedItem);
             Tracking = tracking;
 
-            // Set original item to updated item with unchagned items merged in
+            // Set original item to updated item with unchanged items merged in
             originalItem = updatedItem;
         }
 

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Employee : ModelBase<Employee>, ITrackable
+    public class Employee : ModelBase<Employee>, ITrackable, IEquatable<Employee>
     {
         public Employee()
         {
@@ -110,5 +110,10 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 
         public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }
+
+        bool IEquatable<Employee>.Equals(Employee other)
+        {
+            return EmployeeId.Equals(other.EmployeeId);
+        }
     }
 }

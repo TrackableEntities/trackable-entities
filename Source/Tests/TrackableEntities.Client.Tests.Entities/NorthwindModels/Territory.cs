@@ -5,11 +5,12 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Territory : ModelBase<Territory>, ITrackable
+    public class Territory : ModelBase<Territory>, ITrackable, IEquatable<Territory>
     {
         public Territory()
         {
             _employees = new ChangeTrackingCollection<Employee> { Parent = this };
+            _customers = new ChangeTrackingCollection<Customer> { Parent = this };
         }
 
         private string _territoryId;
@@ -48,6 +49,32 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             }
         }
 
+        private int _areaId;
+        public int AreaId
+        {
+            get { return _areaId; }
+            set
+            {
+                if (value == _areaId) return;
+                _areaId = value;
+                NotifyPropertyChanged(m => m.AreaId);
+            }
+        }
+
+        private Area _area;
+        public Area Area
+        {
+            get { return _area; }
+            set
+            {
+                if (value == _area) return;
+                _area = value;
+                AreaChangeTracker = _area == null ? null
+                    : new ChangeTrackingCollection<Area> { _area };
+            }
+        }
+        private ChangeTrackingCollection<Area> AreaChangeTracker { get; set; }
+
         private ChangeTrackingCollection<Employee> _employees;
         public ChangeTrackingCollection<Employee> Employees
         {
@@ -60,7 +87,24 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             }
         }
 
+        private ChangeTrackingCollection<Customer> _customers;
+        public ChangeTrackingCollection<Customer> Customers
+        {
+            get { return _customers; }
+            set
+            {
+                if (Equals(value, _customers)) return;
+                _customers = value;
+                NotifyPropertyChanged(m => m.Customers);
+            }
+        }
+
         public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }
+
+        bool IEquatable<Territory>.Equals(Territory other)
+        {
+            return TerritoryId.Equals(other.TerritoryId);
+        }
     }
 }

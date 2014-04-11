@@ -1,13 +1,36 @@
 Trackable Entities To Do
 
-4-Apr-2014:
-- Add many-to-many support
-  > Common: AcceptChanges
-  > Server: ApplyChanges
-  > Client: Test adding M-M entities
-- Look at implementing M-1 support
-- Update to EF 6.1
+Release v2.0 Apr-2014:
+
+- Set version to 2.0
+
+- DbContext.LoadRelatedEntities method
+  > Make sure no dup id's to entity sql
+
+- Add support for M-M, M-1, 1-1
+  > AcceptChanges
+  > ApplyChanges
+  > MergeChanges
+
+- Refactor MergeChanges
+  > Make recursive (1-M, M-M, M-1, 1-1)
+
+- Update to EF 6.1 runtime
+  > NuGet package update
+
 - Use 6.1 new CF designer
-- Mapping.tt: using System.ComponentModel.DataAnnotations.Schema;
-- Fix mod props issue
-- Other isses on codeplex site
+
+- Client T4 templates
+  > M-M ctor: init new CT w parent
+  > Add M-1 ref props, change tracker
+  > Check if 1-M init in ctor
+  > Explicitly implement IEquatable
+    - Accommodate multiple keys
+  > Replace == with value.Equals
+    - Use ReferenceEquals for ref props
+
+- Server T4 templates
+  > Mapping.tt: using System.ComponentModel.DataAnnotations.Schema;
+
+- Bug fixes
+  > See codeplex issues

@@ -79,6 +79,8 @@
     <Compile Include="ITrackingCollectionOfT.cs" />
     <Compile Include="ModelBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Trackable_lame.cs" />
+    <Compile Include="ChangeTrackingExtensions.cs" />
     <Compile Include="TrackableExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

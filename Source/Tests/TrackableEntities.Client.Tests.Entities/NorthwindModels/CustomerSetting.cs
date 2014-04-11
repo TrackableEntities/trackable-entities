@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class CustomerSetting : ModelBase<CustomerSetting>, ITrackable
+    public class CustomerSetting : ModelBase<CustomerSetting>, ITrackable, IEquatable<CustomerSetting>
     {
         private string _customerId;
         public string CustomerId
@@ -49,5 +50,10 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 
         public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }
+
+        bool IEquatable<CustomerSetting>.Equals(CustomerSetting other)
+        {
+            return CustomerId.Equals(other.CustomerId);
+        }
     }
 }

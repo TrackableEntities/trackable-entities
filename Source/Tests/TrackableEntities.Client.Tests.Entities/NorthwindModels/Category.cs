@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Category : ModelBase<Category>, ITrackable
+    public class Category : ModelBase<Category>, ITrackable, IEquatable<Category>
     {
         private int _categoryId;
         public int CategoryId
@@ -44,5 +45,10 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 
         public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }
+
+        bool IEquatable<Category>.Equals(Category other)
+        {
+            return CategoryId.Equals(other.CategoryId);
+        }
     }
 }
