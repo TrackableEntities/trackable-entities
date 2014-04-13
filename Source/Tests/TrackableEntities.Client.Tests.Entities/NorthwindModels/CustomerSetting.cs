@@ -48,27 +48,21 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
         }
         private ChangeTrackingCollection<Customer> CustomerChangeTracker { get; set; }
 
+        public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }
-
-        private TrackingState _trackingState;
-        public TrackingState TrackingState
-        {
-            get { return _trackingState; }
-            set
-            {
-                EntityIdentifier = value == TrackingState.Added
-                    ? Guid.NewGuid()
-                    : new Guid();
-                _trackingState = value;
-            }
-        }
 
         bool IEquatable<CustomerSetting>.Equals(CustomerSetting other)
         {
-            if (EntityIdentifier != new Guid())
+            if (EntityIdentifier != default(Guid))
                 return EntityIdentifier == other.EntityIdentifier;
-            return CustomerId.Equals(other.CustomerId);
+            return false;
         }
+
+#pragma warning disable 414
+        [JsonProperty]
         private Guid EntityIdentifier { get; set; }
+        [JsonProperty]
+        private Guid _entityIdentity = default(Guid);
+#pragma warning restore 414
     }
 }

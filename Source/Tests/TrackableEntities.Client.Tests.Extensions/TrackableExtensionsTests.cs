@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework;
 using TrackableEntities.Client.Tests.Entities.Mocks;
 using TrackableEntities.Client.Tests.Entities.FamilyModels;
@@ -608,6 +610,84 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #endregion
 
+        #region IsEquatable Tests
+
+        [Test]
+        public void IsEquatable_Should_Return_False_If_SetEntityIdentifier_Not_Called()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var customer1 = northwind.Customers[0];
+            var customer2 = northwind.Customers[1];
+
+            // Act
+            bool areEquatable = customer1.IsEquatable(customer2);
+
+            // Assert
+            Assert.IsFalse(areEquatable);
+        }
+
+        [Test]
+        public void IsEquatable_Should_Return_True_If_SetEntityIdentifier_Called()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var customer1 = northwind.Customers[0];
+            var customer2 = northwind.Customers[1];
+            customer1.SetEntityIdentifier();
+            Guid entityIdentifier = GetEntityIdentifier(customer1);
+            customer2.SetEntityIdentifier(entityIdentifier);
+
+            // Act
+            bool areEquatable = customer1.IsEquatable(customer2);
+
+            // Assert
+            Assert.IsTrue(areEquatable);
+        }
+
+        [Test]
+        public void IsEquatable_Should_Return_False_If_EntityIdentifier_Cleared()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var customer1 = northwind.Customers[0];
+            var customer2 = northwind.Customers[1];
+            customer1.SetEntityIdentifier();
+            Guid entityIdentifier = GetEntityIdentifier(customer1);
+            customer2.SetEntityIdentifier(entityIdentifier);
+
+            customer1.SetEntityIdentifier(default(Guid)); // Cleared
+
+            // Act
+            bool areEquatable = customer1.IsEquatable(customer2);
+
+            // Assert
+            Assert.IsFalse(areEquatable);
+        }
+
+        [Test]
+        public void IsEquatable_Should_Return_False_If_EntityIdentifier_Reset()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var customer1 = northwind.Customers[0];
+            var customer2 = northwind.Customers[1];
+            customer1.SetEntityIdentifier();
+            Guid entityIdentifier = GetEntityIdentifier(customer1);
+            customer2.SetEntityIdentifier(entityIdentifier);
+
+            customer1.SetEntityIdentifier(default(Guid)); // Cleared
+            customer1.SetEntityIdentifier(); // Reset
+
+            // Act
+            bool areEquatable = customer1.IsEquatable(customer2);
+
+            // Assert
+            Assert.IsTrue(areEquatable);
+        }
+
+        #endregion
+
         #region Helper Methods
 
         private IEnumerable<bool> GetTrackings(Parent parent)
@@ -652,6 +732,14 @@ namespace TrackableEntities.Client.Tests.Extensions
                                from ggc in gc.Children
                                select ggc.ModifiedProperties);
             return modifieds;
+        }
+
+        private Guid GetEntityIdentifier(object item)
+        {
+            var property = typeof(Customer).GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+                .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifierProperty);
+            var entityIdentifier = (Guid)property.GetValue(item);
+            return entityIdentifier;
         }
 
         #endregion

@@ -81,27 +81,21 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             }
         }
 
+        public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }
-
-        private TrackingState _trackingState;
-        public TrackingState TrackingState
-        {
-            get { return _trackingState; }
-            set
-            {
-                EntityIdentifier = value == TrackingState.Added
-                    ? Guid.NewGuid()
-                    : new Guid();
-                _trackingState = value;
-            }
-        }
 
         bool IEquatable<OrderDetail>.Equals(OrderDetail other)
         {
-            if (EntityIdentifier != new Guid())
+            if (EntityIdentifier != default(Guid))
                 return EntityIdentifier == other.EntityIdentifier;
-            return OrderId.Equals(other.OrderId) && ProductId.Equals(other.ProductId);
+            return false;
         }
+
+#pragma warning disable 414
+        [JsonProperty]
         private Guid EntityIdentifier { get; set; }
+        [JsonProperty]
+        private Guid _entityIdentity = default(Guid);
+#pragma warning restore 414
     }
 }

@@ -95,6 +95,10 @@ namespace TrackableEntities.Client
 
                     // Enable tracking on trackable collection properties
                     item.SetTracking(value, Parent);
+
+                    // Set entity identifier
+                    var entityIdentifier = (value) ? default(Guid?) : default(Guid);
+                    item.SetEntityIdentifier(entityIdentifier);
                 }
                 _tracking = value;
             }
@@ -150,7 +154,11 @@ namespace TrackableEntities.Client
                 item.TrackingState = TrackingState.Added;
                 item.PropertyChanged += OnPropertyChanged;
 
-                // Enable tracking on trackable collection properties
+                // Set entity identifier
+                var entityIdentifier = (Tracking) ? default(Guid?) : default(Guid);
+                item.SetEntityIdentifier(entityIdentifier);
+
+                // Enable tracking on trackable properties
                 item.SetTracking(Tracking, Parent);
 
                 // Mark items as added in trackable collection properties

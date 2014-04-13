@@ -60,6 +60,9 @@
     <Compile Include="..\TrackableEntities.Client\ChangeTrackingCollection.cs">
       <Link>ChangeTrackingCollection.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.Client\ChangeTrackingExtensions.cs">
+      <Link>ChangeTrackingExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.Client\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
@@ -22,6 +23,27 @@ namespace TrackableEntities.Client
             foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
                 | BindingFlags.Public | BindingFlags.NonPublic))
             {
+                // Set tracking on 1-1 and M-1 properties
+                var trackableRef = prop.GetValue(item, null) as ITrackable;
+
+                // Stop recursion if trackable is same type as parent
+                if (trackableRef != null
+                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                {
+                    // Get ref prop change tracker
+                    ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
+                    if (refChangeTracker != null)
+                    {
+                        // Set tracking on ref prop change tracker
+                        refChangeTracker.Parent = item;
+                        refChangeTracker.Tracking = enableTracking;
+
+                        // Reset parent because ref prop can have more than one parent
+                        refChangeTracker.Parent = null; 
+                    }
+                }
+
+                // Set tracking on 1-M and M-M properties
                 var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
                 if (trackingColl != null)
                 {
@@ -35,7 +57,6 @@ namespace TrackableEntities.Client
                             stopRecursion = true;
                             break;
                         }
-                        child.SetTracking(enableTracking, item);
                     }
 
                     // Enable tracking if we have not stopped recursion
@@ -319,6 +340,147 @@ namespace TrackableEntities.Client
                 var copy = ser.Deserialize<T>(reader);
                 return copy;
             }
+        }
+
+        /// <summary>
+        /// Determines if two entities have the same identifier.
+        /// </summary>
+        /// <param name="item">Trackable object</param>
+        /// <param name="other">Other trackable object</param>
+        /// <returns>True if item is equatable, otherwise false</returns>
+        public static bool IsEquatable(this ITrackable item, ITrackable other)
+        {
+            var method = GetEquatableMethod(item.GetType());
+            if (method != null)
+            {
+                return (bool)method.Invoke(item, new object[] { other });
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Get entity identifier for correlation with MergeChanges.
+        /// </summary>
+        /// <param name="item">ITrackable object</param>
+        /// <returns>Entity identifier used for correlation with MergeChanges</returns>
+        public static Guid GetEntityIdentifier(this ITrackable item)
+        {
+            var property = GetEntityIdentifierProperty(item.GetType());
+            if (property == null) return default(Guid);
+            return (Guid)property.GetValue(item, null);
+        }
+
+        /// <summary>
+        /// Set entity identifier used for correlation with MergeChanges.
+        /// </summary>
+        /// <param name="item">ITrackable object</param>
+        /// <param name="value">Unique identifier (optional)</param>
+        public static void SetEntityIdentifier(this ITrackable item, Guid? value = null)
+        {
+            // Get entity identifier property
+            var property = GetEntityIdentifierProperty(item.GetType());
+            if (property == null) return;
+
+            // Set entity identifier prop value explicitly
+            if (value != null)
+            {
+                if ((Guid)value != default(Guid))
+                    item.SetEntityIdentity((Guid)value);
+                property.SetValue(item, value, null);
+                return;
+            }
+
+            // Get entity identifier prop value
+            var entityIdentifier = (Guid)property.GetValue(item, null);
+
+            // If entity identifier prop has not been set yet,
+            // set it based on entity identity field.
+            if (entityIdentifier == default(Guid))
+            {
+                var entityIdentity = item.GetOrSetEntityIdentity();
+                property.SetValue(item, entityIdentity, null);
+            }
+        }
+
+        /// <summary>
+        /// Get value of entity identity used for setting EntityIdentifier.
+        /// </summary>
+        /// <param name="item">ITrackable object</param>
+        /// <returns>Value of entity identity field</returns>
+        public static Guid GetEntityIdentity(this ITrackable item)
+        {
+            var field = GetEntityIdentifyField(item.GetType());
+            if (field == null) return default(Guid);
+            return (Guid)field.GetValue(item);
+        }
+
+        /// <summary>
+        /// Set value of entity identity used for setting EntityIdentifier.
+        /// </summary>
+        /// <param name="item">ITrackable object</param>
+        /// <param name="value">Value for entity identity field</param>
+        public static void SetEntityIdentity(this ITrackable item, Guid value)
+        {
+            var field = GetEntityIdentifyField(item.GetType());
+            if (field == null) return;
+            field.SetValue(item, value);
+        }
+
+        /// <summary>
+        /// Get reference property change tracker.
+        /// </summary>
+        /// <param name="item">ITrackable object</param>
+        /// <param name="propertyName">Reference property name</param>
+        /// <returns>Reference property change tracker</returns>
+        public static ITrackingCollection GetRefPropertyChangeTracker(this ITrackable item,
+            string propertyName)
+        {
+            var property = GetChangeTrackingProperty(item.GetType(), propertyName);
+            if (property == null) return null;
+            return property.GetValue(item, null) as ITrackingCollection;
+        }
+
+        private static PropertyInfo GetChangeTrackingProperty(Type entityType, string propertyName)
+        {
+            var property = entityType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+                .SingleOrDefault(m => m.Name == propertyName + Constants.ChangeTrackingMembers.ChangeTrackingPropEnd);
+            return property;
+        }
+
+        private static MethodInfo GetEquatableMethod(Type type)
+        {
+            var method = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
+                .SingleOrDefault(m => m.Name.StartsWith(Constants.EquatableMembers.EquatableMethodStart)
+                    && m.Name.EndsWith(Constants.EquatableMembers.EquatableMethodEnd));
+            return method;
+        }
+
+        private static PropertyInfo GetEntityIdentifierProperty(Type type)
+        {
+            var property = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+                .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifierProperty);
+            return property;
+        }
+
+        private static FieldInfo GetEntityIdentifyField(Type type)
+        {
+            var property = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifyField);
+            return property;
+        }
+
+        private static Guid GetOrSetEntityIdentity(this ITrackable item)
+        {
+            var newIdentity = Guid.NewGuid();
+            var field = GetEntityIdentifyField(item.GetType());
+            if (field != null)
+            {
+                var entityIdentity = (Guid)field.GetValue(item);
+                if (entityIdentity != default(Guid))
+                    return entityIdentity;
+                field.SetValue(item, newIdentity);
+            }
+            return newIdentity;
         }
     }
 }

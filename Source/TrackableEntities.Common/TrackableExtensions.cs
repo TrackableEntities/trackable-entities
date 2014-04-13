@@ -36,13 +36,14 @@ namespace TrackableEntities.Common
             foreach (var prop in item.GetType().GetProperties())
             {
                 // Apply changes to 1-1 and M-1 properties
-                var trackableReference = prop.GetValue(item, null) as ITrackable;
+                var trackableRef = prop.GetValue(item, null) as ITrackable;
 
                 // Stop recursion if trackable is same type as parent
-                if (trackableReference != null
-                    && (parent == null || trackableReference.GetType() != parent.GetType()))
-                    trackableReference.AcceptChanges(item);
+                if (trackableRef != null
+                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                    trackableRef.AcceptChanges(item);
 
+                // Apply changes to 1-M properties
                 var items = prop.GetValue(item, null) as IList;
                 if (items != null)
                 {

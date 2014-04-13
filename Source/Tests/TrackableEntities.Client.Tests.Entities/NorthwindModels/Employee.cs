@@ -113,10 +113,16 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 
         bool IEquatable<Employee>.Equals(Employee other)
         {
-            if (EntityIdentifier != new Guid())
+            if (EntityIdentifier != default(Guid))
                 return EntityIdentifier == other.EntityIdentifier;
-            return EmployeeId.Equals(other.EmployeeId);
+            return false;
         }
+
+#pragma warning disable 414
+        [JsonProperty]
         private Guid EntityIdentifier { get; set; }
+        [JsonProperty]
+        private Guid _entityIdentity = default(Guid);
+#pragma warning restore 414
     }
 }

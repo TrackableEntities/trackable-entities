@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using TrackableEntities.Common;
 
 namespace TrackableEntities.Client
 {
@@ -16,27 +17,21 @@ namespace TrackableEntities.Client
         /// <para>Merge changes from a one or more updated entities into original entities.</para>
         /// <para>First call GetChanges on the change tracker, passing changes to a service update operation.</para>
         /// <para>Then call MergeChanges, passing in one or more updated entities from the service update operation.</para>
-        /// <para>Properties on the original entity will be set to those of the updated entity.</para>
-        /// <para>Unchanged properties will be preserved, while added, removed and modified items will be updated.</para>
+        /// <para>Properties on each original entity will be set to those of each updated entity.</para>
         /// <code>
         /// // Usage:
         /// // Start change-tracking originalEntity (new or retrieved from service)
         /// var changeTracker = new ChangeTrackingCollection(originalEntity);
         /// 
-        /// // Make changes to originalEntity (including reference and child entities)
-        /// originalEntity.ShipDate = DateTime.Today;
-        /// originalEntity.Customer.City = "New York";
-        /// originalEntity.Details[0].Quantity++;
-        /// originalEntity.Details.RemoveAt(1);
-        /// originalEntity.Details.Add(new detail);
+        /// // Make changes to originalEntity, including reference and child entities
         /// 
-        /// // Get only changed entities (exclude unchanged child entities)
+        /// // Get changes
         /// var changedEntity = changeTracker.GetChanges().SingleOrDefault();
         /// 
-        /// // Pass changedEntity to service update operation to get the updated entity
+        /// // Pass changes to service update operation
         /// var updatedEntity = service.Update(changedEntity);
         /// 
-        /// // Merge updates from updatedEntity back into the originalEntity
+        /// // Merge updates from updated entity back into the original entity
         /// changeTracker.MergeChanges(updatedEntity);
         /// </code>
         /// </summary>
@@ -46,79 +41,90 @@ namespace TrackableEntities.Client
             params TEntity[] updatedItems)
                 where TEntity : class, ITrackable, INotifyPropertyChanged
         {
-            // Check for null items
+            // Check for no items
             if (updatedItems == null) throw new ArgumentNullException("updatedItems");
 
             // Recursively set tracking state for child collections
             changeTracker.MergeChanges(updatedItems, null);
         }
 
-        private static void MergeChanges(this ITrackingCollection originalItemChangeTracker,
-            IEnumerable<ITrackable> updatedItems, 
-            ITrackable updatedItemParent)
+        private static void MergeChanges(this ITrackingCollection originalChangeTracker,
+            IEnumerable<ITrackable> updatedItems, ITrackable updatedItemParent, bool isTrackableRef = false)
         {
-            // Check for null items
-            if (updatedItems == null) throw new ArgumentNullException("updatedItems");
-
-            /* // Get unchanged child entities on original item
-            foreach (var prop in updatedItem.GetType().GetProperties())
+            // Process each updated item
+            foreach (var updatedItem in updatedItems)
             {
-                // Apply changes to 1-1 and M-1 properties
-                var origTrackableRef = prop.GetValue(originalItem, null) as ITrackable;
-                var updatedTrackableRef = prop.GetValue(updatedItem, null) as ITrackable;
+                // Get matching orig item
+                var origItem = originalChangeTracker.Cast<ITrackable>()
+                    .GetEquatableItem(updatedItem, isTrackableRef);
+                if (origItem == null) continue;
 
-                // Stop recursion if trackable is same type as parent
-                if (origTrackableRef != null && updatedTrackableRef != null
-                    && (updatedItemParent == null || updatedTrackableRef.GetType() != updatedItemParent.GetType()))
+                // Back fill entity identity on trackable ref
+                if (isTrackableRef)
                 {
-                    // Get ref prop change tracker
-                    ITrackingCollection refPropChangeTracker = GetRefPropChangeTracker(originalItem, prop.Name);
-                    if (refPropChangeTracker != null)
-                        updatedTrackableRef.MergeChanges(ref origTrackableRef, refPropChangeTracker, updatedItem);
-                }
-
-                var updatedItems = prop.GetValue(updatedItem, null) as IList;
-                var originalItems = prop.GetValue(originalItem, null) as IList;
-                var origItemsChangeTracker = originalItems as ITrackingCollection;
-                if (originalItems != null && updatedItems != null 
-                    && origItemsChangeTracker != null)
-                {
-                    for (int i = originalItems.Count - 1; i > -1; i--)
+                    if (updatedItem.GetEntityIdentifier() == default(Guid))
                     {
-                        // Continue if orig item is added or deleted
-                        var origTrackable = originalItems[i] as ITrackable;
-                        if (origTrackable == null) continue;
-                        if (origTrackable.TrackingState == TrackingState.Added
-                            || origTrackable.TrackingState == TrackingState.Deleted)
-                            continue;
-
-                        // Stop recursion if trackable is same type as parent
-                        var updatedTrackable = updatedItems.OfType<ITrackable>()
-                            .FindEquatableItem(origTrackable);
-                        if (updatedTrackable != null && (updatedItemParent == null 
-                            || origTrackable.GetType() != updatedItemParent.GetType()))
-                        {
-                            updatedTrackable.MergeChanges(ref origTrackable,
-                                origItemsChangeTracker, updatedItem);
-                        }
-
-                        // If orig trackable not found in updated items,
-                        // add unchanged original item to updated items.
-                        if (updatedTrackable == null && origTrackable.TrackingState == TrackingState.Unchanged)
-                        {
-                            updatedItems.Add(origTrackable);
-                            FixUpParentReference(originalItemChangeTracker, origTrackable, updatedItem);
-                        }
+                        Guid origEntityIdentifier = origItem.GetEntityIdentifier();
+                        updatedItem.SetEntityIdentity(origEntityIdentifier);
+                        updatedItem.SetEntityIdentifier(); 
                     }
                 }
+                
+                // Iterate entity properties
+                foreach (var prop in updatedItem.GetType().GetProperties())
+                {
+                    // Set to 1-1 and M-1 properties
+                    var updatedTrackableRef = prop.GetValue(updatedItem, null) as ITrackable;
+
+                    // Stop recursion if trackable is same type as parent
+                    if (updatedTrackableRef != null && (updatedItemParent == null
+                        || updatedTrackableRef.GetType() != updatedItemParent.GetType()))
+                    {
+                        ITrackingCollection refPropChangeTracker = GetRefPropChangeTracker(origItem, prop.Name);
+                        if (refPropChangeTracker != null)
+                            refPropChangeTracker.MergeChanges(new[] { updatedTrackableRef }, updatedItem, true);
+                    }
+
+                    // Set 1-M properties
+                    var updatedChildItems = prop.GetValue(updatedItem, null) as IList;
+                    var origItemsChangeTracker = prop.GetValue(origItem, null) as ITrackingCollection;
+                    if (updatedChildItems != null && origItemsChangeTracker != null)
+                    {
+                        // Continue if there are no child items
+                        if (updatedChildItems.Count == 0) return;
+
+                        // Stop recursion if trackable is same type as parent
+                        var updatedTrackableChild = updatedChildItems[0] as ITrackable;
+                        if (updatedTrackableChild != null && (updatedItemParent == null
+                            || updatedTrackableChild.GetType() != updatedItemParent.GetType()))
+                        {
+                            origItemsChangeTracker.MergeChanges(updatedChildItems.Cast<ITrackable>(), updatedItem);
+                        }
+
+                        //  Restore then remove cached deletes
+                        origItemsChangeTracker.RestoreDeletes();
+                        origItemsChangeTracker.RemoveDeletes(false);
+                    }
+                }
+
+                // Set properties on orig item
+                origItem.SetEntityProperties(updatedItem, originalChangeTracker);
+
+                // Accept changes
+                origItem.AcceptChanges();
             }
 
-            // Track updated items
-            originalItemChangeTracker.TrackUpdatedItem(originalItem, updatedItem);
+            //  Restore then remove cached deletes
+            originalChangeTracker.RestoreDeletes();
+            originalChangeTracker.RemoveDeletes(false);
+        }
 
-            // Set original item to updated item with unchanged items merged in
-            originalItem = updatedItem;
-            */
+        private static ITrackable GetEquatableItem
+            (this IEnumerable<ITrackable> sourceItems, ITrackable sourceItem, bool isTrackableRef)
+        {
+            // Get first matching item
+            if (isTrackableRef) return sourceItems.FirstOrDefault();
+            return sourceItems.FirstOrDefault(t => t.IsEquatable(sourceItem));
         }
 
         private static ITrackingCollection GetRefPropChangeTracker(ITrackable originalItem, string propertyName)
@@ -136,64 +142,40 @@ namespace TrackableEntities.Client
             return prop;
         }
 
-        private static ITrackable FindEquatableItem(this IEnumerable<ITrackable> updatedTrackables, 
-            ITrackable origTrackable)
+        private static void SetEntityProperties(this ITrackable targetItem, ITrackable sourceItem,
+            ITrackingCollection changeTracker)
         {
-            ITrackable updatedTrackable = updatedTrackables
-                .FirstOrDefault(t => ItemsAreEquatable(t, origTrackable));
-            return updatedTrackable;
-        }
-
-        static bool ItemsAreEquatable(object a, object b)
-        {
-            Type type = a.GetType();
-            var method = GetEquatableMethod(type);
-            if (method != null)
+            // Iterate properties
+            foreach (var prop in targetItem.GetType().GetProperties())
             {
-                return (bool)method.Invoke(a, new[] { b });
+                // Get source item prop value
+                object sourceValue = prop.GetValue(sourceItem, null);
+                object targetValue = prop.GetValue(targetItem, null);
+
+                // Skip non-null trackable and list properties
+                if (typeof(ITrackingCollection).IsAssignableFrom(prop.PropertyType)
+                    || (targetValue != null && typeof(ITrackable).IsAssignableFrom(prop.PropertyType)))
+                    continue;
+
+                // Skip tracking properties
+                if (prop.Name == Constants.TrackingProperties.TrackingState
+                    || prop.Name == Constants.TrackingProperties.ModifiedProperties)
+                    continue;
+
+                // Continue if source is null or source and target equal
+                if (sourceValue == null || sourceValue.Equals(targetValue))
+                    continue;
+
+                // Turn off change-tracking
+                bool isTracking = changeTracker.Tracking;
+                changeTracker.Tracking = false;
+
+                // Set target item prop value
+                prop.SetValue(targetItem, sourceValue, null);
+
+                // Reset change-tracking
+                changeTracker.Tracking = isTracking;
             }
-            return false;
-        }
-
-        private static MethodInfo GetEquatableMethod(Type type)
-        {
-            var method = type.GetMethods(BindingFlags.Instance
-                                         | BindingFlags.NonPublic)
-                            .SingleOrDefault(m => m.Name.StartsWith("System.IEquatable<")
-                                && m.Name.EndsWith(".Equals"));
-            return method;
-        }
-
-        private static void FixUpParentReference(ITrackingCollection changeTracker, 
-            object child, object parent)
-        {
-            bool isTracking = changeTracker.Tracking;
-            foreach (var prop in child.GetType().GetProperties())
-            {
-                if (prop.PropertyType == parent.GetType())
-                {
-                    var childParent = prop.GetValue(child, null);
-                    if (childParent != null && !ReferenceEquals(childParent, parent))
-                    {
-                        changeTracker.Tracking = false;
-                        prop.SetValue(child, parent, null);
-                        changeTracker.Tracking = isTracking;
-                    }
-                }
-            }
-        }
-
-        private static void TrackUpdatedItem(this ITrackingCollection changeTracker,
-            object originalItem, object updatedItem)
-        {
-            // Track updated item
-            var list = changeTracker as IList;
-            if (list == null) return;
-            bool isTracking = changeTracker.Tracking;
-            changeTracker.Tracking = false;
-            list.Remove(originalItem);
-            list.Add(updatedItem);
-            changeTracker.Tracking = isTracking;
         }
     }
 }
