@@ -322,7 +322,8 @@ namespace TrackableEntities.EF5
                 var items = prop.GetValue(item, null) as IList;
                 if (items != null)
                 {
-                    for (int i = items.Count - 1; i > -1; i--)
+                    var count = items.Count;
+                    for (int i = count - 1; i > -1; i--)
                     {
                         // Stop recursion if trackable is same type as parent
                         var trackableChild = items[i] as ITrackable;

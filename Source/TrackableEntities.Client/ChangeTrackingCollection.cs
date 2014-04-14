@@ -214,38 +214,20 @@ namespace TrackableEntities.Client
         /// <returns>Collection containing only changed entities</returns>
         public ChangeTrackingCollection<T> GetChanges()
         {
-            // Get changed items in this tracking collection, 
-            // including items with child collections that have changes
-            var changes = ((ITrackingCollection)this).GetChanges().Cast<T>()
-                .Union(this.Where(
-                       t => t.TrackingState == TrackingState.Unchanged &&
-                       t.HasChanges(Parent)))
-                .ToList();
+            // Temporarily restore deletes
+            this.RestoreDeletes();
 
-            // Temporarily restore deletes to changes
-            foreach (var change in changes)
-            {
-                change.RestoreDeletes(Parent);
-            }
+            // Clone items in change tracker
+            var items = this.Select(e => e.Clone<T>()).ToList();
 
-            // Clone changes
-            var items = changes.Select(t => t.Clone<T>()).ToList();
+            // Remove deletes
+            this.RemoveDeletes(true);
 
-            // Remove deletes from changes and re-cache
-            foreach (var change in changes)
-            {
-                // TODO: Replace with new overload
-                //change.RemoveDeletes(true, Parent);
-            }
+            // Get changed items
+            List<T> entities = items.GetChanges(null).Cast<T>().ToList();
 
-            // Set collection properties to include only changed items
-            foreach (T item in items)
-            {
-                item.SetChanges(Parent);
-            }
-
-            // Return a new generic tracking collection
-            return new ChangeTrackingCollection<T>(items, true);
+            // Return new change tracking collection with tracking disabled
+            return new ChangeTrackingCollection<T>(entities, true);
         }
 
         /// <summary>

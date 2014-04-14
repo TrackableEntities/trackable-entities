@@ -731,7 +731,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             parent.Children[0].Children.RemoveAt(1);
 
             // Act
-            parent.RestoreDeletes();
+            parent.Children[0].Children.RestoreDeletes();
 
             // Assert
             Assert.AreEqual(count, parent.Children[0].Children.Count);
