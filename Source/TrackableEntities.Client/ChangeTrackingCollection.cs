@@ -234,7 +234,8 @@ namespace TrackableEntities.Client
             // Remove deletes from changes and re-cache
             foreach (var change in changes)
             {
-                change.RemoveDeletes(true, Parent);
+                // TODO: Replace with new overload
+                //change.RemoveDeletes(true, Parent);
             }
 
             // Set collection properties to include only changed items

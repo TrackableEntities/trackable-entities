@@ -136,7 +136,7 @@ namespace TrackableEntities.Client
             IEnumerable<ITrackable> items = changeTracker.Select(e => e.Clone<TEntity>());
 
             // Remove deletes
-            changeTracker.RemoveDeletes(false);
+            changeTracker.RemoveDeletes(true);
 
             // Get changed items
             IEnumerable<ITrackable> changes = items.GetChanges(null);
@@ -156,7 +156,7 @@ namespace TrackableEntities.Client
                 // Iterate entity properties
                 foreach (var prop in item.GetType().GetProperties())
                 {
-                    // Set tracking on 1-1 and M-1 properties
+                    // Process 1-1 and M-1 properties
                     var trackableRef = prop.GetValue(item, null) as ITrackable;
 
                     // Stop recursion if trackable is same type as parent
@@ -170,7 +170,6 @@ namespace TrackableEntities.Client
                             // Get downstream changes
                             IEnumerable<ITrackable> refPropItems = refChangeTracker.Cast<ITrackable>();
                             IEnumerable<ITrackable> refPropChanges = refPropItems.GetChanges(item);
-                            //if (refPropChanges.Any()) hasDownstreamChanges = true;
 
                             // Set flag for downstream changes
                             hasDownstreamChanges = refPropChanges.Any() || 
@@ -187,7 +186,7 @@ namespace TrackableEntities.Client
                         }
                     }
 
-                    // Set tracking on 1-M and M-M properties
+                    // Process 1-M and M-M properties
                     var trackingItems = prop.GetValue(item, null) as IList;
                     var trackingColl = trackingItems as ITrackingCollection;
 
@@ -217,9 +216,7 @@ namespace TrackableEntities.Client
 
                 // Return item if it has changes
                 if (hasDownstreamChanges || item.TrackingState != TrackingState.Unchanged)
-                {
                     yield return item;
-                }
             }
         }
 

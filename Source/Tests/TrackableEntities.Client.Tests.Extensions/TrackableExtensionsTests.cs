@@ -702,13 +702,10 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Act
             var trackableColl = (ITrackingCollection)parent.Children;
-            trackableColl.RemoveDeletes(true);
-            var deletes = trackableColl.GetChanges().Cast<Child>()
-                .Where(t => t.TrackingState == TrackingState.Deleted);
+            trackableColl.RemoveDeletes(false);
 
             // Assert
             Assert.AreEqual(2, trackableColl.Count);
-            Assert.AreEqual(1, deletes.Count());
         }
 
         [Test]
@@ -758,17 +755,37 @@ namespace TrackableEntities.Client.Tests.Extensions
                         }
                     }
             };
-            parent.Children[0].Children[1].TrackingState = TrackingState.Deleted;
+            var deleted = parent.Children[0].Children[1];
+            deleted.TrackingState = TrackingState.Deleted;
 
             // Act
-            parent.RemoveDeletes(true);
             var trackableColl = (ITrackingCollection)parent.Children[0].Children;
-            var deletes = trackableColl.GetChanges().Cast<GrandChild>()
-                .Where(t => t.TrackingState == TrackingState.Deleted);
+            trackableColl.RemoveDeletes(false);
 
             // Assert
             Assert.AreEqual(1, parent.Children[0].Children.Count);
-            Assert.AreEqual(1, deletes.Count());
+            Assert.That(trackableColl, Has.No.Member(deleted));
+        }
+
+        [Test]
+        public void Order_Remove_Deletes_Should_Remove_Deleted_OrderDetails()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var deleted1 = order.OrderDetails[0];
+            var deleted2 = order.OrderDetails[2];
+            deleted1.TrackingState = TrackingState.Deleted;
+            deleted2.TrackingState = TrackingState.Deleted;
+            var changeTracker = new ChangeTrackingCollection<Order> {order};
+
+            // Act
+            changeTracker.RemoveDeletes(false);
+
+            // Assert
+            Assert.AreEqual(1, order.OrderDetails.Count);
+            Assert.That(changeTracker, Has.No.Member(deleted1));
+            Assert.That(changeTracker, Has.No.Member(deleted2));
         }
 
         #endregion
