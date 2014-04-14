@@ -35,7 +35,8 @@ namespace TrackableEntities.Client
         /// changeTracker.MergeChanges(updatedEntity);
         /// </code>
         /// </summary>
-        /// <param name="changeTracker">Change tracker used to track changes on original entity</param>
+        /// <typeparam name="TEntity">Trackable entity type</typeparam>
+        /// <param name="changeTracker">Change tracker used to track changes on original entities</param>
         /// <param name="updatedItems">One or more entities updated with changes from a service update operation</param>
         public static void MergeChanges<TEntity>(this ChangeTrackingCollection<TEntity> changeTracker,
             params TEntity[] updatedItems)
@@ -85,14 +86,12 @@ namespace TrackableEntities.Client
                             refPropChangeTracker.MergeChanges(new[] { updatedTrackableRef }, updatedItem, true);
                     }
 
-                    // Set 1-M properties
+                    // Set 1-M and M-M properties
                     var updatedChildItems = prop.GetValue(updatedItem, null) as IList;
-                    var origItemsChangeTracker = prop.GetValue(origItem, null) as ITrackingCollection;
-                    if (updatedChildItems != null && origItemsChangeTracker != null)
+                    var origItemsChangeTracker = updatedChildItems as ITrackingCollection;
+                    if (updatedChildItems != null && origItemsChangeTracker != null
+                        && updatedChildItems.Count > 0)
                     {
-                        // Continue if there are no child items
-                        if (updatedChildItems.Count == 0) return;
-
                         // Stop recursion if trackable is same type as parent
                         var updatedTrackableChild = updatedChildItems[0] as ITrackable;
                         if (updatedTrackableChild != null && (updatedItemParent == null
@@ -117,6 +116,111 @@ namespace TrackableEntities.Client
             //  Restore then remove cached deletes
             originalChangeTracker.RestoreDeletes();
             originalChangeTracker.RemoveDeletes(false);
+        }
+
+        /// <summary>
+        /// Get entities that have been added, modified or deleted, including trackable 
+        /// reference and child entities.
+        /// </summary>
+        /// <typeparam name="TEntity">Trackable entity type</typeparam>
+        /// <param name="changeTracker">Change tracker used to track changes on entities</param>
+        /// <returns>Collection containing only added, modified or deleted entities</returns>
+        public static ChangeTrackingCollection<TEntity> GetChanges<TEntity>(
+            this ChangeTrackingCollection<TEntity> changeTracker)
+            where TEntity : class, ITrackable, INotifyPropertyChanged
+        {
+            // Temporarily restore deletes
+            changeTracker.RestoreDeletes();
+
+            // Clone items in change tracker
+            IEnumerable<ITrackable> items = changeTracker.Select(e => e.Clone<TEntity>());
+
+            // Remove deletes
+            changeTracker.RemoveDeletes(false);
+
+            // Get changed items
+            IEnumerable<ITrackable> changes = items.GetChanges(null);
+
+            // Return new change tracking collection with tracking disabled
+            return new ChangeTrackingCollection<TEntity>((IEnumerable<TEntity>) changes, true);
+        }
+
+        private static IEnumerable<ITrackable> GetChanges(this IEnumerable<ITrackable> items, ITrackable parent)
+        {
+            // Iterate items in change-tracking collection
+            foreach (ITrackable item in items)
+            {
+                // Downstream changes flag
+                bool hasDownstreamChanges = false;
+
+                // Iterate entity properties
+                foreach (var prop in item.GetType().GetProperties())
+                {
+                    // Set tracking on 1-1 and M-1 properties
+                    var trackableRef = prop.GetValue(item, null) as ITrackable;
+
+                    // Stop recursion if trackable is same type as parent
+                    if (trackableRef != null
+                        && (parent == null || trackableRef.GetType() != parent.GetType()))
+                    {
+                        // Get changed ref prop
+                        ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
+                        if (refChangeTracker != null)
+                        {
+                            // Get downstream changes
+                            IEnumerable<ITrackable> refPropItems = refChangeTracker.Cast<ITrackable>();
+                            IEnumerable<ITrackable> refPropChanges = refPropItems.GetChanges(item);
+                            //if (refPropChanges.Any()) hasDownstreamChanges = true;
+
+                            // Set flag for downstream changes
+                            hasDownstreamChanges = refPropChanges.Any() || 
+                                                   trackableRef.TrackingState == TrackingState.Added ||
+                                                   trackableRef.TrackingState == TrackingState.Modified;
+
+                            // Set ref prop to null if unchanged or deleted
+                            if (trackableRef.TrackingState == TrackingState.Unchanged
+                                || trackableRef.TrackingState == TrackingState.Deleted)
+                            {
+                                prop.SetValue(item, null, null);
+                                continue;
+                            }
+                        }
+                    }
+
+                    // Set tracking on 1-M and M-M properties
+                    var trackingItems = prop.GetValue(item, null) as IList;
+                    var trackingColl = trackingItems as ITrackingCollection;
+
+                    // Get changes on child collection
+                    if (trackingItems != null && trackingColl != null
+                        && trackingColl.Count > 0)
+                    {
+                        // Stop recursion if trackable is same type as parent
+                        var trackableChild = trackingItems[0] as ITrackable;
+                        if (parent == null || (trackableChild != null && trackableChild.GetType() != parent.GetType()))
+                        {
+                            // Get changes on child collection
+                            var trackingCollChanges = trackingColl.Cast<ITrackable>().GetChanges(item).ToList();
+
+                            // Set flag for downstream changes
+                            hasDownstreamChanges = trackingCollChanges.Any();
+
+                            // Remove child items without changes
+                            for (int i = trackingItems.Count - 1; i > -1; i--)
+                            {
+                                if (!trackingCollChanges.Any(e => ReferenceEquals(trackingItems[0], e)))
+                                    trackingItems.RemoveAt(i);
+                            }
+                        }
+                    }
+                }
+
+                // Return item if it has changes
+                if (hasDownstreamChanges || item.TrackingState != TrackingState.Unchanged)
+                {
+                    yield return item;
+                }
+            }
         }
 
         private static ITrackable GetEquatableItem

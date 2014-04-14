@@ -20,6 +20,7 @@ namespace TrackableEntities.Client
         public static void SetTracking(this ITrackable item, 
             bool enableTracking, ITrackable parent = null)
         {
+            // Include private props to get ref prop change tracker
             foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
                 | BindingFlags.Public | BindingFlags.NonPublic))
             {
@@ -78,6 +79,7 @@ namespace TrackableEntities.Client
         public static void SetState(this ITrackable item, TrackingState state, 
             ITrackable parent = null)
         {
+            // Include private props to get ref prop change tracker
             foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
                 | BindingFlags.Public | BindingFlags.NonPublic))
             {
@@ -112,6 +114,7 @@ namespace TrackableEntities.Client
         public static void SetModifiedProperties(this ITrackable item,
             ICollection<string> modified, ITrackable parent = null)
         {
+            // Include private props to get ref prop change tracker
             foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
                 | BindingFlags.Public | BindingFlags.NonPublic))
             {
@@ -138,6 +141,7 @@ namespace TrackableEntities.Client
         /// <param name="parent">ITrackable parent of item</param>
         public static void SetChanges(this ITrackable item, ITrackable parent = null)
         {
+            // Include private props to get ref prop change tracker
             foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
                 | BindingFlags.Public | BindingFlags.NonPublic))
             {
@@ -174,6 +178,7 @@ namespace TrackableEntities.Client
         /// <param name="parent">ITrackable parent of item</param>
         public static void RestoreDeletes(this ITrackable item, ITrackable parent = null)
         {
+            // Include private props to get ref prop change tracker
             foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
                 | BindingFlags.Public | BindingFlags.NonPublic))
             {
@@ -209,6 +214,7 @@ namespace TrackableEntities.Client
         public static void RemoveDeletes(this ITrackable item, bool enableTracking,
             ITrackable parent = null)
         {
+            // Include private props to get ref prop change tracker
             foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
                 | BindingFlags.Public | BindingFlags.NonPublic))
             {
@@ -290,6 +296,7 @@ namespace TrackableEntities.Client
         /// <param name="parent">ITrackable parent of item</param>
         public static bool HasChanges(this ITrackable item, ITrackable parent = null)
         {
+            // Include private props to get ref prop change tracker
             foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
                 | BindingFlags.Public | BindingFlags.NonPublic))
             {
