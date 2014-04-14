@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using TrackableEntities.Client.Tests.Entities.Mocks;
@@ -16,14 +17,14 @@ namespace TrackableEntities.Client.Tests.Extensions
         #region MergeChanges: Single Entity
         
         [Test]
-        public void MergeChanges_Should_Set_Modified_Order_Properties()
+        public void MergeChanges_Should_Set_Properties_For_Modified_Order_With_Updated_Customer()
         {
             // Arrange
             var database = new MockNorthwind();
             var origOrder = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(origOrder);
             origOrder.CustomerId = "ALFKI";
-            var updatedOrder = UpdateOrder(origOrder, database);
+            var updatedOrder = UpdateOrders(database, origOrder)[0];
 
             // Act
             changeTracker.MergeChanges(updatedOrder);
@@ -35,7 +36,7 @@ namespace TrackableEntities.Client.Tests.Extensions
         }
 
         [Test]
-        public void MergeChanges_Should_Set_Modified_Order_TrackingState_To_Unchanged()
+        public void MergeChanges_Should_Set_TrackingState_To_Unchanged_For_Modified_Order_With_Updated_Customer()
         {
             // Arrange
             var database = new MockNorthwind();
@@ -43,7 +44,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             var changeTracker = new ChangeTrackingCollection<Order>(origOrder);
             origOrder.CustomerId = "ALFKI";
             TrackingState origTrackingState = origOrder.TrackingState;
-            var updatedOrder = UpdateOrder(origOrder, database);
+            var updatedOrder = UpdateOrders(database, origOrder)[0];
 
             // Act
             changeTracker.MergeChanges(updatedOrder);
@@ -54,7 +55,7 @@ namespace TrackableEntities.Client.Tests.Extensions
         }
 
         [Test]
-        public void MergeChanges_Should_Set_Modified_Order_ModifiedProperties_To_Null()
+        public void MergeChanges_Should_Set_ModifiedProperties_To_Null_For_Modified_Order_With_Updated_Customer()
         {
             // Arrange
             var database = new MockNorthwind();
@@ -62,7 +63,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             var changeTracker = new ChangeTrackingCollection<Order>(origOrder);
             origOrder.CustomerId = "ALFKI";
             var origModifiedProps = origOrder.ModifiedProperties;
-            var updatedOrder = UpdateOrder(origOrder, database);
+            var updatedOrder = UpdateOrders(database, origOrder)[0];
 
             // Act
             changeTracker.MergeChanges(updatedOrder);
@@ -73,7 +74,28 @@ namespace TrackableEntities.Client.Tests.Extensions
         }
 
         [Test]
-        public void MergeChanges_Should_Set_Added_Order_Properties()
+        public void MergeChanges_Should_Set_ChangeTracker_For_Modified_Order_With_Updated_Customer()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var origOrder = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(origOrder);
+            origOrder.CustomerId = "ALFKI";
+            var updatedOrder = UpdateOrders(database, origOrder)[0];
+
+            // Act
+            changeTracker.MergeChanges(updatedOrder);
+            TrackingState origTrackingState = origOrder.Customer.TrackingState;
+            origOrder.Customer.CustomerName = "xxx";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, origTrackingState);
+            Assert.AreEqual(TrackingState.Modified, origOrder.Customer.TrackingState);
+            Assert.Contains("CustomerName", (ICollection)origOrder.Customer.ModifiedProperties);
+        }
+
+        [Test]
+        public void MergeChanges_Should_Set_Properties_For_Added_Order_With_Null_Customer()
         {
             // Arrange
             var database = new MockNorthwind();
@@ -84,7 +106,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             };
             var changeTracker = new ChangeTrackingCollection<Order>(true) {origOrder};
             TrackingState origTrackingState = origOrder.TrackingState;
-            var addedOrder = AddOrder(origOrder, database);
+            var addedOrder = AddOrders(database, origOrder)[0];
 
             // Act
             changeTracker.MergeChanges(addedOrder);
@@ -95,7 +117,7 @@ namespace TrackableEntities.Client.Tests.Extensions
         }
 
         [Test]
-        public void MergeChanges_Should_Set_Added_Order_TrackingState_To_Unchanged()
+        public void MergeChanges_Should_Set_TrackingState_To_Unchanged_For_Added_Order_With_Null_Customer()
         {
             // Arrange
             var database = new MockNorthwind();
@@ -105,7 +127,7 @@ namespace TrackableEntities.Client.Tests.Extensions
                 CustomerId = "ALFKI"
             };
             var changeTracker = new ChangeTrackingCollection<Order>(true) { origOrder };
-            var addedOrder = AddOrder(origOrder, database);
+            var addedOrder = AddOrders(database, origOrder)[0];
 
             // Act
             changeTracker.MergeChanges(addedOrder);
@@ -116,18 +138,92 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.AreEqual(addedOrder.OrderDate, origOrder.OrderDate);
         }
 
+        [Test]
+        public void MergeChanges_Should_Set_ChangeTracker_For_Added_Order_With_Null_Customer()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var origOrder = new Order
+            {
+                OrderDate = DateTime.Parse("1996-07-04"),
+                CustomerId = "ALFKI"
+            };
+            var changeTracker = new ChangeTrackingCollection<Order>(true) { origOrder };
+            var addedOrder = AddOrders(database, origOrder)[0];
+
+            // Act
+            changeTracker.MergeChanges(addedOrder);
+            TrackingState origTrackingState = origOrder.Customer.TrackingState;
+            origOrder.Customer.CustomerName = "xxx";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, origTrackingState);
+            Assert.AreEqual(TrackingState.Modified, origOrder.Customer.TrackingState);
+            Assert.Contains("CustomerName", (ICollection)origOrder.Customer.ModifiedProperties);
+        }
+
         #endregion
 
         #region MergeChanges: Multiple Entities
-        
+
+        [Test]
+        public void MergeChanges_Should_Set_Properties_For_Multiple_Modified_Orders_With_Updated_Customer()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var origOrder1 = database.Orders[0];
+            var origOrder2 = database.Orders[1];
+            var changeTracker = new ChangeTrackingCollection<Order>(origOrder1, origOrder2);
+            origOrder1.CustomerId = "ALFKI";
+            origOrder2.CustomerId = "ANATR";
+            var updatedOrders = UpdateOrders(database, origOrder1, origOrder2);
+
+            // Act
+            changeTracker.MergeChanges(updatedOrders.ToArray());
+
+            // Assert
+            Assert.AreEqual(updatedOrders[0].CustomerId, origOrder1.CustomerId);
+            Assert.AreEqual(updatedOrders[0].Customer.CustomerId, origOrder1.Customer.CustomerId);
+            Assert.AreEqual(updatedOrders[0].OrderDate, origOrder1.OrderDate);
+            Assert.AreEqual(updatedOrders[1].CustomerId, origOrder2.CustomerId);
+            Assert.AreEqual(updatedOrders[1].Customer.CustomerId, origOrder2.Customer.CustomerId);
+            Assert.AreEqual(updatedOrders[1].OrderDate, origOrder2.OrderDate);
+        }
+
         #endregion
 
         #region MergeChanges: One-to-Many
 
-        [Test]
-        public void MergeChanges_Should_Set_Order_OrderDetails_NonTrackable_Properties()
+        // TODO: Continue Testing
+        [Test, Ignore]
+        public void MergeChanges_Should_Set_Properties_For_Order_With_OrderDetails()
         {
+            // Arrange
+            var database = new MockNorthwind();
+            var origOrder = database.Orders[0];
+            var product = database.Products.Single(p => p.ProductId == 14);
+            origOrder.OrderDetails.Add(new OrderDetail { ProductId = 14, OrderId = 10249, Quantity = 9, UnitPrice = 18.6000M, Product = product });
+            var unchangedDetail = origOrder.OrderDetails[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(origOrder);
+            origOrder.OrderDetails[1].Product.ProductName = "xxx";
+            origOrder.OrderDetails[2].Quantity++;
+            origOrder.OrderDetails[2].ProductId = 1;
+            var newUnitPrice = origOrder.OrderDetails[2].UnitPrice + 1;
+            origOrder.OrderDetails.RemoveAt(3);
+            origOrder.OrderDetails.Add(new OrderDetail { ProductId = 51, OrderId = 10249, Quantity = 40, UnitPrice = 42.4000M });
 
+            var changes = changeTracker.GetChanges();
+            var updatedOrder = UpdateOrdersWithDetails(database, changes)[0];
+
+            // Act
+            changeTracker.MergeChanges(updatedOrder);
+
+            // Assert
+            Assert.Contains(unchangedDetail, origOrder.OrderDetails);
+            Assert.AreEqual(newUnitPrice, origOrder.OrderDetails[2].UnitPrice);
+            Assert.AreEqual(updatedOrder.OrderDetails[1].ProductId, origOrder.OrderDetails[2].ProductId);
+            Assert.AreEqual(updatedOrder.OrderDetails[1].Product.ProductId, origOrder.OrderDetails[2].Product.ProductId);
+            Assert.AreEqual(updatedOrder.OrderDetails[3].Product.ProductId, origOrder.OrderDetails[3].Product.ProductId);
         }
 
         [Test]
@@ -224,33 +320,67 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #region Helpers
 
-        private Order AddOrder(Order origOrder, MockNorthwind database)
+        private List<Order> AddOrders(MockNorthwind database, params Order[] origOrders)
         {
-            // Simulate serialization
-            var addedOrder = origOrder.Clone<Order>();
+            var addedOrders = new List<Order>();
+            for (int i = 0; i < origOrders.Length; i++)
+            {
+                // Simulate serialization
+                var origOrder = origOrders[i];
+                var addedOrder = origOrder.Clone<Order>();
 
-            // Simulate load related entities
-            addedOrder.Customer = database.Customers.Single(c => c.CustomerId == "ALFKI");
+                // Simulate load related entities
+                string customerId = i == 0 ? "ALFKI" : "ANATR";
+                addedOrder.Customer = database.Customers.Single(c => c.CustomerId == customerId);
 
-            // Simulate db-generated values
-            addedOrder.OrderId = new Random().Next(1000);
-            addedOrder.OrderDate = origOrder.OrderDate.AddDays(1);
-            addedOrder.AcceptChanges();
-            return addedOrder;
+                // Simulate db-generated values
+                addedOrder.OrderId = new Random().Next(1000);
+                addedOrder.OrderDate = origOrder.OrderDate.AddDays(1);
+                addedOrder.AcceptChanges();
+                addedOrders.Add(addedOrder);
+            }
+            return addedOrders;
         }
 
-        private Order UpdateOrder(Order origOrder, MockNorthwind database)
+        private List<Order> UpdateOrders(MockNorthwind database, params Order[] origOrders)
         {
-            // Simulate serialization
-            var updatedOrder = origOrder.Clone<Order>();
+            var updatedOrders = new List<Order>();
+            for (int i = 0; i < origOrders.Length; i++)
+            {
+                // Simulate serialization
+                var origOrder = origOrders[i];
+                var updatedOrder = origOrder.Clone<Order>();
 
-            // Simulate load related entities
-            updatedOrder.Customer = database.Customers.Single(c => c.CustomerId == "ALFKI");
+                // Simulate load related entities
+                string customerId = i == 0 ? "ALFKI" : "ANATR";
+                updatedOrder.Customer = database.Customers.Single(c => c.CustomerId == customerId);
 
-            // Simulate db-generated values
-            updatedOrder.OrderDate = origOrder.OrderDate.AddDays(1);
-            updatedOrder.AcceptChanges();
-            return updatedOrder;
+                // Simulate db-generated values
+                updatedOrder.OrderDate = origOrder.OrderDate.AddDays(1);
+                updatedOrder.AcceptChanges();
+                updatedOrders.Add(updatedOrder);
+            }
+            return updatedOrders;
+        }
+
+        private List<Order> UpdateOrdersWithDetails(MockNorthwind database, IEnumerable<Order> changes)
+        {
+            var updatedOrders = new List<Order>();
+            foreach (var origOrder in changes)
+            {
+                // Simulate serialization
+                var updatedOrder = origOrder.Clone<Order>();
+
+                // Simulate load related entities
+                const int productId = 1;
+                updatedOrder.OrderDetails[1].Product = database.Products.Single(p => p.ProductId == productId);
+
+                // Simulate db-generated values
+                updatedOrder.OrderDetails[1].UnitPrice++;
+                updatedOrder.AcceptChanges();
+                updatedOrders.Add(updatedOrder);
+            }
+            return updatedOrders;
         }
 
         #endregion

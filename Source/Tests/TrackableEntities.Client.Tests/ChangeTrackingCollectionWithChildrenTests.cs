@@ -293,6 +293,63 @@ namespace TrackableEntities.Client.Tests
             Assert.That(changedOrder.OrderDetails, Has.No.Member(unchangedDetail));
         }
 
+        [Test]
+        public void GetChanges_On_Modified_Order_Should_Return_Order()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.OrderDate = order.OrderDate.AddDays(1);
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsFalse(changes.Tracking);
+            Assert.AreNotSame(changes[0], order);
+            Assert.IsTrue(changes[0].IsEquatable(order));
+        }
+
+        [Test]
+        public void GetChanges_On_Unchanged_Order_With_Modified_Detail_Should_Return_Order()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.OrderDetails[0].Quantity++;
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, changes[0].TrackingState);
+            Assert.AreEqual(1, changes[0].OrderDetails.Count);
+            Assert.AreEqual(TrackingState.Modified, changes[0].OrderDetails[0].TrackingState);
+            Assert.IsTrue(changes[0].IsEquatable(order));
+            Assert.IsTrue(changes[0].OrderDetails[0].IsEquatable(order.OrderDetails[0]));
+        }
+
+        // TODO: Continue testing
+        [Test, Ignore]
+        public void GetChanges_On_Unchanged_OrderDetail_With_Modified_Product_Should_Return_OrderDetail()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.OrderDetails[0].Product.ProductName = "xxx";
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, changes[0].OrderDetails[0].TrackingState);
+            Assert.AreEqual(1, changes[0].OrderDetails.Count);
+            Assert.AreEqual(TrackingState.Modified, changes[0].OrderDetails[0].Product.TrackingState);
+            Assert.IsTrue(changes[0].IsEquatable(order));
+            Assert.IsTrue(changes[0].OrderDetails[0].IsEquatable(order.OrderDetails[0]));
+            Assert.IsTrue(changes[0].OrderDetails[0].Product.IsEquatable(order.OrderDetails[0].Product));
+        }
+
         #endregion
 
         #region MergeChangesTests
@@ -987,7 +1044,7 @@ namespace TrackableEntities.Client.Tests
 
         #endregion
 
-        #region ManyToOne - GetChanged Tests
+        #region ManyToOne - GetChanges Tests
 
         [Test]
         public void GetChanges_On_Existing_Order_With_Unchanged_Customer_Should_Return_Empty_Collection()

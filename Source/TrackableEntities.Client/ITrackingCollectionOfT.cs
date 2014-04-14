@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace TrackableEntities.Client
 {
@@ -6,12 +7,12 @@ namespace TrackableEntities.Client
     /// Interface implemented by trackable collections.
     /// </summary>
     public interface ITrackingCollection<T> : ICollection<T>
-        where T : class, ITrackable
+        where T : class, ITrackable, INotifyPropertyChanged
     {
         /// <summary>
         /// Get entities that have been marked as Added, Modified or Deleted.
         /// </summary>
         /// <returns>Collection containing only changed entities</returns>
-        ITrackingCollection<T> GetChanges();
+        ChangeTrackingCollection<T> GetChanges();
     }
 }

@@ -97,8 +97,7 @@ namespace TrackableEntities.Client
                     item.SetTracking(value, Parent);
 
                     // Set entity identifier
-                    var entityIdentifier = (value) ? default(Guid?) : default(Guid);
-                    item.SetEntityIdentifier(entityIdentifier);
+                    item.SetEntityIdentifier();
                 }
                 _tracking = value;
             }
@@ -213,7 +212,7 @@ namespace TrackableEntities.Client
         /// collections with entities that have been added, modified or deleted.
         /// </summary>
         /// <returns>Collection containing only changed entities</returns>
-        public ITrackingCollection<T> GetChanges()
+        public ChangeTrackingCollection<T> GetChanges()
         {
             // Get changed items in this tracking collection, 
             // including items with child collections that have changes

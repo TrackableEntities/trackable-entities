@@ -172,6 +172,8 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #region HasChanges Test
 
+        // NOTE: HasChanges only looks at trackable ref and child properties
+
         [Test]
         public void Parent_HasChanges_Should_Return_True_With_Modified_Children()
         {
@@ -250,6 +252,167 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.IsTrue(parentHasChanges);
             Assert.IsTrue(child1HasChanges);
             Assert.IsFalse(child2HasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Should_Return_True_For_Order_With_Modified_Details()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var didHaveChanges = order.HasChanges();
+            order.OrderDetails[0].Quantity++;
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsFalse(didHaveChanges);
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Should_Return_True_For_Order_Details_With_Modified_Product()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var didHaveChanges = order.HasChanges();
+            order.OrderDetails[0].Product.ProductName = "xxx";
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsFalse(didHaveChanges);
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Should_Return_True_For_Order_With_Modified_Customer()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var didHaveChanges = order.HasChanges();
+            order.Customer.CustomerName = "xxx";
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsFalse(didHaveChanges);
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Should_Return_True_For_Order_With_Customer_Modified_CustomerSetting()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            order.Customer.CustomerSetting = new CustomerSetting
+            {
+                Setting = "Setting1",
+                CustomerId = order.Customer.CustomerId,
+                Customer = order.Customer
+            };
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var didHaveChanges = order.HasChanges();
+            order.Customer.CustomerSetting.Setting = "xxx";
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsFalse(didHaveChanges);
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Should_Return_True_For_Employee_With_Modified_Territory()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            var didHaveChanges = employee.HasChanges();
+            employee.Territories[1].Data = "xxx";
+
+            // Act
+            bool hasChanges = employee.HasChanges();
+
+            // Assert
+            Assert.IsFalse(didHaveChanges);
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Should_Return_True_For_Employee_With_Territory_Modified_Area()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            employee.Territories[1].Area = new Area
+            {
+                AreaId = 1,
+                AreaName = "Northern",
+                Territories = new ChangeTrackingCollection<Territory> { employee.Territories[1] }
+            };
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            var didHaveChanges = employee.HasChanges();
+            employee.Territories[1].Area.AreaName = "xxx";
+
+            // Act
+            bool hasChanges = employee.HasChanges();
+
+            // Assert
+            Assert.IsFalse(didHaveChanges);
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Should_Return_True_For_Employee_With_Added_Territory()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            var didHaveChanges = employee.HasChanges();
+            employee.Territories.Add(new Territory
+            {
+                TerritoryId = "91360",
+                Data = "Test",
+                Employees = new ChangeTrackingCollection<Employee> {employee}
+            });
+
+            // Act
+            bool hasChanges = employee.HasChanges();
+
+            // Assert
+            Assert.IsFalse(didHaveChanges);
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Should_Return_True_For_Employee_With_Removed_Territory()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            var didHaveChanges = employee.HasChanges();
+            employee.Territories.RemoveAt(0);
+
+            // Act
+            bool hasChanges = employee.HasChanges();
+
+            // Assert
+            Assert.IsFalse(didHaveChanges);
+            Assert.IsTrue(hasChanges);
         }
 
         #endregion
