@@ -222,7 +222,7 @@ namespace TrackableEntities.Client
         /// <param name="parent">Parent ITrackable object</param>
         public static void RestoreDeletes(this ITrackingCollection changeTracker, ITrackable parent = null)
         {
-            // Get changes that include cached deletes
+            // Get cached deletes
             var removedDeletes = changeTracker.GetChanges(true).Cast<ITrackable>().ToList();
 
             // Restore deleted items

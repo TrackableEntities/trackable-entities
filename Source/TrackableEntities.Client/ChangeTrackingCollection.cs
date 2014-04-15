@@ -247,6 +247,14 @@ namespace TrackableEntities.Client
         }
 
         /// <summary>
+        /// Remove deleted entities which have been cached.
+        /// </summary>
+        void ITrackingCollection.RemoveCachedDeletes()
+        {
+            _deletedEntities.Clear();
+        }
+
+        /// <summary>
         /// <para>Merge changed child items into the original trackable entity. 
         /// This assumes GetChanges was called to update only changed items. 
         /// Non-recursive - only direct children will be merged.</para> 

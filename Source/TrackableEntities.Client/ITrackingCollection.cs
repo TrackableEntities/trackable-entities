@@ -27,6 +27,11 @@ namespace TrackableEntities.Client
         ITrackingCollection GetChanges(bool cachedDeletesOnly);
 
         /// <summary>
+        /// Remove deleted entities which have been cached.
+        /// </summary>
+        void RemoveCachedDeletes();
+
+        /// <summary>
         /// Properties to exclude from change tracking.
         /// </summary>
         IList<string> ExcludedProperties { get; }

@@ -77,7 +77,7 @@ namespace TrackableEntities.Client
                     // Set to 1-1 and M-1 properties
                     var updatedTrackableRef = prop.GetValue(updatedItem, null) as ITrackable;
 
-                    // Stop recursion if trackable is same type as parent
+                    // Continue recursion if trackable is not same type as parent
                     if (updatedTrackableRef != null && (updatedItemParent == null
                         || updatedTrackableRef.GetType() != updatedItemParent.GetType()))
                     {
@@ -88,22 +88,18 @@ namespace TrackableEntities.Client
 
                     // Set 1-M and M-M properties
                     var updatedChildItems = prop.GetValue(updatedItem, null) as IList;
-                    var origItemsChangeTracker = updatedChildItems as ITrackingCollection;
+                    var origItemsChangeTracker = prop.GetValue(origItem, null) as ITrackingCollection;
                     if (updatedChildItems != null && origItemsChangeTracker != null
                         && updatedChildItems.Count > 0)
                     {
-                        // Stop recursion if trackable is same type as parent
+                        // Continue recursion if trackable is not same type as parent
                         var updatedTrackableChild = updatedChildItems[0] as ITrackable;
                         if (updatedTrackableChild != null && (updatedItemParent == null
                             || updatedTrackableChild.GetType() != updatedItemParent.GetType()))
                         {
+                            // Merge changes into trackable children
                             origItemsChangeTracker.MergeChanges(updatedChildItems.Cast<ITrackable>(), updatedItem);
                         }
-
-                        // TODO: Do we need this?
-                        //  Restore then remove cached deletes
-                        origItemsChangeTracker.RestoreDeletes();
-                        origItemsChangeTracker.RemoveRestoredDeletes();
                     }
                 }
 
@@ -114,10 +110,8 @@ namespace TrackableEntities.Client
                 origItem.AcceptChanges();
             }
 
-            // TODO: Do we need this?
-            //  Restore then remove cached deletes
-            originalChangeTracker.RestoreDeletes();
-            originalChangeTracker.RemoveRestoredDeletes();
+            // Remove cached deletes
+            originalChangeTracker.RemoveCachedDeletes();
         }
 
         private static ITrackable GetEquatableItem

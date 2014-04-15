@@ -194,8 +194,7 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #region MergeChanges: One-to-Many
 
-        // TODO: Continue Testing
-        [Test, Ignore]
+        [Test]
         public void MergeChanges_Should_Set_Properties_For_Order_With_OrderDetails()
         {
             // Arrange
@@ -219,13 +218,16 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(updatedOrder);
 
             // Assert
-            Assert.Contains(unchangedDetail, origOrder.OrderDetails);
-            Assert.AreEqual(newUnitPrice, origOrder.OrderDetails[2].UnitPrice);
-            Assert.AreEqual(updatedOrder.OrderDetails[1].ProductId, origOrder.OrderDetails[2].ProductId);
-            Assert.AreEqual(updatedOrder.OrderDetails[1].Product.ProductId, origOrder.OrderDetails[2].Product.ProductId);
-            Assert.AreEqual(updatedOrder.OrderDetails[3].Product.ProductId, origOrder.OrderDetails[3].Product.ProductId);
+            Assert.Contains(unchangedDetail, origOrder.OrderDetails); // Unchanged present
+            Assert.AreEqual("xxx", origOrder.OrderDetails[1].Product.ProductName); // Prod name updated
+            Assert.AreEqual(updatedOrder.OrderDetails[1].ProductId, origOrder.OrderDetails[2].Product.ProductId); // Changed Product set
+            Assert.AreEqual(newUnitPrice, origOrder.OrderDetails[2].UnitPrice); // Db-generated value set
+            Assert.AreEqual(updatedOrder.OrderDetails[2].Product.ProductId, origOrder.OrderDetails[3].Product.ProductId); // Added detail Product set
+            ICollection cachedDeletes = ((ITrackingCollection)origOrder.OrderDetails).GetChanges(true);
+            Assert.IsEmpty(cachedDeletes); // Cached deletes have been removed
         }
 
+        // TODO: Continue Testing
         [Test]
         public void MergeChanges_Should_Set_Order_OrderDetails_TrackingState_To_Unchanged()
         {
@@ -372,8 +374,8 @@ namespace TrackableEntities.Client.Tests.Extensions
                 var updatedOrder = origOrder.Clone<Order>();
 
                 // Simulate load related entities
-                const int productId = 1;
-                updatedOrder.OrderDetails[1].Product = database.Products.Single(p => p.ProductId == productId);
+                updatedOrder.OrderDetails[1].Product = database.Products.Single(p => p.ProductId == 1);
+                updatedOrder.OrderDetails[2].Product = database.Products.Single(p => p.ProductId == 51);
 
                 // Simulate db-generated values
                 updatedOrder.OrderDetails[1].UnitPrice++;
