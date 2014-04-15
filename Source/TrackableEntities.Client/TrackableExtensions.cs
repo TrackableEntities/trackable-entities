@@ -150,50 +150,11 @@ namespace TrackableEntities.Client
         }
 
         /// <summary>
-        /// Recursively set child collections in an object graph to changed items.
-        /// </summary>
-        /// <param name="item">Trackable object</param>
-        /// <param name="parent">ITrackable parent of item</param>
-        public static void SetChanges(this ITrackable item, ITrackable parent = null)
-        {
-            // Include private props to get ref prop change tracker
-            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
-                | BindingFlags.Public | BindingFlags.NonPublic))
-            {
-                var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
-                if (trackingColl != null)
-                {
-                    // Recursively set changes
-                    bool stopRecursion = false;
-                    foreach (ITrackable child in trackingColl)
-                    {
-                        // Stop recursion if trackable is same type as parent
-                        if (parent != null && (child.GetType() == parent.GetType()))
-                        {
-                            stopRecursion = true;
-                            break;
-                        }
-                        child.SetChanges(item);
-                    }
-
-                    // Set collection property on cloned item
-                    if (!stopRecursion)
-                    {
-                        ITrackingCollection changes = trackingColl.GetChanges();
-                        prop.SetValue(item, changes, null); 
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Recursively remove items marked as deleted.
         /// </summary>
         /// <param name="changeTracker">Change-tracking collection</param>
-        /// <param name="enableTracking">True to cache deleted items</param>
         /// <param name="parent">Parent ITrackable object</param>
-        public static void RemoveDeletes(this ITrackingCollection changeTracker, 
-            bool enableTracking, ITrackable parent = null)
+        public static void RemoveRestoredDeletes(this ITrackingCollection changeTracker, ITrackable parent = null)
         {
             // Iterate items in change-tracking collection
             var items = changeTracker as IList;
@@ -220,7 +181,7 @@ namespace TrackableEntities.Client
                         ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
 
                         // Remove deletes on rep prop
-                        if (refChangeTracker != null) refChangeTracker.RemoveDeletes(enableTracking, item);
+                        if (refChangeTracker != null) refChangeTracker.RemoveRestoredDeletes(parent: item);
                     }
 
                     // Process 1-M and M-M properties
@@ -236,17 +197,19 @@ namespace TrackableEntities.Client
                         if (parent == null || (trackableChild != null && trackableChild.GetType() != parent.GetType()))
                         {
                             // Remove deletes on child collection
-                            trackingColl.RemoveDeletes(enableTracking, item);
+                            trackingColl.RemoveRestoredDeletes(parent: item);
                         }
                     }
                 }
 
                 // Remove item if marked as deleted
+                var removedDeletes = changeTracker.GetChanges(true).Cast<ITrackable>().ToList();
                 if (item.TrackingState == TrackingState.Deleted)
                 {
                     var isTracking = changeTracker.Tracking;
-                    changeTracker.Tracking = enableTracking;
-                    items.Remove(item);
+                    changeTracker.Tracking = false;
+                    if (removedDeletes.Contains(item))
+                        items.Remove(item);
                     changeTracker.Tracking = isTracking;
                 }
             }
@@ -260,8 +223,21 @@ namespace TrackableEntities.Client
         public static void RestoreDeletes(this ITrackingCollection changeTracker, ITrackable parent = null)
         {
             // Get changes that include cached deletes
-            var deletes = changeTracker.GetChanges().Cast<ITrackable>()
-                .Where(t => t.TrackingState == TrackingState.Deleted).ToList();
+            var removedDeletes = changeTracker.GetChanges(true).Cast<ITrackable>().ToList();
+
+            // Restore deleted items
+            if (removedDeletes.Any())
+            {
+                var isTracking = changeTracker.Tracking;
+                changeTracker.Tracking = false;
+                foreach (var delete in removedDeletes)
+                {
+                    var items = changeTracker as IList;
+                    if (items != null && !items.Contains(delete))
+                        items.Add(delete);
+                }
+                changeTracker.Tracking = isTracking;
+            }
 
             foreach (var item in changeTracker.Cast<ITrackable>())
             {
@@ -290,11 +266,10 @@ namespace TrackableEntities.Client
                     {
                         // Continue recursion if trackable is not same type as parent
                         var trackableChild = trackingColl.Cast<ITrackable>().FirstOrDefault();
-                        var childDelete = trackingColl.GetChanges().Cast<ITrackable>()
-                            .FirstOrDefault(t => t.TrackingState == TrackingState.Deleted);
+                        var deletedChild = trackingColl.GetChanges(true).Cast<ITrackable>().FirstOrDefault();
                         if (parent == null || 
                             (trackableChild != null && trackableChild.GetType() != parent.GetType()) ||
-                            (childDelete != null && childDelete.GetType() != parent.GetType()))
+                            (deletedChild != null && deletedChild.GetType() != parent.GetType()))
                         {
                             // Remove deletes on child collection
                             trackingColl.RestoreDeletes(item);
@@ -302,17 +277,6 @@ namespace TrackableEntities.Client
                     }
                 }
             }
-
-            // Restore deleted items
-            if (!deletes.Any()) return;
-            var isTracking = changeTracker.Tracking;
-            changeTracker.Tracking = false;
-            foreach (var delete in deletes)
-            {
-                var items = changeTracker as IList;
-                if (items != null) items.Add(delete);
-            }
-            changeTracker.Tracking = isTracking;
         }
 
         /// <summary>
@@ -347,7 +311,7 @@ namespace TrackableEntities.Client
                     // Return true if child collection has changes
                     if (!stopRecursion)
                     {
-                        ITrackingCollection changes = trackingColl.GetChanges();
+                        ITrackingCollection changes = trackingColl.GetChanges(false);
                         if (changes.Count > 0) return true; 
                     }
                 }

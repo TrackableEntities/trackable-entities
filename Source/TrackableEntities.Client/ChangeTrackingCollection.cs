@@ -196,8 +196,9 @@ namespace TrackableEntities.Client
                 // Fire EntityChanged event
                 if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
 
-                // If not added, cache deleted item
-                if (item.TrackingState != TrackingState.Added)
+                // Cache deleted item if not added or already cached
+                if (item.TrackingState != TrackingState.Added
+                    && !_deletedEntities.Contains(item))
                     _deletedEntities.Add(item);
             }
             base.RemoveItem(index);
@@ -217,7 +218,7 @@ namespace TrackableEntities.Client
             var items = this.Select(e => e.Clone<T>()).ToList();
 
             // Remove deletes
-            this.RemoveDeletes(true);
+            this.RemoveRestoredDeletes();
 
             // Get changed items
             List<T> entities = items.GetChanges(null).Cast<T>().ToList();
@@ -229,16 +230,19 @@ namespace TrackableEntities.Client
         /// <summary>
         /// Get entities that have been added, modified or deleted.
         /// </summary>
+        /// <param name="cachedDeletesOnly">True to return only cached deletes</param>
         /// <returns>Collection containing only changed entities</returns>
-        ITrackingCollection ITrackingCollection.GetChanges()
+        ITrackingCollection ITrackingCollection.GetChanges(bool cachedDeletesOnly)
         {
+            // Get removed deletes only
+            if (cachedDeletesOnly)
+                return new ChangeTrackingCollection<T>(_deletedEntities, true);
+
             // Get changed items in this tracking collection
             var changes = (from existing in this
                            where existing.TrackingState != TrackingState.Unchanged
                            select existing)
                           .Union(_deletedEntities);
-
-            // Return a new generic tracking collection
             return new ChangeTrackingCollection<T>(changes, true);
         }
 

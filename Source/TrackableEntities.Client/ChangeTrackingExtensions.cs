@@ -100,9 +100,10 @@ namespace TrackableEntities.Client
                             origItemsChangeTracker.MergeChanges(updatedChildItems.Cast<ITrackable>(), updatedItem);
                         }
 
+                        // TODO: Do we need this?
                         //  Restore then remove cached deletes
                         origItemsChangeTracker.RestoreDeletes();
-                        origItemsChangeTracker.RemoveDeletes(false);
+                        origItemsChangeTracker.RemoveRestoredDeletes();
                     }
                 }
 
@@ -113,9 +114,10 @@ namespace TrackableEntities.Client
                 origItem.AcceptChanges();
             }
 
+            // TODO: Do we need this?
             //  Restore then remove cached deletes
             originalChangeTracker.RestoreDeletes();
-            originalChangeTracker.RemoveDeletes(false);
+            originalChangeTracker.RemoveRestoredDeletes();
         }
 
         private static ITrackable GetEquatableItem

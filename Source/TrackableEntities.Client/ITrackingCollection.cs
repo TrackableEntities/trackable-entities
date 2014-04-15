@@ -22,8 +22,9 @@ namespace TrackableEntities.Client
         /// <summary>
         /// Get entities that have been marked as Added, Modified or Deleted.
         /// </summary>
+        /// <param name="cachedDeletesOnly">True to return only cached deletes</param>
         /// <returns>Collection containing only changed entities</returns>
-        ITrackingCollection GetChanges();
+        ITrackingCollection GetChanges(bool cachedDeletesOnly);
 
         /// <summary>
         /// Properties to exclude from change tracking.

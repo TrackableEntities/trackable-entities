@@ -447,117 +447,7 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #endregion
 
-        #region SetChanges Tests
-
-        [Test]
-        public void Parent_SetChanges_Should_Add_Only_Modified_Children()
-        {
-            // Arrange
-            var parent = new Parent("Parent")
-                {
-                    Children = new ChangeTrackingCollection<Child>
-                        {
-                            new Child("Child1"), 
-                            new Child("Child2")
-                        }
-                };
-            parent.Children.Tracking = true;
-            parent.Children[0].Name += "_Changed";
-
-            // Act
-            parent.SetChanges();
-
-            // Assert
-            Assert.AreEqual(1, parent.Children.Count);
-        }
-
-        [Test]
-        public void Parent_SetChanges_Should_Add_Only_Added_Modified_Deleted_Children()
-        {
-            // Arrange
-            var parent = new Parent("Parent")
-            {
-                Children = new ChangeTrackingCollection<Child>
-                    {
-                        new Child("Child1"), 
-                        new Child("Child2"),
-                        new Child("Child3")
-                    }
-            };
-            parent.Children.Tracking = true;
-            parent.Children.Add(new Child("Child4"));
-            parent.Children[0].Name += "_Changed";
-            parent.Children.RemoveAt(2);
-
-            // Act
-            parent.SetChanges();
-
-            // Assert
-            Assert.AreEqual(3, parent.Children.Count);
-        }
-
-        [Test]
-        public void Parent_SetChanges_Should_Add_Only_Children_With_Modified_Children()
-        {
-            // Arrange
-            var parent = new Parent("Parent")
-            {
-                Children = new ChangeTrackingCollection<Child>
-                    {
-                        new Child("Child1")
-                            { 
-                                Children = new ChangeTrackingCollection<GrandChild>
-                                { 
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
-                                } 
-                            }, 
-                        new Child("Child2")
-                    }
-            };
-            parent.Children.Tracking = true;
-            parent.Children[0].Children[0].Name += "_Changed";
-
-            // Act
-            parent.SetChanges();
-
-            // Assert
-            Assert.AreEqual(1, parent.Children.Count);
-            Assert.AreEqual(1, parent.Children[0].Children.Count);
-        }
-
-        [Test]
-        public void Parent_SetChanges_Should_Add_Only_Children_With_Added_Modified_Deleted_Children()
-        {
-            // Arrange
-            var parent = new Parent("Parent")
-            {
-                Children = new ChangeTrackingCollection<Child>
-                    {
-                        new Child("Child1")
-                            { 
-                                Children = new ChangeTrackingCollection<GrandChild>
-                                { 
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2"),
-                                    new GrandChild("Grandchild3")
-                                } 
-                            }, 
-                        new Child("Child2")
-                    }
-            };
-            parent.Children.Tracking = true;
-            parent.Children[0].Children.Add(new GrandChild("Grandchild4"));
-            parent.Children[0].Children[0].Name += "_Changed";
-            parent.Children[0].Children.RemoveAt(2);
-
-            // Act
-            parent.SetChanges();
-
-            // Assert
-            Assert.AreEqual(1, parent.Children.Count);
-            Assert.AreEqual(3, parent.Children[0].Children.Count);
-        }
+        #region GetChanges Tests
 
         [Test]
         public void Collection_GetChanges_Should_Add_Only_Modified_Children()
@@ -729,10 +619,13 @@ namespace TrackableEntities.Client.Tests.Extensions
                     }
             };
             parent.Children[0].TrackingState = TrackingState.Deleted;
+            parent.Children.Tracking = true;
+            parent.Children.RemoveAt(0);
+            parent.Children.RestoreDeletes();
 
             // Act
             var trackableColl = (ITrackingCollection)parent.Children;
-            trackableColl.RemoveDeletes(false);
+            trackableColl.RemoveRestoredDeletes();
 
             // Assert
             Assert.AreEqual(2, trackableColl.Count);
@@ -786,11 +679,13 @@ namespace TrackableEntities.Client.Tests.Extensions
                     }
             };
             var deleted = parent.Children[0].Children[1];
-            deleted.TrackingState = TrackingState.Deleted;
+            parent.Children[0].Children.Tracking = true;
+            parent.Children[0].Children.RemoveAt(1);
+            parent.Children[0].Children.RestoreDeletes();
 
             // Act
             var trackableColl = (ITrackingCollection)parent.Children[0].Children;
-            trackableColl.RemoveDeletes(false);
+            trackableColl.RemoveRestoredDeletes();
 
             // Assert
             Assert.AreEqual(1, parent.Children[0].Children.Count);
@@ -805,12 +700,13 @@ namespace TrackableEntities.Client.Tests.Extensions
             var order = database.Orders[0];
             var deleted1 = order.OrderDetails[0];
             var deleted2 = order.OrderDetails[2];
-            deleted1.TrackingState = TrackingState.Deleted;
-            deleted2.TrackingState = TrackingState.Deleted;
-            var changeTracker = new ChangeTrackingCollection<Order> {order};
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.OrderDetails.Remove(deleted1);
+            order.OrderDetails.Remove(deleted2);
+            changeTracker.RestoreDeletes();
 
             // Act
-            changeTracker.RemoveDeletes(false);
+            changeTracker.RemoveRestoredDeletes();
 
             // Assert
             Assert.AreEqual(1, order.OrderDetails.Count);
