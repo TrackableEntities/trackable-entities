@@ -329,8 +329,7 @@ namespace TrackableEntities.Client.Tests
             Assert.IsTrue(changes[0].OrderDetails[0].IsEquatable(order.OrderDetails[0]));
         }
 
-        // TODO: Continue testing
-        [Test, Ignore]
+        [Test]
         public void GetChanges_On_Unchanged_OrderDetail_With_Modified_Product_Should_Return_OrderDetail()
         {
             // Arrange
@@ -1061,14 +1060,14 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Test]
-        public void GetChanges_On_Existing_Order_With_Modified_Customer_Return_Customer_Marked_As_Modified()
+        public void GetChanges_On_Existing_Order_With_Modified_Customer_Should_Return_Customer_Marked_As_Modified()
         {
             // Arrange
             var order = _database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer.CustomerName = "xxx";
 
             // Act
-            order.Customer.CustomerName = "xxx";
             var changes = changeTracker.GetChanges();
 
             // Assert
@@ -1078,7 +1077,7 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Test]
-        public void GetChanges_On_Existing_Order_With_New_Customer_Return_Empty_Collection()
+        public void GetChanges_On_Existing_Order_With_New_Customer_Should_Return_Empty_Collection()
         {
             // Arrange
             var order = _database.Orders[0];
@@ -1097,7 +1096,7 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Test]
-        public void GetChanges_On_Existing_Order_With_Manually_Added_Customer_Return_Customer_Marked_As_Added()
+        public void GetChanges_On_Existing_Order_With_Manually_Added_Customer_Should_Return_Customer_Marked_As_Added()
         {
             // Arrange
             var order = _database.Orders[0];
@@ -1119,7 +1118,7 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Test]
-        public void GetChanges_On_Existing_Order_With_Removed_Customer_Return_Empty_Collection()
+        public void GetChanges_On_Existing_Order_With_Removed_Customer_Should_Return_Empty_Collection()
         {
             // NOTE: Reference properties are change-tracked but do not call 
             // NotifyPropertyChanged because it is called by foreign key's property setter.
@@ -1136,6 +1135,144 @@ namespace TrackableEntities.Client.Tests
             // Assert
             Assert.IsEmpty(changes);
             Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Order_With_Customer_Modified_Territory_Should_Return_Territory_Marked_As_Modified()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            order.Customer.Territory = new Territory
+            {
+                TerritoryId = "91360", TerritoryDescription = "Southern California",
+                Customers = new ChangeTrackingCollection<Customer> { order.Customer }
+            };
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer.Territory.TerritoryDescription = "xxx";
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsNotEmpty(changes);
+            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, changes.First().Customer.TrackingState);
+            Assert.AreEqual(TrackingState.Modified, changes.First().Customer.Territory.TrackingState);
+        }
+
+        [Test]
+        public void GetChanges_On_Modified_Order_With_UnModified_Customer_Should_Set_Customer_To_Null()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            order.Customer.Territory = new Territory
+            {
+                TerritoryId = "91360",
+                TerritoryDescription = "Southern California",
+                Customers = new ChangeTrackingCollection<Customer> { order.Customer }
+            };
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.OrderDate = order.OrderDate.AddDays(1);
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsNotEmpty(changes);
+            Assert.AreEqual(TrackingState.Modified, changes.First().TrackingState);
+            Assert.IsNull(changes.First().Customer);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Order_With_Modified_Customer_With_Unmodified_Territory_Should_Set_Territory_To_Null()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            order.Customer.Territory = new Territory
+            {
+                TerritoryId = "91360",
+                TerritoryDescription = "Southern California",
+                Customers = new ChangeTrackingCollection<Customer> { order.Customer }
+            };
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer.CustomerName = "xxx";
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsNotEmpty(changes);
+            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.AreEqual(TrackingState.Modified, changes.First().Customer.TrackingState);
+            Assert.IsNull(changes.First().Customer.Territory);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Order_With_Modified_Customer_With_Deleted_Territory_Should_Set_Territory_To_Null()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            order.Customer.Territory = new Territory
+            {
+                TerritoryId = "91360",
+                TerritoryDescription = "Southern California",
+                Customers = new ChangeTrackingCollection<Customer> { order.Customer }
+            };
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer.CustomerName = "xxx";
+            order.Customer.Territory.TrackingState = TrackingState.Deleted;
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsNotEmpty(changes);
+            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.AreEqual(TrackingState.Modified, changes.First().Customer.TrackingState);
+            Assert.IsNull(changes.First().Customer.Territory);
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Order_With_Customer_Territory_Added_Modified_Removed_Employees_Should_Return_Marked_Employees()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            order.Customer.Territory = new Territory
+            {
+                TerritoryId = "91360",
+                TerritoryDescription = "Southern California",
+                Customers = new ChangeTrackingCollection<Customer> { order.Customer }
+            };
+            var employee1 = _database.Employees[0];
+            var employee2 = _database.Employees[1];
+            var employee3 = _database.Employees[2];
+            var employee4 = _database.Employees[3];
+            employee1.Territories.Add(order.Customer.Territory);
+            employee2.Territories.Add(order.Customer.Territory);
+            employee3.Territories.Add(order.Customer.Territory);
+            employee4.Territories.Add(order.Customer.Territory);
+            order.Customer.Territory.Employees.Add(employee1);
+            order.Customer.Territory.Employees.Add(employee2);
+            order.Customer.Territory.Employees.Add(employee3);
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            employee2.FirstName = "xxx";
+            order.Customer.Territory.Employees.Remove(employee3);
+            order.Customer.Territory.Employees.Add(employee4);
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.IsNotEmpty(changes);
+            var changedOrder = changes.First();
+            Assert.AreEqual(TrackingState.Unchanged, changedOrder.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, changedOrder.Customer.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, changedOrder.Customer.Territory.TrackingState);
+            Assert.AreEqual(3, changedOrder.Customer.Territory.Employees.Count);
+            Assert.AreEqual(TrackingState.Modified, changedOrder.Customer.Territory.Employees[0].TrackingState);
+            Assert.AreEqual(TrackingState.Added, changedOrder.Customer.Territory.Employees[1].TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, changedOrder.Customer.Territory.Employees[2].TrackingState);
         }
 
         #endregion

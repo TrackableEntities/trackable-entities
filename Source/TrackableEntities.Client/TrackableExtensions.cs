@@ -299,7 +299,6 @@ namespace TrackableEntities.Client
             changeTracker.Tracking = isTracking;
         }
 
-        // TODO: Move HasChanges to ChangeTrackingCollection extensions
         /// <summary>
         /// Recursively get items with child collections that have changes.
         /// </summary>
@@ -374,13 +373,14 @@ namespace TrackableEntities.Client
                             IEnumerable<ITrackable> refPropChanges = refPropItems.GetChanges(item);
 
                             // Set flag for downstream changes
-                            hasDownstreamChanges = refPropChanges.Any() ||
+                            hasDownstreamChanges = refPropChanges.Any(t => t.TrackingState != TrackingState.Deleted) ||
                                                    trackableRef.TrackingState == TrackingState.Added ||
                                                    trackableRef.TrackingState == TrackingState.Modified;
 
                             // Set ref prop to null if unchanged or deleted
-                            if (trackableRef.TrackingState == TrackingState.Unchanged
-                                || trackableRef.TrackingState == TrackingState.Deleted)
+                            if (!hasDownstreamChanges && 
+                                (trackableRef.TrackingState == TrackingState.Unchanged
+                                || trackableRef.TrackingState == TrackingState.Deleted))
                             {
                                 prop.SetValue(item, null, null);
                                 continue;
