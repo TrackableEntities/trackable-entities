@@ -257,7 +257,7 @@ namespace TrackableEntities.Client.Tests
         #region GetChanges Tests
 
         [Test]
-        public void GetChanges_On_Existing_Parent_With_Children_Should_Return_Marked_Children()
+        public void GetChanges_On_Unchanged_Order_With_Details_Should_Return_Marked_Children()
         {
             // Arrange
             var order = _database.Orders[0];
@@ -279,18 +279,98 @@ namespace TrackableEntities.Client.Tests
 
             // Act
             var changes = changeTracker.GetChanges();
+
+            // Assert
             var changedOrder = changes.First();
             var changedModifiedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == modifiedDetail.ProductId);
             var changedAddedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == addedDetail.ProductId);
             var changedDeletedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == deletedDetail.ProductId);
-
-            // Assert
             Assert.AreEqual(TrackingState.Unchanged, changedOrder.TrackingState);
             Assert.AreEqual(3, changedOrder.OrderDetails.Count);
             Assert.AreEqual(TrackingState.Modified, changedModifiedDetail.TrackingState);
             Assert.AreEqual(TrackingState.Added, changedAddedDetail.TrackingState);
             Assert.AreEqual(TrackingState.Deleted, changedDeletedDetail.TrackingState);
             Assert.That(changedOrder.OrderDetails, Has.No.Member(unchangedDetail));
+        }
+
+        [Test]
+        public void GetChanges_On_Added_Order_With_Details_Should_Return_Marked_Children_Added()
+        {
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(true) {order};
+            var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
+            var unchangedDetail = orderDetails[0];
+            var modifiedDetail = orderDetails[1];
+            var deletedDetail = orderDetails[2];
+            var addedDetail = new OrderDetail
+            {
+                ProductId = 1,
+                Product = _database.Products[0],
+                Quantity = 10,
+                UnitPrice = 20M
+            };
+            orderDetails.Add(addedDetail);
+            modifiedDetail.UnitPrice++;
+            orderDetails.Remove(deletedDetail);
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            var changedOrder = changes.First();
+            var changedExistingDetail = changedOrder.OrderDetails.Single(d => d.ProductId == unchangedDetail.ProductId);
+            var changedModifiedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == modifiedDetail.ProductId);
+            var changedAddedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == addedDetail.ProductId);
+            Assert.AreEqual(TrackingState.Added, changedOrder.TrackingState);
+            Assert.AreEqual(3, changedOrder.OrderDetails.Count);
+            Assert.AreEqual(TrackingState.Added, changedModifiedDetail.TrackingState);
+            Assert.AreEqual(TrackingState.Added, changedAddedDetail.TrackingState);
+            Assert.AreEqual(TrackingState.Added, changedExistingDetail.TrackingState);
+            Assert.That(changedOrder.OrderDetails, Has.No.Member(deletedDetail));
+        }
+
+        // TODO: Continue Testing
+        [Test, Ignore]
+        public void GetChanges_On_Deleted_Order_With_Details_Should_Return_Marked_Children_Deleted()
+        {
+            // NOTE: Removed order with added detail should exclude added detail
+            // Removed order with deleted detail should include deleted detail
+
+            // Arrange
+            var order = _database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
+            var unchangedDetail = orderDetails[0];
+            var modifiedDetail = orderDetails[1];
+            var deletedDetail = orderDetails[2];
+            var addedDetail = new OrderDetail
+            {
+                ProductId = 1,
+                Product = _database.Products[0],
+                Quantity = 10,
+                UnitPrice = 20M
+            };
+            orderDetails.Add(addedDetail);
+            modifiedDetail.UnitPrice++;
+            orderDetails.Remove(deletedDetail);
+            changeTracker.Remove(order);
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            var changedOrder = changes.First();
+            var changedExistingDetail = changedOrder.OrderDetails.Single(d => d.ProductId == unchangedDetail.ProductId);
+            var changedModifiedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == modifiedDetail.ProductId);
+            var changedAddedDetail = changedOrder.OrderDetails.SingleOrDefault(d => d.ProductId == addedDetail.ProductId);
+            var changedDeletedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == deletedDetail.ProductId);
+            Assert.AreEqual(TrackingState.Deleted, changedOrder.TrackingState);
+            Assert.AreEqual(3, changedOrder.OrderDetails.Count);
+            Assert.AreEqual(TrackingState.Deleted, changedModifiedDetail.TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, changedExistingDetail.TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, changedDeletedDetail.TrackingState);
+            Assert.IsNull(changedAddedDetail);
         }
 
         [Test]
