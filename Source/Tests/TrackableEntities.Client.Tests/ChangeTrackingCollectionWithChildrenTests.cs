@@ -370,6 +370,7 @@ namespace TrackableEntities.Client.Tests
             Assert.AreEqual(TrackingState.Deleted, changedExistingDetail.TrackingState);
             Assert.AreEqual(TrackingState.Deleted, changedDeletedDetail.TrackingState);
             Assert.IsNull(changedAddedDetail);
+            Assert.AreEqual(TrackingState.Unchanged, addedDetail.TrackingState);
         }
 
         [Test]
