@@ -149,18 +149,16 @@ namespace TrackableEntities.Client
         {
             if (Tracking)
             {
-                // Mark item as added, listen for property changes
-                item.TrackingState = TrackingState.Added;
-                item.PropertyChanged += OnPropertyChanged;
-
                 // Set entity identifier
-                var entityIdentifier = (Tracking) ? default(Guid?) : default(Guid);
-                item.SetEntityIdentifier(entityIdentifier);
+                item.SetEntityIdentifier();
+
+                // Listen for property changes
+                item.PropertyChanged += OnPropertyChanged;
 
                 // Enable tracking on trackable properties
                 item.SetTracking(Tracking, Parent);
 
-                // Mark items as added in trackable collection properties
+                // Mark item and trackable collection properties
                 item.SetState(TrackingState.Added, Parent);
 
                 // Fire EntityChanged event
@@ -179,30 +177,28 @@ namespace TrackableEntities.Client
             // then fire EntityChanged event, and cache item.
             if (Tracking)
             {
-                // Removing added item should set it to unchanged.
+                // Get item by index
                 T item = Items[index];
-                if (item.TrackingState == TrackingState.Added)
-                {
-                    item.TrackingState = TrackingState.Unchanged;
-                    item.ModifiedProperties = null;
-                    item.PropertyChanged -= OnPropertyChanged;
-                    item.SetState(TrackingState.Unchanged, Parent);
-                    item.SetModifiedProperties(null, Parent);
-                    if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
-                }
 
-                // Removing unchanged or modified item should mark as deleted.
-                // Removing deleted item should have no effect.
-                else if (item.TrackingState != TrackingState.Deleted)
-                {
-                    item.TrackingState = TrackingState.Deleted;
-                    item.ModifiedProperties = null;
-                    item.PropertyChanged -= OnPropertyChanged;
-                    item.SetState(TrackingState.Deleted, Parent);
-                    item.SetModifiedProperties(null, Parent);
-                    if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
+                // Remove modified properties
+                item.ModifiedProperties = null;
+                item.SetModifiedProperties(null, Parent);
+
+                // Stop listening for property changes
+                item.PropertyChanged -= OnPropertyChanged;
+
+                // Disable tracking on trackable properties
+                item.SetTracking(false, Parent);
+
+                // Mark item and trackable collection properties
+                item.SetState(TrackingState.Deleted, Parent);
+
+                // Fire EntityChanged event
+                if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
+
+                // If not added, cache deleted item
+                if (item.TrackingState != TrackingState.Added)
                     _deletedEntities.Add(item);
-                }
             }
             base.RemoveItem(index);
         }

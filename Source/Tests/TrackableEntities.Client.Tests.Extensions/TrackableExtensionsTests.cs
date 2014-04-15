@@ -94,7 +94,7 @@ namespace TrackableEntities.Client.Tests.Extensions
         #region Set State Tests
 
         [Test]
-        public void Parent_Set_State_As_Added_Should_Mark_Children()
+        public void Parent_Set_State_As_Added_Should_Mark_Children_As_Added()
         {
             // Arrange
             var parent = _family.Parent;
@@ -108,7 +108,7 @@ namespace TrackableEntities.Client.Tests.Extensions
         }
 
         [Test]
-        public void Parent_Set_State_As_Deleted_Should_Mark_Children()
+        public void Parent_Set_State_As_Deleted_Should_Mark_Children_As_Deleted()
         {
             // Arrange
             var parent = _family.Parent;
@@ -119,6 +119,36 @@ namespace TrackableEntities.Client.Tests.Extensions
             // Assert
             IEnumerable<TrackingState> trackings = GetStates(parent);
             Assert.IsTrue(trackings.All(t => t == TrackingState.Deleted));
+        }
+
+        [Test]
+        public void Parent_Set_State_As_Deleted_Should_Mark_Added_Children_As_Unchanged()
+        {
+            // NOTE: Deleting an added child should not mark it as deleted, but mark
+            // it as unchanged because it says it was not really added in the first place.
+
+            // Arrange
+            var parent = _family.Parent;
+            parent.TrackingState = TrackingState.Added;
+            parent.Children.ToList().ForEach(c1 =>
+            {
+                c1.TrackingState = TrackingState.Added;
+                c1.Children.ToList().ForEach(c2 =>
+                {
+                    c2.TrackingState = TrackingState.Added;
+                    c2.Children.ToList().ForEach(c3 =>
+                    {
+                        c3.TrackingState = TrackingState.Added;
+                    });
+                });
+            });
+
+            // Act
+            parent.SetState(TrackingState.Deleted);
+
+            // Assert
+            IEnumerable<TrackingState> trackings = GetStates(parent);
+            Assert.IsTrue(trackings.All(t => t == TrackingState.Unchanged));
         }
 
         [Test]

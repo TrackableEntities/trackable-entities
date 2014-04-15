@@ -588,6 +588,8 @@ namespace TrackableEntities.Client.Tests
         {
             // NOTE: Removing a parent will mark both parent and children as deleted.
             // Deleted M-M childen are simply removed from the relation with parent.
+            // However added children are marked as unchanged to indicate that they
+            // should not be added.
 
             // Arrange
             var employee = _database.Employees[0];
@@ -607,7 +609,7 @@ namespace TrackableEntities.Client.Tests
             Assert.AreEqual(TrackingState.Deleted, employee.TrackingState);
             Assert.AreEqual(TrackingState.Deleted, unchangedTerritory.TrackingState);
             Assert.AreEqual(TrackingState.Deleted, modifiedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, addedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, addedTerritory.TrackingState);
             Assert.AreEqual(TrackingState.Deleted, deletedTerritory.TrackingState);
         }
 

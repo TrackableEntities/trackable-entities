@@ -12,7 +12,7 @@ namespace TrackableEntities.Client
     internal static class TrackableExtensions
     {
         /// <summary>
-        /// Recursively enable or disable tracking on child collections in an object graph.
+        /// Recursively enable or disable tracking on trackable entities in an object graph.
         /// </summary>
         /// <param name="item">Trackable object</param>
         /// <param name="enableTracking">Enable or disable change-tracking</param>
@@ -20,13 +20,13 @@ namespace TrackableEntities.Client
         public static void SetTracking(this ITrackable item, 
             bool enableTracking, ITrackable parent = null)
         {
-            // Include private props to get ref prop change tracker
+            // Iterator entity properties
             foreach (var prop in item.GetType().GetProperties())
             {
                 // Set tracking on 1-1 and M-1 properties
                 var trackableRef = prop.GetValue(item, null) as ITrackable;
 
-                // Stop recursion if trackable is same type as parent
+                // Continue recursion if trackable is not same type as parent
                 if (trackableRef != null
                     && (parent == null || trackableRef.GetType() != parent.GetType()))
                 {
@@ -70,42 +70,58 @@ namespace TrackableEntities.Client
         }
 
         /// <summary>
-        /// Recursively set tracking state on child collections in an object graph.
+        /// Recursively set tracking state on trackable entities in an object graph.
         /// </summary>
         /// <param name="item">Trackable object</param>
         /// <param name="state">Change-tracking state of an entity</param>
         /// <param name="parent">ITrackable parent of item</param>
-        public static void SetState(this ITrackable item, TrackingState state, 
-            ITrackable parent = null)
+        public static void SetState(this ITrackable item, TrackingState state, ITrackable parent = null)
         {
-            // Include private props to get ref prop change tracker
-            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
-                | BindingFlags.Public | BindingFlags.NonPublic))
+            // Recurively set state for added or deleted items,
+            // or if recursion has already begun.
+            if (parent != null || state == TrackingState.Added || state == TrackingState.Deleted)
             {
-                var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
-                if (trackingColl != null)
+                // Iterate entity properties
+                foreach (var prop in item.GetType().GetProperties())
                 {
-                    // Continue if setting reference prop to added or deleted
-                    var propGetter = prop.GetGetMethod(true);
-                    if (propGetter != null && propGetter.IsPrivate
-                        && (state == TrackingState.Added || state == TrackingState.Deleted))
-                        continue;
-
-                    // Recursively set state
-                    foreach (ITrackable child in trackingColl)
+                    // Process 1-M and M-M properties
+                    var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
+                    if (trackingColl != null)
                     {
-                        // Stop recursion if trackable is same type as parent
-                        if (parent != null && (child.GetType() == parent.GetType()))
-                            break;
-                        child.SetState(state, item);
-                        child.TrackingState = state;
+                        // Set state on child entities
+                        foreach (ITrackable trackableChild in trackingColl)
+                        {
+                            // Continue recursion if trackable is not same type as parent
+                            if (trackableChild != null &&
+                                (parent == null || (trackableChild.GetType() != parent.GetType())))
+                            {
+                                switch (state)
+                                {
+                                    case TrackingState.Added:
+                                    case TrackingState.Unchanged:
+                                        trackableChild.SetState(state, item);
+                                        break;
+                                    case TrackingState.Deleted:
+                                        trackableChild.SetState(trackableChild.TrackingState == TrackingState.Added
+                                                ? TrackingState.Unchanged : state, item);
+                                        break;
+                                }
+                            }
+                        }
                     }
                 }
             }
+
+            // When deleting added item, set state to unchanged,
+            // otherwise set entity state
+            if (state == TrackingState.Deleted && item.TrackingState == TrackingState.Added)
+                item.TrackingState = TrackingState.Unchanged;
+            else
+                item.TrackingState = state;
         }
 
         /// <summary>
-        /// Recursively set tracking state on child collections in an object graph.
+        /// Recursively set tracking state on trackable properties in an object graph.
         /// </summary>
         /// <param name="item">Trackable object</param>
         /// <param name="modified">Properties on an entity that have been modified</param>
@@ -196,7 +212,7 @@ namespace TrackableEntities.Client
                     // Process 1-1 and M-1 properties
                     var trackableRef = prop.GetValue(item, null) as ITrackable;
 
-                    // Stop recursion if trackable is same type as parent
+                    // Continue recursion if trackable is not same type as parent
                     if (trackableRef != null
                         && (parent == null || trackableRef.GetType() != parent.GetType()))
                     {
@@ -215,7 +231,7 @@ namespace TrackableEntities.Client
                     if (trackingItems != null && trackingColl != null
                         && trackingColl.Count > 0)
                     {
-                        // Stop recursion if trackable is same type as parent
+                        // Continue recursion if trackable is not same type as parent
                         var trackableChild = trackingItems[0] as ITrackable;
                         if (parent == null || (trackableChild != null && trackableChild.GetType() != parent.GetType()))
                         {
@@ -255,7 +271,7 @@ namespace TrackableEntities.Client
                     // Process 1-1 and M-1 properties
                     var trackableRef = prop.GetValue(item, null) as ITrackable;
 
-                    // Stop recursion if trackable is same type as parent
+                    // Continue recursion if trackable is not same type as parent
                     if (trackableRef != null
                         && (parent == null || trackableRef.GetType() != parent.GetType()))
                     {
@@ -272,7 +288,7 @@ namespace TrackableEntities.Client
                     // Restore deletes on child collection
                     if (trackingColl != null)
                     {
-                        // Stop recursion if trackable is same type as parent
+                        // Continue recursion if trackable is not same type as parent
                         var trackableChild = trackingColl.Cast<ITrackable>().FirstOrDefault();
                         var childDelete = trackingColl.GetChanges().Cast<ITrackable>()
                             .FirstOrDefault(t => t.TrackingState == TrackingState.Deleted);
@@ -360,7 +376,7 @@ namespace TrackableEntities.Client
                     // Process 1-1 and M-1 properties
                     var trackableRef = prop.GetValue(item, null) as ITrackable;
 
-                    // Stop recursion if trackable is same type as parent
+                    // Continue recursion if trackable is not same type as parent
                     if (trackableRef != null
                         && (parent == null || trackableRef.GetType() != parent.GetType()))
                     {
@@ -396,7 +412,7 @@ namespace TrackableEntities.Client
                     if (trackingItems != null && trackingColl != null
                         && trackingColl.Count > 0)
                     {
-                        // Stop recursion if trackable is same type as parent
+                        // Continue recursion if trackable is not same type as parent
                         var trackableChild = trackingItems[0] as ITrackable;
                         if (parent == null || (trackableChild != null && trackableChild.GetType() != parent.GetType()))
                         {
