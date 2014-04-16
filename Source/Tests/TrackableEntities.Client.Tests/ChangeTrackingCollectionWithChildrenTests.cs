@@ -1177,6 +1177,9 @@ namespace TrackableEntities.Client.Tests
         [Test]
         public void GetChanges_On_Existing_Order_With_New_Customer_Should_Return_Empty_Collection()
         {
+            // NOTE: Reference properties not explicitly marked as Added will be considered
+            // unchanged.
+
             // Arrange
             var order = _database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
@@ -1196,6 +1199,8 @@ namespace TrackableEntities.Client.Tests
         [Test]
         public void GetChanges_On_Existing_Order_With_Manually_Added_Customer_Should_Return_Customer_Marked_As_Added()
         {
+            // NOTE: Reference properties must be explicitly marked as Added.
+            
             // Arrange
             var order = _database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
