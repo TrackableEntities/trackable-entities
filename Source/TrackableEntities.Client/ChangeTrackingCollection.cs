@@ -262,7 +262,7 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="originalItem">Local entity containing unchanged child items.</param>
         /// <param name="updatedItem">Entity returned by an update operation.</param>
-        [Obsolete("ChangeTrackingCollection.MergeChanges has been deprecated. Instead use ITrackable.MergeChanges or IEnumerable<ITrackable>.MergeChanges.")]
+        [Obsolete("ChangeTrackingCollection.MergeChanges has been deprecated. Instead use ChangeTrackingCollection.MergeChanges.")]
         public void MergeChanges(ref T originalItem, T updatedItem)
         {
             // Get unchanged child entities

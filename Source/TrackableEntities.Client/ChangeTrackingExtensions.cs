@@ -16,8 +16,8 @@ namespace TrackableEntities.Client
         /// <summary>
         /// <para>Merge changes from a one or more updated entities into original entities.</para>
         /// <para>First call GetChanges on the change tracker, passing changes to a service update operation.</para>
-        /// <para>Then call MergeChanges, passing in one or more updated entities from the service update operation.</para>
-        /// <para>Properties on each original entity will be set to those of each updated entity.</para>
+        /// <para>Then call MergeChanges, passing one or more updated entities from the service update operation.</para>
+        /// <para>Properties on original entities will be set to those from updated entities.</para>
         /// <code>
         /// // Usage:
         /// // Start change-tracking originalEntity (new or retrieved from service)
