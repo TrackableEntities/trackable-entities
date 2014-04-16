@@ -387,14 +387,11 @@ namespace TrackableEntities.Client
                             hasDownstreamChanges = hasDownstreamChanges || trackingCollChanges.Any();
 
                             // Remove child items without changes
-                            if (trackingCollChanges.Any())
+                            var count = trackingItems.Count;
+                            for (int i = count - 1; i > -1; i--)
                             {
-                                var count = trackingItems.Count;
-                                for (int i = count - 1; i > -1; i--)
-                                {
-                                    if (!trackingCollChanges.Any(e => ReferenceEquals(trackingItems[i], e)))
-                                        trackingItems.Remove(trackingItems[i]);
-                                } 
+                                if (!trackingCollChanges.Any(e => ReferenceEquals(trackingItems[i], e)))
+                                    trackingItems.Remove(trackingItems[i]);
                             }
                         }
                     }

@@ -737,6 +737,22 @@ namespace TrackableEntities.Client.Tests
             Assert.That(changedEmployee.Territories, Has.No.Member(unchangedTerritory));
         }
 
+        [Test]
+        public void GetChanges_On_Modified_Employee_With_Unchanged_Territories_Should_Return_No_Territories()
+        {
+            // Arrange
+            var employee = _database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            employee.LastName = "xxx";
+
+            // Act
+            var changes = changeTracker.GetChanges();
+            var changedEmployee = changes.First();
+
+            // Assert
+            Assert.IsEmpty(changedEmployee.Territories);
+        }
+
         #endregion
 
         #region ManyToOne - Set Status Tests
