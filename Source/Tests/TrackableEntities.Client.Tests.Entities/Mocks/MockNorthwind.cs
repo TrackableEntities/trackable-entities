@@ -174,6 +174,8 @@ namespace TrackableEntities.Client.Tests.Entities.Mocks
             {
                 foreach (var territory in employee.Territories)
                 {
+                    if (territory.Employees == null)
+                        territory.Employees = new ChangeTrackingCollection<Employee>();
                     if (!territory.Employees.Contains(employee))
                         territory.Employees.Add(employee);
                 }

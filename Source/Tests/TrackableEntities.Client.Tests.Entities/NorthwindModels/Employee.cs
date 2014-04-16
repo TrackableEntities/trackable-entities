@@ -7,11 +7,6 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
     [JsonObject(IsReference = true)]
     public class Employee : ModelBase<Employee>, ITrackable, IEquatable<Employee>
     {
-        public Employee()
-        {
-            _territories = new ChangeTrackingCollection<Territory> { Parent = this };
-        }
-
         private int _employeeId;
         public int EmployeeId
         {
@@ -102,6 +97,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             get { return _territories; }
             set
             {
+                if (value != null) value.Parent = this;
                 if (Equals(value, _territories)) return;
                 _territories = value;
                 NotifyPropertyChanged(m => m.Territories);
