@@ -571,8 +571,8 @@ namespace TrackableEntities.Client.Tests
 
             // Act
             modifiedTerritory.TerritoryDescription = "xxx";
-            employee.Territories.Add(addedTerritory);
-            employee.Territories.Remove(deletedTerritory);
+            employee.Territories.Add(addedTerritory); // stays added
+            employee.Territories.Remove(deletedTerritory); // from added to unchanged
             changeTracker.Remove(employee);
 
             // Assert
@@ -588,8 +588,6 @@ namespace TrackableEntities.Client.Tests
         {
             // NOTE: Removing a parent will mark both parent and children as deleted.
             // Deleted M-M childen are simply removed from the relation with parent.
-            // However added children are marked as unchanged to indicate that they
-            // should not be added.
 
             // Arrange
             var employee = _database.Employees[0];
@@ -607,8 +605,8 @@ namespace TrackableEntities.Client.Tests
 
             // Assert
             Assert.AreEqual(TrackingState.Deleted, employee.TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, unchangedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, modifiedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, unchangedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Modified, modifiedTerritory.TrackingState);
             Assert.AreEqual(TrackingState.Unchanged, addedTerritory.TrackingState);
             Assert.AreEqual(TrackingState.Deleted, deletedTerritory.TrackingState);
         }
@@ -1354,9 +1352,8 @@ namespace TrackableEntities.Client.Tests
             employee2.Territories.Add(order.Customer.Territory);
             employee3.Territories.Add(order.Customer.Territory);
             employee4.Territories.Add(order.Customer.Territory);
-            order.Customer.Territory.Employees.Add(employee1);
-            order.Customer.Territory.Employees.Add(employee2);
-            order.Customer.Territory.Employees.Add(employee3);
+            order.Customer.Territory.Employees = new ChangeTrackingCollection<Employee>
+                {employee1, employee2, employee3};
             var changeTracker = new ChangeTrackingCollection<Order>(order);
 
             employee2.FirstName = "xxx";

@@ -37,8 +37,6 @@ namespace TrackableEntities.Client
                         // Set tracking on ref prop change tracker
                         refChangeTracker.Parent = item;
                         refChangeTracker.Tracking = enableTracking;
-
-                        // Reset parent because ref prop can have more than one parent
                         refChangeTracker.Parent = null; 
                     }
                 }
@@ -62,8 +60,10 @@ namespace TrackableEntities.Client
                     // Enable tracking if we have not stopped recursion
                     if (!stopRecursion)
                     {
-                        trackingColl.Parent = item;
+                        bool isManyToMany = IsManyToManyChildCollection(trackingColl);
+                        if (!isManyToMany) trackingColl.Parent = item;
                         trackingColl.Tracking = enableTracking;
+                        if (!isManyToMany) trackingColl.Parent = null;
                     }
                 }
             }
@@ -75,7 +75,9 @@ namespace TrackableEntities.Client
         /// <param name="item">Trackable object</param>
         /// <param name="state">Change-tracking state of an entity</param>
         /// <param name="parent">ITrackable parent of item</param>
-        public static void SetState(this ITrackable item, TrackingState state, ITrackable parent = null)
+        /// <param name="changeTracker">Change-tracking collection this item is being added to, removed from, or is a member of</param>
+        public static void SetState(this ITrackable item, TrackingState state, ITrackable parent,
+            ITrackingCollection changeTracker)
         {
             // Recurively set state for added or deleted items,
             // or if recursion has already begun.
@@ -95,15 +97,24 @@ namespace TrackableEntities.Client
                             if (trackableChild != null &&
                                 (parent == null || (trackableChild.GetType() != parent.GetType())))
                             {
+                                // Cascade state for Unchanged - AcceptChanges
+                                // Also cascade state for Added, Deleted
                                 switch (state)
                                 {
-                                    case TrackingState.Added:
+                                    // Cascade unchanged and added state
                                     case TrackingState.Unchanged:
-                                        trackableChild.SetState(state, item);
+                                    case TrackingState.Added:
+                                        trackableChild.SetState(state, item, trackingColl);
                                         break;
                                     case TrackingState.Deleted:
-                                        trackableChild.SetState(trackableChild.TrackingState == TrackingState.Added
-                                                ? TrackingState.Unchanged : state, item);
+                                        // Cascade deleted state for 1-M properties
+                                        // Deleting an added item will mark it as Unchanged (that is, not added)
+                                        if (!IsManyToManyChildCollection(trackingColl))
+                                            trackableChild.SetState((trackableChild.TrackingState == TrackingState.Added)
+                                                ? TrackingState.Unchanged : state, item, trackingColl);
+                                        // Set deleted for M-M as unchanged state for added
+                                        else if (trackableChild.TrackingState == TrackingState.Added)
+                                            trackableChild.TrackingState = TrackingState.Unchanged;
                                         break;
                                 }
                             }
@@ -519,6 +530,18 @@ namespace TrackableEntities.Client
             var property = GetChangeTrackingProperty(item.GetType(), propertyName);
             if (property == null) return null;
             return property.GetValue(item, null) as ITrackingCollection;
+        }
+
+        /// <summary>
+        /// Determine if an entity is a child of a many-to-many change-tracking collection property.
+        /// </summary>
+        /// <param name="changeTracker">Change-tracking collection</param>
+        /// <returns></returns>
+        public static bool IsManyToManyChildCollection(ITrackingCollection changeTracker)
+        {
+            // Entity is a M-M child if change-tracking collection has a non-null Parent property
+            bool isManyToManyChild = changeTracker.Parent != null;
+            return isManyToManyChild;
         }
 
         private static PropertyInfo GetChangeTrackingProperty(Type entityType, string propertyName)
