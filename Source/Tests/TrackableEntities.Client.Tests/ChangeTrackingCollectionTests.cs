@@ -10,27 +10,14 @@ namespace TrackableEntities.Client.Tests
     [TestFixture]
     public class ChangeTrackingCollectionTests
     {
-        #region Setup
-
-        // Mock database
-        MockNorthwind _database;
-
-        [SetUp]
-        public void Init()
-        {
-            // Create new mock database for each test
-            _database = new MockNorthwind();
-        } 
-
-        #endregion
-
         #region Ctor: Tracking Enablement Tests
 
         [Test]
         public void Tracking_Should_Be_Disabled_With_Default_Ctor()
         {
             // Arrange
-            var product = _database.Products[0];
+            var database = new MockNorthwind();
+            var product = database.Products[0];
             var changeTracker = new ChangeTrackingCollection<Product>();
 
             // Act
@@ -44,8 +31,9 @@ namespace TrackableEntities.Client.Tests
         public void Tracking_Should_Be_Enabled_With_Enumerable_Ctor()
         {
             // Arrange
-            var products = new List<Product> { _database.Products[0] };
-            var product = _database.Products[1];
+            var database = new MockNorthwind();
+            var products = new List<Product> { database.Products[0] };
+            var product = database.Products[1];
 
             // Act
             var changeTracker = new ChangeTrackingCollection<Product>(products);
@@ -59,10 +47,11 @@ namespace TrackableEntities.Client.Tests
         public void Tracking_Should_Be_Enabled_With_Array_Ctor()
         {
             // Arrange
-            var product = _database.Products[1];
+            var database = new MockNorthwind();
+            var product = database.Products[1];
 
             // Act
-            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
             changeTracker.Add(product);
 
             // Assert
@@ -77,7 +66,8 @@ namespace TrackableEntities.Client.Tests
         public void Items_Should_Be_Added_As_Unchanged_With_Enumerable_Ctor()
         {
             // Arrange
-            var product = _database.Products[0];
+            var database = new MockNorthwind();
+            var product = database.Products[0];
             var products = new List<Product> { product };
 
             // Act
@@ -91,7 +81,8 @@ namespace TrackableEntities.Client.Tests
         public void Items_Should_Be_Added_As_Unchanged_With_Array_Ctor()
         {
             // Arrange
-            var product = _database.Products[0];
+            var database = new MockNorthwind();
+            var product = database.Products[0];
 
             // Act
             var changeTracker = new ChangeTrackingCollection<Product>(product);
@@ -108,7 +99,8 @@ namespace TrackableEntities.Client.Tests
         public void Added_Items_After_Tracking_Enabled_Should_Be_Marked_As_Added()
         {
             // Arrange
-            var product = _database.Products[0];
+            var database = new MockNorthwind();
+            var product = database.Products[0];
             var changeTracker = new ChangeTrackingCollection<Product>(true);
 
             // Act
@@ -122,14 +114,15 @@ namespace TrackableEntities.Client.Tests
         public void Added_Items_With_Enumerable_Ctor_Should_Be_Marked_As_Added()
         {
             // Arrange
-            var products = new List<Product> { _database.Products[0] };
+            var database = new MockNorthwind();
+            var products = new List<Product> { database.Products[0] };
             var changeTracker = new ChangeTrackingCollection<Product>(products);
             var product = new Product
                 {
                     ProductId = 100,
                     ProductName = "Test Beverage",
                     CategoryId = 1,
-                    Category = _database.Categories[0],
+                    Category = database.Categories[0],
                     UnitPrice = 10M
                 };
 
@@ -142,12 +135,34 @@ namespace TrackableEntities.Client.Tests
 
         #endregion
 
+        #region Added Items: Many-to-Many Tests
+
+        [Test]
+        public void Added_Employee_After_Tracking_Enabled_Should_Not_Mark_Manually_Added_Territories_As_Unchanged()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            employee.Territories.ToList().ForEach(t => t.TrackingState = TrackingState.Added);
+            var changeTracker = new ChangeTrackingCollection<Employee>(true);
+
+            // Act
+            changeTracker.Add(employee);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Added, employee.TrackingState);
+            Assert.IsTrue(employee.Territories.All(t => t.TrackingState == TrackingState.Added));
+        }
+
+        #endregion
+
         #region Modified Items Tests
 
         [Test]
         public void Modified_Added_Items_Should_Be_Marked_As_Added()
         {
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Product>();
             changeTracker.Tracking = true;
             var product = new Product
@@ -155,7 +170,7 @@ namespace TrackableEntities.Client.Tests
                 ProductId = 100,
                 ProductName = "Test Beverage",
                 CategoryId = 1,
-                Category = _database.Categories[0],
+                Category = database.Categories[0],
                 UnitPrice = 10M
             };
 
@@ -171,6 +186,7 @@ namespace TrackableEntities.Client.Tests
         public void Modified_Added_Items_Should_Not_Add_ModifiedProperties()
         {
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Product>();
             changeTracker.Tracking = true;
             var product = new Product
@@ -178,7 +194,7 @@ namespace TrackableEntities.Client.Tests
                 ProductId = 100,
                 ProductName = "Test Beverage",
                 CategoryId = 1,
-                Category = _database.Categories[0],
+                Category = database.Categories[0],
                 UnitPrice = 10M
             };
 
@@ -195,7 +211,8 @@ namespace TrackableEntities.Client.Tests
         public void Modified_Existing_Items_Should_Be_Marked_As_Modified()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            var database = new MockNorthwind();
+            var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
             var product = changeTracker[0];
 
             // Act
@@ -209,7 +226,8 @@ namespace TrackableEntities.Client.Tests
         public void Modified_Existing_Items_Should_Add_ModifiedProperty()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            var database = new MockNorthwind();
+            var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
             var product = changeTracker[0];
 
             // Act
@@ -223,7 +241,8 @@ namespace TrackableEntities.Client.Tests
         public void Modified_Existing_Excluded_Items_Should_Not_Be_Marked_As_Modified()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            var database = new MockNorthwind();
+            var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
             changeTracker.ExcludedProperties.Add("UnitPrice");
             var product = changeTracker[0];
 
@@ -238,7 +257,8 @@ namespace TrackableEntities.Client.Tests
         public void Modified_Existing_Excluded_Items_Should_Not_Add_ModifiedProperty()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            var database = new MockNorthwind();
+            var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
             changeTracker.ExcludedProperties.Add("UnitPrice");
             var product = changeTracker[0];
 
@@ -254,7 +274,8 @@ namespace TrackableEntities.Client.Tests
         public void Modified_Existing_Items_Should_Add_Multiples_ModifiedProperties()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            var database = new MockNorthwind();
+            var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
             var product = changeTracker[0];
 
             // Act
@@ -272,7 +293,8 @@ namespace TrackableEntities.Client.Tests
         public void Modified_Existing_Mixed_Items_Should_Not_Be_Marked_As_Modified()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            var database = new MockNorthwind();
+            var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
             changeTracker.ExcludedProperties.Add("UnitPrice");
             var product = changeTracker[0];
 
@@ -294,6 +316,7 @@ namespace TrackableEntities.Client.Tests
         public void Removed_Added_Items_Should_Be_Marked_As_Unchanged()
         {
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Product>();
             changeTracker.Tracking = true;
             var product = new Product
@@ -301,7 +324,7 @@ namespace TrackableEntities.Client.Tests
                 ProductId = 100,
                 ProductName = "Test Beverage",
                 CategoryId = 1,
-                Category = _database.Categories[0],
+                Category = database.Categories[0],
                 UnitPrice = 10M
             };
 
@@ -318,6 +341,7 @@ namespace TrackableEntities.Client.Tests
         public void Removed_Added_Items_Should_Not_Have_ModifiedProperties()
         {
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Product>();
             changeTracker.Tracking = true;
             var product = new Product
@@ -325,7 +349,7 @@ namespace TrackableEntities.Client.Tests
                 ProductId = 100,
                 ProductName = "Test Beverage",
                 CategoryId = 1,
-                Category = _database.Categories[0],
+                Category = database.Categories[0],
                 UnitPrice = 10M
             };
 
@@ -342,13 +366,14 @@ namespace TrackableEntities.Client.Tests
         public void Removed_Added_Modified_Items_Should_Not_Have_ModifiedProperties()
         {
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Product>(true);
             var product = new Product
             {
                 ProductId = 100,
                 ProductName = "Test Beverage",
                 CategoryId = 1,
-                Category = _database.Categories[0],
+                Category = database.Categories[0],
                 UnitPrice = 10M
             };
 
@@ -366,7 +391,8 @@ namespace TrackableEntities.Client.Tests
         public void Removed_Existing_Unchanged_Items_Should_Be_Marked_As_Deleted()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            var database = new MockNorthwind();
+            var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
             var product = changeTracker[0];
 
             // Act
@@ -380,7 +406,8 @@ namespace TrackableEntities.Client.Tests
         public void Removed_Existing_Modified_Items_Should_Be_Marked_As_Deleted()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            var database = new MockNorthwind();
+            var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
             var product = changeTracker[0];
             product.UnitPrice++;
 
@@ -395,7 +422,8 @@ namespace TrackableEntities.Client.Tests
         public void Removed_Existing_Modified_Items_Should_Not_Have_ModifiedProperties()
         {
             // Arrange
-            var changeTracker = new ChangeTrackingCollection<Product>(_database.Products[0]);
+            var database = new MockNorthwind();
+            var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
             var product = changeTracker[0];
             product.UnitPrice++;
 
@@ -415,8 +443,9 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_Should_Return_Added_Items()
         {
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Product>(true);
-            var product = _database.Products[0];
+            var product = database.Products[0];
             changeTracker.Add(product);
 
             // Act
@@ -430,7 +459,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_Should_Return_Modified_Items()
         {
             // Arrange
-            var product = _database.Products[0];
+            var database = new MockNorthwind();
+            var product = database.Products[0];
             var changeTracker = new ChangeTrackingCollection<Product>(product);
             product.UnitPrice++;
 
@@ -445,7 +475,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_Should_Return_Deleted_Items()
         {
             // Arrange
-            var product = _database.Products[0];
+            var database = new MockNorthwind();
+            var product = database.Products[0];
             var changeTracker = new ChangeTrackingCollection<Product>(product);
             changeTracker.Remove(product);
 
@@ -460,9 +491,10 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_Should_Return_Added_Modified_Deleted_Items()
         {
             // Arrange
-            var addedProduct = _database.Products[0];
-            var updatedProduct = _database.Products[1];
-            var deletedProduct = _database.Products[2];
+            var database = new MockNorthwind();
+            var addedProduct = database.Products[0];
+            var updatedProduct = database.Products[1];
+            var deletedProduct = database.Products[2];
 
             var changeTracker = new ChangeTrackingCollection<Product>(updatedProduct, deletedProduct);
             
@@ -489,9 +521,10 @@ namespace TrackableEntities.Client.Tests
             // Arrange
             int changesCount = 0;
 
-            var addedProduct = _database.Products[0];
-            var updatedProduct = _database.Products[1];
-            var deletedProduct = _database.Products[2];
+            var database = new MockNorthwind();
+            var addedProduct = database.Products[0];
+            var updatedProduct = database.Products[1];
+            var deletedProduct = database.Products[2];
             var changeTracker = new ChangeTrackingCollection<Product>(updatedProduct, deletedProduct);
             changeTracker.EntityChanged += (s, e) => changesCount++;
 

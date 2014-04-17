@@ -447,43 +447,6 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.IsEmpty(cachedDeletes); // Cached deletes have been removed
         }
 
-        // TODO: Continue testing
-        [Test, Ignore]
-        public void MergeChanges_Should_Set_Added_Employee_With_Unchanged_Territories()
-        {
-            // Arrange
-            var database = new MockNorthwind();
-            var employee = database.Employees[0];
-            var unchangedterritory = employee.Territories[0];
-            var modifiedterritory = employee.Territories[1];
-            var deletedterritory = employee.Territories[2];
-            var addedExistingTerritory = database.Territories[3];
-            var addedNewTerritory = new Territory
-            {
-                TerritoryId = "91360",
-                TerritoryDescription = "SouthernCalifornia",
-                Employees = new ChangeTrackingCollection<Employee> { employee }
-            };
-
-            // Territories should stay unchanged
-            var changeTracker = new ChangeTrackingCollection<Employee>(true) { employee }; // mark as added
-
-            var name = employee.LastName = "xxx";
-            var origState = employee.TrackingState;
-            var changes = changeTracker.GetChanges();
-            var changedTerritories = changes[0].Territories;
-            var updatedEmployee = changes[0].Clone<Employee>();
-            updatedEmployee.AcceptChanges();
-
-            // Act
-            changeTracker.MergeChanges(updatedEmployee);
-
-            // Assert
-            Assert.AreEqual(name, employee.LastName); // Changed prop is preserved
-            Assert.IsEmpty(changedTerritories); // GetChanges sets unchanges ref props to null
-            Assert.AreEqual(3, employee.Territories.Count); // Unchanged items preserved
-        }
-
         #endregion
 
         #region Helpers

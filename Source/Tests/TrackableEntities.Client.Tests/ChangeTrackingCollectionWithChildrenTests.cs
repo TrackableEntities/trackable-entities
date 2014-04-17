@@ -10,33 +10,20 @@ namespace TrackableEntities.Client.Tests
     [TestFixture]
     public class ChangeTrackingCollectionWithChildrenTests
     {
-        #region Setup
-
-        // Mock database
-        MockNorthwind _database;
-
-        [SetUp]
-        public void Init()
-        {
-            // Create new mock database for each test
-            _database = new MockNorthwind();
-        }
-
-        #endregion
-
         #region Set Status Tests
 
         [Test]
         public void Existing_Parent_With_Children_Should_Have_Children_Marked()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
             var addedDetail = new OrderDetail
                 {
                     ProductId = 1,
-                    Product = _database.Products[0],
+                    Product = database.Products[0],
                     Quantity = 10,
                     UnitPrice = 20M
                 };
@@ -58,8 +45,9 @@ namespace TrackableEntities.Client.Tests
         public void Added_Parent_With_Children_Should_Have_Children_Marked_As_Added()
         {
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Order>(true);
-            var order = _database.Orders[0];
+            var order = database.Orders[0];
             var orderDetails = (IList<OrderDetail>)order.OrderDetails;
 
             // Act
@@ -74,8 +62,9 @@ namespace TrackableEntities.Client.Tests
         public void Added_Parent_With_Modified_Children_Should_Have_Children_Marked_As_Added()
         {
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Order>(true);
-            var order = _database.Orders[0];
+            var order = database.Orders[0];
             var orderDetails = (IList<OrderDetail>)order.OrderDetails;
 
             // Act
@@ -91,8 +80,9 @@ namespace TrackableEntities.Client.Tests
         public void Added_Parent_Then_Removed_Should_Have_Children_Marked_As_Unchanged()
         {
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Order>(true);
-            var order = _database.Orders[0];
+            var order = database.Orders[0];
             var orderDetails = (IList<OrderDetail>)order.OrderDetails;
             var orderDetail = orderDetails[0];
 
@@ -109,8 +99,9 @@ namespace TrackableEntities.Client.Tests
         public void Added_Parent_With_Removed_Children_Should_Have_Children_Marked_As_Unchanged()
         {
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Order>(true);
-            var order = _database.Orders[0];
+            var order = database.Orders[0];
             var orderDetails = (IList<OrderDetail>)order.OrderDetails;
             var orderDetail = orderDetails[0];
 
@@ -127,7 +118,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Parent_Removed_With_Modified_Children_Should_Have_Children_Marked_As_Deleted()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var orderDetails = (IList<OrderDetail>)order.OrderDetails;
             var orderDetail = orderDetails[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
@@ -149,7 +141,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Parent_With_Modified_Children_Should_Add_ModifiedProperties()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
             var modifiedDetail = orderDetails[0];
@@ -165,7 +158,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Parent_With_Modified_Children_Should_Add_Multiple_ModifiedProperties()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
             var modifiedDetail = orderDetails[0];
@@ -183,7 +177,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Parent_With_Excluded_Children_Should_Not_Be_Marked_As_Modified()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var orderDetails = changeTracker[0].OrderDetails;
             orderDetails.ExcludedProperties.Add("Quantity");
@@ -200,7 +195,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Parent_With_Excluded_Children_Should_Not_Add_ModifiedProperty()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var orderDetails = changeTracker[0].OrderDetails;
             orderDetails.ExcludedProperties.Add("Quantity");
@@ -218,7 +214,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Parent_With_Mixed_Children_Should_Not_Add_ModifiedProperty()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var orderDetails = changeTracker[0].OrderDetails;
             orderDetails.ExcludedProperties.Add("Quantity");
@@ -238,7 +235,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Parent_Removed_With_Modified_Children_Should_Have_Children_Modified_Properties_Cleared()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var orderDetails = (IList<OrderDetail>)order.OrderDetails;
             var orderDetail = orderDetails[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
@@ -260,7 +258,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Unchanged_Order_With_Details_Should_Return_Marked_Children()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
             var unchangedDetail = orderDetails[0];
@@ -269,7 +268,7 @@ namespace TrackableEntities.Client.Tests
             var addedDetail = new OrderDetail
             {
                 ProductId = 1,
-                Product = _database.Products[0],
+                Product = database.Products[0],
                 Quantity = 10,
                 UnitPrice = 20M
             };
@@ -297,7 +296,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Added_Order_With_Details_Should_Return_Marked_Children_Added()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(true) {order};
             var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
             var unchangedDetail = orderDetails[0];
@@ -306,7 +306,7 @@ namespace TrackableEntities.Client.Tests
             var addedDetail = new OrderDetail
             {
                 ProductId = 1,
-                Product = _database.Products[0],
+                Product = database.Products[0],
                 Quantity = 10,
                 UnitPrice = 20M
             };
@@ -337,7 +337,8 @@ namespace TrackableEntities.Client.Tests
             // Removed order with deleted detail should include deleted detail
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
             var unchangedDetail = orderDetails[0];
@@ -346,7 +347,7 @@ namespace TrackableEntities.Client.Tests
             var addedDetail = new OrderDetail
             {
                 ProductId = 1,
-                Product = _database.Products[0],
+                Product = database.Products[0],
                 Quantity = 10,
                 UnitPrice = 20M
             };
@@ -377,7 +378,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Modified_Order_Should_Return_Order()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             order.OrderDate = order.OrderDate.AddDays(1);
 
@@ -394,7 +396,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Unchanged_Order_With_Modified_Detail_Should_Return_Order()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             order.OrderDetails[0].Quantity++;
 
@@ -413,7 +416,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Unchanged_OrderDetail_With_Modified_Product_Should_Return_OrderDetail()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             order.OrderDetails[0].Product.ProductName = "xxx";
 
@@ -437,9 +441,10 @@ namespace TrackableEntities.Client.Tests
         public void Updated_Parent_With_Children_Should_Merge_Unchanged_Children()
         {
             // Arrange
+            var database = new MockNorthwind();
 
             // Get order, fix up details, clone
-            var origOrder = _database.Orders[0];
+            var origOrder = database.Orders[0];
             foreach (var detail in origOrder.OrderDetails)
                 detail.Order = origOrder;
             var updatedOrder = origOrder.Clone<Order>();
@@ -448,7 +453,7 @@ namespace TrackableEntities.Client.Tests
             origOrder.OrderDetails.Add(new OrderDetail
             {
                 ProductId = 1,
-                Product = _database.Products[0],
+                Product = database.Products[0],
                 Quantity = 10,
                 UnitPrice = 20M,
                 OrderId = origOrder.OrderId,
@@ -506,12 +511,13 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Employee_With_Territories_Should_Have_Territories_Marked()
         {
             // Arrange
-            var employee = _database.Employees[0];
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
             var changeTracker = new ChangeTrackingCollection<Employee>(employee);
             var unchangedTerritory = employee.Territories[0];
             var modifiedTerritory = employee.Territories[1];
             var deletedTerritory = employee.Territories[2];
-            var addedTerritory = _database.Territories[3];
+            var addedTerritory = database.Territories[3];
 
             // Act
             modifiedTerritory.TerritoryDescription = "xxx";
@@ -533,12 +539,13 @@ namespace TrackableEntities.Client.Tests
             // This is so that GetChanges will not include the removed child.
 
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Employee>(true);
-            var employee = _database.Employees[0];
+            var employee = database.Employees[0];
             var unchangedTerritory = employee.Territories[0];
             var modifiedTerritory = employee.Territories[1];
             var deletedTerritory = employee.Territories[2];
-            var addedTerritory = _database.Territories[3];
+            var addedTerritory = database.Territories[3];
             changeTracker.Add(employee);
 
             // Act
@@ -561,12 +568,13 @@ namespace TrackableEntities.Client.Tests
             // This is so that GetChanges will not include parent or children.
 
             // Arrange
+            var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Employee>(true);
-            var employee = _database.Employees[0];
+            var employee = database.Employees[0];
             var unchangedTerritory = employee.Territories[0];
             var modifiedTerritory = employee.Territories[1];
             var deletedTerritory = employee.Territories[2];
-            var addedTerritory = _database.Territories[3];
+            var addedTerritory = database.Territories[3];
             changeTracker.Add(employee);
 
             // Act
@@ -588,14 +596,16 @@ namespace TrackableEntities.Client.Tests
         {
             // NOTE: Removing a parent will mark both parent and children as deleted.
             // Deleted M-M childen are simply removed from the relation with parent.
+            // 
 
             // Arrange
-            var employee = _database.Employees[0];
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
             var changeTracker = new ChangeTrackingCollection<Employee>(employee);
             var unchangedTerritory = employee.Territories[0];
             var modifiedTerritory = employee.Territories[1];
             var deletedTerritory = employee.Territories[2];
-            var addedTerritory = _database.Territories[3];
+            var addedTerritory = database.Territories[3];
 
             // Act
             modifiedTerritory.TerritoryDescription = "xxx";
@@ -619,7 +629,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Employee_With_Modified_Children_Should_Add_ModifiedProperties()
         {
             // Arrange
-            var employee = _database.Employees[0];
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
             var changeTracker = new ChangeTrackingCollection<Employee>(employee);
             var modifiedTerritory = employee.Territories[1];
 
@@ -634,7 +645,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Employee_With_Modified_Children_Should_Add_Multiple_ModifiedProperties()
         {
             // Arrange
-            var employee = _database.Employees[0];
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
             var changeTracker = new ChangeTrackingCollection<Employee>(employee);
             var modifiedTerritory = employee.Territories[1];
 
@@ -651,7 +663,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Employee_With_Excluded_Children_Should_Not_Be_Marked_As_Modified()
         {
             // Arrange
-            var employee = _database.Employees[0];
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
             var changeTracker = new ChangeTrackingCollection<Employee>(employee);
             employee.Territories.ExcludedProperties.Add("TerritoryDescription");
             var modifiedTerritory = employee.Territories[1];
@@ -669,7 +682,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Employee_With_Mixed_Children_Should_Not_Add_ModifiedProperties()
         {
             // Arrange
-            var employee = _database.Employees[0];
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
             var changeTracker = new ChangeTrackingCollection<Employee>(employee);
             employee.Territories.ExcludedProperties.Add("TerritoryDescription");
             var modifiedTerritory = employee.Territories[1];
@@ -688,7 +702,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Employee_Removed_With_Modified_Children_Have_Children_ModifiedProperties_Cleared()
         {
             // Arrange
-            var employee = _database.Employees[0];
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
             var changeTracker = new ChangeTrackingCollection<Employee>(employee);
             var modifiedTerritory = employee.Territories[1];
             modifiedTerritory.TerritoryDescription = "xxx";
@@ -709,12 +724,13 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Employee_With_Territories_Should_Return_Marked_Territories()
         {
             // Arrange
-            var employee = _database.Employees[0];
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
             var changeTracker = new ChangeTrackingCollection<Employee>(employee);
             var unchangedTerritory = employee.Territories[0];
             var modifiedTerritory = employee.Territories[1];
             var deletedTerritory = employee.Territories[2];
-            var addedTerritory = _database.Territories[3];
+            var addedTerritory = database.Territories[3];
             employee.Territories.Add(addedTerritory);
             modifiedTerritory.TerritoryDescription = "xxx";
             employee.Territories.Remove(deletedTerritory);
@@ -739,7 +755,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Modified_Employee_With_Unchanged_Territories_Should_Return_No_Territories()
         {
             // Arrange
-            var employee = _database.Employees[0];
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
             var changeTracker = new ChangeTrackingCollection<Employee>(employee);
             employee.LastName = "xxx";
 
@@ -759,7 +776,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Order_With_Unchanged_Customer_Should_Mark_Customer_As_Unchanged()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
 
             // Act
@@ -774,7 +792,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Order_With_Modified_Customer_Should_Mark_Customer_As_Modified()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
 
             // Act
@@ -794,7 +813,8 @@ namespace TrackableEntities.Client.Tests
             // or already exists.  However, Customer can be marked as Added manually.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
 
             // Act
@@ -821,7 +841,8 @@ namespace TrackableEntities.Client.Tests
             // when it is saved.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
 
             // Act
@@ -850,7 +871,8 @@ namespace TrackableEntities.Client.Tests
             // to delete a customer independently.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var customer = order.Customer;
 
@@ -875,7 +897,8 @@ namespace TrackableEntities.Client.Tests
             // marks children as added.)
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(true);
             changeTracker.Add(order);
 
@@ -893,7 +916,8 @@ namespace TrackableEntities.Client.Tests
             // NOTE: Modified reference entity will remain modified if parent is added.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(true);
             changeTracker.Add(order);
 
@@ -914,7 +938,8 @@ namespace TrackableEntities.Client.Tests
             // or already exists.  However, Customer can be marked as Added manually.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(true);
             changeTracker.Add(order);
 
@@ -939,7 +964,8 @@ namespace TrackableEntities.Client.Tests
             // when it is saved.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(true);
             changeTracker.Add(order);
 
@@ -964,7 +990,8 @@ namespace TrackableEntities.Client.Tests
             // it must be independently marked as deleted.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(true);
             changeTracker.Add(order);
             var customer = order.Customer;
@@ -984,7 +1011,8 @@ namespace TrackableEntities.Client.Tests
             // NOTE: Removing order will not automatically mark customer as deleted.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var customer = order.Customer;
 
@@ -1003,7 +1031,8 @@ namespace TrackableEntities.Client.Tests
             // NOTE: Modified reference entity will remain modified if parent is deleted.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             order.Customer.CustomerName = "xxx";
 
@@ -1023,7 +1052,8 @@ namespace TrackableEntities.Client.Tests
             // Because customer not marked as deleted, it refers to an existing customer.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             order.Customer = new Customer
             {
@@ -1047,7 +1077,8 @@ namespace TrackableEntities.Client.Tests
             // when it is saved.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             order.Customer = new Customer
             {
@@ -1072,7 +1103,8 @@ namespace TrackableEntities.Client.Tests
             // it must be independently marked as deleted.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var customer = order.Customer;
             order.Customer = null;
@@ -1094,7 +1126,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Order_With_Modified_Customer_Should_Add_ModifiedProperties()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
 
             // Act
@@ -1108,7 +1141,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Order_With_Modified_Customer_Should_Add_Multiple_ModifiedProperties()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
 
             // Act
@@ -1124,7 +1158,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Order_Removed_With_Modified_Customer_Has_Children_ModifiedProperties_Cleared()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var modifiedCustomer = order.Customer;
             modifiedCustomer.CustomerName = "xxx";
@@ -1145,7 +1180,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Order_With_Unchanged_Customer_Should_Return_Empty_Collection()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
 
             // Act
@@ -1159,7 +1195,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Order_With_Modified_Customer_Should_Return_Customer_Marked_As_Modified()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             order.Customer.CustomerName = "xxx";
 
@@ -1179,7 +1216,8 @@ namespace TrackableEntities.Client.Tests
             // unchanged.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             order.Customer = new Customer()
             {
@@ -1200,7 +1238,8 @@ namespace TrackableEntities.Client.Tests
             // NOTE: Reference properties must be explicitly marked as Added.
             
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             order.Customer = new Customer()
             {
@@ -1225,7 +1264,8 @@ namespace TrackableEntities.Client.Tests
             // NotifyPropertyChanged because it is called by foreign key's property setter.
 
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var customer = order.Customer;
             order.Customer = null;
@@ -1242,7 +1282,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Order_With_Customer_Modified_Territory_Should_Return_Territory_Marked_As_Modified()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             order.Customer.Territory = new Territory
             {
                 TerritoryId = "91360", TerritoryDescription = "Southern California",
@@ -1265,7 +1306,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Modified_Order_With_UnModified_Customer_Should_Set_Customer_To_Null()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             order.Customer.Territory = new Territory
             {
                 TerritoryId = "91360",
@@ -1288,7 +1330,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Order_With_Modified_Customer_With_Unmodified_Territory_Should_Set_Territory_To_Null()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             order.Customer.Territory = new Territory
             {
                 TerritoryId = "91360",
@@ -1312,7 +1355,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Order_With_Modified_Customer_With_Deleted_Territory_Should_Set_Territory_To_Null()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             order.Customer.Territory = new Territory
             {
                 TerritoryId = "91360",
@@ -1337,23 +1381,24 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Order_With_Customer_Territory_Added_Modified_Removed_Employees_Should_Return_Marked_Employees()
         {
             // Arrange
-            var order = _database.Orders[0];
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
             order.Customer.Territory = new Territory
             {
                 TerritoryId = "91360",
                 TerritoryDescription = "Southern California",
                 Customers = new ChangeTrackingCollection<Customer> { order.Customer }
             };
-            var employee1 = _database.Employees[0];
-            var employee2 = _database.Employees[1];
-            var employee3 = _database.Employees[2];
-            var employee4 = _database.Employees[3];
+            var employee1 = database.Employees[0];
+            var employee2 = database.Employees[1];
+            var employee3 = database.Employees[2];
+            var employee4 = database.Employees[3];
             employee1.Territories.Add(order.Customer.Territory);
             employee2.Territories.Add(order.Customer.Territory);
             employee3.Territories.Add(order.Customer.Territory);
             employee4.Territories.Add(order.Customer.Territory);
             order.Customer.Territory.Employees = new ChangeTrackingCollection<Employee>
-                {employee1, employee2, employee3};
+                { employee1, employee2, employee3 };
             var changeTracker = new ChangeTrackingCollection<Order>(order);
 
             employee2.FirstName = "xxx";
@@ -1383,7 +1428,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Customer_With_Unchanged_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Unchanged()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             var customerSetting = new CustomerSetting
             {
                 CustomerId = customer.CustomerId,
@@ -1404,7 +1450,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Customer_With_Modified_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Modified()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             var customerSetting = new CustomerSetting
             {
                 CustomerId = customer.CustomerId,
@@ -1426,7 +1473,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Customer_With_New_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Unchanged()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             var changeTracker = new ChangeTrackingCollection<Customer>(customer);
 
             // Act
@@ -1447,7 +1495,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Customer_With_Manually_Added_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Added()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             var changeTracker = new ChangeTrackingCollection<Customer>(customer);
 
             // Act
@@ -1469,7 +1518,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Customer_With_Removed_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Unchanged()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             var customerSetting = new CustomerSetting
             {
                 CustomerId = customer.CustomerId,
@@ -1495,7 +1545,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Customer_With_Modified_CustomerSetting_Should_Add_ModifiedProperties()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             customer.CustomerSetting = new CustomerSetting
             {
                 CustomerId = customer.CustomerId,
@@ -1515,7 +1566,8 @@ namespace TrackableEntities.Client.Tests
         public void Existing_Customer_Removed_With_Modified_CustomerSetting_Has_Children_ModifiedProperties_Cleared()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             customer.CustomerSetting = new CustomerSetting
             {
                 CustomerId = customer.CustomerId,
@@ -1542,7 +1594,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Customer_With_Unchanged_CustomerSetting_Should_Return_Empty_Collection()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             customer.CustomerSetting = new CustomerSetting
             {
                 CustomerId = customer.CustomerId,
@@ -1562,7 +1615,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Customer_With_Modified_CustomerSetting_Return_CustomerSetting_Marked_As_Modified()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             customer.CustomerSetting = new CustomerSetting
             {
                 CustomerId = customer.CustomerId,
@@ -1585,7 +1639,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Customer_With_New_CustomerSetting_Return_Empty_Collection()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             var changeTracker = new ChangeTrackingCollection<Customer>(customer);
             customer.CustomerSetting = new CustomerSetting
             {
@@ -1605,7 +1660,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Customer_With_Manually_Added_CustomerSetting_Return_CustomerSetting_Marked_As_Added()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             var changeTracker = new ChangeTrackingCollection<Customer>(customer);
             customer.CustomerSetting = new CustomerSetting
             {
@@ -1628,7 +1684,8 @@ namespace TrackableEntities.Client.Tests
         public void GetChanges_On_Existing_Customer_With_Removed_CustomerSetting_Return_Empty_Collection()
         {
             // Arrange
-            var customer = _database.Customers[0];
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
             customer.CustomerSetting = new CustomerSetting
             {
                 CustomerId = customer.CustomerId,

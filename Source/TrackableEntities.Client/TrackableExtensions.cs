@@ -112,7 +112,8 @@ namespace TrackableEntities.Client
                                         if (!IsManyToManyChildCollection(trackingColl))
                                             trackableChild.SetState((trackableChild.TrackingState == TrackingState.Added)
                                                 ? TrackingState.Unchanged : state, item, trackingColl);
-                                        // Set deleted for M-M as unchanged state for added
+                                        // Set deleted for M-M as unchanged state for added.
+                                        // (Cached M-M child deletes will remain deleted.)
                                         else if (trackableChild.TrackingState == TrackingState.Added)
                                             trackableChild.TrackingState = TrackingState.Unchanged;
                                         break;
