@@ -181,7 +181,7 @@ namespace TrackableEntities.EF5.Tests
             detail3.Product = null;
             detail4.Product = null;
             order1.OrderDetails = new List<OrderDetail> { detail1, detail2 };
-            order1.OrderDetails = new List<OrderDetail> { detail3, detail4 };
+            order2.OrderDetails = new List<OrderDetail> { detail3, detail4 };
 
             // Return orders
             return new List<Order> {order1, order2};
@@ -457,6 +457,21 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var employee = CreateTestEmployees(context)[0];
+
+            // Act
+            context.LoadRelatedEntities(employee);
+
+            // Assert
+            Assert.IsFalse(employee.Territories.Any(t => t.Area == null));
+            Assert.IsFalse(employee.Territories.Any(t => t.AreaId != t.Area.AreaId));
+        }
+
+        [Test]
+        public void LoadRelatedEntities_Should_Populate_Employee_Territories_With_Overlapping_Areas()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var employee = CreateTestEmployees(context)[1];
 
             // Act
             context.LoadRelatedEntities(employee);

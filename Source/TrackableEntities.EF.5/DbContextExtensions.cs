@@ -532,7 +532,7 @@ namespace TrackableEntities.EF5
             var values = from item in items
                          let prop = item.GetType().GetProperty(foreignKeyName)
                          select prop != null ? prop.GetValue(item) : null;
-            return values.Where(v => v != null).ToArray();
+            return values.Where(v => v != null).Distinct().ToArray();
         }
 
         private static string GetEntitySetName(this DbContext dbContext, string propertyTypeName)
