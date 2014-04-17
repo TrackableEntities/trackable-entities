@@ -1087,6 +1087,31 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #endregion
 
+        #region Clone Tests
+
+        [Test]
+        public void Clone_Of_ChangeTrackingCollection_Should_Create_Deep_Copy()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var customer = order.Customer;
+            var details = order.OrderDetails;
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            // Act
+            var clonedChangeTracker = changeTracker.Clone();
+
+            // Assert
+            Assert.AreNotSame(order, clonedChangeTracker[0]);
+            Assert.AreNotSame(customer, clonedChangeTracker[0].Customer);
+            Assert.AreNotSame(details, clonedChangeTracker[0].OrderDetails);
+            Assert.IsTrue(order.IsEquatable(clonedChangeTracker[0]));
+            Assert.IsTrue(customer.IsEquatable(clonedChangeTracker[0].Customer));
+        }
+
+        #endregion
+
         #region Helpers
 
         private List<Order> AddOrders(MockNorthwind database, params Order[] origOrders)

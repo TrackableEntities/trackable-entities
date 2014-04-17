@@ -172,6 +172,26 @@ namespace TrackableEntities.Client
             return false;
         }
 
+        /// <summary>
+        /// <para>Create a clone of the ChangeTrackingCollection using a JSON binary serializer.</para>
+        /// <para>Changes can be rolled back by reverting to the cloned ChangeTrackingCollection.</para>
+        /// </summary>
+        /// <param name="changeTracker">Change tracker used to track changes on entities</param>
+        /// <typeparam name="TEntity">Trackable entity type</typeparam>
+        /// <returns>Deep copy of the ChangeTrackingCollection</returns>
+        public static ChangeTrackingCollection<TEntity> Clone<TEntity>(this ChangeTrackingCollection<TEntity> changeTracker)
+                where TEntity : class, ITrackable, INotifyPropertyChanged
+        {
+            IEnumerable<TEntity> clonedEntities = changeTracker.CloneEntities();
+            return new ChangeTrackingCollection<TEntity>(clonedEntities, true);
+        }
+
+        private static IEnumerable<T> CloneEntities<T>(this IEnumerable<T> items)
+            where T : class, ITrackable
+        {
+            return items.Select(item => item.Clone());
+        }
+
         private static ITrackable GetEquatableItem
             (this IEnumerable<ITrackable> sourceItems, ITrackable sourceItem, bool isTrackableRef)
         {

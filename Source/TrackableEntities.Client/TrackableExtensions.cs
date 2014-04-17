@@ -376,12 +376,12 @@ namespace TrackableEntities.Client
         }
 
         /// <summary>
-        /// Performs a deep copy using JsonSerializer.
+        /// Performs a deep copy using Json binary serializer.
         /// </summary>
         /// <typeparam name="T">Entity type</typeparam>
         /// <param name="item">Trackable object</param>
-        /// <returns>Cloned entity</returns>
-        public static T Clone<T>(this ITrackable item)
+        /// <returns>Cloned Trackable object</returns>
+        public static T Clone<T>(this T item)
             where T : class, ITrackable
         {
             using (var stream = new MemoryStream())
