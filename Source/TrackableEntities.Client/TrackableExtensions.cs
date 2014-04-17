@@ -292,46 +292,6 @@ namespace TrackableEntities.Client
         }
 
         /// <summary>
-        /// Recursively get items with child collections that have changes.
-        /// </summary>
-        /// <param name="item">Trackable object</param>
-        /// <returns>True if item has child collections that have changes</returns>
-        /// <param name="parent">ITrackable parent of item</param>
-        public static bool HasChanges(this ITrackable item, ITrackable parent = null)
-        {
-            // Include private props to get ref prop change tracker
-            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
-                | BindingFlags.Public | BindingFlags.NonPublic))
-            {
-                var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
-                if (trackingColl != null)
-                {
-                    // Recursively check for child collection changes
-                    bool stopRecursion = false;
-                    foreach (ITrackable child in trackingColl)
-                    {
-                        // Stop recursion if trackable is same type as parent
-                        if (parent != null && (child.GetType() == parent.GetType()))
-                        {
-                            stopRecursion = true;
-                            break;
-                        }
-                        bool hasChanges = child.HasChanges(item);
-                        if (hasChanges) return true;
-                    }
-
-                    // Return true if child collection has changes
-                    if (!stopRecursion)
-                    {
-                        ITrackingCollection changes = trackingColl.GetChanges(false);
-                        if (changes.Count > 0) return true; 
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
         /// Get entities that have been added, modified or deleted, including trackable 
         /// reference and child entities.
         /// </summary>

@@ -114,6 +114,99 @@ namespace TrackableEntities.Client
             originalChangeTracker.RemoveCachedDeletes();
         }
 
+        /// <summary>
+        /// See if there are changes in an object graph.
+        /// </summary>
+        /// <param name="item">Trackable object</param>
+        /// <returns>True if there are changes in the object graph</returns>
+        public static bool HasChanges(this ITrackable item)
+        {
+            bool hasChanges = item.HasChanges(null);
+            return hasChanges;
+        }
+
+        private static bool HasChanges(this ITrackable item, ITrackable parent)
+        {
+            // See if item has changes
+            bool itemHasChanges = item.TrackingState != TrackingState.Unchanged;
+            if (itemHasChanges) return true;
+
+            // Recursively see if trackable properties have changes
+            foreach (var prop in item.GetType().GetProperties())
+            {
+                // Process 1-1 and M-1 properties
+                var trackableRef = prop.GetValue(item, null) as ITrackable;
+
+                // Continue recursion if trackable is not same type as parent
+                if (trackableRef != null
+                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                {
+                    // See if ref prop has changes
+                    bool refPropHasChanges = trackableRef.HasChanges(item);
+                    if (refPropHasChanges) return true;
+                }
+
+                // Process 1-M and M-M properties
+                var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
+                if (trackingColl != null)
+                {
+                    // See if there are any cached deletes
+                    var cachedDeletes = trackingColl.GetChanges(true);
+                    if (cachedDeletes.Count > 0) return true;
+
+                    // See if child entities have changes
+                    foreach (ITrackable trackableChild in trackingColl)
+                    {
+                        // Continue recursion if trackable is not same type as parent
+                        if (trackableChild != null &&
+                            (parent == null || (trackableChild.GetType() != parent.GetType())))
+                        {
+                            bool childHasChanges = trackableChild.HasChanges(item);
+                            if (childHasChanges) return true;
+                        }
+                    }
+                }
+            }
+
+            // Return false if there are no changes
+            return false;
+        }
+
+        // TODO: Remove commented code
+        /* private static bool HasChanges_Old(this ITrackable item, ITrackable parent)
+        {
+            // Include private props to get ref prop change tracker
+            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance |
+                BindingFlags.Public | BindingFlags.NonPublic))
+            {
+                var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
+                if (trackingColl != null)
+                {
+                    // Recursively check for child collection changes
+                    bool stopRecursion = false;
+                    foreach (ITrackable child in trackingColl)
+                    {
+                        // Stop recursion if trackable is same type as parent
+                        if (parent != null && (child.GetType() == parent.GetType()))
+                        {
+                            stopRecursion = true;
+                            break;
+                        }
+                        bool hasChanges = child.HasChanges(item);
+                        if (hasChanges) return true;
+                    }
+
+                    // Return true if child collection has changes
+                    if (!stopRecursion)
+                    {
+                        ITrackingCollection changes = trackingColl.GetChanges(false);
+                        if (changes.Count > 0) return true;
+                    }
+                }
+            }
+            return false;
+        } */
+
         private static ITrackable GetEquatableItem
             (this IEnumerable<ITrackable> sourceItems, ITrackable sourceItem, bool isTrackableRef)
         {

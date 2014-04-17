@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using TrackableEntities.Client.Tests.Entities.FamilyModels;
 using TrackableEntities.Client.Tests.Entities.Mocks;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
 using TrackableEntities.Common;
@@ -445,6 +446,643 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.That(employee.Territories, Has.No.Member(deletedTerritory)); // Detail deleted
             ICollection cachedDeletes = ((ITrackingCollection)employee.Territories).GetChanges(true);
             Assert.IsEmpty(cachedDeletes); // Cached deletes have been removed
+        }
+
+        #endregion
+
+        #region HasChanges: One-to-Many
+
+        [Test]
+        public void HasChanges_Unchanged_Parent_Should_Return_False()
+        {
+            // Arrange
+            var parent = new Parent("Parent");
+            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsFalse(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Modified_Parent_Should_Return_True()
+        {
+            // Arrange
+            var parent = new Parent("Parent");
+            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
+            parent.Name += "_Changed";
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Added_Parent_Should_Return_True()
+        {
+            // Arrange
+            var parent = new Parent("Parent");
+            var changeTracker = new ChangeTrackingCollection<Parent>(true);
+            changeTracker.Add(parent);
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Deleted_Parent_Should_Return_True()
+        {
+            // Arrange
+            var parent = new Parent("Parent");
+            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
+            changeTracker.Remove(parent);
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Parent_With_Unchanged_Children_Should_Return_False()
+        {
+            // Arrange
+            var parent = new Parent("Parent")
+            {
+                Children = new ChangeTrackingCollection<Child>
+                    {
+                        new Child("Child1"), 
+                        new Child("Child2")
+                    }
+            };
+            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsFalse(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Parent_With_Modified_Child_Should_Return_True()
+        {
+            // Arrange
+            var parent = new Parent("Parent")
+            {
+                Children = new ChangeTrackingCollection<Child>
+                    {
+                        new Child("Child1"), 
+                        new Child("Child2")
+                    }
+            };
+            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
+            parent.Children[0].Name += "_Changed";
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Parent_With_Added_Child_Should_Return_True()
+        {
+            // Arrange
+            var parent = new Parent("Parent")
+            {
+                Children = new ChangeTrackingCollection<Child>
+                    {
+                        new Child("Child1"), 
+                        new Child("Child2")
+                    }
+            };
+            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
+            parent.Children.Add(new Child("Child3"));
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Parent_With_Removed_Child_Should_Return_True()
+        {
+            // Arrange
+            var parent = new Parent("Parent")
+            {
+                Children = new ChangeTrackingCollection<Child>
+                    {
+                        new Child("Child1"), 
+                        new Child("Child2")
+                    }
+            };
+            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
+            parent.Children.RemoveAt(0);
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Parent_With_Unchanged_Grandchildren_Should_Return_False()
+        {
+            // Arrange
+            var parent = new Parent("Parent")
+            {
+                Children = new ChangeTrackingCollection<Child>
+                    {
+                        new Child("Child1")
+                            { 
+                                Children = new ChangeTrackingCollection<GrandChild>
+                                { 
+                                    new GrandChild("Grandchild1"),
+                                    new GrandChild("Grandchild2")
+                                } 
+                            }, 
+                        new Child("Child2")
+                    }
+            };
+            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsFalse(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Parent_With_Modified_Grandchild_Should_Return_True()
+        {
+            // Arrange
+            var parent = new Parent("Parent")
+            {
+                Children = new ChangeTrackingCollection<Child>
+                    {
+                        new Child("Child1")
+                            { 
+                                Children = new ChangeTrackingCollection<GrandChild>
+                                { 
+                                    new GrandChild("Grandchild1"),
+                                    new GrandChild("Grandchild2")
+                                } 
+                            }, 
+                        new Child("Child2")
+                    }
+            };
+            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
+            parent.Children[0].Children[0].Name += "_Changed";
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Parent_With_Added_Grandchild_Should_Return_True()
+        {
+            // Arrange
+            var parent = new Parent("Parent")
+            {
+                Children = new ChangeTrackingCollection<Child>
+                    {
+                        new Child("Child1")
+                            { 
+                                Children = new ChangeTrackingCollection<GrandChild>
+                                { 
+                                    new GrandChild("Grandchild1"),
+                                    new GrandChild("Grandchild2")
+                                } 
+                            }, 
+                        new Child("Child2")
+                    }
+            };
+            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
+            parent.Children[0].Children.Add(new GrandChild("Grandchild3"));
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Parent_With_Removed_Grandchild_Should_Return_True()
+        {
+            // Arrange
+            var parent = new Parent("Parent")
+            {
+                Children = new ChangeTrackingCollection<Child>
+                    {
+                        new Child("Child1")
+                            { 
+                                Children = new ChangeTrackingCollection<GrandChild>
+                                { 
+                                    new GrandChild("Grandchild1"),
+                                    new GrandChild("Grandchild2")
+                                } 
+                            }, 
+                        new Child("Child2")
+                    }
+            };
+            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
+            parent.Children[0].Children.RemoveAt(0);
+
+            // Act
+            bool hasChanges = parent.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_OrderDetail_With_Modified_Product_Should_Return_True()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.OrderDetails[0].Product.ProductName = "xxx";
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_OrderDetail_With_Product_Set_To_Null_Should_Return_False()
+        {
+            // NOTE: Setting OrderDetail.Product to null is not considered a change,
+            // because it will not result in any updated entities.
+
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.OrderDetails[0].Product = null;
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsFalse(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_OrderDetail_With_Product_Set_To_Unchanged_Product_Should_Return_False()
+        {
+            // NOTE: Setting null OrderDetail.Product to a product is not considered a change,
+            // because it will not result in any updated entities.
+
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var product = database.Products[0];
+            order.OrderDetails[0].Product = product;
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsFalse(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_OrderDetail_Set_Product_To_Added_Product_Should_Return_True()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var product = database.Products[0];
+            product.TrackingState = TrackingState.Added;
+            order.OrderDetails[0].Product = product;
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_OrderDetail_Set_Product_To_Deleted_Product_Should_Return_True()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var product = database.Products[0];
+            product.TrackingState = TrackingState.Deleted;
+            order.OrderDetails[0].Product = product;
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        #endregion
+
+        #region HasChanges: Many-to-One
+
+        [Test]
+        public void HasChanges_Unchanged_Order_Customer_With_Unchanged_Territory_Should_Return_False()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var territory = database.Territories[0];
+            var employee = database.Employees[0];
+            territory.Employees = new ChangeTrackingCollection<Employee> {employee};
+            order.Customer.Territory = territory;
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsFalse(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_Customer_With_Territory_Set_To_Null_Should_Return_False()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var territory = database.Territories[0];
+            var employee = database.Employees[0];
+            territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+            order.Customer.Territory = territory;
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer.Territory = null;
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsFalse(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_Customer_With_Territory_Set_To_Unchanged_Territory_Should_Return_False()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var territory = database.Territories[0];
+            var employee = database.Employees[0];
+            territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+            order.Customer.Territory = territory;
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer.Territory = database.Territories[1];
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsFalse(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_Customer_With_Modified_Territory_Should_Return_True()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var territory = database.Territories[0];
+            var employee = database.Employees[0];
+            territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+            order.Customer.Territory = territory;
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            territory.Data = "xxx";
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_Customer_Territory_With_Modified_Employee_Should_Return_True()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var territory = database.Territories[0];
+            var employee = database.Employees[0];
+            territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+            order.Customer.Territory = territory;
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            territory.Employees[0].LastName = "xxx";
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_Customer_Territory_With_Added_Employee_Should_Return_True()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var territory = database.Territories[0];
+            var employee = database.Employees[0];
+            territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+            order.Customer.Territory = territory;
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            territory.Employees.Add(database.Employees[1]);
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_Customer_Territory_With_Removed_Employee_Should_Return_True()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var territory = database.Territories[0];
+            var employee = database.Employees[0];
+            territory.Employees = new ChangeTrackingCollection<Employee> { employee };
+            order.Customer.Territory = territory;
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            territory.Employees.Remove(employee);
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        #endregion
+
+        #region HasChanges: One-to-One
+
+        [Test]
+        public void HasChanges_Unchanged_Order_Customer_With_Unchanged_Setting_Should_Return_False()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            order.Customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = order.CustomerId,
+                Customer = order.Customer,
+                Setting = "Setting1"
+            };
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsFalse(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_Customer_With_Modified_Setting_Should_Return_True()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            order.Customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = order.CustomerId,
+                Customer = order.Customer,
+                Setting = "Setting1"
+            };
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer.CustomerSetting.Setting = "xxx";
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Order_Customer_With_Setting_Set_To_Null_Should_Return_False()
+        {
+            // NOTE: Setting ref prop to false will not result in updated entities.
+
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            order.Customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = order.CustomerId,
+                Customer = order.Customer,
+                Setting = "Setting1"
+            };
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer.CustomerSetting = null;
+
+            // Act
+            bool hasChanges = order.HasChanges();
+
+            // Assert
+            Assert.IsFalse(hasChanges);
+        }
+
+        #endregion
+
+        #region HasChanges: Many-to-Many
+
+        [Test]
+        public void HasChanges_Unchanged_Employee_With_Unchanged_Territories_Should_Return_False()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+
+            // Act
+            bool hasChanges = employee.HasChanges();
+
+            // Assert
+            Assert.IsFalse(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Employee_With_Modified_Territory_Should_Return_True()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            employee.Territories[0].Data = "xxx";
+
+            // Act
+            bool hasChanges = employee.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Employee_With_Added_Territory_Should_Return_True()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            employee.Territories.Add(database.Territories[4]);
+
+            // Act
+            bool hasChanges = employee.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
+        }
+
+        [Test]
+        public void HasChanges_Unchanged_Employee_With_Removed_Territory_Should_Return_True()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            employee.Territories.RemoveAt(0);
+
+            // Act
+            bool hasChanges = employee.HasChanges();
+
+            // Assert
+            Assert.IsTrue(hasChanges);
         }
 
         #endregion
