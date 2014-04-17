@@ -6,8 +6,13 @@ namespace TrackableEntities.EF.Tests.Contexts
 {
     public class FamilyDbContext : DbContext
     {
+#if EF_6
+        private const string TestDbName = "FamilyTestDbv6";        
+#else
+        private const string TestDbName = "FamilyTestDbv5";
+#endif
         public FamilyDbContext(CreateDbOptions createDbOptions = CreateDbOptions.CreateDatabaseIfNotExists)
-            : base("FamilyTestDb")
+            : base(TestDbName)
         {
             switch (createDbOptions)
             {
