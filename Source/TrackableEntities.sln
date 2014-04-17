@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{320BE240-F2E9-493B-959A-ECDA9A06123E}"
 EndProject
@@ -37,6 +37,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Patterns.EF.6", "TrackableEntities.Patterns.EF.6\TrackableEntities.Patterns.EF.6.csproj", "{00D8961F-2C08-4F5C-8B35-2AA360A3B7DE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Client.Net4", "TrackableEntities.Client.Net4\TrackableEntities.Client.Net4.csproj", "{B4A05A5B-FE50-4DD0-87CE-C3E2D63E2C66}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CFC68E28-5512-4E36-92CF-287B9908DCD2}"
+	ProjectSection(SolutionItems) = preProject
+		AssemblyVersion.cs = AssemblyVersion.cs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
