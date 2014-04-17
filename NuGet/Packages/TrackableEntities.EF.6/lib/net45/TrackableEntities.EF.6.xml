@@ -11,10 +11,45 @@
         </member>
         <member name="M:TrackableEntities.EF6.DbContextExtensions.ApplyChanges(System.Data.Entity.DbContext,TrackableEntities.ITrackable)">
             <summary>
-            Recursively set entity state for DbContext entry.
+            Update entity state on DbContext for an object graph.
             </summary>
             <param name="context">Used to query and save changes to a database</param>
             <param name="item">Object that implements ITrackable</param>
+        </member>
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.ApplyChanges(System.Data.Entity.DbContext,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable})">
+            <summary>
+            Update entity state on DbContext for more than one object graph.
+            </summary>
+            <param name="context">Used to query and save changes to a database</param>
+            <param name="items">Objects that implement ITrackable</param>
+        </member>
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntities(System.Data.Entity.DbContext,TrackableEntities.ITrackable)">
+            <summary>
+            Load related entities for an object graph.
+            </summary>
+            <param name="context">Used to query and save changes to a database</param>
+            <param name="item">Object that implement ITrackable</param>
+        </member>
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntities(System.Data.Entity.DbContext,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable})">
+            <summary>
+            Load related entities for more than one object graph.
+            </summary>
+            <param name="context">Used to query and save changes to a database</param>
+            <param name="items">Objects that implements ITrackable</param>
+        </member>
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,TrackableEntities.ITrackable)">
+            <summary>
+            Load related entities for an object graph asynchronously.
+            </summary>
+            <param name="context">Used to query and save changes to a database</param>
+            <param name="item">Object that implement ITrackable</param>
+        </member>
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable})">
+            <summary>
+            Load related entities for more than one object graph asynchronously.
+            </summary>
+            <param name="context">Used to query and save changes to a database</param>
+            <param name="items">Objects that implements ITrackable</param>
         </member>
     </members>
 </doc>

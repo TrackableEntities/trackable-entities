@@ -30,6 +30,12 @@
             </summary>
             <param name="item">Trackable object</param>
         </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.AcceptChanges(System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable})">
+            <summary>
+            Set tracking state to Unchanged on entities and their child collections.
+            </summary>
+            <param name="items">Trackable objects</param>
+        </member>
         <member name="T:TrackableEntities.TrackingState">
             <summary>
             Change-tracking state of an entity.
