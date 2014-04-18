@@ -44,5 +44,13 @@ namespace TrackableEntities.Client
             /// <summary>Change-tracking property end</summary>
             public const string ChangeTrackingPropEnd = "ChangeTracker";
         }
+
+        public static class ErrorMessages
+        {
+            public const string EntityMustImplementIEquatable = "Entity must implement IEquatable<TEntity>. " +
+                "Update Trackable Entities Visual Studio Extension (Tools, Extensions and Updates). " +
+                "Then re-generate model classes by right-clicking the Client.Entities project and selecting 'Reverse Engineer Code First' " +
+                "from the Entity Framework context menu.";
+        }
     }
 }

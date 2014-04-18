@@ -450,6 +450,39 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #endregion
 
+        #region MergeChanges Exceptions
+
+        [Test]
+        public void MergeChanges_On_Equatable_Customer_Should_Not_Throw_ArgumentException()
+        {
+            // Arrange
+            var customer = new Customer { CustomerId = "ALFKI" };
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+            changeTracker.MergeChanges();
+
+            // Assert
+            Assert.Pass();
+        }
+
+        [Test, ExpectedException(typeof(ArgumentException))]
+        public void MergeChanges_On_Non_Equatable_Customer_Should_Throw_ArgumentException()
+        {
+            // Arrange
+            var bogusCustomer = new BogusCustomer { CustomerId = "BOGUS" };
+            var changeTracker = new ChangeTrackingCollection<BogusCustomer>(bogusCustomer);
+
+            // Act
+            changeTracker.MergeChanges();
+        }
+
+        #endregion
+
+        #endregion
+
+        #region HasChanges Tests
+
         #region HasChanges: One-to-Many
 
         [Test]
@@ -816,7 +849,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             var order = database.Orders[0];
             var territory = database.Territories[0];
             var employee = database.Employees[0];
-            territory.Employees = new ChangeTrackingCollection<Employee> {employee};
+            territory.Employees = new ChangeTrackingCollection<Employee> { employee };
             order.Customer.Territory = territory;
             var changeTracker = new ChangeTrackingCollection<Order>(order);
 
@@ -1087,6 +1120,8 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #endregion
 
+        #endregion
+
         #region Clone Tests
 
         [Test]
@@ -1203,8 +1238,6 @@ namespace TrackableEntities.Client.Tests.Extensions
             }
             return updatedEmployees;
         }
-
-        #endregion
 
         #endregion
     }
