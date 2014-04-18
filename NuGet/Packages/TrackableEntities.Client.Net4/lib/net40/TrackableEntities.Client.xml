@@ -8,7 +8,7 @@
             <summary>
             Collection responsible for tracking changes to entities.
             </summary>
-            <typeparam name="T">Trackable entity type</typeparam>
+            <typeparam name="TEntity">Trackable entity type</typeparam>
         </member>
         <member name="T:TrackableEntities.Client.ITrackingCollection`1">
             <summary>
@@ -179,6 +179,10 @@
             <typeparam name="TEntity">Trackable entity type</typeparam>
             <param name="changeTracker">Change tracker used to track changes on original entities</param>
             <param name="updatedItems">One or more entities updated with changes from a service update operation</param>
+            <exception cref="T:System.ArgumentException">
+            <para>Entity must implement IEquatable(TEntity)</para>
+            <para>Update Trackable Entities Visual Studio Extension to v 2.0 or later, then re-generate client entities.</para>
+            </exception>
         </member>
         <member name="M:TrackableEntities.Client.ChangeTrackingExtensions.HasChanges(TrackableEntities.ITrackable)">
             <summary>

@@ -8,7 +8,7 @@
             <summary>
             Collection responsible for tracking changes to entities.
             </summary>
-            <typeparam name="T">Trackable entity type</typeparam>
+            <typeparam name="TEntity">Trackable entity type</typeparam>
         </member>
         <member name="T:TrackableEntities.Client.ITrackingCollection`1">
             <summary>
@@ -26,11 +26,17 @@
             Interface implemented by trackable collections.
             </summary>
         </member>
-        <member name="M:TrackableEntities.Client.ITrackingCollection.GetChanges">
+        <member name="M:TrackableEntities.Client.ITrackingCollection.GetChanges(System.Boolean)">
             <summary>
             Get entities that have been marked as Added, Modified or Deleted.
             </summary>
+            <param name="cachedDeletesOnly">True to return only cached deletes</param>
             <returns>Collection containing only changed entities</returns>
+        </member>
+        <member name="M:TrackableEntities.Client.ITrackingCollection.RemoveCachedDeletes">
+            <summary>
+            Remove deleted entities which have been cached.
+            </summary>
         </member>
         <member name="E:TrackableEntities.Client.ITrackingCollection.EntityChanged">
             <summary>
@@ -40,6 +46,16 @@
         <member name="P:TrackableEntities.Client.ITrackingCollection.Tracking">
             <summary>
             Turn change-tracking on and off.
+            </summary>
+        </member>
+        <member name="P:TrackableEntities.Client.ITrackingCollection.ExcludedProperties">
+            <summary>
+            Properties to exclude from change tracking.
+            </summary>
+        </member>
+        <member name="P:TrackableEntities.Client.ITrackingCollection.Parent">
+            <summary>
+            ITrackable parent referencing items in this collection.
             </summary>
         </member>
         <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.#ctor">
@@ -54,6 +70,13 @@
             </summary>
             <param name="enableTracking">Enable tracking after entities are added</param>
         </member>
+        <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.#ctor(`0[])">
+            <summary>
+            Constructor that accepts one or more entities.
+            Change-tracking will begin after entities are added.
+            </summary>
+            <param name="entities">Entities being change-tracked</param>
+        </member>
         <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0},System.Boolean)">
             <summary>
             Constructor that accepts a collection of entities.
@@ -62,13 +85,6 @@
             </summary>
             <param name="entities">Entities being change-tracked</param>
             <param name="disableTracking">Disable tracking after entities are added</param>
-        </member>
-        <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.#ctor(`0[])">
-            <summary>
-            Constructor that accepts one or more entities.
-            Change-tracking will begin after entities are added.
-            </summary>
-            <param name="entities">Entities being change-tracked</param>
         </member>
         <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.InsertItem(System.Int32,`0)">
             <summary>
@@ -90,18 +106,24 @@
             </summary>
             <returns>Collection containing only changed entities</returns>
         </member>
-        <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.TrackableEntities#Client#ITrackingCollection#GetChanges">
+        <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.TrackableEntities#Client#ITrackingCollection#GetChanges(System.Boolean)">
             <summary>
             Get entities that have been added, modified or deleted.
             </summary>
+            <param name="cachedDeletesOnly">True to return only cached deletes</param>
             <returns>Collection containing only changed entities</returns>
+        </member>
+        <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.TrackableEntities#Client#ITrackingCollection#RemoveCachedDeletes">
+            <summary>
+            Remove deleted entities which have been cached.
+            </summary>
         </member>
         <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.MergeChanges(`0@,`0)">
             <summary>
-            Merge changed child items into the original trackable entity. 
+            <para>Merge changed child items into the original trackable entity. 
             This assumes GetChanges was called to update only changed items. 
-            Non-recursive - only direct children will be merged. 
-            Usage: MergeChanges(ref originalItem, updatedItem);
+            Non-recursive - only direct children will be merged.</para> 
+            <code>Usage: MergeChanges(ref originalItem, updatedItem);</code>
             </summary>
             <param name="originalItem">Local entity containing unchanged child items.</param>
             <param name="updatedItem">Entity returned by an update operation.</param>
@@ -111,9 +133,19 @@
             Event for when an entity in the collection has changed its tracking state.
             </summary>
         </member>
+        <member name="P:TrackableEntities.Client.ChangeTrackingCollection`1.ExcludedProperties">
+            <summary>
+            Properties to exclude from change tracking.
+            </summary>
+        </member>
         <member name="P:TrackableEntities.Client.ChangeTrackingCollection`1.Tracking">
             <summary>
             Turn change-tracking on and off.
+            </summary>
+        </member>
+        <member name="P:TrackableEntities.Client.ChangeTrackingCollection`1.Parent">
+            <summary>
+            ITrackable parent referencing items in this collection.
             </summary>
         </member>
         <member name="T:TrackableEntities.Client.Constants">
@@ -131,6 +163,31 @@
         </member>
         <member name="F:TrackableEntities.Client.Constants.TrackingProperties.ModifiedProperties">
             <summary>ModifiedProperties property name</summary>
+        </member>
+        <member name="T:TrackableEntities.Client.Constants.EquatableMembers">
+            <summary>
+            Equatable member names.
+            </summary>
+        </member>
+        <member name="F:TrackableEntities.Client.Constants.EquatableMembers.EquatableMethodStart">
+            <summary>Equatable method start</summary>
+        </member>
+        <member name="F:TrackableEntities.Client.Constants.EquatableMembers.EquatableMethodEnd">
+            <summary>Equatable method end</summary>
+        </member>
+        <member name="F:TrackableEntities.Client.Constants.EquatableMembers.EntityIdentifierProperty">
+            <summary>Entity identifier property</summary>
+        </member>
+        <member name="F:TrackableEntities.Client.Constants.EquatableMembers.EntityIdentifyField">
+            <summary>Entity identify field</summary>
+        </member>
+        <member name="T:TrackableEntities.Client.Constants.ChangeTrackingMembers">
+            <summary>
+            Change-tracking member names.
+            </summary>
+        </member>
+        <member name="F:TrackableEntities.Client.Constants.ChangeTrackingMembers.ChangeTrackingPropEnd">
+            <summary>Change-tracking property end</summary>
         </member>
         <member name="T:TrackableEntities.Client.ModelBase`1">
             <summary>
@@ -150,73 +207,164 @@
             Event for notification of property changes
             </summary>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.SetTracking(TrackableEntities.ITrackable,System.Boolean)">
+        <member name="T:TrackableEntities.Client.ChangeTrackingExtensions">
             <summary>
-            Recursively enable or disable tracking on child collections in an object graph.
+            ITrackable extension methods.
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Client.ChangeTrackingExtensions.MergeChanges``1(TrackableEntities.Client.ChangeTrackingCollection{``0},``0[])">
+            <summary>
+            <para>Merge changes from a one or more updated entities into original entities.</para>
+            <para>First call GetChanges on the change tracker, passing changes to a service update operation.</para>
+            <para>Then call MergeChanges, passing one or more updated entities from the service update operation.</para>
+            <para>Properties on original entities will be set to those from updated entities.</para>
+            <code>
+            // Usage:
+            // Start change-tracking originalEntity (new or retrieved from service)
+            var changeTracker = new ChangeTrackingCollection(originalEntity);
+            
+            // Make changes to originalEntity, including reference and child entities
+            
+            // Get changes
+            var changedEntity = changeTracker.GetChanges().SingleOrDefault();
+            
+            // Pass changes to service update operation
+            var updatedEntity = service.Update(changedEntity);
+            
+            // Merge updates from updated entity back into the original entity
+            changeTracker.MergeChanges(updatedEntity);
+            </code>
+            </summary>
+            <typeparam name="TEntity">Trackable entity type</typeparam>
+            <param name="changeTracker">Change tracker used to track changes on original entities</param>
+            <param name="updatedItems">One or more entities updated with changes from a service update operation</param>
+            <exception cref="T:System.ArgumentException">
+            <para>Entity must implement IEquatable(TEntity)</para>
+            <para>Update Trackable Entities Visual Studio Extension to v 2.0 or later, then re-generate client entities.</para>
+            </exception>
+        </member>
+        <member name="M:TrackableEntities.Client.ChangeTrackingExtensions.HasChanges(TrackableEntities.ITrackable)">
+            <summary>
+            See if there are changes in an object graph.
+            </summary>
+            <param name="item">Trackable object</param>
+            <returns>True if there are changes in the object graph</returns>
+        </member>
+        <member name="M:TrackableEntities.Client.ChangeTrackingExtensions.Clone``1(TrackableEntities.Client.ChangeTrackingCollection{``0})">
+            <summary>
+            <para>Create a clone of the ChangeTrackingCollection using a JSON binary serializer.</para>
+            <para>Changes can be rolled back by reverting to the cloned ChangeTrackingCollection.</para>
+            </summary>
+            <param name="changeTracker">Change tracker used to track changes on entities</param>
+            <typeparam name="TEntity">Trackable entity type</typeparam>
+            <returns>Deep copy of the ChangeTrackingCollection</returns>
+        </member>
+        <member name="M:TrackableEntities.Client.TrackableExtensions.SetTracking(TrackableEntities.ITrackable,System.Boolean,TrackableEntities.ITrackable)">
+            <summary>
+            Recursively enable or disable tracking on trackable entities in an object graph.
             </summary>
             <param name="item">Trackable object</param>
             <param name="enableTracking">Enable or disable change-tracking</param>
+            <param name="parent">ITrackable parent of item</param>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.SetState(TrackableEntities.ITrackable,TrackableEntities.TrackingState)">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.SetState(TrackableEntities.ITrackable,TrackableEntities.TrackingState,TrackableEntities.ITrackable,TrackableEntities.Client.ITrackingCollection)">
             <summary>
-            Recursively set tracking state on child collections in an object graph.
+            Recursively set tracking state on trackable entities in an object graph.
             </summary>
             <param name="item">Trackable object</param>
             <param name="state">Change-tracking state of an entity</param>
+            <param name="parent">ITrackable parent of item</param>
+            <param name="changeTracker">Change-tracking collection this item is being added to, removed from, or is a member of</param>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.SetModifiedProperties(TrackableEntities.ITrackable,System.Collections.Generic.ICollection{System.String})">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.SetModifiedProperties(TrackableEntities.ITrackable,System.Collections.Generic.ICollection{System.String},TrackableEntities.ITrackable)">
             <summary>
-            Recursively set tracking state on child collections in an object graph.
+            Recursively set tracking state on trackable properties in an object graph.
             </summary>
             <param name="item">Trackable object</param>
             <param name="modified">Properties on an entity that have been modified</param>
+            <param name="parent">ITrackable parent of item</param>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.SetChanges(TrackableEntities.ITrackable)">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.RemoveRestoredDeletes(TrackableEntities.Client.ITrackingCollection,TrackableEntities.ITrackable)">
             <summary>
-            Recursively set child collections in an object graph to changed items.
+            Recursively remove items marked as deleted.
             </summary>
-            <param name="item">Trackable object</param>
+            <param name="changeTracker">Change-tracking collection</param>
+            <param name="parent">Parent ITrackable object</param>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.RestoreDeletes(TrackableEntities.ITrackable)">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.RestoreDeletes(TrackableEntities.Client.ITrackingCollection,TrackableEntities.ITrackable)">
             <summary>
-            Recursively restore deletes from child collections in an object graph.
+            Restore items marked as deleted.
             </summary>
-            <param name="item">Trackable object</param>
+            <param name="changeTracker">Change-tracking collection</param>
+            <param name="parent">Parent ITrackable object</param>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.RemoveDeletes(TrackableEntities.ITrackable,System.Boolean)">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.GetChanges(System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable},TrackableEntities.ITrackable)">
             <summary>
-            Recursively remove deletes from child collections in an object graph.
+            Get entities that have been added, modified or deleted, including trackable 
+            reference and child entities.
             </summary>
-            <param name="item">Trackable object</param>
-            <param name="enableTracking">Set to true to track removed items</param>
+            <param name="items">Collection of ITrackable objects</param>
+            <param name="parent">Parent ITrackable object</param>
+            <returns>Collection containing only added, modified or deleted entities</returns>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.RestoreDeletes(TrackableEntities.Client.ITrackingCollection)">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.Clone``1(``0)">
             <summary>
-            Restore deletes to a trackable collection.
-            </summary>
-            <param name="trackingColl">Trackable collection</param>
-        </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.RemoveDeletes(TrackableEntities.Client.ITrackingCollection,System.Boolean)">
-            <summary>
-            Remove deletes from a trackable collection.
-            </summary>
-            <param name="trackingColl">Trackable collection</param>
-            <param name="enableTracking">Set to true to track removed items</param>
-        </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.HasChanges(TrackableEntities.ITrackable)">
-            <summary>
-            Recursively get items with child collections that have changes.
-            </summary>
-            <param name="item">Trackable object</param>
-            <returns>True if item has child collections that have changes</returns>
-        </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.Clone``1(TrackableEntities.ITrackable)">
-            <summary>
-            Performs a deep copy using JsonSerializer.
+            Performs a deep copy using Json binary serializer.
             </summary>
             <typeparam name="T">Entity type</typeparam>
             <param name="item">Trackable object</param>
-            <returns>Cloned entity</returns>
+            <returns>Cloned Trackable object</returns>
+        </member>
+        <member name="M:TrackableEntities.Client.TrackableExtensions.IsEquatable(TrackableEntities.ITrackable,TrackableEntities.ITrackable)">
+            <summary>
+            Determines if two entities have the same identifier.
+            </summary>
+            <param name="item">Trackable object</param>
+            <param name="other">Other trackable object</param>
+            <returns>True if item is equatable, otherwise false</returns>
+        </member>
+        <member name="M:TrackableEntities.Client.TrackableExtensions.GetEntityIdentifier(TrackableEntities.ITrackable)">
+            <summary>
+            Get entity identifier for correlation with MergeChanges.
+            </summary>
+            <param name="item">ITrackable object</param>
+            <returns>Entity identifier used for correlation with MergeChanges</returns>
+        </member>
+        <member name="M:TrackableEntities.Client.TrackableExtensions.SetEntityIdentifier(TrackableEntities.ITrackable,System.Nullable{System.Guid})">
+            <summary>
+            Set entity identifier used for correlation with MergeChanges.
+            </summary>
+            <param name="item">ITrackable object</param>
+            <param name="value">Unique identifier (optional)</param>
+        </member>
+        <member name="M:TrackableEntities.Client.TrackableExtensions.GetEntityIdentity(TrackableEntities.ITrackable)">
+            <summary>
+            Get value of entity identity used for setting EntityIdentifier.
+            </summary>
+            <param name="item">ITrackable object</param>
+            <returns>Value of entity identity field</returns>
+        </member>
+        <member name="M:TrackableEntities.Client.TrackableExtensions.SetEntityIdentity(TrackableEntities.ITrackable,System.Guid)">
+            <summary>
+            Set value of entity identity used for setting EntityIdentifier.
+            </summary>
+            <param name="item">ITrackable object</param>
+            <param name="value">Value for entity identity field</param>
+        </member>
+        <member name="M:TrackableEntities.Client.TrackableExtensions.GetRefPropertyChangeTracker(TrackableEntities.ITrackable,System.String)">
+            <summary>
+            Get reference property change tracker.
+            </summary>
+            <param name="item">ITrackable object</param>
+            <param name="propertyName">Reference property name</param>
+            <returns>Reference property change tracker</returns>
+        </member>
+        <member name="M:TrackableEntities.Client.TrackableExtensions.IsManyToManyChildCollection(TrackableEntities.Client.ITrackingCollection)">
+            <summary>
+            Determine if an entity is a child of a many-to-many change-tracking collection property.
+            </summary>
+            <param name="changeTracker">Change-tracking collection</param>
+            <returns></returns>
         </member>
     </members>
 </doc>
