@@ -1,6 +1,7 @@
-<#@ template hostspecific="true" language="C#" #>
-<#@ include file="EF.Utility.CS.ttinclude" #><#@
- output extension=".cs" #><#
+<#@ template  debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ include file="EF.Utility.CS.ttinclude" #>
+<#
 
     var efHost = (EfTextTemplateHost)Host;
     var code = new CodeGenerationTools(this);
@@ -61,7 +62,7 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 			get { return _<#= code.Escape(property) #>; }
 			set
 			{
-				if (Equals(value, _<#= code.Escape(property) #>) return;
+				if (Equals(value, _<#= code.Escape(property) #>)) return;
 				_<#= code.Escape(property) #> = value;
 				NotifyPropertyChanged(m => m.<#= code.Escape(property) #>);
 			}
@@ -104,10 +105,10 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 			get { return _<#= code.Escape(navProperty) #>; }
 			set
 			{
-				if (Equals(value, _<#= code.Escape(navProperty) #>) return;
+				if (Equals(value, _<#= code.Escape(navProperty) #>)) return;
 				_<#= code.Escape(navProperty) #> = value;
 				<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>ChangeTracker = _<#= code.Escape(navProperty) #> == null ? null
-					: new ChangeTrackingCollection<Category> { _<#= code.Escape(navProperty) #> };
+					: new ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> { _<#= code.Escape(navProperty) #> };
 			}
 		}
 		private <#= code.Escape(navProperty.ToEndMember.GetEntityType()) #> _<#= code.Escape(navProperty) #>;
@@ -117,24 +118,30 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
         }
     }
 #>
-		[DataMember]
-		public ICollection<string> ModifiedProperties { get; set; }
+        #region Change Tracking
 
 		[DataMember]
 		public TrackingState TrackingState { get; set; }
 
+		[DataMember]
+		public ICollection<string> ModifiedProperties { get; set; }
+
 		#pragma warning disable 414
+
 		[JsonProperty, DataMember]
 		private Guid EntityIdentifier { get; set; }
+
 		[JsonProperty, DataMember]
 		private Guid _entityIdentity = default(Guid);
+
 		#pragma warning restore 414
 
-		bool IEquatable<Product>.Equals(<#= efHost.EntityType.Name #> other)
+		bool IEquatable<<#= efHost.EntityType.Name #>>.Equals(<#= efHost.EntityType.Name #> other)
 		{
 			if (EntityIdentifier != default(Guid))
 				return EntityIdentifier == other.EntityIdentifier;
 			return false;
 		}
+        #endregion
 	}
 }
