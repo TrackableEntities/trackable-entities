@@ -10,13 +10,13 @@ namespace TrackableEntities.Client
     /// <summary>
     /// Collection responsible for tracking changes to entities.
     /// </summary>
-    /// <typeparam name="T">Trackable entity type</typeparam>
-    public class ChangeTrackingCollection<T> : ObservableCollection<T>,
-        ITrackingCollection<T>, ITrackingCollection
-        where T : class, ITrackable, INotifyPropertyChanged
+    /// <typeparam name="TEntity">Trackable entity type</typeparam>
+    public class ChangeTrackingCollection<TEntity> : ObservableCollection<TEntity>,
+        ITrackingCollection<TEntity>, ITrackingCollection
+        where TEntity : class, ITrackable, INotifyPropertyChanged
     {
         // Deleted entities cache
-        readonly private Collection<T> _deletedEntities = new Collection<T>();
+        readonly private Collection<TEntity> _deletedEntities = new Collection<TEntity>();
 
         /// <summary>
         /// Event for when an entity in the collection has changed its tracking state.
@@ -47,7 +47,7 @@ namespace TrackableEntities.Client
         /// Change-tracking will begin after entities are added.
         /// </summary>
         /// <param name="entities">Entities being change-tracked</param>
-        public ChangeTrackingCollection(params T[] entities)
+        public ChangeTrackingCollection(params TEntity[] entities)
             : this(entities, false) { }
 
         /// <summary>
@@ -57,13 +57,13 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="entities">Entities being change-tracked</param>
         /// <param name="disableTracking">Disable tracking after entities are added</param>
-        public ChangeTrackingCollection(IEnumerable<T> entities, bool disableTracking = false)
+        public ChangeTrackingCollection(IEnumerable<TEntity> entities, bool disableTracking = false)
         {
             // Initialize excluded properties
             ExcludedProperties = new List<string>();
             
             // Add items to the change tracking list
-            foreach (T item in entities)
+            foreach (TEntity item in entities)
             {
                 Add(item);
             }
@@ -87,7 +87,7 @@ namespace TrackableEntities.Client
             set
             {
                 // Get notified when an item in the collection has changed
-                foreach (T item in this)
+                foreach (TEntity item in this)
                 {
                     // Property change notification
                     if (value) item.PropertyChanged += OnPropertyChanged;
@@ -145,7 +145,7 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="index">Zero-based index at which item should be inserted</param>
         /// <param name="item">Item to insert</param>
-        protected override void InsertItem(int index, T item)
+        protected override void InsertItem(int index, TEntity item)
         {
             if (Tracking)
             {
@@ -178,7 +178,7 @@ namespace TrackableEntities.Client
             if (Tracking)
             {
                 // Get item by index
-                T item = Items[index];
+                TEntity item = Items[index];
 
                 // Remove modified properties
                 item.ModifiedProperties = null;
@@ -209,22 +209,22 @@ namespace TrackableEntities.Client
         /// collections with entities that have been added, modified or deleted.
         /// </summary>
         /// <returns>Collection containing only changed entities</returns>
-        public ChangeTrackingCollection<T> GetChanges()
+        public ChangeTrackingCollection<TEntity> GetChanges()
         {
             // Temporarily restore deletes
             this.RestoreDeletes();
 
             // Clone items in change tracker
-            var items = this.Select(e => e.Clone<T>()).ToList();
+            var items = this.Select(e => e.Clone<TEntity>()).ToList();
 
             // Remove deletes
             this.RemoveRestoredDeletes();
 
             // Get changed items
-            List<T> entities = items.GetChanges(null).Cast<T>().ToList();
+            List<TEntity> entities = items.GetChanges(null).Cast<TEntity>().ToList();
 
             // Return new change tracking collection with tracking disabled
-            return new ChangeTrackingCollection<T>(entities, true);
+            return new ChangeTrackingCollection<TEntity>(entities, true);
         }
 
         /// <summary>
@@ -236,14 +236,14 @@ namespace TrackableEntities.Client
         {
             // Get removed deletes only
             if (cachedDeletesOnly)
-                return new ChangeTrackingCollection<T>(_deletedEntities, true);
+                return new ChangeTrackingCollection<TEntity>(_deletedEntities, true);
 
             // Get changed items in this tracking collection
             var changes = (from existing in this
                            where existing.TrackingState != TrackingState.Unchanged
                            select existing)
                           .Union(_deletedEntities);
-            return new ChangeTrackingCollection<T>(changes, true);
+            return new ChangeTrackingCollection<TEntity>(changes, true);
         }
 
         /// <summary>
@@ -263,10 +263,10 @@ namespace TrackableEntities.Client
         /// <param name="originalItem">Local entity containing unchanged child items.</param>
         /// <param name="updatedItem">Entity returned by an update operation.</param>
         [Obsolete("ChangeTrackingCollection.MergeChanges has been deprecated. Instead use ChangeTrackingCollection.MergeChanges.")]
-        public void MergeChanges(ref T originalItem, T updatedItem)
+        public void MergeChanges(ref TEntity originalItem, TEntity updatedItem)
         {
             // Get unchanged child entities
-            foreach (var prop in typeof(T).GetProperties())
+            foreach (var prop in typeof(TEntity).GetProperties())
             {
                 var updatedItems = prop.GetValue(updatedItem, null) as IList;
                 var originalItems = prop.GetValue(originalItem, null) as IList;

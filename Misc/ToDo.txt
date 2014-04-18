@@ -2,39 +2,30 @@ Trackable Entities To Do
 
 Release v2.0: Apr-2014
 
-- Set version to 2.0
+Release Notes:
+- Breaking Change:
+  > CT v2 will only work with new entities
+- Test with old entities
+
+- NorthwindSlim:
+  DONE (develop):
+  > Script new tables and data
+  > Include with Samples
+  > Post to ts.com
+  
+  NOT DONE:
+  > Update local db w WebApi Sample (run sample)
 
 - Bug: Delete asm in item templ refl code
+
 - CT Coll:
+  DONE (issue-equatable):
   > Rename T to TEntity
-  > Constrain TEntity to IEquatable<TEntity>
-  > Make Parent prop public
-
-Release 2.1:
-
-- Create integration tests with SpecFlow
-  > Test T4 templates
-  > Test Serialization, Equatability
-  > Test LoadRelatedEntities
-  > Test MergeChanges
-
-- DbContext.LoadRelatedEntities method
-  > Make sure no dup id's to entity sql
-
-- Add support for M-M, M-1, 1-1
-  > AcceptChanges
-  > ApplyChanges
-  > MergeChanges
-
-- Refactor MergeChanges
-  > Make recursive (1-M, M-M, M-1, 1-1)
-
-- Update to EF 6.1 runtime
-  > NuGet package update
-
-- Use 6.1 new CF designer
+  > Throw exception if entity is not IEquatable<TEntity>
+    - MergeChanges
 
 - Client T4 templates
+  DONE (deploy):
   > M-M prop setter: if (value != null) value.Parent = this;
   > Add M-1 ref props, change tracker
   > Add 1-1 change tracker prop
@@ -49,11 +40,35 @@ Release 2.1:
   > Add private EntityIdentifer
     - Make serializable for Json, DataContract
 
-- Bug fixes
-  > See codeplex issues
+- Samples:
+  > See if ref to System.Windows is req/present in client app
+
+  VS 2013
+  - WebApi (working on it)
+  - WebApi.Patterns
+  - Wcf
+  VS 2012
+  - WebApi
+  - Wcf
+
+- VSIX
+  > NuGet Packages
+  > Templates
   
-MergeChanges Feature:
-- Entity sets private EntityIdentifier for Added
-  > On client only
-- MergeChanges reads
+Release 2.1:
+
+- Create integration tests with SpecFlow
+  > Test T4 templates
+  > Test Serialization, Equatability
+  > Test LoadRelatedEntities
+  > Test MergeChanges
   
+Testing data:
+
+unchanged terr id:      "01581"
+modified terr id:       "01730" c
+added existing terr id: "02116" c
+added new terr id:      "91360" c
+deleted terr id:        "01833" c
+
+

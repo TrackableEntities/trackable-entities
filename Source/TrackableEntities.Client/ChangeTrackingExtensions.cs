@@ -45,6 +45,10 @@ namespace TrackableEntities.Client
             // Check for no items
             if (updatedItems == null) throw new ArgumentNullException("updatedItems");
 
+            // Check for IEquatable<TEntity>
+            if (!typeof(IEquatable<TEntity>).IsAssignableFrom(typeof(TEntity)))
+                throw new ArgumentException(Constants.ErrorMessages.EntityMustImplementIEquatable);
+
             // Recursively set tracking state for child collections
             changeTracker.MergeChanges(updatedItems, null);
         }
