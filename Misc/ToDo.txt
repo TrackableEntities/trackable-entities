@@ -3,9 +3,7 @@ Trackable Entities To Do
 Release v2.0: Apr-2014
 
 Release Notes:
-- Breaking Change:
-  > CT v2 will only work with new entities
-- Test with old entities
+- Do these
 
 - NorthwindSlim:
   DONE (develop):
@@ -23,6 +21,8 @@ Release Notes:
   > Rename T to TEntity
   > Throw exception if entity is not IEquatable<TEntity>
     - MergeChanges
+  TODO:
+  > Add xml doc for Arg Exception on MergeChanges
 
 - Client T4 templates
   DONE (deploy):
@@ -36,6 +36,7 @@ Release Notes:
     - Use ReferenceEquals for ref props
 
 - Server T4 templates
+  DONE (deploy):
   > Mapping.tt: using System.ComponentModel.DataAnnotations.Schema;
   > Add private EntityIdentifer
     - Make serializable for Json, DataContract

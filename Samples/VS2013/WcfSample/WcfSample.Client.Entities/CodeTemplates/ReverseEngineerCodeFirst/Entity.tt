@@ -126,10 +126,10 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 		[DataMember]
 		public ICollection<string> ModifiedProperties { get; set; }
 
-		#pragma warning disable 414
-
 		[JsonProperty, DataMember]
 		private Guid EntityIdentifier { get; set; }
+
+		#pragma warning disable 414
 
 		[JsonProperty, DataMember]
 		private Guid _entityIdentity = default(Guid);
