@@ -1,8 +1,16 @@
 Trackable Entities To Do
 
-Release v2.0 Apr-2014:
+Release v2.0: Apr-2014
 
 - Set version to 2.0
+
+- Bug: Delete asm in item templ refl code
+- CT Coll:
+  > Rename T to TEntity
+  > Constrain TEntity to IEquatable<TEntity>
+  > Make Parent prop public
+
+Release 2.1:
 
 - Create integration tests with SpecFlow
   > Test T4 templates
@@ -27,10 +35,10 @@ Release v2.0 Apr-2014:
 - Use 6.1 new CF designer
 
 - Client T4 templates
-  > M-M ctor: init new CT w parent
+  > M-M prop setter: if (value != null) value.Parent = this;
   > Add M-1 ref props, change tracker
-  > Check if 1-M init in ctor
-  > Explicitly implement IEquatable
+  > Add 1-1 change tracker prop
+  > Explicitly implement IEquatable<T>
     - Make private EntityIdentifer serializable
       - Json, DataContract
   > Replace == with value.Equals

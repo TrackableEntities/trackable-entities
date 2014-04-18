@@ -1,4 +1,4 @@
-<#
+﻿<#
 // Simplifying assumptions based on reverse engineer rules
 //  - No complex types
 //  - One entity container
@@ -6,14 +6,15 @@
 //  - Always have two navigation properties
 //  - All associations expose FKs (except many:many)
 #>
-<#@ template hostspecific="true" language="C#" #>
-<#@ include file="EF.Utility.CS.ttinclude" #><#@
- output extension=".cs" #><#
-
+<#@ template  debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ include file="EF.Utility.CS.ttinclude" #>
+<#
     var efHost = (EfTextTemplateHost)Host;
     var code = new CodeGenerationTools(this);
 #>
 using System.Data.Entity.ModelConfiguration;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 {

@@ -8,27 +8,29 @@ namespace WebApiSample.Service.Entities.Models
 {
     [JsonObject(IsReference = true)]
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Customer : ITrackable
+    public partial class Employee : ITrackable
     {
-        public Customer()
+        public Employee()
         {
-            this.Orders = new List<Order>();
+            this.Territories = new List<Territory>();
         }
 
         [DataMember]
-        public string CustomerId { get; set; }
+        public int EmployeeId { get; set; }
         [DataMember]
-        public string CompanyName { get; set; }
+        public string LastName { get; set; }
         [DataMember]
-        public string ContactName { get; set; }
+        public string FirstName { get; set; }
+        [DataMember]
+        public DateTime? BirthDate { get; set; }
+        [DataMember]
+        public DateTime? HireDate { get; set; }
         [DataMember]
         public string City { get; set; }
         [DataMember]
         public string Country { get; set; }
         [DataMember]
-        public CustomerSetting CustomerSetting { get; set; }
-        [DataMember]
-        public ICollection<Order> Orders { get; set; }
+        public ICollection<Territory> Territories { get; set; }
 
         [DataMember]
         public TrackingState TrackingState { get; set; }

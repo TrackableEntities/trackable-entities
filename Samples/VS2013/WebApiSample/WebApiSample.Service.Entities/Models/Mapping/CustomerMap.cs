@@ -36,6 +36,10 @@ namespace WebApiSample.Service.Entities.Models.Mapping
             this.Property(t => t.City).HasColumnName("City");
             this.Property(t => t.Country).HasColumnName("Country");
 
+            // Relationships
+            this.HasRequired(t => t.CustomerSetting)
+                .WithOptional(t => t.Customer);
+
             // Tracking Properties
 			this.Ignore(t => t.TrackingState);
 			this.Ignore(t => t.ModifiedProperties);
