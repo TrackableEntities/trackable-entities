@@ -466,6 +466,8 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.Pass();
         }
 
+        // TODO: Continue testing
+        [Ignore]
         [Test, ExpectedException(typeof(ArgumentException))]
         public void MergeChanges_On_Non_Equatable_Customer_Should_Throw_ArgumentException()
         {
