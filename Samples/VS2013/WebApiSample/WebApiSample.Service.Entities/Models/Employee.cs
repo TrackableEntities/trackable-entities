@@ -22,19 +22,21 @@ namespace WebApiSample.Service.Entities.Models
         [DataMember]
         public string FirstName { get; set; }
         [DataMember]
-        public DateTime? BirthDate { get; set; }
+        public Nullable<System.DateTime> BirthDate { get; set; }
         [DataMember]
-        public DateTime? HireDate { get; set; }
+        public Nullable<System.DateTime> HireDate { get; set; }
         [DataMember]
         public string City { get; set; }
         [DataMember]
         public string Country { get; set; }
         [DataMember]
-        public ICollection<Territory> Territories { get; set; }
+        public List<Territory> Territories { get; set; }
 
         [DataMember]
         public TrackingState TrackingState { get; set; }
         [DataMember]
         public ICollection<string> ModifiedProperties { get; set; }
+        [JsonProperty, DataMember]
+        private Guid EntityIdentifier { get; set; }
     }
 }

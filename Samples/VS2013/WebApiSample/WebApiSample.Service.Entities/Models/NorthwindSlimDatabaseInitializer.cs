@@ -4,7 +4,7 @@ using System.Data.Entity;
 
 namespace WebApiSample.Service.Entities.Models
 {
-    public class NorthwindSlimDatabaseInitializer : DropCreateDatabaseIfModelChanges<NorthwindSlimContext>
+    public class NorthwindSlimDatabaseInitializer : DropCreateDatabaseAlways<NorthwindSlimContext>
     {
         protected override void Seed(NorthwindSlimContext context)
         {

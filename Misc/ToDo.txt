@@ -5,6 +5,17 @@ Release v2.0: Apr-2014
 Release Notes:
 - Do these
 
+HOT:
+1) Get sample working w v2
+   - Client using new MergeChanges API
+   - Service controllers using ApplyChanges, LoadRelatedEntities
+   - Update controller scaffolding   
+   - Replace in all samples and vs project templates
+2) Update Patterns and WCF samples
+   - Operations use ApplyChanges, LoadRelatedEntities
+   - Update project templates   
+   - Replace in all samples and vs project templates
+
 - NorthwindSlim:
   DONE (develop):
   > Script new tables and data
@@ -34,12 +45,14 @@ Release Notes:
       - Json, DataContract
   > Replace == with value.Equals
     - Use ReferenceEquals for ref props
+  > Replicate to all samples and vs project templates
 
 - Server T4 templates
   DONE (deploy):
   > Mapping.tt: using System.ComponentModel.DataAnnotations.Schema;
   > Add private EntityIdentifer
     - Make serializable for Json, DataContract
+  > Replicate to all samples and vs project templates
 
 - Samples:
   > See if ref to System.Windows is req/present in client app

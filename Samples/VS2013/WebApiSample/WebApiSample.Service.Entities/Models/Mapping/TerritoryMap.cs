@@ -1,4 +1,6 @@
+
 using System.Data.Entity.ModelConfiguration;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiSample.Service.Entities.Models.Mapping
 {
@@ -13,11 +15,11 @@ namespace WebApiSample.Service.Entities.Models.Mapping
             this.Property(t => t.TerritoryId)
                 .IsRequired()
                 .HasMaxLength(20);
+
             this.Property(t => t.TerritoryDescription)
                 .IsRequired()
                 .HasMaxLength(50);
 
-            // Table & Column Mappings
             // Table & Column Mappings
             this.ToTable("Territory");
             this.Property(t => t.TerritoryId).HasColumnName("TerritoryId");

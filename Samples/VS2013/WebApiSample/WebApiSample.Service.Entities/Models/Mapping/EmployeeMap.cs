@@ -1,4 +1,6 @@
+
 using System.Data.Entity.ModelConfiguration;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiSample.Service.Entities.Models.Mapping
 {
@@ -10,14 +12,17 @@ namespace WebApiSample.Service.Entities.Models.Mapping
             this.HasKey(t => t.EmployeeId);
 
             // Properties
-            this.Property(t => t.FirstName)
-                .IsRequired()
-                .HasMaxLength(20);
             this.Property(t => t.LastName)
                 .IsRequired()
                 .HasMaxLength(20);
+
+            this.Property(t => t.FirstName)
+                .IsRequired()
+                .HasMaxLength(20);
+
             this.Property(t => t.City)
                 .HasMaxLength(15);
+
             this.Property(t => t.Country)
                 .HasMaxLength(15);
 
@@ -31,19 +36,21 @@ namespace WebApiSample.Service.Entities.Models.Mapping
             this.Property(t => t.City).HasColumnName("City");
             this.Property(t => t.Country).HasColumnName("Country");
 
+            // Tracking Properties
+			this.Ignore(t => t.TrackingState);
+			this.Ignore(t => t.ModifiedProperties);
+
             // Relationships
             this.HasMany(t => t.Territories)
                 .WithMany(t => t.Employees)
                 .Map(m =>
-                {
-                    m.ToTable("EmployeeTerritories");
-                    m.MapLeftKey("EmployeeId");
-                    m.MapRightKey("TerritoryId");
-                });
+                    {
+                        m.ToTable("EmployeeTerritories");
+                        m.MapLeftKey("EmployeeId");
+                        m.MapRightKey("TerritoryId");
+                    });
 
-            // Tracking Properties
-			this.Ignore(t => t.TrackingState);
-			this.Ignore(t => t.ModifiedProperties);
+
         }
     }
 }

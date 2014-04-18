@@ -20,11 +20,13 @@ namespace WebApiSample.Service.Entities.Models
         [DataMember]
         public string TerritoryDescription { get; set; }
         [DataMember]
-        public ICollection<Employee> Employees { get; set; }
+        public List<Employee> Employees { get; set; }
 
         [DataMember]
         public TrackingState TrackingState { get; set; }
         [DataMember]
         public ICollection<string> ModifiedProperties { get; set; }
+        [JsonProperty, DataMember]
+        private Guid EntityIdentifier { get; set; }
     }
 }

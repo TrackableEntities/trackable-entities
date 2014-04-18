@@ -1,4 +1,6 @@
+
 using System.Data.Entity.ModelConfiguration;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiSample.Service.Entities.Models.Mapping
 {
@@ -36,13 +38,14 @@ namespace WebApiSample.Service.Entities.Models.Mapping
             this.Property(t => t.City).HasColumnName("City");
             this.Property(t => t.Country).HasColumnName("Country");
 
+            // Tracking Properties
+			this.Ignore(t => t.TrackingState);
+			this.Ignore(t => t.ModifiedProperties);
+
             // Relationships
             this.HasRequired(t => t.CustomerSetting)
                 .WithOptional(t => t.Customer);
 
-            // Tracking Properties
-			this.Ignore(t => t.TrackingState);
-			this.Ignore(t => t.ModifiedProperties);
         }
     }
 }
