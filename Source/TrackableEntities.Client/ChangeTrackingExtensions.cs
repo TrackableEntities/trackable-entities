@@ -38,6 +38,10 @@ namespace TrackableEntities.Client
         /// <typeparam name="TEntity">Trackable entity type</typeparam>
         /// <param name="changeTracker">Change tracker used to track changes on original entities</param>
         /// <param name="updatedItems">One or more entities updated with changes from a service update operation</param>
+        /// <exception cref="ArgumentException">
+        /// <para>Entity must implement IEquatable(TEntity)</para>
+        /// <para>Update Trackable Entities Visual Studio Extension to v 2.0 or later, then re-generate client entities.</para>
+        /// </exception>
         public static void MergeChanges<TEntity>(this ChangeTrackingCollection<TEntity> changeTracker,
             params TEntity[] updatedItems)
                 where TEntity : class, ITrackable, INotifyPropertyChanged
