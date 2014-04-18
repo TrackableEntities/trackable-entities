@@ -22,17 +22,13 @@ HOT:
   > Include with Samples
   > Post to ts.com
   
-  NOT DONE:
-  > Update local db w WebApi Sample (run sample)
-
-- Bug: Delete asm in item templ refl code
+- BUG: Delete asm in item templ refl code
 
 - CT Coll:
   DONE (issue-equatable):
   > Rename T to TEntity
   > Throw exception if entity is not IEquatable<TEntity>
     - MergeChanges
-  TODO:
   > Add xml doc for Arg Exception on MergeChanges
 
 - Client T4 templates
@@ -55,7 +51,6 @@ HOT:
   > Replicate to all samples and vs project templates
 
 - Samples:
-  > See if ref to System.Windows is req/present in client app
 
   VS 2013
   - WebApi (working on it)
