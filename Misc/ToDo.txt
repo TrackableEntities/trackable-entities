@@ -16,15 +16,14 @@ HOT:
    
 * Overload for async methods accepting cancellation token
 
-v 2.1:
 * Issue: if unchange ref props are null, should load related
 entities populate them?  Maybe check for entity id?
-> If state != added && entity id != new guid, don't load entity
+> condition: if state == added load entity
 
 orig Order:
-OrderDetail[0] Prod Id 1 (ee0): wasted bandwidth
+OrderDetail[0] Prod Id 1 (ee0): wasted bandwidth -> modified
 OrderDetail[1] Prod Id 4 (433): wasted bandwidth
-OrderDetail[2] Prod Id 3 (null)
+OrderDetail[2] Prod Id 3 (null) -> added
 
 updated Order:
 OrderDetail[0] Prod Id 1 (000 -> ee0)

@@ -77,12 +77,6 @@ namespace WebApiSample.Service.WebApi.Controllers
 				order.AcceptChanges();
 			    await _dbContext.LoadRelatedEntitiesAsync(order);
 
-				// Load Products into added order details
-                //var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
-                //ctx.LoadProperty(order, o => o.Customer);
-                //foreach (var detail in order.OrderDetails)
-                //    ctx.LoadProperty(detail, od => od.Product);
-
 				return Ok(order);
 			}
 			catch (DbUpdateConcurrencyException)
@@ -112,13 +106,6 @@ namespace WebApiSample.Service.WebApi.Controllers
             // Accept changes and load related entities
 			order.AcceptChanges();
 		    await _dbContext.LoadRelatedEntitiesAsync(order);
-
-			// Load related entities
-            //var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
-            //ctx.LoadProperty(order, o => o.Customer);
-            //ctx.LoadProperty(order, o => o.OrderDetails);
-            //foreach (var detail in order.OrderDetails)
-            //    ctx.LoadProperty(detail, od => od.Product);
 
 			return CreatedAtRoute("DefaultApi", new { id = order.OrderId }, order);
 		}
