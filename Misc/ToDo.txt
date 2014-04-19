@@ -15,6 +15,16 @@ HOT:
    - Operations use ApplyChanges, LoadRelatedEntities
    - Update project templates   
    - Replace in all samples and vs project templates
+3) VS2013 Update 2 RC
+   - Make VM snapshot
+   - Install Web Essentials update
+   - Test everything
+4) Patterns
+   - Move Mappings into .EF project
+     > Add step in Getting Started guide
+5) Reverse 1-1 rel Cust-CustSetting
+   - Re-genenerate CF DB
+   - Fix in tests
 
 - NorthwindSlim:
   DONE (develop):
@@ -23,6 +33,12 @@ HOT:
   > Post to ts.com
   
 - BUG: Delete asm in item templ refl code
+
+- DOCS:
+  > Migration from v1.x:
+    - Update Nuget packages to v2
+    - Regenerate client and service entities (via EF rev eng db command)
+    - 
 
 - CT Coll:
   DONE (issue-equatable):

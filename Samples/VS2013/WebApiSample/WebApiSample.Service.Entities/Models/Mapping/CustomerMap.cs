@@ -41,11 +41,6 @@ namespace WebApiSample.Service.Entities.Models.Mapping
             // Tracking Properties
 			this.Ignore(t => t.TrackingState);
 			this.Ignore(t => t.ModifiedProperties);
-
-            // Relationships
-            this.HasRequired(t => t.CustomerSetting)
-                .WithOptional(t => t.Customer);
-
         }
     }
 }

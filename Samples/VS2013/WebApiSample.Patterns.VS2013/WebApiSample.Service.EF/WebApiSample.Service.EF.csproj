@@ -52,16 +52,13 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TrackableEntities.Common, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="TrackableEntities.Common">
       <HintPath>..\packages\TrackableEntities.Common.2.0.0.0\lib\portable-net40+sl5+win8+windowsphone8\TrackableEntities.Common.dll</HintPath>
     </Reference>
-    <Reference Include="TrackableEntities.EF.6, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="TrackableEntities.EF.6">
       <HintPath>..\packages\TrackableEntities.EF.6.2.0.0.0\lib\net45\TrackableEntities.EF.6.dll</HintPath>
     </Reference>
-    <Reference Include="TrackableEntities.Patterns, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="TrackableEntities.Patterns">
       <HintPath>..\packages\TrackableEntities.Patterns.2.0.0.0\lib\net45\TrackableEntities.Patterns.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.Patterns.EF.6">
@@ -72,6 +69,14 @@
     <Compile Include="Contexts\INorthwindSlimContext.cs" />
     <Compile Include="Contexts\NorthwindSlimContext.cs" />
     <Compile Include="Contexts\NorthwindSlimDatabaseInitializer.cs" />
+    <Compile Include="Mapping\CategoryMap.cs" />
+    <Compile Include="Mapping\CustomerMap.cs" />
+    <Compile Include="Mapping\CustomerSettingMap.cs" />
+    <Compile Include="Mapping\EmployeeMap.cs" />
+    <Compile Include="Mapping\OrderDetailMap.cs" />
+    <Compile Include="Mapping\OrderMap.cs" />
+    <Compile Include="Mapping\ProductMap.cs" />
+    <Compile Include="Mapping\TerritoryMap.cs" />
     <Compile Include="UnitsOfWork\NorthwindUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />

@@ -26,11 +26,15 @@ namespace WebApiSample.Service.Entities.Models
         [DataMember]
         public string Country { get; set; }
         [DataMember]
-        public ICollection<Order> Orders { get; set; }
+        public CustomerSetting CustomerSetting { get; set; }
+        [DataMember]
+        public List<Order> Orders { get; set; }
 
         [DataMember]
         public TrackingState TrackingState { get; set; }
         [DataMember]
         public ICollection<string> ModifiedProperties { get; set; }
+        [JsonProperty, DataMember]
+        private Guid EntityIdentifier { get; set; }
     }
 }

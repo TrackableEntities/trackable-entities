@@ -15,6 +15,7 @@ namespace WebApiSample.Service.Entities.Models.Mapping
                 .HasMaxLength(40);
 
             this.Property(t => t.RowVersion)
+                .IsRequired()
                 .IsFixedLength()
                 .HasMaxLength(8)
                 .IsRowVersion();
