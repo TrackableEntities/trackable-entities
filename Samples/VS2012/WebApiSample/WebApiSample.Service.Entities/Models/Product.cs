@@ -30,11 +30,13 @@ namespace WebApiSample.Service.Entities.Models
         [DataMember]
         public Category Category { get; set; }
         [DataMember]
-        public ICollection<OrderDetail> OrderDetails { get; set; }
+        public List<OrderDetail> OrderDetails { get; set; }
 
         [DataMember]
         public TrackingState TrackingState { get; set; }
         [DataMember]
         public ICollection<string> ModifiedProperties { get; set; }
+        [JsonProperty, DataMember]
+        private Guid EntityIdentifier { get; set; }
     }
 }

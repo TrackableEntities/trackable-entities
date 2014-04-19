@@ -76,6 +76,7 @@
     <Compile Include="Models\Mapping\ProductMap.cs" />
     <Compile Include="Models\Mapping\TerritoryMap.cs" />
     <Compile Include="Models\NorthwindSlimContext.cs" />
+    <Compile Include="Models\NorthwindSlimDatabaseInitializer.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />
     <Compile Include="Models\Product.cs" />

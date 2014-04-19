@@ -14,9 +14,9 @@ HOT:
    
 - Samples:
   VS 2013
-  - WebApi*
-  - WebApi.Patterns*
-  - Wcf*
+  - WebApi
+  - WebApi.Patterns
+  - Wcf
   VS 2012
   - WebApi
   - Wcf
@@ -78,6 +78,8 @@ HOT:
 - VSIX
   > NuGet Packages
   > Templates
+  > Remove EF Power Tools dependency
+    - Keep NuGet dependency
   
 Release 2.1:
 

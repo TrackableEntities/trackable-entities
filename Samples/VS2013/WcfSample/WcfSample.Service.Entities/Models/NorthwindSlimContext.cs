@@ -7,7 +7,7 @@ namespace WcfSample.Service.Entities.Models
     {
         static NorthwindSlimContext()
         {
-            Database.SetInitializer<NorthwindSlimContext>(null);
+            Database.SetInitializer(new NorthwindSlimDatabaseInitializer());
         }
 
         public NorthwindSlimContext()

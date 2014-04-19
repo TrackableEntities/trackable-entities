@@ -65,16 +65,22 @@
   <ItemGroup>
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Customer.cs" />
+    <Compile Include="Models\CustomerSetting.cs" />
+    <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\Mapping\CategoryMap.cs" />
     <Compile Include="Models\Mapping\CustomerMap.cs" />
+    <Compile Include="Models\Mapping\CustomerSettingMap.cs" />
+    <Compile Include="Models\Mapping\EmployeeMap.cs" />
     <Compile Include="Models\Mapping\OrderDetailMap.cs" />
     <Compile Include="Models\Mapping\OrderMap.cs" />
     <Compile Include="Models\Mapping\ProductMap.cs" />
+    <Compile Include="Models\Mapping\TerritoryMap.cs" />
     <Compile Include="Models\NorthwindSlimContext.cs" />
     <Compile Include="Models\NorthwindSlimDatabaseInitializer.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />
     <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\Territory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
