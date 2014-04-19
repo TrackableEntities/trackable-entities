@@ -9,8 +9,27 @@ HOT:
 1) Get sample working w v2
    - Client using new MergeChanges API
    - Service controllers using ApplyChanges, LoadRelatedEntities
-   - Update controller scaffolding   
+   - Update controller scaffolding
+     > Replace Customer controller
+   - Add code for M-1, 1-1, M-M
    - Replace in all samples and vs project templates
+   
+* Overload for async methods accepting cancellation token
+
+v 2.1:
+* Issue: if unchange ref props are null, should load related
+entities populate them?  Maybe check for entity id?
+> If state != added && entity id != new guid, don't load entity
+
+orig Order:
+OrderDetail[0] Prod Id 1 (ee0): wasted bandwidth
+OrderDetail[1] Prod Id 4 (433): wasted bandwidth
+OrderDetail[2] Prod Id 3 (null)
+
+updated Order:
+OrderDetail[0] Prod Id 1 (000 -> ee0)
+OrderDetail[2] Prod Id 3 (000 -> 84b)
+
    
 - Samples:
   VS 2013
@@ -25,13 +44,16 @@ HOT:
    - Operations use ApplyChanges, LoadRelatedEntities
    - Update project templates   
    - Replace in all samples and vs project templates
+   
 3) VS2013 Update 2 RC
    - Make VM snapshot
    - Install Web Essentials update
    - Test everything
+   
 4) Patterns
    - Move Mappings into .EF project (done)
      > Add step in Getting Started guide
+     
 5) Reverse 1-1 rel Cust-CustSetting
    - Fix in tests
 

@@ -69,16 +69,19 @@ namespace WebApiSample.Service.WebApi.Controllers
 
 			try
 			{
-				// Update object graph entity state
-				_dbContext.ApplyChanges(order);
+                // Apply changes and save
+                _dbContext.ApplyChanges(order);
 				await _dbContext.SaveChangesAsync();
+
+                // Accept changes and load related entities
 				order.AcceptChanges();
+			    await _dbContext.LoadRelatedEntitiesAsync(order);
 
 				// Load Products into added order details
-				var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
-				ctx.LoadProperty(order, o => o.Customer);
-				foreach (var detail in order.OrderDetails)
-					ctx.LoadProperty(detail, od => od.Product);
+                //var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
+                //ctx.LoadProperty(order, o => o.Customer);
+                //foreach (var detail in order.OrderDetails)
+                //    ctx.LoadProperty(detail, od => od.Product);
 
 				return Ok(order);
 			}
@@ -101,16 +104,21 @@ namespace WebApiSample.Service.WebApi.Controllers
 				return BadRequest(ModelState);
 			}
 
-			_dbContext.Orders.Add(order);
+            // Mark as added, apply changes and save
+            order.TrackingState = TrackingState.Added;
+			_dbContext.ApplyChanges(order);
 			await _dbContext.SaveChangesAsync();
+
+            // Accept changes and load related entities
 			order.AcceptChanges();
+		    await _dbContext.LoadRelatedEntitiesAsync(order);
 
 			// Load related entities
-			var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
-			ctx.LoadProperty(order, o => o.Customer);
-			ctx.LoadProperty(order, o => o.OrderDetails);
-			foreach (var detail in order.OrderDetails)
-				ctx.LoadProperty(detail, od => od.Product);
+            //var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
+            //ctx.LoadProperty(order, o => o.Customer);
+            //ctx.LoadProperty(order, o => o.OrderDetails);
+            //foreach (var detail in order.OrderDetails)
+            //    ctx.LoadProperty(detail, od => od.Product);
 
 			return CreatedAtRoute("DefaultApi", new { id = order.OrderId }, order);
 		}
@@ -118,24 +126,20 @@ namespace WebApiSample.Service.WebApi.Controllers
 		// DELETE api/Order/5
 		public async Task<IHttpActionResult> DeleteOrder(int id)
 		{
+            // Retrieve order with details
 			Order order = await _dbContext.Orders
-				.Include(o => o.OrderDetails) // include details
+				.Include(o => o.OrderDetails)
 				.SingleOrDefaultAsync(o => o.OrderId == id);
+
+            // Deleting non-existent order should have no effect
 			if (order == null)
 			{
 				return Ok();
 			}
 
-			// First remove order
-			_dbContext.Orders.Attach(order);
-			_dbContext.Orders.Remove(order);
-
-			// Then remove order details
-			foreach (var detail in order.OrderDetails)
-			{
-				_dbContext.OrderDetails.Attach(detail);
-				_dbContext.OrderDetails.Remove(detail);
-			}
+			// Mark order as deleted and apply changes
+			order.TrackingState = TrackingState.Deleted;
+			_dbContext.ApplyChanges(order);
 
 			try
 			{
