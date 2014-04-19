@@ -95,7 +95,7 @@ namespace WcfSample.Client.ConsoleApp
                     Order updatedOrder = orderService.UpdateOrderAsync(changedOrder).Result;
 
                     // Merge changes
-                    changeTracker.MergeChanges(ref createdOrder, updatedOrder);
+                    changeTracker.MergeChanges(updatedOrder);
                     Console.WriteLine("Updated order:");
                     PrintOrderWithDetails(createdOrder);
 

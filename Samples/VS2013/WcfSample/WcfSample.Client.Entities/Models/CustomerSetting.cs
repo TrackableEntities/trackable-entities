@@ -10,51 +10,48 @@ namespace WcfSample.Client.Entities.Models
 {
     [JsonObject(IsReference = true)]
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Category : ModelBase<Category>, IEquatable<Category>, ITrackable
+    public partial class CustomerSetting : ModelBase<CustomerSetting>, IEquatable<CustomerSetting>, ITrackable
     {
-		public Category()
-		{
-			this.Products = new ChangeTrackingCollection<Product>();
-		}
-
 		[DataMember]
-		public int CategoryId
+		public string CustomerId
 		{ 
-			get { return _CategoryId; }
+			get { return _CustomerId; }
 			set
 			{
-				if (Equals(value, _CategoryId)) return;
-				_CategoryId = value;
-				NotifyPropertyChanged(m => m.CategoryId);
+				if (Equals(value, _CustomerId)) return;
+				_CustomerId = value;
+				NotifyPropertyChanged(m => m.CustomerId);
 			}
 		}
-		private int _CategoryId;
+		private string _CustomerId;
 
 		[DataMember]
-		public string CategoryName
+		public string Setting
 		{ 
-			get { return _CategoryName; }
+			get { return _Setting; }
 			set
 			{
-				if (Equals(value, _CategoryName)) return;
-				_CategoryName = value;
-				NotifyPropertyChanged(m => m.CategoryName);
+				if (Equals(value, _Setting)) return;
+				_Setting = value;
+				NotifyPropertyChanged(m => m.Setting);
 			}
 		}
-		private string _CategoryName;
+		private string _Setting;
 
 		[DataMember]
-		public ChangeTrackingCollection<Product> Products
+		public Customer Customer
 		{
-			get { return _Products; }
+			get { return _Customer; }
 			set
 			{
-				if (Equals(value, _Products)) return;
-				_Products = value;
-				NotifyPropertyChanged(m => m.Products);
+				if (Equals(value, _Customer)) return;
+				_Customer = value;
+				CustomerChangeTracker = _Customer == null ? null
+					: new ChangeTrackingCollection<Customer> { _Customer };
 			}
 		}
-		private ChangeTrackingCollection<Product> _Products;
+		private Customer _Customer;
+		private ChangeTrackingCollection<Customer> CustomerChangeTracker { get; set; }
 
         #region Change Tracking
 
@@ -74,7 +71,7 @@ namespace WcfSample.Client.Entities.Models
 
 		#pragma warning restore 414
 
-		bool IEquatable<Category>.Equals(Category other)
+		bool IEquatable<CustomerSetting>.Equals(CustomerSetting other)
 		{
 			if (EntityIdentifier != default(Guid))
 				return EntityIdentifier == other.EntityIdentifier;

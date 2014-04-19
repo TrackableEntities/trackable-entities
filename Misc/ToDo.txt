@@ -11,6 +11,16 @@ HOT:
    - Service controllers using ApplyChanges, LoadRelatedEntities
    - Update controller scaffolding   
    - Replace in all samples and vs project templates
+   
+- Samples:
+  VS 2013
+  - WebApi*
+  - WebApi.Patterns*
+  - Wcf*
+  VS 2012
+  - WebApi
+  - Wcf
+   
 2) Update Patterns and WCF samples
    - Operations use ApplyChanges, LoadRelatedEntities
    - Update project templates   
@@ -20,10 +30,9 @@ HOT:
    - Install Web Essentials update
    - Test everything
 4) Patterns
-   - Move Mappings into .EF project
+   - Move Mappings into .EF project (done)
      > Add step in Getting Started guide
 5) Reverse 1-1 rel Cust-CustSetting
-   - Re-genenerate CF DB
    - Fix in tests
 
 - NorthwindSlim:
@@ -65,16 +74,6 @@ HOT:
   > Add private EntityIdentifer
     - Make serializable for Json, DataContract
   > Replicate to all samples and vs project templates
-
-- Samples:
-
-  VS 2013
-  - WebApi (working on it)
-  - WebApi.Patterns
-  - Wcf
-  VS 2012
-  - WebApi
-  - Wcf
 
 - VSIX
   > NuGet Packages

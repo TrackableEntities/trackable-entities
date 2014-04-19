@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -9,121 +10,143 @@ namespace WcfSample.Client.Entities.Models
 {
     [JsonObject(IsReference = true)]
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Order : ModelBase<Order>, ITrackable
+    public partial class Order : ModelBase<Order>, IEquatable<Order>, ITrackable
     {
-        public Order()
-        {
-            this.OrderDetails = new ChangeTrackingCollection<OrderDetail>();
-        }
+		public Order()
+		{
+			this.OrderDetails = new ChangeTrackingCollection<OrderDetail>();
+		}
 
-        [DataMember]
-        public int OrderId
+		[DataMember]
+		public int OrderId
 		{ 
-		    get { return _OrderId; }
+			get { return _OrderId; }
 			set
 			{
-			    if (value == _OrderId) return;
+				if (Equals(value, _OrderId)) return;
 				_OrderId = value;
 				NotifyPropertyChanged(m => m.OrderId);
 			}
 		}
-        private int _OrderId;
+		private int _OrderId;
 
-        [DataMember]
-        public string CustomerId
+		[DataMember]
+		public string CustomerId
 		{ 
-		    get { return _CustomerId; }
+			get { return _CustomerId; }
 			set
 			{
-			    if (value == _CustomerId) return;
+				if (Equals(value, _CustomerId)) return;
 				_CustomerId = value;
 				NotifyPropertyChanged(m => m.CustomerId);
 			}
 		}
-        private string _CustomerId;
+		private string _CustomerId;
 
-        [DataMember]
-        public Nullable<System.DateTime> OrderDate
+		[DataMember]
+		public Nullable<System.DateTime> OrderDate
 		{ 
-		    get { return _OrderDate; }
+			get { return _OrderDate; }
 			set
 			{
-			    if (value == _OrderDate) return;
+				if (Equals(value, _OrderDate)) return;
 				_OrderDate = value;
 				NotifyPropertyChanged(m => m.OrderDate);
 			}
 		}
-        private Nullable<System.DateTime> _OrderDate;
+		private Nullable<System.DateTime> _OrderDate;
 
-        [DataMember]
-        public Nullable<System.DateTime> ShippedDate
+		[DataMember]
+		public Nullable<System.DateTime> ShippedDate
 		{ 
-		    get { return _ShippedDate; }
+			get { return _ShippedDate; }
 			set
 			{
-			    if (value == _ShippedDate) return;
+				if (Equals(value, _ShippedDate)) return;
 				_ShippedDate = value;
 				NotifyPropertyChanged(m => m.ShippedDate);
 			}
 		}
-        private Nullable<System.DateTime> _ShippedDate;
+		private Nullable<System.DateTime> _ShippedDate;
 
-        [DataMember]
-        public Nullable<int> ShipVia
+		[DataMember]
+		public Nullable<int> ShipVia
 		{ 
-		    get { return _ShipVia; }
+			get { return _ShipVia; }
 			set
 			{
-			    if (value == _ShipVia) return;
+				if (Equals(value, _ShipVia)) return;
 				_ShipVia = value;
 				NotifyPropertyChanged(m => m.ShipVia);
 			}
 		}
-        private Nullable<int> _ShipVia;
+		private Nullable<int> _ShipVia;
 
-        [DataMember]
-        public Nullable<decimal> Freight
+		[DataMember]
+		public Nullable<decimal> Freight
 		{ 
-		    get { return _Freight; }
+			get { return _Freight; }
 			set
 			{
-			    if (value == _Freight) return;
+				if (Equals(value, _Freight)) return;
 				_Freight = value;
 				NotifyPropertyChanged(m => m.Freight);
 			}
 		}
-        private Nullable<decimal> _Freight;
+		private Nullable<decimal> _Freight;
 
-        [DataMember]
-        public Customer Customer
+		[DataMember]
+		public Customer Customer
 		{
-		    get { return _Customer; }
+			get { return _Customer; }
 			set
 			{
-			    if (value == _Customer) return;
+				if (Equals(value, _Customer)) return;
 				_Customer = value;
-				NotifyPropertyChanged(m => m.Customer);
+				CustomerChangeTracker = _Customer == null ? null
+					: new ChangeTrackingCollection<Customer> { _Customer };
 			}
 		}
-        private Customer _Customer;
+		private Customer _Customer;
+		private ChangeTrackingCollection<Customer> CustomerChangeTracker { get; set; }
 
-        [DataMember]
-        public ChangeTrackingCollection<OrderDetail> OrderDetails
+		[DataMember]
+		public ChangeTrackingCollection<OrderDetail> OrderDetails
 		{
-		    get { return _OrderDetails; }
+			get { return _OrderDetails; }
 			set
 			{
-			    if (Equals(value, _OrderDetails)) return;
+				if (Equals(value, _OrderDetails)) return;
 				_OrderDetails = value;
 				NotifyPropertyChanged(m => m.OrderDetails);
 			}
 		}
-        private ChangeTrackingCollection<OrderDetail> _OrderDetails;
+		private ChangeTrackingCollection<OrderDetail> _OrderDetails;
 
-        [DataMember]
-        public ICollection<string> ModifiedProperties { get; set; }
+        #region Change Tracking
 
-        [DataMember]
-        public TrackingState TrackingState { get; set; }
-    }
+		[DataMember]
+		public TrackingState TrackingState { get; set; }
+
+		[DataMember]
+		public ICollection<string> ModifiedProperties { get; set; }
+
+		[JsonProperty, DataMember]
+		private Guid EntityIdentifier { get; set; }
+
+		#pragma warning disable 414
+
+		[JsonProperty, DataMember]
+		private Guid _entityIdentity = default(Guid);
+
+		#pragma warning restore 414
+
+		bool IEquatable<Order>.Equals(Order other)
+		{
+			if (EntityIdentifier != default(Guid))
+				return EntityIdentifier == other.EntityIdentifier;
+			return false;
+		}
+        #endregion
+	}
 }

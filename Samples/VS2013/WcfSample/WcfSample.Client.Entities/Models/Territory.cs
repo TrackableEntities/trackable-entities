@@ -10,51 +10,52 @@ namespace WcfSample.Client.Entities.Models
 {
     [JsonObject(IsReference = true)]
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Category : ModelBase<Category>, IEquatable<Category>, ITrackable
+    public partial class Territory : ModelBase<Territory>, IEquatable<Territory>, ITrackable
     {
-		public Category()
+		public Territory()
 		{
-			this.Products = new ChangeTrackingCollection<Product>();
+			this.Employees = new ChangeTrackingCollection<Employee>();
 		}
 
 		[DataMember]
-		public int CategoryId
+		public string TerritoryId
 		{ 
-			get { return _CategoryId; }
+			get { return _TerritoryId; }
 			set
 			{
-				if (Equals(value, _CategoryId)) return;
-				_CategoryId = value;
-				NotifyPropertyChanged(m => m.CategoryId);
+				if (Equals(value, _TerritoryId)) return;
+				_TerritoryId = value;
+				NotifyPropertyChanged(m => m.TerritoryId);
 			}
 		}
-		private int _CategoryId;
+		private string _TerritoryId;
 
 		[DataMember]
-		public string CategoryName
+		public string TerritoryDescription
 		{ 
-			get { return _CategoryName; }
+			get { return _TerritoryDescription; }
 			set
 			{
-				if (Equals(value, _CategoryName)) return;
-				_CategoryName = value;
-				NotifyPropertyChanged(m => m.CategoryName);
+				if (Equals(value, _TerritoryDescription)) return;
+				_TerritoryDescription = value;
+				NotifyPropertyChanged(m => m.TerritoryDescription);
 			}
 		}
-		private string _CategoryName;
+		private string _TerritoryDescription;
 
 		[DataMember]
-		public ChangeTrackingCollection<Product> Products
+		public ChangeTrackingCollection<Employee> Employees
 		{
-			get { return _Products; }
+			get { return _Employees; }
 			set
 			{
-				if (Equals(value, _Products)) return;
-				_Products = value;
-				NotifyPropertyChanged(m => m.Products);
+				if (value != null) value.Parent = this;
+				if (Equals(value, _Employees)) return;
+				_Employees = value;
+				NotifyPropertyChanged(m => m.Employees);
 			}
 		}
-		private ChangeTrackingCollection<Product> _Products;
+		private ChangeTrackingCollection<Employee> _Employees;
 
         #region Change Tracking
 
@@ -74,7 +75,7 @@ namespace WcfSample.Client.Entities.Models
 
 		#pragma warning restore 414
 
-		bool IEquatable<Category>.Equals(Category other)
+		bool IEquatable<Territory>.Equals(Territory other)
 		{
 			if (EntityIdentifier != default(Guid))
 				return EntityIdentifier == other.EntityIdentifier;
