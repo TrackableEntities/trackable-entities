@@ -7,21 +7,14 @@ DONE:
 - api controller t4
   > all samples
   > vs project templates
-  
-DOING:
->>> Update Repository.cs in Patters.EF6
+- Repository.cs -> Fix Delete + Async
 - WebApi.Patterns
   > Sample
   > vs project templates
-- Entity Repository
-  > Delete method refactor
   
->> VS 2012 Samples, vs proj templates
->> Repository.cs -> Fix Delete + Async
-
-
 NEXT:
-- VS 2012 Web Api Sample
+- VS 2012 Samples, vs proj templates
+  > WCF sample, vs templates
 
 TODO:
 1) Get sample working w v2
