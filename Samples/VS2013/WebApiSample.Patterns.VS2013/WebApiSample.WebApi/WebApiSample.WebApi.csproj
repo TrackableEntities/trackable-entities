@@ -128,7 +128,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\TrackableEntities.Patterns.2.0.0.0\lib\net45\TrackableEntities.Patterns.dll</HintPath>
     </Reference>
-    <Reference Include="TrackableEntities.Patterns.EF.6">
+    <Reference Include="TrackableEntities.Patterns.EF.6, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\TrackableEntities.Patterns.EF.6.2.0.0.0\lib\net45\TrackableEntities.Patterns.EF.6.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease">

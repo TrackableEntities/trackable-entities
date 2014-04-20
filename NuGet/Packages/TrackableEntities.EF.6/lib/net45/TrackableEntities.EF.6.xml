@@ -43,6 +43,16 @@
             </summary>
             <param name="context">Used to query and save changes to a database</param>
             <param name="item">Object that implement ITrackable</param>
+            <returns>A task that represents the asynchronous operation</returns>
+        </member>
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,TrackableEntities.ITrackable,System.Threading.CancellationToken)">
+            <summary>
+            Load related entities for an object graph asynchronously.
+            </summary>
+            <param name="context">Used to query and save changes to a database</param>
+            <param name="item">Object that implement ITrackable</param>
+            <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+            <returns>A task that represents the asynchronous operation.</returns>
         </member>
         <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable})">
             <summary>
@@ -50,6 +60,16 @@
             </summary>
             <param name="context">Used to query and save changes to a database</param>
             <param name="items">Objects that implements ITrackable</param>
+            <returns>A task that represents the asynchronous operation.</returns>
+        </member>
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable},System.Threading.CancellationToken)">
+            <summary>
+            Load related entities for more than one object graph asynchronously.
+            </summary>
+            <param name="context">Used to query and save changes to a database</param>
+            <param name="items">Objects that implements ITrackable</param>
+            <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+            <returns>A task that represents the asynchronous operation.</returns>
         </member>
     </members>
 </doc>
