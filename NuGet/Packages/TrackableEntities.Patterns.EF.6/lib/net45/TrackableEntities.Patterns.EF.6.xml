@@ -77,6 +77,48 @@
             <param name="keyValues">The values of the primary key for the entity to be found.</param>
             <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
         </member>
+        <member name="M:TrackableEntities.Patterns.EF6.Repository`1.LoadRelatedEntities(`0)">
+            <summary>
+            Load related entities for an object graph.
+            </summary>
+            <param name="entity">Entity on which related entities are loaded.</param>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.Repository`1.LoadRelatedEntitiesAsync(`0)">
+            <summary>
+            Load related entities for an object graph.
+            </summary>
+            <param name="entity">Entity on which related entities are loaded.</param>
+            <returns>A task that represents the asynchronous operation</returns>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.Repository`1.LoadRelatedEntitiesAsync(`0,System.Threading.CancellationToken)">
+            <summary>
+            Load related entities for an object graph.
+            </summary>
+            <param name="entity">Entity on which related entities are loaded.</param>
+            <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+            <returns>A task that represents the asynchronous operation</returns>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.Repository`1.LoadRelatedEntities(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Load related entities for more than one object graph.
+            </summary>
+            <param name="entities">Entities on which related entities are loaded.</param>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.Repository`1.LoadRelatedEntitiesAsync(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Load related entities for more than one object graph.
+            </summary>
+            <param name="entities">Entities on which related entities are loaded.</param>
+            <returns>A task that represents the asynchronous operation</returns>
+        </member>
+        <member name="M:TrackableEntities.Patterns.EF6.Repository`1.LoadRelatedEntitiesAsync(System.Collections.Generic.IEnumerable{`0},System.Threading.CancellationToken)">
+            <summary>
+            Load related entities for more than one object graph.
+            </summary>
+            <param name="entities">Entities on which related entities are loaded.</param>
+            <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+            <returns>A task that represents the asynchronous operation</returns>
+        </member>
         <member name="P:TrackableEntities.Patterns.EF6.Repository`1.Context">
             <summary>
             Gets and sets the DbContext for the repository.
