@@ -5,6 +5,7 @@ using System.Collections;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Reflection;
+using System.Threading;
 #if EF_6
 using System.Threading.Tasks;
 using System.Data.Entity.Core.Objects;
@@ -174,10 +175,24 @@ namespace TrackableEntities.EF5
         /// </summary>
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="item">Object that implement ITrackable</param>
+        /// <returns>A task that represents the asynchronous operation</returns>
         public static Task LoadRelatedEntitiesAsync(this DbContext context,
             ITrackable item)
         {
-            return LoadRelatedEntitiesAsync(context, new[] {item}, null);
+            return LoadRelatedEntitiesAsync(context, new[] {item}, null, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Load related entities for an object graph asynchronously.
+        /// </summary>
+        /// <param name="context">Used to query and save changes to a database</param>
+        /// <param name="item">Object that implement ITrackable</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public static Task LoadRelatedEntitiesAsync(this DbContext context,
+            ITrackable item, CancellationToken cancellationToken)
+        {
+            return LoadRelatedEntitiesAsync(context, new[] { item }, null, cancellationToken);
         }
 
         /// <summary>
@@ -185,9 +200,23 @@ namespace TrackableEntities.EF5
         /// </summary>
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="items">Objects that implements ITrackable</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static Task LoadRelatedEntitiesAsync(this DbContext context, IEnumerable<ITrackable> items)
         {
-            return LoadRelatedEntitiesAsync(context, items.ToArray(), null);
+            return LoadRelatedEntitiesAsync(context, items.ToArray(), null, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Load related entities for more than one object graph asynchronously.
+        /// </summary>
+        /// <param name="context">Used to query and save changes to a database</param>
+        /// <param name="items">Objects that implements ITrackable</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public static Task LoadRelatedEntitiesAsync(this DbContext context, IEnumerable<ITrackable> items,
+            CancellationToken cancellationToken)
+        {
+            return LoadRelatedEntitiesAsync(context, items.ToArray(), null, cancellationToken);
         }
 #endif
         private static void LoadRelatedEntities(this DbContext context, 
@@ -232,8 +261,8 @@ namespace TrackableEntities.EF5
         }
 
 #if EF_6
-        private static async Task LoadRelatedEntitiesAsync(this DbContext context, 
-            ITrackable[] items, ITrackable parent)
+        private static async Task LoadRelatedEntitiesAsync(this DbContext context,
+            ITrackable[] items, ITrackable parent, CancellationToken cancellationToken)
         {
             // Return if no items
             if (items == null || items.Length == 0) return;
@@ -252,7 +281,7 @@ namespace TrackableEntities.EF5
                 string propertyName = prop.Name;
                 string propertyTypeName = prop.PropertyType.Name;
                 List<object> relatedEntities = await context.GetRelatedEntitiesAsync(entities,
-                    entityTypeName, propertyName, propertyTypeName);
+                    entityTypeName, propertyName, propertyTypeName, cancellationToken);
 
                 // Continue if there are no related entities
                 if (!relatedEntities.Any()) continue;
@@ -455,13 +484,14 @@ namespace TrackableEntities.EF5
 
 #if EF_6
         private static async Task<List<object>> GetRelatedEntitiesAsync(this DbContext context,
-            object[] items, string entityTypeName, string propertyName, string propertyTypeName)
+            object[] items, string entityTypeName, string propertyName, string propertyTypeName,
+            CancellationToken cancellationToken)
         {
             // Get entity sql
             string entitySql = context.GetRelatedEntitiesSql(items, entityTypeName, propertyName, propertyTypeName);
 
             // Get related entities
-            List<object> entities = await context.ExecuteQueryEntitySqlAsync(entitySql);
+            List<object> entities = await context.ExecuteQueryEntitySqlAsync(entitySql, cancellationToken);
             return entities;
         } 
 #endif
@@ -607,11 +637,12 @@ namespace TrackableEntities.EF5
         }
 
 #if EF_6
-        private static async Task<List<object>> ExecuteQueryEntitySqlAsync(this DbContext dbContext, string entitySql)
+        private static async Task<List<object>> ExecuteQueryEntitySqlAsync(this DbContext dbContext, string entitySql,
+            CancellationToken cancellationToken)
         {
             var objContext = ((IObjectContextAdapter)dbContext).ObjectContext;
             var objQuery = new ObjectQuery<object>(entitySql, objContext);
-            ObjectResult<object> result = await objQuery.ExecuteAsync(MergeOption.NoTracking);
+            ObjectResult<object> result = await objQuery.ExecuteAsync(MergeOption.NoTracking, cancellationToken);
             return result.ToList();
         }
 #endif
