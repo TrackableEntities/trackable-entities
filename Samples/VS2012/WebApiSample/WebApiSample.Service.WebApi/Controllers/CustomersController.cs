@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using TrackableEntities.Common;
+using TrackableEntities;
 using TrackableEntities.EF5;
+using TrackableEntities.Common;
 using WebApiSample.Service.Entities.Models;
 
 namespace WebApiSample.Service.WebApi.Controllers
@@ -19,7 +21,9 @@ namespace WebApiSample.Service.WebApi.Controllers
         public IEnumerable<Customer> GetCustomers()
         {
             IEnumerable<Customer> customers = _dbContext.Customers
-                .ToList();
+			    .Include(c => c.CustomerSetting)
+				.ToList();
+
             return customers;
         }
 
@@ -27,12 +31,47 @@ namespace WebApiSample.Service.WebApi.Controllers
         public Customer GetCustomer(string id)
         {
             Customer customer = _dbContext.Customers
+			    .Include(c => c.CustomerSetting)
                 .SingleOrDefault(c => c.CustomerId == id);
+
             if (customer == null)
             {
                 throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
             }
+
             return customer;
+        }
+
+        // POST api/Customer
+        public HttpResponseMessage PostCustomer(Customer customer)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+            }
+
+            customer.TrackingState = TrackingState.Added;
+            _dbContext.ApplyChanges(customer);
+
+            try
+            {
+                _dbContext.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (_dbContext.Customers.Any(c => c.CustomerId == customer.CustomerId))
+                {
+	                return Request.CreateErrorResponse(HttpStatusCode.Conflict, ex);
+                }
+                throw;
+            }
+
+            _dbContext.LoadRelatedEntities(customer);
+            customer.AcceptChanges();
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, customer);
+            response.Headers.Location = new Uri(Url.Link("DefaultApi", new { id = customer.CustomerId }));
+            return response;
         }
 
         // PUT api/Customer
@@ -43,37 +82,26 @@ namespace WebApiSample.Service.WebApi.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
 
+            _dbContext.ApplyChanges(customer);
+
             try
             {
-				// Update object graph entity state
-                _dbContext.ApplyChanges(customer);
                 _dbContext.SaveChanges();
-                customer.AcceptChanges();
-
-                HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, customer);
-                return response;
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
-            }
-        }
-
-        // POST api/Customer
-        public HttpResponseMessage PostCustomer(Customer customer)
-        {
-            if (ModelState.IsValid)
-            {
-				_dbContext.Customers.Add(customer);
-                _dbContext.SaveChanges();
-                customer.AcceptChanges();
-
-                HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, customer);
-                response.Headers.Location = new Uri(Url.Link("DefaultApi", new { id = customer.CustomerId }));
-                return response;
+                if (!_dbContext.Customers.Any(c => c.CustomerId == customer.CustomerId))
+                {
+	                return Request.CreateErrorResponse(HttpStatusCode.Conflict, ex);
+                }
+                throw;
             }
 
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+			_dbContext.LoadRelatedEntities(customer);
+			customer.AcceptChanges();
+
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, customer);
+            return response;
         }
 
         // DELETE api/Customer/5
@@ -85,8 +113,9 @@ namespace WebApiSample.Service.WebApi.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
-            _dbContext.Customers.Attach(customer);
-            _dbContext.Customers.Remove(customer);
+
+			customer.TrackingState = TrackingState.Deleted;
+			_dbContext.ApplyChanges(customer);
 
             try
             {
@@ -94,7 +123,11 @@ namespace WebApiSample.Service.WebApi.Controllers
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
+                if (!_dbContext.Customers.Any(c => c.CustomerId == customer.CustomerId))
+                {
+	                return Request.CreateErrorResponse(HttpStatusCode.Conflict, ex);
+                }
+                throw;
             }
 
             return Request.CreateResponse(HttpStatusCode.OK);

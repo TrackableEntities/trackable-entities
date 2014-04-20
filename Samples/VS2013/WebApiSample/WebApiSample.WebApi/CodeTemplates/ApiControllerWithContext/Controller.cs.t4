@@ -193,7 +193,7 @@ namespace <#= Namespace #>
             {
                 if (!_dbContext.<#= entitySetName #>.Any(<#= lambdaVar #> => <#= lambdaVar #>.<#= primaryKeyName #> == <#= ModelVariable #>.<#= primaryKeyName #>))
                 {
-                    return NotFound();
+                    return Conflict();
                 }
                 throw;
             }
@@ -239,7 +239,7 @@ namespace <#= Namespace #>
             {
                 if (!_dbContext.<#= entitySetName #>.Any(<#= lambdaVar #> => <#= lambdaVar #>.<#= primaryKeyName #> == <#= ModelVariable #>.<#= primaryKeyName #>))
                 {
-                    return NotFound();
+                    return Conflict();
                 }
                 throw;
             }
