@@ -42,7 +42,8 @@
         </member>
         <member name="M:TrackableEntities.Patterns.EF6.Repository`1.Delete(System.Object[])">
             <summary>
-            Removes an entity from the respository.
+            <para>Removes an entity from the respository.</para>
+            <para>Override to include child entities in delete operation.</para>
             </summary>
             <param name="keyValues">The values of the primary key for the entity to be found.</param>
             <returns>False if the entity does not exist in the repository, or true if successfully deleted.</returns>
@@ -64,14 +65,16 @@
         </member>
         <member name="M:TrackableEntities.Patterns.EF6.Repository`1.DeleteAsync(System.Object[])">
             <summary>
-            Removes an entity from the respository.
+            <para>Removes an entity from the respository.</para>
+            <para>Override to include child entities in delete operation.</para>
             </summary>
             <param name="keyValues">The values of the primary key for the entity to be found.</param>
             <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
         </member>
         <member name="M:TrackableEntities.Patterns.EF6.Repository`1.DeleteAsync(System.Threading.CancellationToken,System.Object[])">
             <summary>
-            Removes an entity from the respository.
+            <para>Removes an entity from the respository.</para>
+            <para>Override to include child entities in delete operation.</para>
             </summary>
             <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
             <param name="keyValues">The values of the primary key for the entity to be found.</param>
