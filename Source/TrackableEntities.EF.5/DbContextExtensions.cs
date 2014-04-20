@@ -175,7 +175,7 @@ namespace TrackableEntities.EF5
         /// </summary>
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="item">Object that implement ITrackable</param>
-        /// <returns>A task that represents the asynchronous operation.</returns>
+        /// <returns>A task that represents the asynchronous operation</returns>
         public static Task LoadRelatedEntitiesAsync(this DbContext context,
             ITrackable item)
         {

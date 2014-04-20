@@ -40,5 +40,20 @@ namespace TrackableEntities.Patterns
         /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
         /// <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
         Task<bool> DeleteAsync(CancellationToken cancellationToken, params object[] keyValues);
+
+        /// <summary>
+        /// Load related entities for an object graph.
+        /// </summary>
+        /// <param name="entity">Entity on which related entities are loaded.</param>
+        /// <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
+        Task LoadRelatedEntitiesAsync(TEntity entity);
+
+        /// <summary>
+        /// Load related entities for an object graph.
+        /// </summary>
+        /// <param name="entity">Entity on which related entities are loaded.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
+        Task LoadRelatedEntitiesAsync(TEntity entity, CancellationToken cancellationToken);
     }
 }

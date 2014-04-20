@@ -9,7 +9,8 @@ namespace TrackableEntities.Patterns.EF6
     /// Generic repository with basic operations.
     /// </summary>
     /// <typeparam name="TEntity">Entity type for the repository.</typeparam>
-    public abstract class Repository<TEntity> : IRepository<TEntity>, IRepositoryAsync<TEntity> where TEntity : class, ITrackable
+    public abstract class Repository<TEntity> : IRepository<TEntity>, IRepositoryAsync<TEntity>
+        where TEntity : class, ITrackable
     {
         /// <summary>
         /// Creates a new Repository.
@@ -129,6 +130,36 @@ namespace TrackableEntities.Patterns.EF6
             Set.Attach(entity);
             Set.Remove(entity);
             return true;
+        }
+
+        /// <summary>
+        /// Load related entities for an object graph.
+        /// </summary>
+        /// <param name="entity">Entity on which related entities are loaded.</param>
+        public virtual void LoadRelatedEntities(TEntity entity)
+        {
+            Context.LoadRelatedEntities(entity);
+        }
+
+        /// <summary>
+        /// Load related entities for an object graph.
+        /// </summary>
+        /// <param name="entity">Entity on which related entities are loaded.</param>
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public virtual async Task LoadRelatedEntitiesAsync(TEntity entity)
+        {
+            await Context.LoadRelatedEntitiesAsync(entity);
+        }
+
+        /// <summary>
+        /// Load related entities for an object graph.
+        /// </summary>
+        /// <param name="entity">Entity on which related entities are loaded.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public virtual async Task LoadRelatedEntitiesAsync(TEntity entity, CancellationToken cancellationToken)
+        {
+            await Context.LoadRelatedEntitiesAsync(entity, cancellationToken);
         }
     }
 }

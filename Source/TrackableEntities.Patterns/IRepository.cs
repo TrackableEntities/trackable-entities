@@ -34,5 +34,11 @@ namespace TrackableEntities.Patterns
         /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
         /// <returns>False if the entity does not exist in the repository, or true if successfully deleted.</returns>
         bool Delete(params object[] keyValues);
+
+        /// <summary>
+        /// Load related entities for an object graph.
+        /// </summary>
+        /// <param name="entity">Entity on which related entities are loaded.</param>
+        void LoadRelatedEntities(TEntity entity);
     }
 }
