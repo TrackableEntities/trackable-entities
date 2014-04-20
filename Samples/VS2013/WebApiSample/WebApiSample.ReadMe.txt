@@ -4,12 +4,18 @@ This sample demonstrates how to create an ASP.NET Web API service
 that uses trackable entities. At this time only C# is supported
 using Visual Studio 2012 or 2013.
 
-NOTE: You must first install the Entity Framework Power Tools.
+NOTE: You must first install either the Entity Framework Power Tools:
+http://visualstudiogallery.msdn.microsoft.com/72a60b14-1581-4b9b-89f2-846072eff19d,
+or Entity Framework 6.1.0 Tools for Visual Studio 2012 & 2013:
+http://www.microsoft.com/en-us/download/details.aspx?id=40762.
+
 By default LocalDb is used and the NorthwindSlim databased is
 created and seeded with a small amount of data when you first
 run the WebApi service. Optionally, you can use SQL Express (or
 another edition), create NorthwindSlim manually and run the
 SQL script in the Data folder to create and populate the tables.
+You can also find the NorthwindSlim.sql script here:
+http://bit.ly/northwindslim.
 
 Before starting the client Console app, build the solution, then
 right-click on the Web Api project and select View in Browser.
@@ -45,41 +51,34 @@ To replicate this sample follow these steps:
      > For Data context class: select NorthwindSlimContext
    - The code-generated API controller class is only slightly different
      than the standard version.
-	 > The Put action calls db.ApplyChanges, which applies entity state
-	   from trackable entities in the Order's object graph. The updated 
-	   entity is returned so as to include a possible concurrency field.
-     > The delete method has also been altered to accept an entity
-	   parameter and use it to create a dummy entity for deletion. There
-	   is a TODO item for setting the concurrency field if there is one.
+	 > Post, Put and Delete actions call _dbContext.ApplyChanges, which applies
+	   entity state from trackable entities in the Order's object graph. The updated 
+	   entity is returned so as to include database-generated values, such as
+	   identity or concurrency fields.
+     > The Delete action has a TODO item for inserting one or more Include statements
+	   to retrieve child entities.
+	 > If the entity has a concurrency field, you should pass it into the Delete
+	   action to support concurency checks.
    - Modify the GetOrders method to include related OrderDetails and Products:
-        IEnumerable<Order> orders = await db.Orders.Include(o => o.Customer)
+        IEnumerable<Order> orders = await _dbContext.Orders.Include(o => o.Customer)
             .Include("OrderDetails.Product")
             .Where(o => o.CustomerId == customerId)
             .ToListAsync();
+	 > A string is passed to Include to bring in products for each order detail.
      > Do the same for the GetOrder method:
-        Order order = await db.Orders.Include(o => o.Customer)
+        Order order = await _dbContext.Orders.Include(o => o.Customer)
             .Include("OrderDetails.Product")
             .SingleOrDefaultAsync(o => o.OrderId == id);
    - Add a GetOrders method that accepts a customerId:
 		// GET api/Orders?customerId=ABCD
 		public async Task<IEnumerable<Order>> GetOrders(string customerId)
 		{
-			IEnumerable<Order> orders = await db.Orders.Include(o => o.Customer)
+			IEnumerable<Order> orders = await _dbContext.Orders.Include(o => o.Customer)
 				.Include("OrderDetails.Product")
 				.Where(o => o.CustomerId == customerId)
 				.ToListAsync();
 			return orders;
 		}
-   - Add code to the PutOrder and PostOrder method for loading related entities:
-        // Load order details
-        ctx.LoadProperty(order, o => o.OrderDetails);
-        foreach (var detail in order.OrderDetails)
-            ctx.LoadProperty(detail, od => od.Product);
-   - Add code to DeleteOrder to include order details:
-        // Include order details
-        Order order = db.Orders
-        .Include(o => o.OrderDetails)
-        .SingleOrDefaultAsync(o => o.OrderId == id);
 
 5. Run the Web Api project to test the controller
     - Click the API link on the home page
