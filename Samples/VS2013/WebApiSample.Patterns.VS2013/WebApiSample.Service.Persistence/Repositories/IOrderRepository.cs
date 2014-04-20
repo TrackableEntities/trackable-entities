@@ -10,8 +10,5 @@ namespace WebApiSample.Service.Persistence.Repositories
         Task<IEnumerable<Order>> GetOrders();
         Task<IEnumerable<Order>> GetOrders(string customerId);
         Task<Order> GetOrder(int id);
-        Task<bool> DeleteOrder(int id);
-        void LoadRelatedEntities(Order order);
-        void LoadProductsOnAddedDetails(Order order);
     }
 }

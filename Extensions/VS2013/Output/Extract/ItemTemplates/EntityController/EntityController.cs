@@ -41,32 +41,6 @@ namespace $rootnamespace$
 			return Ok(entity);
 		}
 
-		// PUT api/$entityName$
-		[ResponseType(typeof($entityName$))]
-		public async Task<IHttpActionResult> Put$entityName$($entityName$ entity)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-
-			try
-			{
-				_unitOfWork.$entityName$Repository.Update(entity);
-				await _unitOfWork.SaveChangesAsync();
-				entity.AcceptChanges();
-				return Ok(entity);
-			}
-			catch (UpdateConcurrencyException)
-			{
-				if (_unitOfWork.$entityName$Repository.Find(entity.$entityName$Id) == null)
-				{
-					return NotFound();
-				}
-				throw;
-			}
-		}
-
 		// POST api/$entityName$
 		[ResponseType(typeof($entityName$))]
 		public async Task<IHttpActionResult> Post$entityName$($entityName$ entity)
@@ -81,7 +55,6 @@ namespace $rootnamespace$
 			try
 			{
 				await _unitOfWork.SaveChangesAsync();
-				entity.AcceptChanges();
 			}
 			catch (UpdateException)
 			{
@@ -92,28 +65,61 @@ namespace $rootnamespace$
 				throw;
 			}
 
+            await _unitOfWork.OrderRepository.LoadRelatedEntitiesAsync(entity);
+			entity.AcceptChanges();
+
 			return CreatedAtRoute("DefaultApi", new { id = entity.$entityName$Id }, entity);
+		}
+
+		// PUT api/$entityName$
+		[ResponseType(typeof($entityName$))]
+		public async Task<IHttpActionResult> Put$entityName$($entityName$ entity)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest(ModelState);
+			}
+
+			_unitOfWork.$entityName$Repository.Update(entity);
+
+			try
+			{
+				await _unitOfWork.SaveChangesAsync();
+			}
+			catch (UpdateConcurrencyException)
+			{
+				if (_unitOfWork.$entityName$Repository.Find(entity.$entityName$Id) == null)
+				{
+					return Conflict();
+				}
+				throw;
+			}
+
+            await _unitOfWork.OrderRepository.LoadRelatedEntitiesAsync(entity);
+			entity.AcceptChanges();
+			return Ok(entity);
 		}
 
 		// DELETE api/$entityName$/5
 		public async Task<IHttpActionResult> Delete$entityName$(int id)
 		{
-			bool exists = await _unitOfWork.$entityName$Repository.Delete$entityName$(id);
-			if (!exists) return Ok();
+			bool result = await _unitOfWork.$entityName$Repository.DeleteAsync(id);	
+            if (!result) return Ok();
 
 			try
 			{
 				await _unitOfWork.SaveChangesAsync();
-				return Ok();
 			}
 			catch (UpdateConcurrencyException)
 			{
 				if (_unitOfWork.$entityName$Repository.Find(id) == null)
 				{
-					return NotFound();
+					return Conflict();
 				}
 				throw;
 			}
+
+			return Ok();
 		}
 
 		protected override void Dispose(bool disposing)

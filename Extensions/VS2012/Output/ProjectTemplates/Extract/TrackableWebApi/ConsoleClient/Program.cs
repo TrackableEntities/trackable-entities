@@ -97,7 +97,7 @@ namespace $safeprojectname$
             var updatedOrder = UpdateOrder(client, changedOrder);
 
             // Merge changes
-            changeTracker.MergeChanges(ref createdOrder, updatedOrder);
+            changeTracker.MergeChanges(updatedOrder);
             Console.WriteLine("Updated order:");
             PrintOrderWithDetails(createdOrder);
 

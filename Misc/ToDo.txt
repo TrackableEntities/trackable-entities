@@ -2,6 +2,27 @@ Trackable Entities To Do
 
 Release v2.0: Apr-2014
 
+Deploy: Update All Samples
+DONE:
+- api controller t4
+  > all samples
+  > vs project templates
+  
+DOING:
+>>> Update Repository.cs in Patters.EF6
+- WebApi.Patterns
+  > Sample
+  > vs project templates
+- Entity Repository
+  > Delete method refactor
+  
+>> VS 2012 Samples, vs proj templates
+>> Repository.cs -> Fix Delete + Async
+
+
+NEXT:
+- VS 2012 Web Api Sample
+
 TODO:
 1) Get sample working w v2
    - Client using new MergeChanges API
@@ -21,14 +42,10 @@ TODO:
      - WebApi
      - Wcf
 
-? Add new controller scaffold vs hijack EF scaffold
-  - v 2.1
-   
-* Overload for async methods accepting cancellation token
+* DONE: Overload for async methods accepting cancellation token
 
-* Issue: if unchange ref props are null, should load related
-entities populate them?  Maybe check for entity id?
-> condition: if state == added load entity
+* TODO: Refactor LoadRelatedEntities
+  - condition: if state == added load entity
    
    
 2) Update Patterns and WCF samples

@@ -97,7 +97,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             {
                 if (!_dbContext.Orders.Any(o => o.OrderId == order.OrderId))
                 {
-                    return NotFound();
+                    return Conflict();
                 }
                 throw;
             }
@@ -129,7 +129,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             {
                 if (!_dbContext.Orders.Any(o => o.OrderId == order.OrderId))
                 {
-                    return NotFound();
+                    return Conflict();
                 }
                 throw;
             }

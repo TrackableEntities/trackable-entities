@@ -44,13 +44,8 @@ namespace $rootnamespace$
         {
             $entityName$ entity = await Get$entityName$(id);
             if (entity == null) return false;
-            Set.Attach(entity);
-            Set.Remove(entity);
-
-            // TODO: Remove child entities
+			entity.TrackingState = TrackingState.Deleted;
             return true;
         }
-        
-        // TODO: Add methods to load related entities if needed
     }
 }

@@ -47,7 +47,41 @@ namespace WebApiSample.Service.WebApi.Controllers
 			return Ok(order);
 		}
 
-		// PUT api/Order
+
+        // POST api/Order
+        [ResponseType(typeof(Order))]
+        public async Task<IHttpActionResult> PostOrder(Order order)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Insert order
+            _unitOfWork.OrderRepository.Insert(order);
+
+            try
+            {
+                // Save and accept changes
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (UpdateException)
+            {
+                if (_unitOfWork.OrderRepository.Find(order.OrderId) == null)
+                {
+                    return Conflict();
+                }
+                throw;
+            }
+
+            // Load related entities and accept changes
+            await _unitOfWork.OrderRepository.LoadRelatedEntitiesAsync(order);
+            order.AcceptChanges();
+
+            return CreatedAtRoute("DefaultApi", new { id = order.OrderId }, order);
+        }
+
+        // PUT api/Order
 		[ResponseType(typeof(Order))]
 		public async Task<IHttpActionResult> PutOrder(Order order)
 		{
@@ -56,16 +90,12 @@ namespace WebApiSample.Service.WebApi.Controllers
 				return BadRequest(ModelState);
 			}
 
-			try
+            // Update order
+            _unitOfWork.OrderRepository.Update(order);
+            
+            try
 			{
-				// Update order
-				_unitOfWork.OrderRepository.Update(order);
 				await _unitOfWork.SaveChangesAsync();
-				order.AcceptChanges();
-
-				// Load Products into added order details
-				_unitOfWork.OrderRepository.LoadProductsOnAddedDetails(order);
-				return Ok(order);
 			}
 			catch (UpdateConcurrencyException)
 			{
@@ -75,51 +105,23 @@ namespace WebApiSample.Service.WebApi.Controllers
 				}
 				throw;
 			}
-		}
 
-		// POST api/Order
-		[ResponseType(typeof(Order))]
-		public async Task<IHttpActionResult> PostOrder(Order order)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-
-			// Insert order
-			_unitOfWork.OrderRepository.Insert(order);
-			
-			try
-			{
-				// Save and accept changes
-				await _unitOfWork.SaveChangesAsync();
-				order.AcceptChanges();
-
-				// Load related entities
-				_unitOfWork.OrderRepository.LoadRelatedEntities(order);
-			}
-			catch (UpdateException)
-			{
-				if (_unitOfWork.OrderRepository.Find(order.OrderId) == null)
-				{
-					return Conflict();
-				}
-				throw;
-			}
-			
-			return CreatedAtRoute("DefaultApi", new { id = order.OrderId }, order);
-		}
+            // Load related entities and accept changes
+            await _unitOfWork.OrderRepository.LoadRelatedEntitiesAsync(order);
+            order.AcceptChanges();
+            return Ok(order);
+        }
 
 		// DELETE api/Order/5
 		public async Task<IHttpActionResult> DeleteOrder(int id)
 		{
-			bool exists = await _unitOfWork.OrderRepository.DeleteOrder(id);
-			if (!exists) return Ok();
-
-			try
+            // Delete order
+            bool result = await _unitOfWork.OrderRepository.DeleteAsync(id);
+            if (!result) return Ok();
+            
+            try
 			{
 				await _unitOfWork.SaveChangesAsync();
-				return Ok();
 			}
 			catch (UpdateConcurrencyException)
 			{
@@ -129,7 +131,9 @@ namespace WebApiSample.Service.WebApi.Controllers
 				}
 				throw;
 			}
-		}
+
+            return Ok();
+        }
 
 		protected override void Dispose(bool disposing)
 		{

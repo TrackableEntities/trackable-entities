@@ -94,7 +94,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             {
                 if (!_dbContext.Customers.Any(c => c.CustomerId == customer.CustomerId))
                 {
-                    return NotFound();
+                    return Conflict();
                 }
                 throw;
             }
@@ -125,7 +125,7 @@ namespace WebApiSample.Service.WebApi.Controllers
             {
                 if (!_dbContext.Customers.Any(c => c.CustomerId == customer.CustomerId))
                 {
-                    return NotFound();
+                    return Conflict();
                 }
                 throw;
             }
