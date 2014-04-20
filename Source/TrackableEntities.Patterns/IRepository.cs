@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TrackableEntities.Patterns
 {
@@ -40,5 +41,11 @@ namespace TrackableEntities.Patterns
         /// </summary>
         /// <param name="entity">Entity on which related entities are loaded.</param>
         void LoadRelatedEntities(TEntity entity);
+
+        /// <summary>
+        /// Load related entities for more than one object graph.
+        /// </summary>
+        /// <param name="entities">Entities on which related entities are loaded.</param>
+        void LoadRelatedEntities(IEnumerable<TEntity> entities);
     }
 }

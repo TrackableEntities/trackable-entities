@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -55,5 +56,20 @@ namespace TrackableEntities.Patterns
         /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
         /// <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
         Task LoadRelatedEntitiesAsync(TEntity entity, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Load related entities for more than one object graph.
+        /// </summary>
+        /// <param name="entities">Entities on which related entities are loaded.</param>
+        /// <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
+        Task LoadRelatedEntitiesAsync(IEnumerable<TEntity> entities);
+
+        /// <summary>
+        /// Load related entities for more than one object graph.
+        /// </summary>
+        /// <param name="entities">Entities on which related entities are loaded.</param>
+        /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
+        Task LoadRelatedEntitiesAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken);
     }
 }
