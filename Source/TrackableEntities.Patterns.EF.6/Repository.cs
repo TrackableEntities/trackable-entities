@@ -72,7 +72,8 @@ namespace TrackableEntities.Patterns.EF6
         }
 
         /// <summary>
-        /// Removes an entity from the respository.
+        /// <para>Removes an entity from the respository.</para>
+        /// <para>Override to include child entities in delete operation.</para>
         /// </summary>
         /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
         /// <returns>False if the entity does not exist in the repository, or true if successfully deleted.</returns>
@@ -81,8 +82,8 @@ namespace TrackableEntities.Patterns.EF6
             var entity = Find(keyValues);
             if (entity == null) return false;
 
-            Set.Attach(entity);
-            Set.Remove(entity);
+            entity.TrackingState = TrackingState.Deleted;
+            Context.ApplyChanges(entity);
             return true;
         }
 
@@ -108,7 +109,8 @@ namespace TrackableEntities.Patterns.EF6
         }
 
         /// <summary>
-        /// Removes an entity from the respository.
+        /// <para>Removes an entity from the respository.</para>
+        /// <para>Override to include child entities in delete operation.</para>
         /// </summary>
         /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
         /// <returns>A task that represents the asynchronous delete operation. The task result will be false if the entity does not exist in the repository, or true if successfully removed.</returns>
@@ -118,7 +120,8 @@ namespace TrackableEntities.Patterns.EF6
         }
 
         /// <summary>
-        /// Removes an entity from the respository.
+        /// <para>Removes an entity from the respository.</para>
+        /// <para>Override to include child entities in delete operation.</para>
         /// </summary>
         /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
         /// <param name="keyValues">The values of the primary key for the entity to be found.</param>
@@ -128,8 +131,8 @@ namespace TrackableEntities.Patterns.EF6
             var entity = await FindAsync(cancellationToken, keyValues);
             if (entity == null) return false;
 
-            Set.Attach(entity);
-            Set.Remove(entity);
+            entity.TrackingState = TrackingState.Deleted;
+            Context.ApplyChanges(entity);
             return true;
         }
 
