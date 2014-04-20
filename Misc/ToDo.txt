@@ -2,42 +2,35 @@ Trackable Entities To Do
 
 Release v2.0: Apr-2014
 
-Release Notes:
-- Do these
-
 HOT:
 1) Get sample working w v2
    - Client using new MergeChanges API
    - Service controllers using ApplyChanges, LoadRelatedEntities
-   - Update controller scaffolding
      > Replace Customer controller
+   - Update controller scaffolding
+     > Order: POST, PUT, DELETE
+     > Remove try/catch from POST
    - Add code for M-1, 1-1, M-M
-   - Replace in all samples and vs project templates
+   - Replace in all samples and vs project templates   
+   
+   - Samples:
+     VS 2013
+     - WebApi
+     - WebApi.Patterns
+     - Wcf
+     VS 2012
+     - WebApi
+     - Wcf
+
+? Add new controller scaffold vs hijack EF scaffold
+  - v 2.1
    
 * Overload for async methods accepting cancellation token
 
 * Issue: if unchange ref props are null, should load related
 entities populate them?  Maybe check for entity id?
 > condition: if state == added load entity
-
-orig Order:
-OrderDetail[0] Prod Id 1 (ee0): wasted bandwidth -> modified
-OrderDetail[1] Prod Id 4 (433): wasted bandwidth
-OrderDetail[2] Prod Id 3 (null) -> added
-
-updated Order:
-OrderDetail[0] Prod Id 1 (000 -> ee0)
-OrderDetail[2] Prod Id 3 (000 -> 84b)
-
    
-- Samples:
-  VS 2013
-  - WebApi
-  - WebApi.Patterns
-  - Wcf
-  VS 2012
-  - WebApi
-  - Wcf
    
 2) Update Patterns and WCF samples
    - Operations use ApplyChanges, LoadRelatedEntities
@@ -53,32 +46,36 @@ OrderDetail[2] Prod Id 3 (000 -> 84b)
    - Move Mappings into .EF project (done)
      > Add step in Getting Started guide
      
-5) Reverse 1-1 rel Cust-CustSetting
-   - Fix in tests
+5) VSIX
+  > NuGet Packages
+  > Templates
+  > Remove EF Power Tools dependency
+    - Keep NuGet dependency
+  > BUG: Delete asm in item templ refl code
+  > Update ReadMe files
+  > Release Notes
+  
+DOCS:
+- Getting Started Guides
+- Migrationg from v1.x
+  > Update Nuget packages to v2
+  > Regenerate client and service entities (via EF rev eng db command)
+  > Replace obsolete MergeChanges in client app
+
+DONE:
 
 - NorthwindSlim:
-  DONE (develop):
   > Script new tables and data
   > Include with Samples
   > Post to ts.com
-  
-- BUG: Delete asm in item templ refl code
-
-- DOCS:
-  > Migration from v1.x:
-    - Update Nuget packages to v2
-    - Regenerate client and service entities (via EF rev eng db command)
-    - 
 
 - CT Coll:
-  DONE (issue-equatable):
   > Rename T to TEntity
   > Throw exception if entity is not IEquatable<TEntity>
     - MergeChanges
   > Add xml doc for Arg Exception on MergeChanges
 
 - Client T4 templates
-  DONE (deploy):
   > M-M prop setter: if (value != null) value.Parent = this;
   > Add M-1 ref props, change tracker
   > Add 1-1 change tracker prop
@@ -90,18 +87,11 @@ OrderDetail[2] Prod Id 3 (000 -> 84b)
   > Replicate to all samples and vs project templates
 
 - Server T4 templates
-  DONE (deploy):
   > Mapping.tt: using System.ComponentModel.DataAnnotations.Schema;
   > Add private EntityIdentifer
     - Make serializable for Json, DataContract
   > Replicate to all samples and vs project templates
 
-- VSIX
-  > NuGet Packages
-  > Templates
-  > Remove EF Power Tools dependency
-    - Keep NuGet dependency
-  
 Release 2.1:
 
 - Create integration tests with SpecFlow
@@ -117,5 +107,4 @@ modified terr id:       "01730" c
 added existing terr id: "02116" c
 added new terr id:      "91360" c
 deleted terr id:        "01833" c
-
 
