@@ -9,14 +9,13 @@ TODO:
      > Replace Customer controller
    - Update controller scaffolding
      > Order: POST, PUT, DELETE
-     > Remove try/catch from POST
    - Add code for M-1, 1-1, M-M
    - Replace in all samples and vs project templates   
    
    - Samples:
      VS 2013
      - WebApi
-     - WebApi.Patterns
+     - WebApi.Patterns* - next
      - Wcf
      VS 2012
      - WebApi
