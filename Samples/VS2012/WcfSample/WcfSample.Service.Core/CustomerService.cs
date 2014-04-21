@@ -4,8 +4,10 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using TrackableEntities;
 using TrackableEntities.Common;
 using TrackableEntities.EF6;
+using WcfSample.Service.Entities.Contexts;
 using WcfSample.Service.Entities.Models;
 
 namespace WcfSample.Service.Core
@@ -34,25 +36,39 @@ namespace WcfSample.Service.Core
             return customer;
         }
 
-        public async Task<Customer> UpdateCustomer(Customer customer)
+        public async Task<Customer> CreateCustomer(Customer customer)
         {
+            customer.TrackingState = TrackingState.Added;
+            _dbContext.ApplyChanges(customer);
+
             try
             {
-                _dbContext.ApplyChanges(customer);
                 await _dbContext.SaveChangesAsync();
-                customer.AcceptChanges();
-                return customer;
+            }
+            catch (DbUpdateException updateEx)
+            {
+                throw new FaultException(updateEx.Message);
+            }
+
+            await _dbContext.LoadRelatedEntitiesAsync(customer);
+            customer.AcceptChanges();
+            return customer;
+        }
+
+        public async Task<Customer> UpdateCustomer(Customer customer)
+        {
+            _dbContext.ApplyChanges(customer);
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException updateEx)
             {
                 throw new FaultException(updateEx.Message);
             }
-        }
 
-        public async Task<Customer> CreateCustomer(Customer customer)
-        {
-            _dbContext.Customers.Add(customer);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.LoadRelatedEntitiesAsync(customer);
             customer.AcceptChanges();
             return customer;
         }
@@ -64,10 +80,11 @@ namespace WcfSample.Service.Core
             if (customer == null)
                 return false;
 
+            customer.TrackingState = TrackingState.Deleted;
+            _dbContext.ApplyChanges(customer);
+
             try
             {
-                _dbContext.Customers.Attach(customer);
-                _dbContext.Customers.Remove(customer);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }

@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using TrackableEntities;
 using TrackableEntities.EF6;
 using TrackableEntities.Common;
 using $baseNamespace$.Entities.Models;
@@ -45,6 +46,7 @@ namespace $rootnamespace$
 
         public async Task<IEnumerable<$entityName$>> Get$entitySetName$()
         {
+            // TODO: Include related entities if needed
             IEnumerable<$entityName$> entities = await _dbContext.$entitySetName$
                 .ToListAsync();
             return entities;
@@ -52,45 +54,62 @@ namespace $rootnamespace$
 
         public async Task<$entityName$> Get$entityName$(int id)
         {
+            // TODO: Include related entities if needed
             $entityName$ entity = await _dbContext.$entitySetName$
                 .SingleOrDefaultAsync(x => x.$entityName$Id == id);
             return entity;
         }
 
-        public async Task<$entityName$> Update$entityName$($entityName$ entity)
+        public async Task<$entityName$> Create$entityName$($entityName$ entity)
         {
+            entity.TrackingState = TrackingState.Added;
+            _dbContext.ApplyChanges(entity);
+
             try
             {
-                _dbContext.ApplyChanges(entity);
                 await _dbContext.SaveChangesAsync();
-                entity.AcceptChanges();
-                return entity;
+            }
+            catch (DbUpdateException updateEx)
+            {
+                throw new FaultException(updateEx.Message);
+            }
+
+            await _dbContext.LoadRelatedEntitiesAsync(entity);
+            entity.AcceptChanges();
+            return entity;
+        }
+
+        public async Task<$entityName$> Update$entityName$($entityName$ entity)
+        {
+            _dbContext.ApplyChanges(entity);
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException updateEx)
             {
                 throw new FaultException(updateEx.Message);
             }
-        }
 
-        public async Task<$entityName$> Create$entityName$($entityName$ entity)
-        {
-            _dbContext.$entitySetName$.Add(entity);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.LoadRelatedEntitiesAsync(entity);
             entity.AcceptChanges();
             return entity;
         }
 
         public async Task<bool> Delete$entityName$(int id)
         {
+            // TODO: Include related entities if needed
             $entityName$ entity = await _dbContext.$entitySetName$
                 .SingleOrDefaultAsync(x => x.$entityName$Id == id);
             if (entity == null)
                 return false;
 
+            entity.TrackingState = TrackingState.Deleted;
+            _dbContext.ApplyChanges(entity);
+
             try
             {
-                _dbContext.$entitySetName$.Attach(entity);
-                _dbContext.$entitySetName$.Remove(entity);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }

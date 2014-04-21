@@ -42,9 +42,11 @@ namespace $rootnamespace$
 
         public async Task<bool> Delete$entityName$(int id)
         {
-            $entityName$ entity = await Get$entityName$(id);
+            // TODO: Add Includes for related entities if needed
+            $entityName$ entity = await _context.$entitySetName$
+                 .SingleOrDefaultAsync(t => t.$entityName$Id == id);
             if (entity == null) return false;
-			entity.TrackingState = TrackingState.Deleted;
+			ApplyDelete(entity);
             return true;
         }
     }

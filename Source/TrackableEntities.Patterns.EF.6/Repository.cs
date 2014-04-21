@@ -81,9 +81,7 @@ namespace TrackableEntities.Patterns.EF6
         {
             var entity = Find(keyValues);
             if (entity == null) return false;
-
-            entity.TrackingState = TrackingState.Deleted;
-            Context.ApplyChanges(entity);
+            ApplyDelete(entity);
             return true;
         }
 
@@ -130,9 +128,7 @@ namespace TrackableEntities.Patterns.EF6
         {
             var entity = await FindAsync(cancellationToken, keyValues);
             if (entity == null) return false;
-
-            entity.TrackingState = TrackingState.Deleted;
-            Context.ApplyChanges(entity);
+            ApplyDelete(entity);
             return true;
         }
 
@@ -194,6 +190,16 @@ namespace TrackableEntities.Patterns.EF6
         public virtual async Task LoadRelatedEntitiesAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
         {
             await Context.LoadRelatedEntitiesAsync(entities, cancellationToken);
+        }
+
+        /// <summary>
+        /// Mark entity as deleted and apply changes to context.
+        /// </summary>
+        /// <param name="entity">Entity which is marked as deleted.</param>
+        protected void ApplyDelete(TEntity entity)
+        {
+            entity.TrackingState = TrackingState.Deleted;
+            Context.ApplyChanges(entity);
         }
     }
 }

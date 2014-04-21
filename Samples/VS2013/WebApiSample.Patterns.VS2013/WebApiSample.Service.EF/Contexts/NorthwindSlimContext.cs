@@ -1,4 +1,5 @@
 using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using WebApiSample.Service.Entities.Models;
 using WebApiSample.Service.Entities.Models.Mapping;
 
@@ -37,6 +38,8 @@ namespace WebApiSample.Service.EF.Contexts
             modelBuilder.Configurations.Add(new ProductMap());
             modelBuilder.Configurations.Add(new EmployeeMap());
             modelBuilder.Configurations.Add(new TerritoryMap());
+
+            modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
         }
     }
 }

@@ -1,7 +1,8 @@
 using System.Data.Entity;
-using WcfSample.Service.Entities.Models.Mapping;
+using WebApiSample.Service.Entities.Models;
+using WebApiSample.Service.Entities.Models.Mapping;
 
-namespace WcfSample.Service.Entities.Models
+namespace WebApiSample.Service.Entities.Contexts
 {
     public partial class NorthwindSlimContext : DbContext
     {

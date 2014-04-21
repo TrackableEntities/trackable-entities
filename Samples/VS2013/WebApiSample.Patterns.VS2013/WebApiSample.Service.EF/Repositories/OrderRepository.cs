@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TrackableEntities;
 using TrackableEntities.Patterns.EF6;
@@ -48,6 +49,15 @@ namespace WebApiSample.Service.EF.Repositories
                  .Include("OrderDetails.Product")
                  .SingleOrDefaultAsync(o => o.OrderId == id);
             return order;
+        }
+
+        public async Task<bool> DeleteOrder(int id)
+        {
+            Order order = await _context.Orders
+                .Include(o => o.OrderDetails) // Include details
+                .SingleOrDefaultAsync(o => o.OrderId == id);
+            ApplyDelete(order);
+            return true;
         }
     }
 }

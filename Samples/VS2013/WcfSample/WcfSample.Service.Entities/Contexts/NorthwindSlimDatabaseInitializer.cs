@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using WcfSample.Service.Entities.Models;
 
-namespace WebApiSample.Service.Entities.Models
+namespace WcfSample.Service.Entities.Contexts
 {
     public class NorthwindSlimDatabaseInitializer : DropCreateDatabaseIfModelChanges<NorthwindSlimContext>
     {

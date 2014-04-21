@@ -101,7 +101,7 @@ namespace WebApiSample.Service.WebApi.Controllers
 			{
 				if (_unitOfWork.OrderRepository.Find(order.OrderId) == null)
 				{
-					return NotFound();
+					return Conflict();
 				}
 				throw;
 			}
@@ -116,7 +116,7 @@ namespace WebApiSample.Service.WebApi.Controllers
 		public async Task<IHttpActionResult> DeleteOrder(int id)
 		{
             // Delete order
-            bool result = await _unitOfWork.OrderRepository.DeleteAsync(id);
+            bool result = await _unitOfWork.OrderRepository.DeleteOrder(id);
             if (!result) return Ok();
             
             try
@@ -127,7 +127,7 @@ namespace WebApiSample.Service.WebApi.Controllers
 			{
 				if (_unitOfWork.OrderRepository.Find(id) == null)
 				{
-					return NotFound();
+					return Conflict();
 				}
 				throw;
 			}

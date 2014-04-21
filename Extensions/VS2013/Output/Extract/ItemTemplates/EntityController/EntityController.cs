@@ -103,7 +103,7 @@ namespace $rootnamespace$
 		// DELETE api/$entityName$/5
 		public async Task<IHttpActionResult> Delete$entityName$(int id)
 		{
-			bool result = await _unitOfWork.$entityName$Repository.DeleteAsync(id);	
+			bool result = await _unitOfWork.$entityName$Repository.Delete$entityName$(id);	
             if (!result) return Ok();
 
 			try

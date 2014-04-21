@@ -1,7 +1,9 @@
 using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using WcfSample.Service.Entities.Models;
 using WcfSample.Service.Entities.Models.Mapping;
 
-namespace WcfSample.Service.Entities.Models
+namespace WcfSample.Service.Entities.Contexts
 {
     public partial class NorthwindSlimContext : DbContext
     {
@@ -36,6 +38,8 @@ namespace WcfSample.Service.Entities.Models
             modelBuilder.Configurations.Add(new OrderDetailMap());
             modelBuilder.Configurations.Add(new ProductMap());
             modelBuilder.Configurations.Add(new TerritoryMap());
+
+            modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
         }
     }
 }

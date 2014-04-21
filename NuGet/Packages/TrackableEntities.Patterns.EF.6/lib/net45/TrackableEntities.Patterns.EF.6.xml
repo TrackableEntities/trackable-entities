@@ -122,6 +122,12 @@
             <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
             <returns>A task that represents the asynchronous operation</returns>
         </member>
+        <member name="M:TrackableEntities.Patterns.EF6.Repository`1.ApplyDelete(`0)">
+            <summary>
+            Mark entity as deleted and apply changes to context.
+            </summary>
+            <param name="entity">Entity which is marked as deleted.</param>
+        </member>
         <member name="P:TrackableEntities.Patterns.EF6.Repository`1.Context">
             <summary>
             Gets and sets the DbContext for the repository.

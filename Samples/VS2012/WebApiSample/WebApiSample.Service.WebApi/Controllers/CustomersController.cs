@@ -9,6 +9,7 @@ using System.Web.Http;
 using TrackableEntities;
 using TrackableEntities.EF5;
 using TrackableEntities.Common;
+using WebApiSample.Service.Entities.Contexts;
 using WebApiSample.Service.Entities.Models;
 
 namespace WebApiSample.Service.WebApi.Controllers

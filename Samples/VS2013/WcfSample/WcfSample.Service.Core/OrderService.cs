@@ -5,8 +5,10 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using TrackableEntities;
 using TrackableEntities.Common;
 using TrackableEntities.EF6;
+using WcfSample.Service.Entities.Contexts;
 using WcfSample.Service.Entities.Models;
 
 namespace WcfSample.Service.Core
@@ -49,64 +51,62 @@ namespace WcfSample.Service.Core
             return order;
         }
 
-        public async Task<Order> UpdateOrder(Order order)
+        public async Task<Order> CreateOrder(Order order)
         {
+            // Mark order as added
+            order.TrackingState = TrackingState.Added;
+            _dbContext.ApplyChanges(order);
+
             try
             {
-                // Update object graph entity state
-                _dbContext.ApplyChanges(order);
                 await _dbContext.SaveChangesAsync();
-                order.AcceptChanges();
+            }
+            catch (DbUpdateException updateEx)
+            {
+                throw new FaultException(updateEx.Message);
+            }
 
-                // Load order details
-                var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
-                foreach (var detail in order.OrderDetails)
-                    ctx.LoadProperty(detail, od => od.Product);
-                return order;
+            // Load related entities and accept changes
+            await _dbContext.LoadRelatedEntitiesAsync(order);
+            order.AcceptChanges();
+            return order;
+        }
+
+        public async Task<Order> UpdateOrder(Order order)
+        {
+            // Update entity state
+            _dbContext.ApplyChanges(order);
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException updateEx)
             {
                 throw new FaultException(updateEx.Message);
             }
-        }
 
-        public async Task<Order> CreateOrder(Order order)
-        {
-            // Save new order
-            _dbContext.Orders.Add(order);
-            await _dbContext.SaveChangesAsync();
+            // Load related entities, accept changes and return updated order
+            await _dbContext.LoadRelatedEntitiesAsync(order);
             order.AcceptChanges();
-
-            // Load order details
-            var ctx = ((IObjectContextAdapter)_dbContext).ObjectContext;
-            ctx.LoadProperty(order, o => o.Customer);
-            ctx.LoadProperty(order, o => o.OrderDetails);
-            foreach (var detail in order.OrderDetails)
-                ctx.LoadProperty(detail, od => od.Product);
             return order;
         }
 
         public async Task<bool> DeleteOrder(int id)
         {
+            // Retrieve order to be deleted
             Order order = await _dbContext.Orders
-                .Include(o => o.OrderDetails)
+                .Include(o => o.OrderDetails) // Include details
                 .SingleOrDefaultAsync(c => c.OrderId == id);
             if (order == null)
                 return false;
 
+            // Mark as deleted
+            order.TrackingState = TrackingState.Deleted;
+            _dbContext.ApplyChanges(order);
+
             try
             {
-                // First remove order
-                _dbContext.Orders.Attach(order);
-                _dbContext.Orders.Remove(order);
-
-                // Then remove order details
-                foreach (var detail in order.OrderDetails)
-                {
-                    _dbContext.OrderDetails.Attach(detail);
-                    _dbContext.OrderDetails.Remove(detail);
-                }
-
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
