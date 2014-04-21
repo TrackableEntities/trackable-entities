@@ -2,62 +2,9 @@ Trackable Entities To Do
 
 Release v2.0: Apr-2014
 
-Deploy: Update All Samples
-DONE:
-- api controller t4
-  > all samples
-  > vs project templates
-- Repository.cs -> Fix Delete + Async
-- WebApi.Patterns
-  > Sample
-  > vs project templates
-  
-NEXT:
-- VS 2012 Samples, vs proj templates
-  > WCF sample, vs templates
-
 TODO:
-1) Get sample working w v2
-   - Client using new MergeChanges API
-   - Service controllers using ApplyChanges, LoadRelatedEntities
-     > Replace Customer controller
-   - Update controller scaffolding
-     > Order: POST, PUT, DELETE
-   - Add code for M-1, 1-1, M-M
-   - Replace in all samples and vs project templates   
    
-   - Samples:
-     VS 2013
-     - WebApi
-     - WebApi.Patterns* - next
-     - Wcf
-     VS 2012
-     - WebApi
-     - Wcf
-
-* DONE: Overload for async methods accepting cancellation token
-
-* TODO: Refactor LoadRelatedEntities
-  - condition: if state == added load entity
-   
-   
-2) Update Patterns and WCF samples
-   - Operations use ApplyChanges, LoadRelatedEntities
-   - Update project templates   
-   - Replace in all samples and vs project templates
-   
-3) VS2013 Update 2 RC
-   - Make VM snapshot
-   - Install Web Essentials update
-   - Test everything
-   
-4) Patterns
-   - Move Mappings into .EF project (done)
-     > Add step in Getting Started guide
-   - Update controller actions
-   - Update controller item template
-     
-5) VSIX
+1) VSIX
   > NuGet Packages
   > Templates
   > Remove EF Power Tools dependency
@@ -68,16 +15,59 @@ TODO:
     %ProgramFiles%\Microsoft Visual Studio 12.0\Common7\IDE\PrivateAssemblies
   > Update ReadMe files
   > Release Notes
-  
+
+2) Updated sample for M-1, 1-1, M-M
+
+3) VS2013 Update 2 RC
+   - Make VM snapshot
+   - Install Web Essentials update
+   - Test everything
+   
 DOCS:
 - Getting Started Guides
 - Migrationg from v1.x
   > Update Nuget packages to v2
   > Regenerate client and service entities (via EF rev eng db command)
   > Replace obsolete MergeChanges in client app
+  > Patterns:
+   - Move Mappings into .EF project (done)
+     > Add step in Getting Started guide
 
 DONE:
 
+1) Get sample working w v2
+   - Client using new MergeChanges API
+   - Service controllers using ApplyChanges, LoadRelatedEntities
+     > Replace Customer controller
+   - Update controller scaffolding
+     > Order: POST, PUT, DELETE
+   - Replace in all samples and vs project templates   
+   - Samples:
+     VS 2013
+     - WebApi
+     - WebApi.Patterns* - next
+     - Wcf
+     VS 2012
+     - WebApi
+     - Wcf
+
+2) Update Patterns and WCF samples
+   - Operations use ApplyChanges, LoadRelatedEntities
+   - Update project templates   
+   - Replace in all samples and vs project templates
+   
+* DONE: Overload for async methods accepting cancellation token
+* DONE: Refactor LoadRelatedEntities
+  - condition: if state == added load entity
+   
+- api controller t4
+  > all samples
+  > vs project templates
+- Repository.cs -> Fix Delete + Async
+- WebApi.Patterns
+  > Sample
+  > vs project templates
+  
 - NorthwindSlim:
   > Script new tables and data
   > Include with Samples

@@ -23,52 +23,58 @@
             <param name="context">Used to query and save changes to a database</param>
             <param name="items">Objects that implement ITrackable</param>
         </member>
-        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntities(System.Data.Entity.DbContext,TrackableEntities.ITrackable)">
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntities(System.Data.Entity.DbContext,TrackableEntities.ITrackable,System.Boolean)">
             <summary>
             Load related entities for an object graph.
             </summary>
             <param name="context">Used to query and save changes to a database</param>
             <param name="item">Object that implement ITrackable</param>
+            <param name="loadAll">True to load all related entities, false to load only added entities</param>
         </member>
-        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntities(System.Data.Entity.DbContext,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable})">
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntities(System.Data.Entity.DbContext,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable},System.Boolean)">
             <summary>
             Load related entities for more than one object graph.
             </summary>
             <param name="context">Used to query and save changes to a database</param>
             <param name="items">Objects that implements ITrackable</param>
+            <param name="loadAll">True to load all related entities, false to load only added entities</param>
         </member>
-        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,TrackableEntities.ITrackable)">
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,TrackableEntities.ITrackable,System.Boolean)">
             <summary>
             Load related entities for an object graph asynchronously.
             </summary>
             <param name="context">Used to query and save changes to a database</param>
             <param name="item">Object that implement ITrackable</param>
+            <param name="loadAll">True to load all related entities, false to load only added entities</param>
             <returns>A task that represents the asynchronous operation</returns>
         </member>
-        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,TrackableEntities.ITrackable,System.Threading.CancellationToken)">
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,TrackableEntities.ITrackable,System.Threading.CancellationToken,System.Boolean)">
             <summary>
             Load related entities for an object graph asynchronously.
             </summary>
             <param name="context">Used to query and save changes to a database</param>
             <param name="item">Object that implement ITrackable</param>
             <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+            <param name="loadAll">True to load all related entities, false to load only added entities</param>
             <returns>A task that represents the asynchronous operation.</returns>
         </member>
-        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable})">
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable},System.Boolean)">
             <summary>
             Load related entities for more than one object graph asynchronously.
             </summary>
             <param name="context">Used to query and save changes to a database</param>
             <param name="items">Objects that implements ITrackable</param>
+            <param name="loadAll">True to load all related entities, false to load only added entities</param>
             <returns>A task that represents the asynchronous operation.</returns>
         </member>
-        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable},System.Threading.CancellationToken)">
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntitiesAsync(System.Data.Entity.DbContext,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable},System.Threading.CancellationToken,System.Boolean)">
             <summary>
             Load related entities for more than one object graph asynchronously.
             </summary>
             <param name="context">Used to query and save changes to a database</param>
             <param name="items">Objects that implements ITrackable</param>
             <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+            <param name="loadAll">True to load all related entities, false to load only added entities</param>
             <returns>A task that represents the asynchronous operation.</returns>
         </member>
     </members>
