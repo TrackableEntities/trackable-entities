@@ -246,9 +246,25 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = CreateTestOrders(context)[0];
+            order.TrackingState = TrackingState.Added;
 
             // Act
             context.LoadRelatedEntities(order);
+
+            // Assert
+            Assert.IsNotNull(order.Customer);
+            Assert.AreEqual(order.CustomerId, order.Customer.CustomerId);
+        }
+
+        [Test]
+        public void LoadRelatedEntities_Load_All_Should_Populate_Order_With_Customer()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = CreateTestOrders(context)[0];
+
+            // Act
+            context.LoadRelatedEntities(order, true);
 
             // Assert
             Assert.IsNotNull(order.Customer);
@@ -261,6 +277,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var orders = CreateTestOrders(context);
+            orders.ForEach(o => o.TrackingState = TrackingState.Added);
 
             // Act
             context.LoadRelatedEntities(orders);
@@ -276,6 +293,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = CreateTestOrders(context)[0];
+            order.TrackingState = TrackingState.Added;
 
             // Act
             context.LoadRelatedEntities(order);
@@ -291,6 +309,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = CreateTestOrders(context)[0];
+            order.TrackingState = TrackingState.Added;
 
             // Act
             context.LoadRelatedEntities(order);
@@ -308,9 +327,25 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = CreateTestOrders(context)[0];
+            order.TrackingState = TrackingState.Added;
 
             // Act
             await context.LoadRelatedEntitiesAsync(order);
+
+            // Assert
+            Assert.IsNotNull(order.Customer);
+            Assert.AreEqual(order.CustomerId, order.Customer.CustomerId);
+        }
+
+        [Test]
+        public async void LoadRelatedEntitiesAsync_Load_All_Should_Populate_Order_With_Customer()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = CreateTestOrders(context)[0];
+
+            // Act
+            await context.LoadRelatedEntitiesAsync(order, true);
 
             // Assert
             Assert.IsNotNull(order.Customer);
@@ -323,6 +358,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var orders = CreateTestOrders(context);
+            orders.ForEach(o => o.TrackingState = TrackingState.Added);
 
             // Act
             await context.LoadRelatedEntitiesAsync(orders);
@@ -338,6 +374,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = CreateTestOrders(context)[0];
+            order.TrackingState = TrackingState.Added;
 
             // Act
             await context.LoadRelatedEntitiesAsync(order);
@@ -353,6 +390,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = CreateTestOrders(context)[0];
+            order.TrackingState = TrackingState.Added;
 
             // Act
             await context.LoadRelatedEntitiesAsync(order);
@@ -373,6 +411,44 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = CreateTestOrders(context)[0];
+            order.TrackingState = TrackingState.Added;
+
+            // Act
+            context.LoadRelatedEntities(order);
+
+            // Assert
+            var details = order.OrderDetails;
+            Assert.IsFalse(details.Any(d => d.Product == null));
+            Assert.IsFalse(details.Any(d => d.Product.ProductId != d.ProductId));
+            Assert.IsFalse(details.Any(d => d.Product.Category == null));
+            Assert.IsFalse(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
+        }
+
+        [Test]
+        public void LoadRelatedEntities_Load_All_Should_Populate_Order_Details_With_Product_With_Category()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = CreateTestOrders(context)[0];
+
+            // Act
+            context.LoadRelatedEntities(order, true);
+
+            // Assert
+            var details = order.OrderDetails;
+            Assert.IsFalse(details.Any(d => d.Product == null));
+            Assert.IsFalse(details.Any(d => d.Product.ProductId != d.ProductId));
+            Assert.IsFalse(details.Any(d => d.Product.Category == null));
+            Assert.IsFalse(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
+        }
+
+        [Test]
+        public void LoadRelatedEntities_Should_Populate_Order_With_Added_Details_With_Product_With_Category()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = CreateTestOrders(context)[0];
+            order.OrderDetails.ForEach(d => d.TrackingState = TrackingState.Added);
 
             // Act
             context.LoadRelatedEntities(order);
@@ -391,6 +467,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var orders = CreateTestOrders(context);
+            orders.ForEach(o => o.TrackingState = TrackingState.Added);
 
             // Act
             context.LoadRelatedEntities(orders);
@@ -413,9 +490,28 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = CreateTestOrders(context)[0];
+            order.TrackingState = TrackingState.Added;
 
             // Act
             await context.LoadRelatedEntitiesAsync(order);
+
+            // Assert
+            var details = order.OrderDetails;
+            Assert.IsFalse(details.Any(d => d.Product == null));
+            Assert.IsFalse(details.Any(d => d.Product.ProductId != d.ProductId));
+            Assert.IsFalse(details.Any(d => d.Product.Category == null));
+            Assert.IsFalse(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
+        }
+
+        [Test]
+        public async void LoadRelatedEntitiesAsync_Load_All_Should_Populate_Order_Details_With_Product_With_Category()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = CreateTestOrders(context)[0];
+
+            // Act
+            await context.LoadRelatedEntitiesAsync(order, true);
 
             // Assert
             var details = order.OrderDetails;
@@ -431,6 +527,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var orders = CreateTestOrders(context);
+            orders.ForEach(o => o.TrackingState = TrackingState.Added);
 
             // Act
             await context.LoadRelatedEntitiesAsync(orders);
@@ -457,9 +554,26 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var employee = CreateTestEmployees(context)[0];
+            employee.TrackingState = TrackingState.Added;
 
             // Act
             context.LoadRelatedEntities(employee);
+
+            // Assert
+            Assert.IsFalse(employee.Territories.Any(t => t.Area == null));
+            Assert.IsFalse(employee.Territories.Any(t => t.AreaId != t.Area.AreaId));
+        }
+
+        [Test]
+        public void LoadRelatedEntities_Load_All_Should_Populate_Employee_Territories_With_Area()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var employee = CreateTestEmployees(context)[0];
+            employee.TrackingState = TrackingState.Added;
+
+            // Act
+            context.LoadRelatedEntities(employee, true);
 
             // Assert
             Assert.IsFalse(employee.Territories.Any(t => t.Area == null));
@@ -472,6 +586,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var employee = CreateTestEmployees(context)[1];
+            employee.TrackingState = TrackingState.Added;
 
             // Act
             context.LoadRelatedEntities(employee);
@@ -487,6 +602,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var employees = CreateTestEmployees(context);
+            employees.ForEach(e => e.TrackingState = TrackingState.Added);
 
             // Act
             context.LoadRelatedEntities(employees);
@@ -506,6 +622,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var employee = CreateTestEmployees(context)[0];
+            employee.TrackingState = TrackingState.Added;
 
             // Act
             await context.LoadRelatedEntitiesAsync(employee);
@@ -521,6 +638,7 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var employees = CreateTestEmployees(context);
+            employees.ForEach(e => e.TrackingState = TrackingState.Added);
 
             // Act
             await context.LoadRelatedEntitiesAsync(employees);

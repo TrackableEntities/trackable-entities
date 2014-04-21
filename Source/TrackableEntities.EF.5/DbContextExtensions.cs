@@ -153,10 +153,11 @@ namespace TrackableEntities.EF5
         /// </summary>
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="item">Object that implement ITrackable</param>
+        /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
         public static void LoadRelatedEntities(this DbContext context,
-            ITrackable item)
+            ITrackable item, bool loadAll = false)
         {
-            LoadRelatedEntities(context, new[] {item}, null);
+            LoadRelatedEntities(context, new[] {item}, null, loadAll);
         }
 
         /// <summary>
@@ -164,9 +165,11 @@ namespace TrackableEntities.EF5
         /// </summary>
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="items">Objects that implements ITrackable</param>
-        public static void LoadRelatedEntities(this DbContext context, IEnumerable<ITrackable> items)
+        /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
+        public static void LoadRelatedEntities(this DbContext context, IEnumerable<ITrackable> items,
+            bool loadAll = false)
         {
-            LoadRelatedEntities(context, items.ToArray(), null);
+            LoadRelatedEntities(context, items.ToArray(), null, loadAll);
         }
 
 #if EF_6
@@ -175,11 +178,13 @@ namespace TrackableEntities.EF5
         /// </summary>
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="item">Object that implement ITrackable</param>
+        /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
         /// <returns>A task that represents the asynchronous operation</returns>
         public static Task LoadRelatedEntitiesAsync(this DbContext context,
-            ITrackable item)
+            ITrackable item, bool loadAll = false)
         {
-            return LoadRelatedEntitiesAsync(context, new[] {item}, null, CancellationToken.None);
+            return LoadRelatedEntitiesAsync(context, new[] {item}, null, 
+                CancellationToken.None, loadAll);
         }
 
         /// <summary>
@@ -188,11 +193,13 @@ namespace TrackableEntities.EF5
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="item">Object that implement ITrackable</param>
         /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         public static Task LoadRelatedEntitiesAsync(this DbContext context,
-            ITrackable item, CancellationToken cancellationToken)
+            ITrackable item, CancellationToken cancellationToken, bool loadAll = false)
         {
-            return LoadRelatedEntitiesAsync(context, new[] { item }, null, cancellationToken);
+            return LoadRelatedEntitiesAsync(context, new[] { item }, null, 
+                cancellationToken, loadAll);
         }
 
         /// <summary>
@@ -200,10 +207,13 @@ namespace TrackableEntities.EF5
         /// </summary>
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="items">Objects that implements ITrackable</param>
+        /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        public static Task LoadRelatedEntitiesAsync(this DbContext context, IEnumerable<ITrackable> items)
+        public static Task LoadRelatedEntitiesAsync(this DbContext context,
+            IEnumerable<ITrackable> items, bool loadAll = false)
         {
-            return LoadRelatedEntitiesAsync(context, items.ToArray(), null, CancellationToken.None);
+            return LoadRelatedEntitiesAsync(context, items.ToArray(), null,
+                CancellationToken.None, loadAll);
         }
 
         /// <summary>
@@ -212,15 +222,18 @@ namespace TrackableEntities.EF5
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="items">Objects that implements ITrackable</param>
         /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
+        /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         public static Task LoadRelatedEntitiesAsync(this DbContext context, IEnumerable<ITrackable> items,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken, bool loadAll = false)
         {
-            return LoadRelatedEntitiesAsync(context, items.ToArray(), null, cancellationToken);
+            return LoadRelatedEntitiesAsync(context, items.ToArray(), null, 
+                cancellationToken, loadAll);
         }
 #endif
+
         private static void LoadRelatedEntities(this DbContext context, 
-            ITrackable[] items, ITrackable parent)
+            ITrackable[] items, ITrackable parent, bool loadAll)
         {
             // Return if no items
             if (items == null || items.Length == 0) return;
@@ -237,8 +250,14 @@ namespace TrackableEntities.EF5
                 if (parent != null && prop.PropertyType == parent.GetType())
                     continue;
 
+                // Get selected items
+                var selectedItems = loadAll ? items
+                    : items.Where(t => t.TrackingState == TrackingState.Added
+                        || (parent != null && parent.TrackingState == TrackingState.Added)).ToArray();
+                if (selectedItems.Length == 0) continue;
+                var entities = selectedItems.Cast<object>().ToArray();
+
                 // Get related entities
-                var entities = items.Cast<object>().ToArray();
                 string entityTypeName = entity.GetType().Name;
                 string propertyName = prop.Name;
                 string propertyTypeName = prop.PropertyType.Name;
@@ -256,13 +275,16 @@ namespace TrackableEntities.EF5
             // Recursively populate related entities on ref and child properties
             foreach (var item in items)
             {
-                context.LoadRelatedEntitiesOnProperties(item, parent);
+                bool loadAllRelated = loadAll 
+                    || item.TrackingState == TrackingState.Added
+                    || (parent  != null && parent.TrackingState == TrackingState.Added);
+                context.LoadRelatedEntitiesOnProperties(item, parent, loadAllRelated);
             }
         }
 
 #if EF_6
         private static async Task LoadRelatedEntitiesAsync(this DbContext context,
-            ITrackable[] items, ITrackable parent, CancellationToken cancellationToken)
+            ITrackable[] items, ITrackable parent, CancellationToken cancellationToken, bool loadAll)
         {
             // Return if no items
             if (items == null || items.Length == 0) return;
@@ -275,8 +297,14 @@ namespace TrackableEntities.EF5
                 if (!typeof(ITrackable).IsAssignableFrom(prop.PropertyType))
                     continue;
 
+                // Get selected items
+                var selectedItems = loadAll ? items
+                    : items.Where(t => t.TrackingState == TrackingState.Added
+                        || (parent != null && parent.TrackingState == TrackingState.Added)).ToArray();
+                if (selectedItems.Length == 0) continue;
+                var entities = selectedItems.Cast<object>().ToArray();
+
                 // Get related entities
-                var entities = items.Cast<object>().ToArray();
                 string entityTypeName = entity.GetType().Name;
                 string propertyName = prop.Name;
                 string propertyTypeName = prop.PropertyType.Name;
@@ -294,13 +322,16 @@ namespace TrackableEntities.EF5
             // Recursively populate related entities on ref and child properties
             foreach (var item in items)
             {
-                context.LoadRelatedEntitiesOnProperties(item, parent);
+                bool loadAllRelated = loadAll
+                    || item.TrackingState == TrackingState.Added
+                    || (parent != null && parent.TrackingState == TrackingState.Added);
+                await context.LoadRelatedEntitiesOnPropertiesAsync(item, parent,
+                    cancellationToken, loadAllRelated);
             }
         }
-#endif
 
-        private static void LoadRelatedEntitiesOnProperties(this DbContext context,
-            ITrackable item, ITrackable parent)
+        private async static Task LoadRelatedEntitiesOnPropertiesAsync(this DbContext context,
+            ITrackable item, ITrackable parent, CancellationToken cancellationToken, bool loadAll)
         {
             // Recursively load related entities
             foreach (var prop in item.GetType().GetProperties())
@@ -312,7 +343,8 @@ namespace TrackableEntities.EF5
                 if (trackableRef != null
                     && (parent == null || trackableRef.GetType() != parent.GetType()))
                 {
-                    context.LoadRelatedEntities(new[] { trackableRef }, item);
+                    await context.LoadRelatedEntitiesAsync(new[] { trackableRef }, item,
+                        cancellationToken, loadAll);
                 }
 
                 // Apply changes to 1-M and M-M properties
@@ -325,7 +357,41 @@ namespace TrackableEntities.EF5
                         && (parent == null || trackableChild.GetType() != parent.GetType()))
                     {
                         var trackableChildren = childItems.OfType<ITrackable>().ToArray();
-                        context.LoadRelatedEntities(trackableChildren, item);
+                        await context.LoadRelatedEntitiesAsync(trackableChildren, item,
+                            cancellationToken, loadAll);
+                    }
+                }
+            }
+        }
+#endif
+
+        private static void LoadRelatedEntitiesOnProperties(this DbContext context,
+            ITrackable item, ITrackable parent, bool loadAll)
+        {
+            // Recursively load related entities
+            foreach (var prop in item.GetType().GetProperties())
+            {
+                // Apply changes to 1-1 and M-1 properties
+                var trackableRef = prop.GetValue(item) as ITrackable;
+
+                // Stop recursion if trackable is same type as parent
+                if (trackableRef != null
+                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                {
+                    context.LoadRelatedEntities(new[] { trackableRef }, item, loadAll);
+                }
+
+                // Apply changes to 1-M and M-M properties
+                var childItems = prop.GetValue(item, null) as IList;
+                if (childItems != null && childItems.Count > 0)
+                {
+                    // Stop recursion if trackable is same type as parent
+                    var trackableChild = childItems[0] as ITrackable;
+                    if (trackableChild != null
+                        && (parent == null || trackableChild.GetType() != parent.GetType()))
+                    {
+                        var trackableChildren = childItems.OfType<ITrackable>().ToArray();
+                        context.LoadRelatedEntities(trackableChildren, item, loadAll);
                     }
                 }
             }
