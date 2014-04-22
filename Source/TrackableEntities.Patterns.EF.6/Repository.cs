@@ -59,7 +59,8 @@ namespace TrackableEntities.Patterns.EF6
         /// <param name="entity">Entity to insert.</param>
         public virtual void Insert(TEntity entity)
         {
-            Set.Add(entity);
+            entity.TrackingState = TrackingState.Added;
+            Context.ApplyChanges(entity);
         }
 
         /// <summary>
