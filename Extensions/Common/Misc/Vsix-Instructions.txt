@@ -1,0 +1,43 @@
+Intructions for Updating VSIX Deploy Project
+
+1. Replace zip files in ItemTemplates and ProjectTemplates folders
+
+2. Update files in Packages folder
+   - Include in project
+   - Build action: Content
+   - Include in VSIX: True
+   
+3. Edit .vsixmanifest
+   - Increment Version number
+   - Edit Dependencies if needed
+   - Add or remove Assets if needed
+   
+4. Update Wizards
+   - Update packages as needed
+
+5. Build solution
+   - Set config to Release
+   
+6. Test VSIX
+   - Uninstall current version if needed
+   - Open Release folder to locate .vsix file
+   - Launch the VSIX installer, then open Visual Studio
+   
+7. TODO: Misc items
+   - Update description
+   - Release notes
+   - ReadMe files
+   - Item template mem bug
+   - Solution readme location
+   
+NuGet Package Updates:
+
+EntityFramework.6.1.0
+Microsoft.AspNet.WebApi.Client.5.1.2
+Newtonsoft.Json.6.0.2
+
+TrackableEntities.Client.2.0.0.0
+TrackableEntities.Client.Net4.2.0.0.0
+TrackableEntities.Common.2.0.0.0
+TrackableEntities.EF.5.2.0.0.0
+TrackableEntities.EF.6.2.0.0.0

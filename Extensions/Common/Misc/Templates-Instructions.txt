@@ -1,0 +1,16 @@
+Intructions for Updating Visual Studio Project Templates
+
+1. Update .csproj file
+   - References: update version numbers
+     > Refer to sample csproj file
+       - Power Commands, Edit Project File
+     > Open csproj file from VS (Open With XML Text Editor)
+     > Copy Reference, including HintPath
+   - Multi-project templates
+     > Add level to packages hint path: ..\..\packages\*
+   - Update packages.config file
+     > package version numbers
+   
+2. Update .vstemplate file
+   - Update package version numbers
+   

@@ -3,6 +3,13 @@ Trackable Entities To Do
 Release v2.0: Apr-2014
 
 TODO:
+
+* NorthwindSlim.sql
+  - Remove added products (> 70?), orders
+* TE add asm Description
+* VSIX: Change Description
+* Test concurrency?
+* Test relationships
    
 1) VSIX
   > NuGet Packages
@@ -16,7 +23,7 @@ TODO:
   > Update ReadMe files
   > Release Notes
 
-2) Updated sample for M-1, 1-1, M-M
+2) Updated sample for M-1, 1-1, M-M relationships
 
 3) VS2013 Update 2 RC
    - Make VM snapshot
