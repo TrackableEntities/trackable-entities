@@ -3,6 +3,7 @@ Templates Checklist:
 Package Version Numbers:
 EntityFramework.6.1.0
 Newtonsoft.Json.6.0.2
+Microsoft.AspNet.WebApi.Client.5.1.2
 TrackableEntities.*.2.0.0.0
 
 Part A: VS2012
@@ -13,6 +14,9 @@ Part A: VS2012
 4. Trackable Wcf Service
 5. Trackable Web Api
 
-TODO:
-Update samples and templates:
-ConsoleClient - update to Microsoft.AspNet.WebApi.Client.5.1.2
+DONE:
+- Update samples and templates:
+  > ConsoleClient - update to Microsoft.AspNet.WebApi.Client.5.1.2
+- Patterns: folder structure
+  > Service.EF: Contexts, Mapping folders, classes
+  > Service.Entities: Remove mapping classes, 

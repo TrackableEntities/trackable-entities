@@ -65,7 +65,7 @@ namespace $rootnamespace$
 				throw;
 			}
 
-            await _unitOfWork.OrderRepository.LoadRelatedEntitiesAsync(entity);
+            await _unitOfWork.$entityName$Repository.LoadRelatedEntitiesAsync(entity);
 			entity.AcceptChanges();
 
 			return CreatedAtRoute("DefaultApi", new { id = entity.$entityName$Id }, entity);
@@ -95,7 +95,7 @@ namespace $rootnamespace$
 				throw;
 			}
 
-            await _unitOfWork.OrderRepository.LoadRelatedEntitiesAsync(entity);
+            await _unitOfWork.$entityName$Repository.LoadRelatedEntitiesAsync(entity);
 			entity.AcceptChanges();
 			return Ok(entity);
 		}

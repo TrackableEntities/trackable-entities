@@ -20,6 +20,7 @@ TODO:
   > BUG: Delete asm in item template reflection code
   > BUG: Solution ReadMe file in:
     %ProgramFiles%\Microsoft Visual Studio 12.0\Common7\IDE\PrivateAssemblies
+  > ISSUE: Make item template dialogs expandable with anchored controls
   > Update ReadMe files
   > Release Notes
 

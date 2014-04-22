@@ -224,7 +224,7 @@
               repositoryId="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7">
       <package id="Antlr" version="3.5.0.2" />
       <package id="bootstrap" version="3.0.1" />
-      <package id="EntityFramework" version="6.0.2" />
+      <package id="EntityFramework" version="6.1.0" />
       <package id="jQuery" version="2.0.3" />
       <package id="jQuery.UI.Combined" version="1.10.3" />
       <package id="knockoutjs" version="3.0.0" />
@@ -239,13 +239,13 @@
       <package id="Microsoft.AspNet.WebPages" version="3.0.0" />
       <package id="Microsoft.Web.Infrastructure" version="1.0.0.0" />
       <package id="Modernizr" version="2.6.2" />
-      <package id="Newtonsoft.Json" version="5.0.8" />
+      <package id="Newtonsoft.Json" version="6.0.2" />
       <package id="TinyIoC" version="1.2" />
       <package id="TinyIoC.AspNetExtensions" version="1.2" />
-      <package id="TrackableEntities.Common" version="1.0.3.0" />
-      <package id="TrackableEntities.EF.6" version="1.0.3.0" />
-      <package id="TrackableEntities.Patterns" version="1.0.3.0" />
-      <package id="TrackableEntities.Patterns.EF.6" version="1.0.3.0" />
+      <package id="TrackableEntities.Common" version="2.0.0.0" />
+      <package id="TrackableEntities.EF.6" version="2.0.0.0" />
+      <package id="TrackableEntities.Patterns" version="2.0.0.0" />
+      <package id="TrackableEntities.Patterns.EF.6" version="2.0.0.0" />
       <package id="WebApiTestClient" version="1.1.1" />
       <package id="WebGrease" version="1.5.2" />
     </packages>

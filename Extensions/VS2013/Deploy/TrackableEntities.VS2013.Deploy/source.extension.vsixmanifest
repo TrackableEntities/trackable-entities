@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7" Version="1.0.3" Language="en-US" Publisher="Tony Sneed" />
+    <Identity Id="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7" Version="2.0.0" Language="en-US" Publisher="Tony Sneed" />
     <DisplayName>Trackable Entities for Visual Studio 2013</DisplayName>
     <Description xml:space="preserve">Client and server project templates with NuGet packages for reverse engineering trackable entitites.</Description>
     <MoreInfo>http://trackable.codeplex.com</MoreInfo>
@@ -20,7 +20,6 @@
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
-    <Dependency d:Source="Installed" Id="2b119c79-9836-46e2-b5ed-eb766cebbf7c" DisplayName="Entity Framework Power Tools Beta 4" Version="[0.9,1.0)" d:InstallSource="Download" Location="http://visualstudiogallery.msdn.microsoft.com/72a60b14-1581-4b9b-89f2-846072eff19d/file/51005/4/EFPowerTools.vsix" />
     <Dependency d:Source="Installed" Id="NuGet.67e54e40-0ae3-42c5-a949-fddf5739e6a5" DisplayName="NuGet Package Manager for Visual Studio 2013" Version="[2.7.40911.287,3.0)" d:InstallSource="Download" Location="http://visualstudiogallery.msdn.microsoft.com/4ec1526c-4a8c-4a84-b702-b21a8f5293ca/file/105933/3/NuGet.Tools.2013.vsix" />
   </Dependencies>
   <Assets>

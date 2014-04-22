@@ -39,7 +39,39 @@ namespace WebApiSample.Service.WebApi.Controllers
 			return Ok(customer);
 		}
 
-		// PUT api/Customer
+        // POST api/Customer
+        [ResponseType(typeof(Customer))]
+        public async Task<IHttpActionResult> PostCustomer(Customer customer)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _unitOfWork.CustomerRepository.Insert(customer);
+
+            try
+            {
+                // Save and accept changes
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (UpdateException)
+            {
+                if (_unitOfWork.CustomerRepository.Find(customer.CustomerId) == null)
+                {
+                    return Conflict();
+                }
+                throw;
+            }
+
+            // Load related entities and accept changes
+            await _unitOfWork.CustomerRepository.LoadRelatedEntitiesAsync(customer);
+            customer.AcceptChanges();
+
+            return CreatedAtRoute("DefaultApi", new { id = customer.CustomerId }, customer);
+        }
+
+        // PUT api/Customer
 		[ResponseType(typeof(Customer))]
 		public async Task<IHttpActionResult> PutCustomer(Customer customer)
 		{
@@ -48,71 +80,47 @@ namespace WebApiSample.Service.WebApi.Controllers
 				return BadRequest(ModelState);
 			}
 
-			try
+            _unitOfWork.CustomerRepository.Update(customer);
+            
+            try
 			{
-				_unitOfWork.CustomerRepository.Update(customer);
 				await _unitOfWork.SaveChangesAsync();
-				customer.AcceptChanges();
-				return Ok(customer);
 			}
 			catch (UpdateConcurrencyException)
 			{
 				if (_unitOfWork.CustomerRepository.Find(customer.CustomerId) == null)
 				{
-					return NotFound();
-				}
-				throw;
-			}
-		}
-
-		// POST api/Customer
-		[ResponseType(typeof(Customer))]
-		public async Task<IHttpActionResult> PostCustomer(Customer customer)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-
-			_unitOfWork.CustomerRepository.Insert(customer);
-
-			try
-			{
-				await _unitOfWork.SaveChangesAsync();
-				customer.AcceptChanges();
-			}
-			catch (UpdateException)
-			{
-				if (_unitOfWork.CustomerRepository.Find(customer.CustomerId) == null)
-				{
-					return Conflict();
+                    return Conflict();
 				}
 				throw;
 			}
 
-			return CreatedAtRoute("DefaultApi", new { id = customer.CustomerId }, customer);
-		}
+            await _unitOfWork.CustomerRepository.LoadRelatedEntitiesAsync(customer);
+            customer.AcceptChanges();
+            return Ok(customer);
+        }
 
 		// DELETE api/Customer/5
 		public async Task<IHttpActionResult> DeleteCustomer(string id)
 		{
-			bool exists = await _unitOfWork.CustomerRepository.DeleteAsync(id);
-			if (!exists) return Ok();
+			bool result = await _unitOfWork.CustomerRepository.DeleteAsync(id);
+			if (!result) return Ok();
 
 			try
 			{
 				await _unitOfWork.SaveChangesAsync();
-				return Ok();
 			}
 			catch (UpdateConcurrencyException)
 			{
 				if (_unitOfWork.CustomerRepository.Find(id) == null)
 				{
-					return NotFound();
+                    return Conflict();
 				}
 				throw;
 			}
-		}
+
+            return Ok();
+        }
 
 		protected override void Dispose(bool disposing)
 		{

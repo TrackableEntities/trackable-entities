@@ -14,3 +14,4 @@ Intructions for Updating Visual Studio Project Templates
 2. Update .vstemplate file
    - Update package version numbers
    
+3. Update package.config files

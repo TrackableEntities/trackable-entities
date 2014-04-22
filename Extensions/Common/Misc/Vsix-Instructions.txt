@@ -13,7 +13,7 @@ Intructions for Updating VSIX Deploy Project
    - Add or remove Assets if needed
    
 4. Update Wizards
-   - Update packages as needed
+   - Update NuGet packages as needed
 
 5. Build solution
    - Set config to Release

@@ -35,8 +35,8 @@
   <WizardData>
     <packages repository="extension"
               repositoryId="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7">
-		<package id="Newtonsoft.Json" version="5.0.8" />
-		<package id="EntityFramework" version="6.0.2" />
+		<package id="Newtonsoft.Json" version="6.0.2" />
+		<package id="EntityFramework" version="6.1.0" />
     </packages>
   </WizardData>	
 </VSTemplate>
