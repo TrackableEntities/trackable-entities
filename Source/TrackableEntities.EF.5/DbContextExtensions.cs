@@ -297,6 +297,10 @@ namespace TrackableEntities.EF5
                 if (!typeof(ITrackable).IsAssignableFrom(prop.PropertyType))
                     continue;
 
+                // Continue if trackable prop is same type as parent
+                if (parent != null && prop.PropertyType == parent.GetType())
+                    continue;
+
                 // Get selected items
                 var selectedItems = loadAll ? items
                     : items.Where(t => t.TrackingState == TrackingState.Added
