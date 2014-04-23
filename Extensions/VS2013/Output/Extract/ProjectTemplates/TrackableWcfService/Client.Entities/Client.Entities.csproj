@@ -48,6 +48,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TrackableClientEntities.ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="App.config" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
     <None Include="packages.config" />
