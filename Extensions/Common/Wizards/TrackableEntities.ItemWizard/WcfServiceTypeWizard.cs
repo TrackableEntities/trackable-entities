@@ -14,7 +14,8 @@ namespace TrackableEntities.ItemWizard
             WizardHelper.AddCustomParameters(automationObject, replacementsDictionary,
                 Dialogs.WcfServiceType.Title,
                 Dialogs.WcfServiceType.Message, 
-                Dialogs.WcfServiceType.GetDbContextName);
+                Dialogs.WcfServiceType.GetDbContextName,
+                Dialogs.WcfServiceType.DialogWidth);
         }
 
         public void BeforeOpeningFile(ProjectItem projectItem)

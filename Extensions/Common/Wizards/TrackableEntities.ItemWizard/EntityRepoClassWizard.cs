@@ -14,7 +14,8 @@ namespace TrackableEntities.ItemWizard
             WizardHelper.AddCustomParameters(automationObject, replacementsDictionary,
                 Dialogs.EntityRepoClass.Title,
                 Dialogs.EntityRepoClass.Message,
-                Dialogs.EntityRepoClass.GetDbContextName);
+                Dialogs.EntityRepoClass.GetDbContextName,
+                Dialogs.EntityRepoClass.DialogWidth);
         }
 
         public void BeforeOpeningFile(ProjectItem projectItem)

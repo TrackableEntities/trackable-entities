@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ItemTemplateParametersWizard
@@ -11,13 +12,14 @@ namespace ItemTemplateParametersWizard
         private readonly string _dialogMessage;
 
         public ModelTypesDialog(List<ModelTypeInfo> modelTypes, 
-            string dialogTitle, string dialogMessage)
+            string dialogTitle, string dialogMessage, int dialogWidth)
         {
             Application.EnableVisualStyles();
             InitializeComponent();
             _modelTypes = modelTypes;
             _dialogTitle = dialogTitle;
             _dialogMessage = dialogMessage;
+            Width = dialogWidth;
         }
 
         public ModelTypesDialogInfo ModelTypesDialogInfo { get; private set; }
@@ -44,6 +46,19 @@ namespace ItemTemplateParametersWizard
             {
                 DialogResult = DialogResult.Cancel;
             }
+        }
+
+        private void ModelTypesDialog_Resize(object sender, EventArgs e)
+        {
+            PositionControl(descriptionLabel);
+            PositionControl(buttonsPanel);
+        }
+
+        private void PositionControl(Control control)
+        {
+            var curHeight = control.Location.Y;
+            control.Location = new Point(
+            Width / 2 - control.Size.Width / 2, curHeight);
         }
     }
 }

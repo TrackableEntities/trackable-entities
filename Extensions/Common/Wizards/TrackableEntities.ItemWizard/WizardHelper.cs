@@ -16,7 +16,7 @@ namespace TrackableEntities.ItemWizard
     {
         public static void AddCustomParameters(object automationObject,
             Dictionary<string, string> replacementsDictionary, 
-            string dialogTitle, string dialogMessage, bool getDbContextName)
+            string dialogTitle, string dialogMessage, bool getDbContextName, int dialogWidth)
         {
             // Get referenced types
             var dte2 = (DTE2)automationObject;
@@ -43,9 +43,9 @@ namespace TrackableEntities.ItemWizard
             // Prompt user for Entity and DbContext names
             Form dialog;
             if (getDbContextName)
-                dialog = new ModelTypesContextDialog(modelTypes, dialogTitle, dialogMessage); 
+                dialog = new ModelTypesContextDialog(modelTypes, dialogTitle, dialogMessage, dialogWidth); 
             else
-                dialog = new ModelTypesDialog(modelTypes, dialogTitle, dialogMessage);
+                dialog = new ModelTypesDialog(modelTypes, dialogTitle, dialogMessage, dialogWidth);
             if (dialog.ShowDialog() == DialogResult.Cancel)
                 throw new WizardBackoutException();
 
