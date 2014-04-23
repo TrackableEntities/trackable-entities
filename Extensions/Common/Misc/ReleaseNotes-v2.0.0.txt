@@ -1,0 +1,32 @@
+﻿Release Notes for Trackable Entities v 2.0.0
+1. Support for 1-M, 1-1, M-1 and M-M Relationships.
+   - Both client and server libraries have been updated to support all entity relations, including One-to-Many, One-to-One, Many-to-One, and Many-to-Many.
+   - Reference properties are now change-tracked on the client side, including any downstream changes on the object graph. For example, Order.Customer will be marked as modified if CustomerName is changed, and if Customer has reference or child entities, those will be change-tracked as well.
+   - On the server-side, ApplyChanges walks the entire object graph in all directions. Cyclical references are detected to avoid infinite loops, and added or deleted children of Many-to-Many relations will remove the relation without adding or removing the related entity.
+2. Change tracker MergeChanges has been refactored into a new method overload (with the v1 method marked as obsolete), so that changes from the update operation are merged back into the original object graph.
+   - Client entities now implement IEquatable using a Guid identifier to correlate updated entities to original entities in the object graph, including added items.
+3. New HasChanges and Clone methods have been added to the change tracker.
+   - HasMethods returns true if a change (modify, add or remove) is detected anywhere in the object graph.
+   - The Clone method performs a deep copy of all objects in the change tracker, providing a snapshot in time of the change tracker, which can be reverted to if you wish to discard changes and revert to the earlier state.
+4. LoadRelatedEntities had been added as an extension method to DbContext.
+   - This method is called after an insert or update service operation has been performed, in order to load reference properties for added items.
+   - This allows for more efficient transmission of entity changes across the wire from client to service and back. Reference properties that have not changed are set to null, so that only the foreign key value is passed. However, added items should have reference properties populated before an updated entity is returned to the client.
+   - This alleviates the need to call LoadProperty on ObjectContext to populate properties, which is highly inefficient.
+   - LoadRelatedEntities efficiently retrieves related entities and walks the entire object graph in all directions.
+   - The asynchronous version executes database queries using EF6's async capabilities.
+5. Support for Entity Framework v 6.1
+   - All packages now reference the EF 6.1 runtime.
+   - The process to reverse engineer Code First classes from an existing database is supported by the consolidated 6.1 model designer. This is performed in the same manner as with the EF Power Tools (beta 4), therefore compatibility with the Power Tools is maintained.
+6. Templates and Samples
+   - Client t4 code-generation templates have been updated to support change-tracking of reference properties.
+   - Both client and service T4 templates have been updated to support correlation of entities with an entity identifier for merging changes after performing updates.
+   - Web API controller and WCF service type templates have been updated to call LoadRelatedEntities on Create and Update operations, and to call ApplyChanges on Create, Update and Delete operations.
+   - All samples have been updated 
+7. Miscellaneous Issues
+   - An ExcludedProperties member has been added to the change tracker so that changes to specified properties will not result in an entity being marked as Modified.
+   - Overloads have been added to ApplyChanges and other methods accepting multiple entities.
+   - Various bugs have been fixed, including where properties were not added to ModifiedProperties when more than one property was updated.
+   - Mapping.tt template was modified to include a using directive for the System.ComponentModel.DataAnnotations.Schema namespace.
+   - VSIX installers have been updated with new templates and NuGet packages, and the item template dialogs have been improved.
+   - Numerous unit tests have been added to improve code coverage.
+

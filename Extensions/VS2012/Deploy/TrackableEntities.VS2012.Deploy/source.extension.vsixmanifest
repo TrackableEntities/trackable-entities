@@ -6,7 +6,7 @@
     <Description xml:space="preserve">Visual Studio project and item templates for quickly building n-tier applications using Entity Framework with entities that are change-tracked on the client and persisted on the server.</Description>
     <MoreInfo>http://trackable.codeplex.com</MoreInfo>
     <License>License.txt</License>
-    <ReleaseNotes>ReleaseNotes-v1.0.3.txt</ReleaseNotes>
+    <ReleaseNotes>ReleaseNotes-v2.0.0.txt</ReleaseNotes>
     <Icon>tracking-small.png</Icon>
     <PreviewImage>tracking.png</PreviewImage>
     <Tags>change-tracking entity-framework n-tier wcf web-api</Tags>
