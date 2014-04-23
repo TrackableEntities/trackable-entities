@@ -56,9 +56,13 @@ namespace TrackableEntities.TemplateWizard
             // Add ReadMe file to solution folder
             var solution = (Solution2)_dte2.Solution;
             solution.AddSolutionFolder("Solution Items");
-            string readMePath = GetTemplateReadMe(_templateName);
-            if (File.Exists(readMePath))
-                _dte2.ItemOperations.AddExistingItem(readMePath);
+
+            // Copy readme file to solution directory and add to solution folder
+            string sourceReadMePath = GetTemplateReadMePath(_templateName);
+            string destReadMePath = GetDestReadMePath(solution, _templateName);
+            File.Copy(sourceReadMePath, destReadMePath);
+            if (File.Exists(destReadMePath))
+                _dte2.ItemOperations.AddExistingItem(destReadMePath);
 
             // Set startup project
             string extension = null;
@@ -82,13 +86,6 @@ namespace TrackableEntities.TemplateWizard
             return true;
         }
 
-        private string GetTextFilePath(string fileName)
-        {
-            string dirPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string filePath = Path.Combine(dirPath, fileName);
-            return filePath;
-        }
-
         private Project GetProject(string extension)
         {
             string projectName = GlobalDictionary["$saferootprojectname$"] + extension;
@@ -102,19 +99,45 @@ namespace TrackableEntities.TemplateWizard
             return null;
         }
 
-        private string GetTemplateReadMe(string templateName)
+        private string GetDestReadMePath(Solution2 solution, string templateName)
+        {
+            var solutionPath = solution.Properties.Item("Path").Value as string;
+            if (string.IsNullOrWhiteSpace(solutionPath)) return null;
+            string solutionDir = new FileInfo(solutionPath).DirectoryName;
+            if (string.IsNullOrWhiteSpace(solutionDir)) return null;
+            string readMeFileName = GetReadMeFileName(templateName);
+            string destReadMePath = Path.Combine(solutionDir, readMeFileName);
+            return destReadMePath;
+        }
+
+        private string GetReadMeFileName(string templateName)
         {
             switch (templateName)
             {
                 case Constants.ProjectTemplates.TrackableWcfService:
-                    return GetTextFilePath(Constants.ReadMeFiles.TrackableWcf);
+                    return Constants.ReadMeFiles.TrackableWcf;
                 case Constants.ProjectTemplates.TrackableWebApi:
-                    return GetTextFilePath(Constants.ReadMeFiles.TrackableWebApi);
+                    return Constants.ReadMeFiles.TrackableWebApi;
                 case Constants.ProjectTemplates.TrackableWebApiPatterns:
-                    return GetTextFilePath(Constants.ReadMeFiles.WebApiPatternsSample);
+                    return Constants.ReadMeFiles.WebApiPatternsSample;
                 default:
                     return null;
             }
+        }
+
+        private string GetTemplateReadMePath(string templateName)
+        {
+            string readMeFileName = GetReadMeFileName(templateName);
+            if (readMeFileName == null) return null;
+            string templateReadMePath = GetTemplateFilePath(readMeFileName);
+            return templateReadMePath;
+        }
+
+        private string GetTemplateFilePath(string fileName)
+        {
+            string dirPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string filePath = Path.Combine(dirPath, fileName);
+            return filePath;
         }
     }
 }
