@@ -1,6 +1,6 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
-    <Name>Trackable Service Entities</Name>
+    <Name>Trackable Service Entities Library</Name>
     <Description>Class library with templates for reverse engineering trackable service entitites using Entity Framework Code First. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
     <ProjectType>CSharp</ProjectType>
     <ProjectSubType>
@@ -13,6 +13,7 @@
     <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
     <Icon>__TemplateIcon.png</Icon>
     <PreviewImage>__PreviewImage.png</PreviewImage>
+    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
   </TemplateData>
   <TemplateContent>
     <Project TargetFileName="TrackableEntities.Service.Template.csproj" File="TrackableEntities.Service.Template.csproj" ReplaceParameters="true">

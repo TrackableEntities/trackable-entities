@@ -1,10 +1,9 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="ProjectGroup">
   <TemplateData>
-    <Name>Trackable WCF Service</Name>
+    <Name>Trackable WCF Service Application</Name>
     <Description>Solution containing WCF service, web host, trackable entities and client projects. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
     <ProjectType>CSharp</ProjectType>
     <TemplateGroupID>Trackable</TemplateGroupID>
-    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
     <SortOrder>1000</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
     <DefaultName>TrackableWcfService</DefaultName>

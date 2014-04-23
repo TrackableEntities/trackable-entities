@@ -2,11 +2,12 @@
   <TemplateData>
     <DefaultName>TrackableWcfService.cs</DefaultName>
     <Name>Trackable WCF Service Type</Name>
-    <Description>WCF service with scaffolding for CRUD operations using Trackable Entities and Entity Framework. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
+    <Description>WCF service with read-write operations using Trackable Entities and Entity Framework. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
     <ProjectType>CSharp</ProjectType>
     <SortOrder>10</SortOrder>
     <Icon>__TemplateIcon.png</Icon>
     <PreviewImage>__PreviewImage.png</PreviewImage>
+    <NumberOfParentCategoriesToRollUp>2</NumberOfParentCategoriesToRollUp>
   </TemplateData>
   <TemplateContent>
     <References />

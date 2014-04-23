@@ -12,18 +12,32 @@ TODO:
 * Test relationships
    
 1) VSIX
-  > NuGet Packages
-  > Templates
-  > Remove EF Power Tools dependency
-    - Keep NuGet dependency
-  > VS2012: Delete Models and Mapping folders
-  > BUG: Delete asm in item template reflection code
+
   > BUG: Solution ReadMe file in:
     %ProgramFiles%\Microsoft Visual Studio 12.0\Common7\IDE\PrivateAssemblies
-  > ISSUE: Make item template dialogs expandable with anchored controls
-  > Update ReadMe files
-  > Release Notes
 
+  > * Update VSIX Description:
+      Visual Studio project and item templates for quickly building n-tier applications using Entity Framework with entities that are change-tracked on the client and persisted on the server.
+
+  > Item templates org: 
+    - Trackable\Patterns, WCF folders (VS 2013 only) (rollup 2)
+  > Project templates org:
+
+      Trackable Client Entities Library (rollup 1)
+      Trackable Service Entities Library (rollup 1)
+      Trackable WCF Service Application (no rollup) -> Trackable, WCF folders
+      Trackable Web API Application (no rollup) -> Trackable, Web folders
+
+  > TODO: Update ReadMe files
+  > TODO: Release Notes
+
+  > NOT SURE: VS2012: Delete Models and Mapping folders
+  > NO REPRO: Delete asm in item template reflection code
+  > DONE:
+    Make item template dialogs expandable with anchored controls
+    Remove EF Power Tools dependency
+    NuGet Packages
+    
 2) Updated sample for M-1, 1-1, M-M relationships
 
 3) VS2013 Update 2 RC

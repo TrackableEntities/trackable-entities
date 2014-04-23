@@ -183,10 +183,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="ProjectTemplates\Trackable\TrackableWebApi.zip">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Packages\EntityFramework.6.1.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -213,6 +209,14 @@
     </Content>
     <Content Include="Packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="ProjectTemplates\WCF\TrackableWcfService.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Trackable\TrackableWebApi.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
