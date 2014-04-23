@@ -75,6 +75,10 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\..\..\Common\Misc\ReleaseNotes-v2.0.0.txt">
+      <Link>ReleaseNotes-v2.0.0.txt</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Packages\jQuery.1.8.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -172,10 +176,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ProjectTemplates\Trackable\TrackableWcfService.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="ReleaseNotes-v2.0.0.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>

@@ -3,20 +3,16 @@
   <Metadata>
     <Identity Id="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7" Version="2.0.0" Language="en-US" Publisher="Tony Sneed" />
     <DisplayName>Trackable Entities for Visual Studio 2013</DisplayName>
-    <Description xml:space="preserve">Client and server project templates with NuGet packages for reverse engineering trackable entitites.</Description>
+    <Description xml:space="preserve">Visual Studio project and item templates for quickly building n-tier applications using Entity Framework with entities that are change-tracked on the client and persisted on the server.</Description>
     <MoreInfo>http://trackable.codeplex.com</MoreInfo>
     <License>License.txt</License>
-    <ReleaseNotes>ReleaseNotes-v1.0.3.txt</ReleaseNotes>
+    <ReleaseNotes>ReleaseNotes-v2.0.0.txt</ReleaseNotes>
     <Icon>tracking-small.png</Icon>
     <PreviewImage>tracking.png</PreviewImage>
     <Tags>change-tracking entity-framework n-tier wcf web-api</Tags>
   </Metadata>
   <Installation>
     <InstallationTarget Version="[12.0,13.0)" Id="Microsoft.VisualStudio.Pro" />
-    <InstallationTarget Version="[12.0,13.0)" Id="Microsoft.VisualStudio.VSWinExpress" />
-    <InstallationTarget Version="[12.0,13.0)" Id="Microsoft.VisualStudio.VPDExpress" />
-    <InstallationTarget Version="[12.0,13.0)" Id="Microsoft.VisualStudio.VWDExpress" />
-    <InstallationTarget Version="[12.0,13.0)" Id="Microsoft.VisualStudio.VSWinDesktopExpress" />
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
