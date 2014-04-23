@@ -89,7 +89,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="ItemTemplates\Trackable\TrackableWcfServiceType.zip">
+    <Content Include="ItemTemplates\Trackable\WCF\TrackableWcfServiceType.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -148,27 +148,27 @@
     <Content Include="Packages\WebGrease.1.5.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="ItemTemplates\Trackable\EntityRepository.zip">
+    <Content Include="ItemTemplates\Trackable\Patterns\EntityRepository.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ItemTemplates\Trackable\ExampleUnitOfWork.zip">
+    <Content Include="ItemTemplates\Trackable\Patterns\ExampleUnitOfWork.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ItemTemplates\Trackable\IDatabaseContext.zip">
+    <Content Include="ItemTemplates\Trackable\Patterns\IDatabaseContext.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ItemTemplates\Trackable\IEntityRepository.zip">
+    <Content Include="ItemTemplates\Trackable\Patterns\IEntityRepository.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ItemTemplates\Trackable\IExampleUnitOfWork.zip">
+    <Content Include="ItemTemplates\Trackable\Patterns\IExampleUnitOfWork.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="ItemTemplates\Trackable\EntityController.zip">
+    <Content Include="ItemTemplates\Trackable\Patterns\EntityController.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

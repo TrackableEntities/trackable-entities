@@ -214,10 +214,6 @@
     <Content Include="Packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="ProjectTemplates\WCF\TrackableWcfService.zip">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="ProjectTemplates\Trackable\TrackableWebApi.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
