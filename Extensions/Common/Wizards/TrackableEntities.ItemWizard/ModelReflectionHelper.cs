@@ -14,8 +14,6 @@ namespace TrackableEntities.ItemWizard
     {
         public static List<ModelTypeInfo> GetModelTypes(FileInfo assemblyLocation)
         {
-            var types = new List<ModelTypeInfo>();
-
             if (string.IsNullOrEmpty(assemblyLocation.Directory.FullName))
             {
                 throw new InvalidOperationException("Directory can't be null or empty.");
@@ -29,26 +27,19 @@ namespace TrackableEntities.ItemWizard
                    assemblyLocation.Directory.FullName));
             }
 
-            AppDomain childDomain = BuildChildDomain(
-                AppDomain.CurrentDomain);
+            AppDomain childDomain = BuildChildDomain(AppDomain.CurrentDomain);
 
             try
             {
                 Type loaderType = typeof(AssemblyLoader);
-                if (loaderType.Assembly != null)
-                {
-                    var loader =
-                        (AssemblyLoader)childDomain.
-                            CreateInstanceFrom(
-                            loaderType.Assembly.Location,
-                            loaderType.FullName).Unwrap();
+                var loader = (AssemblyLoader)childDomain.
+                        CreateInstanceFrom(
+                        loaderType.Assembly.Location,
+                        loaderType.FullName).Unwrap();
 
-                    loader.LoadAssembly(
-                        assemblyLocation.FullName);
-                    types =
-                        loader.GetModelTypeInfo(
-                        assemblyLocation.Directory.FullName);
-                }
+                loader.LoadAssembly(assemblyLocation.FullName);
+                var types = loader.GetModelTypeInfo(
+                    assemblyLocation.Directory.FullName);
                 return types;
             }
 
@@ -62,8 +53,7 @@ namespace TrackableEntities.ItemWizard
         {
             var evidence = new Evidence(parentDomain.Evidence);
             AppDomainSetup setup = parentDomain.SetupInformation;
-            return AppDomain.CreateDomain("DiscoveryRegion",
-                evidence, setup);
+            return AppDomain.CreateDomain("DiscoveryRegion", evidence, setup);
         }
 
         private static bool InheritsFrom(this Type type, Type comparedType)
@@ -86,16 +76,12 @@ namespace TrackableEntities.ItemWizard
         {
             internal List<ModelTypeInfo> GetModelTypeInfo(string path)
             {
-
                 var types = new List<ModelTypeInfo>();
 
                 var directory = new DirectoryInfo(path);
                 ResolveEventHandler resolveEventHandler =
-                    (s, e) =>
-                    {
-                        return OnReflectionOnlyResolve(
-                            e, directory);
-                    };
+                    (s, e) => OnReflectionOnlyResolve(
+                        e, directory);
 
                 AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve
                     += resolveEventHandler;
@@ -124,13 +110,11 @@ namespace TrackableEntities.ItemWizard
                 AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve
                     -= resolveEventHandler;
                 return types;
-
             }
 
             private Assembly OnReflectionOnlyResolve(
                 ResolveEventArgs args, DirectoryInfo directory)
             {
-
                 Assembly loadedAssembly =
                     AppDomain.CurrentDomain.ReflectionOnlyGetAssemblies()
                         .FirstOrDefault(
@@ -155,7 +139,7 @@ namespace TrackableEntities.ItemWizard
                 return Assembly.ReflectionOnlyLoad(args.Name);
             }
 
-            internal void LoadAssembly(String assemblyPath)
+            internal void LoadAssembly(string assemblyPath)
             {
                 try
                 {
