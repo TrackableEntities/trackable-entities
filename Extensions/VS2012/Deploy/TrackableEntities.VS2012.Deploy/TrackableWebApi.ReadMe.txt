@@ -4,9 +4,9 @@ This solution containts everything you need to create an ASP.NET Web API
 service that uses trackable entities. At this time only C# is supported
 using Visual Studio 2012 or 2013.
 
-NOTE: You must first install the Entity Framework Power Tools.
-These steps use a scaled down version of the Northwind database,
-which you can get here: http://bit.ly/northwindslim.
+NOTE: You must first install either the Entity Framework Power Tools,
+or the EF 6.1 Tools for Visual Studio. These steps use a scaled down version
+of the Northwind database, which you can get here: http://bit.ly/northwindslim.
 
 Before starting the client Console app, build the solution, then right-click 
 on the Web Api project and select View in Browser. This will start the service 
@@ -20,7 +20,7 @@ using the IIS Express web server.
    - Build the solution
 
 2. Copy the connection string from App.config in Service.Entities
-   - Past it into the connectionStrings section of the web.config
+   - Paste it into the connectionStrings section of the web.config
 	 file in the Service.WebApi project
 
 3. Add a new Web API controller using Entity Framework
@@ -33,39 +33,34 @@ using the IIS Express web server.
 	 > For Data context class: select NorthwindSlimContext
    - The code-generated API controller class is only slightly different
 	 than the standard version.
-	 > The Put action calls db.ApplyChanges, which applies entity state
+	 > The Put action calls _dbContext.ApplyChanges, which applies entity state
 	   from trackable entities in the Order's object graph. The updated 
 	   entity is returned so as to include a possible concurrency field.
 	 > The delete method has also been altered to accept an entity
 	   parameter and use it to create a dummy entity for deletion. There
-	   is a TODO item for setting the concurrency field if there is one.
+	   can be a TODO item for setting the concurrency field if there is one.
    - Modify the GetOrders method to include related OrderDetails and Products:
-		IEnumerable<Order> orders = await db.Orders.Include(o => o.Customer)
+		IEnumerable<Order> orders = await _dbContext.Orders.Include(o => o.Customer)
 			.Include("OrderDetails.Product")
 			.Where(o => o.CustomerId == customerId)
 			.ToListAsync();
 	 > Do the same for the GetOrder method:
-		Order order = await db.Orders.Include(o => o.Customer)
+		Order order = await _dbContext.Orders.Include(o => o.Customer)
 			.Include("OrderDetails.Product")
 			.SingleOrDefaultAsync(o => o.OrderId == id);
    - Add a GetOrders method that accepts a customerId:
 		// GET api/Orders?customerId=ABCD
 		public async Task<IEnumerable<Order>> GetOrders(string customerId)
 		{
-			IEnumerable<Order> orders = await db.Orders.Include(o => o.Customer)
+			IEnumerable<Order> orders = await _dbContext.Orders.Include(o => o.Customer)
 				.Include("OrderDetails.Product")
 				.Where(o => o.CustomerId == customerId)
 				.ToListAsync();
 			return orders;
 		}
-   - Add code to the PutOrder and PostOrder method for loading related entities:
-		// Load order details
-		ctx.LoadProperty(order, o => o.OrderDetails);
-		foreach (var detail in order.OrderDetails)
-			ctx.LoadProperty(detail, od => od.Product);
    - Add code to DeleteOrder to include order details:
 		// Include order details
-		Order order = db.Orders
+		Order order = _dbContext.Orders
 		.Include(o => o.OrderDetails)
 		.SingleOrDefaultAsync(o => o.OrderId == id);
 

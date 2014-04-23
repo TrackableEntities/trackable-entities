@@ -5,9 +5,9 @@ and Unit of Work patterns to abstract away the underlying data access
 technology.  This allows for greater flexibility and the ability to switch
 from one data provider to another without re-writing application code.
 
-NOTE: You must first install the Entity Framework Power Tools.
-These steps use a scaled down version of the Northwind database,
-which you can get here: http://bit.ly/northwindslim.
+NOTE: You must first install either the Entity Framework Power Tools,
+or the EF 6.1 Tools for Visual Studio. These steps use a scaled down version
+of the Northwind database, which you can get here: http://bit.ly/northwindslim.
 
 Before starting the client Console app, build the solution, then right-click 
 on the Web Api project and select View in Browser. This will start the service 
@@ -21,7 +21,7 @@ using the IIS Express web server.
    - Build the solution
 
 2. Copy the connection string from App.config in Service.Entities
-   - Past it into the connectionStrings section of the web.config
+   - Paste it into the connectionStrings section of the web.config
 	 file in the Service.WebApi project
 
 3. Add Repository Interfaces to the Service.Persistence project.
@@ -39,10 +39,6 @@ using the IIS Express web server.
 	   Task<IEnumerable<Order>> GetOrders(string customerId);
 	 > Add other entity repository interfaces as needed, for example:
 	   IOrderRepository
-	   If the entity has child entities, for example, Order has OrderDetails,
-	   then add two more methods for loading child entities:
-	   void LoadRelatedEntities(Order order);
-	   void LoadEntitiesOnAddedDetails(Order order);
 
 4. Add Unit of Work Interfaces to the Service.Persistence project.
    - Right-click the UnitsOfWork folder, Add New Item, Trackable category,
@@ -52,7 +48,7 @@ using the IIS Express web server.
 	   ICustomerRepository CustomerRepository { get; }
 	   IOrderRepository OrderRepository { get; }
 	   - NOTE: You will need to resolve namespaces for the Entity Repository Interfaces
-		 by adding the required using directive.
+		 by adding the required using directives.
 
 5. Add a Database Context Interface to the Service.EF project
    - Right-click the Contexts folder, Add New Item, Trackable category,
@@ -73,6 +69,9 @@ using the IIS Express web server.
 	   Service.EF project
 	   - NOTE: You will need to resolve namespaces for the entity classes by adding the 
 		 required using directive.
+   - You should also move classes from the Mapping folder in the Service.Entities project
+     over to the Mapping folder in the Service.EF project.
+	 > Remember to remove mapping classes altogether from the Service.Entities project.
    - Next, modify the DbContext class to implement the Database Context Interface you just added,
 	 for example: public partial class NorthwindSlimContext : DbContext, INorthwindSlimContext
 	 > Then change each DbSet property to IDbSet, so that interface is implemented
@@ -94,8 +93,6 @@ using the IIS Express web server.
 	   replacing the Data Context Interface as before
 	 > Implement other methods defined on the IOrderRepository interface:
 	   public Task<IEnumerable<Order>> GetOrders(string customerId)
-	   public void LoadRelatedEntities(Order order)
-	   public void LoadEntitiesOnAddedDetails(Order order)
 	 > Add Include statements as needed to the Get methods for including child entities:
 
 		public async Task<IEnumerable<Order>> GetOrders()
@@ -126,34 +123,6 @@ using the IIS Express web server.
 			return order;
 		}
 
-	 > If the entity has child entities, remove them in the Delete method.
-	   For example, paste tis code in the DeleteOrder method:
-
-		foreach (var detail in entity.OrderDetails)
-		{
-			_context.OrderDetails.Attach(detail);
-			_context.OrderDetails.Remove(detail);
-		}
-
-	 > Lastly, implement methods to load related entities if needed, for example:
-	   
-		public void LoadRelatedEntities(Order order)
-		{
-			var ctx = ((IObjectContextAdapter)_context).ObjectContext;
-			ctx.LoadProperty(order, o => o.Customer);
-			ctx.LoadProperty(order, o => o.OrderDetails);
-			foreach (var detail in order.OrderDetails)
-				ctx.LoadProperty(detail, od => od.Product);
-		}
-
-		public void LoadEntitiesOnAddedDetails(Order order)
-		{
-			var ctx = ((IObjectContextAdapter)_context).ObjectContext;
-			ctx.LoadProperty(order, o => o.Customer);
-			foreach (var detail in order.OrderDetails)
-				ctx.LoadProperty(detail, od => od.Product);
-		}
-
    - Build the solution to make sure everything compiles
 
 7. Add a Unit of Work class to the Service.EF project
@@ -168,7 +137,7 @@ using the IIS Express web server.
 	 > Then add repository interface parameters for each field you added,
 	   for example: IProductRepository productRepository
 	 > Initialize each entity repository field using the ctor parameters,
-	   for example: _productRepository = productRepository;
+	   for example:
 
 		private readonly ICustomerRepository _customerRepository;
 		private readonly IOrderRepository _orderRepository;
@@ -224,17 +193,11 @@ using the IIS Express web server.
 		return Ok(orders);
 	}
 
-   - If the entity has child entities, in the controller Post method add a line of
-	 code after calling entity.AcceptChanges, to load related entities from the
+   - If the entity has child entities, in the controller Post and Put methods add a line of
+	 code before calling entity.AcceptChanges, to load related entities from the
 	 repository that hangs off the unit of work.  For example:
 
-	_unitOfWork.OrderRepository.LoadRelatedEntities(entity);
-
-   - If the entity has child entities, in the controller Put method add a line of
-	 code after calling entity.AcceptChanges, to load entities on added details from
-	 the repository that hangs off the unit of work.  For example:
-
-	_unitOfWork.OrderRepository.LoadEntitiesOnAddedDetails(entity);
+	_unitOfWork.OrderRepository.LoadRelatedEntitiesAsync(entity);
 
    - Build the solution to make sure everything compiles
 

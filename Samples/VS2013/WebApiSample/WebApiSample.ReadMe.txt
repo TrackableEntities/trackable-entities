@@ -4,10 +4,9 @@ This sample demonstrates how to create an ASP.NET Web API service
 that uses trackable entities. At this time only C# is supported
 using Visual Studio 2012 or 2013.
 
-NOTE: You must first install either the Entity Framework Power Tools:
-http://visualstudiogallery.msdn.microsoft.com/72a60b14-1581-4b9b-89f2-846072eff19d,
-or Entity Framework 6.1.0 Tools for Visual Studio 2012 & 2013:
-http://www.microsoft.com/en-us/download/details.aspx?id=40762.
+NOTE: You must first install either the Entity Framework Power Tools,
+or the EF 6.1 Tools for Visual Studio. These steps use a scaled down version
+of the Northwind database, which you can get here: http://bit.ly/northwindslim.
 
 By default LocalDb is used and the NorthwindSlim databased is
 created and seeded with a small amount of data when you first
@@ -55,8 +54,8 @@ To replicate this sample follow these steps:
 	   entity state from trackable entities in the Order's object graph. The updated 
 	   entity is returned so as to include database-generated values, such as
 	   identity or concurrency fields.
-     > The Delete action has a TODO item for inserting one or more Include statements
-	   to retrieve child entities.
+     > The Delete action can include a TODO item for inserting one or more Include
+	   statements to retrieve child entities.
 	 > If the entity has a concurrency field, you should pass it into the Delete
 	   action to support concurency checks.
    - Modify the GetOrders method to include related OrderDetails and Products:

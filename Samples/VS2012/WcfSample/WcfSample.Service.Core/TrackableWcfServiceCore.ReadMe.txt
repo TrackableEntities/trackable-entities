@@ -1,6 +1,7 @@
 Trackable WCF Service Core ReadMe
 
-NOTE: You must first install the Entity Framework Power Tools.
+NOTE: You must first install the Entity Framework Power Tools,
+or the EF 6.1 Tools for Visual Studio.
 
 This project consists of a class library containing WCF service
 contracts and types.
