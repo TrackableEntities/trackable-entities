@@ -21,12 +21,13 @@ namespace TrackableEntities.ItemWizard
             // Get referenced types
             var dte2 = (DTE2)automationObject;
             List<ModelTypeInfo> modelTypes = GetReferencedTypes(dte2).ToList();
+            const string noEntitiesMessage = "Referenced projects do not contain any {0}." +
+                    "\r\nAdd service entities by reverse engineering Code First classes from an existing database, then re-build the solution.";
 
             // Check for trackable entities in referenced projects
             if (modelTypes.Count(t => t.ModelType == ModelType.Trackable) == 0)
             {
-                MessageBox.Show("Referenced projects do not contain any trackable entities." +
-                    "\r\nAdd service entities using EF Power Tools then build the solution.",
+                MessageBox.Show(string.Format(noEntitiesMessage, "Trackable model classes"),
                     "Trackable Entities Not Found");
                 throw new WizardBackoutException();
             }
@@ -34,8 +35,7 @@ namespace TrackableEntities.ItemWizard
             // Check for DbContext types in referenced projects
             if (getDbContextName && modelTypes.Count(t => t.ModelType == ModelType.DbContext) == 0)
             {
-                MessageBox.Show("Referenced projects do not contain any DbContext classes." +
-                    "\r\nAdd service entities using EF Power Tools then build the solution.",
+                MessageBox.Show(string.Format(noEntitiesMessage, "DbContext classes"),
                     "DbContext Class Not Found");
                 throw new WizardBackoutException();
             }

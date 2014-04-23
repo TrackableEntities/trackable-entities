@@ -12,9 +12,9 @@ namespace TrackableEntities.ItemWizard
         {
             // Add custom parameters
             WizardHelper.AddCustomParameters(automationObject, replacementsDictionary,
-                "Entity Repository Class",
-                "Add an Entity Repository Class to the Trackable Service.EF project.",
-                false);
+                Dialogs.EntityRepoClass.Title,
+                Dialogs.EntityRepoClass.Message,
+                Dialogs.EntityRepoClass.GetDbContextName);
         }
 
         public void BeforeOpeningFile(ProjectItem projectItem)

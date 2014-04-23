@@ -12,9 +12,9 @@ namespace TrackableEntities.ItemWizard
         {
             // Add custom parameters
             WizardHelper.AddCustomParameters(automationObject, replacementsDictionary,
-                "Entity Repository Interface",
-                "Add an Entity Repository Interface to the Trackable Service.Persistence project.",
-                false);
+                Dialogs.EntityRepoInterface.Title,
+                Dialogs.EntityRepoInterface.Message,
+                Dialogs.EntityRepoInterface.GetDbContextName);
         }
 
         public void BeforeOpeningFile(ProjectItem projectItem)

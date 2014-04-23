@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dialogs.cs" />
     <Compile Include="EntityControllerWizard.cs" />
     <Compile Include="EntityRepoClassWizard.cs" />
     <Compile Include="EntityRepoInterfaceWizard.cs" />

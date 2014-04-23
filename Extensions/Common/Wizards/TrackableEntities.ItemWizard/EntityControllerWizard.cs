@@ -12,9 +12,9 @@ namespace TrackableEntities.ItemWizard
         {
             // Add custom parameters
             WizardHelper.AddCustomParameters(automationObject, replacementsDictionary,
-                "Entity API Controller",
-                "Add an Entity API Controller to the Trackable WebApi project.",
-                false);
+                Dialogs.EntityController.Title,
+                Dialogs.EntityController.Message,
+                Dialogs.EntityController.GetDbContextName);
         }
 
         public void BeforeOpeningFile(ProjectItem projectItem)

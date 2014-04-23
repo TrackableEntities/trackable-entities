@@ -12,9 +12,9 @@ namespace TrackableEntities.ItemWizard
         {
             // Add custom parameters
             WizardHelper.AddCustomParameters(automationObject, replacementsDictionary,
-                "Trackable WCF Service Type",
-                "Add WCF service contract and type with CRUD operations using Trackable Entities.", 
-                true);
+                Dialogs.WcfServiceType.Title,
+                Dialogs.WcfServiceType.Message, 
+                Dialogs.WcfServiceType.GetDbContextName);
         }
 
         public void BeforeOpeningFile(ProjectItem projectItem)
