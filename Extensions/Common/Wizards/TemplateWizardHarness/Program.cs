@@ -81,8 +81,10 @@ namespace TemplateWizardHarness
 
         static List<ModelTypeInfo> GetModelTypes()
         {
-            Assembly assembly = Assembly.Load("TemplateWizard.Service.Entities");
-            return ModelReflectionHelper.GetModelTypes(new FileInfo(assembly.Location));
+            const string entitiesAsmName = "TemplateWizard.Service.Entities.dll";
+            var dirName = new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName;
+            string asmLocation = Path.Combine(dirName, entitiesAsmName);
+            return ModelReflectionHelper.GetModelTypes(new FileInfo(asmLocation));
         }
     }
 }
