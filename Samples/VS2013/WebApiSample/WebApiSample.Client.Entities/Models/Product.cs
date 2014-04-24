@@ -104,6 +104,7 @@ namespace WebApiSample.Client.Entities.Models
 				_Category = value;
 				CategoryChangeTracker = _Category == null ? null
 					: new ChangeTrackingCollection<Category> { _Category };
+				NotifyPropertyChanged(m => m.Category);
 			}
 		}
 		private Category _Category;

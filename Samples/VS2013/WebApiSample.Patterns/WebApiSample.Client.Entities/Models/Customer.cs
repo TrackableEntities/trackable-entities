@@ -91,6 +91,7 @@ namespace WebApiSample.Client.Entities.Models
 				_CustomerSetting = value;
 				CustomerSettingChangeTracker = _CustomerSetting == null ? null
 					: new ChangeTrackingCollection<CustomerSetting> { _CustomerSetting };
+				NotifyPropertyChanged(m => m.CustomerSetting);
 			}
 		}
 		private CustomerSetting _CustomerSetting;

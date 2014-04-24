@@ -108,6 +108,7 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 				_<#= code.Escape(navProperty) #> = value;
 				<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>ChangeTracker = _<#= code.Escape(navProperty) #> == null ? null
 					: new ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> { _<#= code.Escape(navProperty) #> };
+				NotifyPropertyChanged(m => m.<#= code.Escape(navProperty) #>);
 			}
 		}
 		private <#= code.Escape(navProperty.ToEndMember.GetEntityType()) #> _<#= code.Escape(navProperty) #>;

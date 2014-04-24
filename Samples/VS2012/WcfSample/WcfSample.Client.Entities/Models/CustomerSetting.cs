@@ -47,6 +47,7 @@ namespace WcfSample.Client.Entities.Models
 				_Customer = value;
 				CustomerChangeTracker = _Customer == null ? null
 					: new ChangeTrackingCollection<Customer> { _Customer };
+				NotifyPropertyChanged(m => m.Customer);
 			}
 		}
 		private Customer _Customer;

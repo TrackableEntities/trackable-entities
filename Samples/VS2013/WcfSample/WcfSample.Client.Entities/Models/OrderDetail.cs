@@ -99,6 +99,7 @@ namespace WcfSample.Client.Entities.Models
 				_Order = value;
 				OrderChangeTracker = _Order == null ? null
 					: new ChangeTrackingCollection<Order> { _Order };
+				NotifyPropertyChanged(m => m.Order);
 			}
 		}
 		private Order _Order;
@@ -114,6 +115,7 @@ namespace WcfSample.Client.Entities.Models
 				_Product = value;
 				ProductChangeTracker = _Product == null ? null
 					: new ChangeTrackingCollection<Product> { _Product };
+				NotifyPropertyChanged(m => m.Product);
 			}
 		}
 		private Product _Product;

@@ -21,7 +21,7 @@
    - Client T4 code-generation templates have been updated to support change-tracking of reference properties.
    - Both client and service T4 templates have been updated to support correlation of entities with an entity identifier for merging changes after performing updates.
    - Web API controller and WCF service type templates have been updated to call LoadRelatedEntities on Create and Update operations, and to call ApplyChanges on Create, Update and Delete operations.
-   - All samples have been updated.
+   - All samples have been updated. A WebApi.Relations sample has been added to demonstrate how to use the change tracking API for updates to 1-1, M-1, and M-M relationships.
 7. Miscellaneous Issues
    - An ExcludedProperties member has been added to the change tracker so that changes to specified properties will not result in an entity being marked as Modified.
    - Overloads have been added to ApplyChanges and other methods accepting multiple entities.
