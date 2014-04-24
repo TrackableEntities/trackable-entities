@@ -789,6 +789,25 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Test]
+        public void Existing_Order_With_Assigned_Customer_Should_Mark_Customer_As_Modified()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var customer = database.Customers[5];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            order.Customer = customer;
+
+            // Act
+            order.Customer.CustomerName = "xxx";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
+            Assert.AreEqual(TrackingState.Modified, order.Customer.TrackingState);
+            Assert.IsTrue(order.HasChanges());
+        }
+
+        [Test]
         public void Existing_Order_With_Modified_Customer_Should_Mark_Customer_As_Modified()
         {
             // Arrange
@@ -1460,6 +1479,29 @@ namespace TrackableEntities.Client.Tests
             };
             customer.CustomerSetting = customerSetting;
             var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+            customer.CustomerSetting.Setting = "xxx";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.AreEqual(TrackingState.Modified, customerSetting.TrackingState);
+        }
+
+        [Test]
+        public void Existing_Customer_With_Assigned_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Modified()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
+            var customerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+            customer.CustomerSetting = customerSetting; // will be tracked
 
             // Act
             customer.CustomerSetting.Setting = "xxx";
