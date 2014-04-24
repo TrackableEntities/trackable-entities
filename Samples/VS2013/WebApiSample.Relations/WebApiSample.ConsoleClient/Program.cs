@@ -22,15 +22,21 @@ namespace WebApiSample.Client.ConsoleApp
 
             // Perform updates on a 1-1 property
             Console.WriteLine("\nPART A: One-to-One Relation: Customer.CustomerSetting");
-            Console.WriteLine("Update 1-1 relation property? {Y/N}");
+            Console.WriteLine("Update 1-1 relation? {Y/N}");
             if (Console.ReadLine().ToUpper() == "Y")
                 OneToOneRelation(client);
 
             // Perform updates on a M-1 property
             Console.WriteLine("\nPART B: Many-to-One Relation: Order.Customer");
-            Console.WriteLine("Update M-1 relation property? {Y/N}");
+            Console.WriteLine("Update M-1 relation? {Y/N}");
             if (Console.ReadLine().ToUpper() == "Y")
                 ManyToOneRelation(client);
+
+            // Perform updates on a M-M property
+            Console.WriteLine("\nPART C: Many-to-Many Relation: Employee.Territories");
+            Console.WriteLine("Update M-M relation? {Y/N}");
+            if (Console.ReadLine().ToUpper() == "Y")
+                ManyToManyRelation(client);
 
             // Keep console open
             Console.WriteLine("Press any key to exit");
@@ -140,7 +146,7 @@ namespace WebApiSample.Client.ConsoleApp
             Console.ReadLine();
 
             // Create a new customer
-            // NOTE: To add a M-1 property, you must manually mark it as Added.
+            // NOTE: Marking customer as Added will create a NEW customer
             const string customerId = "WXYZ";
             var customer = new Customer
             {
@@ -156,8 +162,7 @@ namespace WebApiSample.Client.ConsoleApp
 
             // Update order, then accept changes
             updatedOrder = UpdateTEntity(client, order);
-            var updatedCustomer = GetEntity<Customer, string>(client, customerId);
-            Console.WriteLine("\tOrder's customer added: {0}", updatedCustomer != null);
+            Console.WriteLine("\tOrder's customer added: {0}", updatedOrder.Customer != null);
             order.AcceptChanges();
             PrintOrder(order);
             PrintCustomer(order.Customer);
@@ -170,7 +175,7 @@ namespace WebApiSample.Client.ConsoleApp
 
             // Update order, then accept changes
             UpdateTEntity(client, order);
-            updatedCustomer = GetEntity<Customer, string>(client, customerId);
+            var updatedCustomer = GetEntity<Customer, string>(client, customerId);
             Console.WriteLine("\tOrder customer's name modified: {0}",
                 updatedCustomer.CompanyName == newCompanyName);
             customer.AcceptChanges();
@@ -193,6 +198,66 @@ namespace WebApiSample.Client.ConsoleApp
             Console.WriteLine(customerDeleted ?
                 "Customer was successfully deleted" :
                 "Customer was NOT deleted");
+        }
+
+        private static void ManyToManyRelation(HttpClient client)
+        {
+            Console.WriteLine("\nPress Enter to create a new employee existing territory");
+            Console.ReadLine();
+
+            // Get existing territories
+            var territory1 = GetEntity<Territory, string>(client, "01581");
+            var territory2 = GetEntity<Territory, string>(client, "01730");
+            var territory3 = GetEntity<Territory, string>(client, "01833");
+
+            // Create a new employee
+            var employee = new Employee
+            {
+                LastName = "Smith",
+                FirstName = "John",
+                BirthDate = DateTime.Parse("1979-12-09"),
+                HireDate = DateTime.Parse("2001-05-01"),
+                City = "Dallas",
+                Country = "USA",
+                Territories = new ChangeTrackingCollection<Territory>
+                    {territory1, territory2, territory3}
+            };
+
+            // Add to change tracker to mark as Added
+            var employeeChangeTracker = new ChangeTrackingCollection<Employee>(true) { employee };
+
+            // Insert employee and merge
+            Employee updatedEmployee = CreateEntity(client, employee);
+            employeeChangeTracker.MergeChanges(updatedEmployee);
+            PrintEmployee(employee);
+
+            Console.WriteLine("\nPress Enter to modify, add and remove territories");
+            Console.ReadLine();
+
+            // Modify territory, remove territory, add existing territory
+            var territory4 = GetEntity<Territory, string>(client, "02116");
+            employee.Territories[1].TerritoryDescription += " - Changed";
+            employee.Territories.RemoveAt(2);
+            employee.Territories.Add(territory4);
+
+            // Update employee, then merge changes
+            updatedEmployee = UpdateTEntity(client, employee);
+            employeeChangeTracker.MergeChanges(updatedEmployee);
+            PrintEmployee(employee);
+
+            // Delete the order and customer
+            Console.WriteLine("\nPress Enter to delete the employee without deleting territories");
+            Console.ReadLine();
+
+            // Delete order and verify
+            DeleteTEntity<Employee, int>(client, employee.EmployeeId);
+            var employeeDeleted = VerifyEntityDeleted<Employee, int>(client, employee.EmployeeId);
+            Console.WriteLine(employeeDeleted ?
+                "Employee was successfully deleted" :
+                "Employee was NOT deleted");
+            var removedTerritory = GetEntity<Territory, string>(client, "01833");
+            Console.WriteLine("Removed territory '01833' still exists: {0}",
+                removedTerritory != null);
         }
 
         #region Helper Methods
@@ -263,6 +328,22 @@ namespace WebApiSample.Client.ConsoleApp
             Console.WriteLine("\t{0} {1}",
                 o.OrderId,
                 o.OrderDate.GetValueOrDefault().ToShortDateString());
+        }
+
+        private static void PrintEmployee(Employee e)
+        {
+            Console.WriteLine("\t{0} {1} {2} {3} {4}",
+                e.EmployeeId,
+                e.FirstName,
+                e.LastName,
+                e.BirthDate.Value.ToShortDateString(),
+                e.HireDate.Value.ToShortDateString());
+            foreach (var t in e.Territories)
+            {
+                Console.WriteLine("\t\t{0} {1}",
+                    t.TerritoryId,
+                    t.TerritoryDescription);
+            }
         }
 
         #endregion
