@@ -13,8 +13,6 @@ created and seeded with a small amount of data when you first
 run the WebApi service. Optionally, you can use SQL Express (or
 another edition), create NorthwindSlim manually and run the
 SQL script in the Data folder to create and populate the tables.
-You can also find the NorthwindSlim.sql script here:
-http://bit.ly/northwindslim.
 
 Before starting the client Console app, build the solution, then
 right-click on the Web Api project and select View in Browser.

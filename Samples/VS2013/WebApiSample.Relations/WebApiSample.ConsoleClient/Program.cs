@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using TrackableEntities;
 using TrackableEntities.Client;
+using TrackableEntities.Common;
 using WebApiSample.Client.Entities.Models;
 
 namespace WebApiSample.Client.ConsoleApp
@@ -15,158 +17,232 @@ namespace WebApiSample.Client.ConsoleApp
             Console.ReadLine();
 
             // TODO: Address for Web API service (replace port number)
-            const string serviceBaseAddress = "http://localhost:" + "58527" + "/";
+            const string serviceBaseAddress = "http://localhost:" + "58540" + "/";
             var client = new HttpClient { BaseAddress = new Uri(serviceBaseAddress) };
 
-            // Get customers
-            Console.WriteLine("Customers:");
-            IEnumerable<Customer> customers = GetCustomers(client);
-            if (customers == null) return;
-            foreach (var c in customers)
-                PrintCustomer(c);
+            // Perform updates on a 1-1 property
+            Console.WriteLine("\nPART A: One-to-One Relation: Customer.CustomerSetting");
+            Console.WriteLine("Update 1-1 relation property? {Y/N}");
+            if (Console.ReadLine().ToUpper() == "Y")
+                OneToOneRelation(client);
 
-            // Get orders for a customer
-            Console.WriteLine("\nGet customer orders {CustomerId}:");
-            string customerId = Console.ReadLine();
-            if (!customers.Any(c => string.Equals(c.CustomerId, customerId, StringComparison.OrdinalIgnoreCase)))
-            {
-                Console.WriteLine("Invalid customer id: {0}", customerId.ToUpper());
-                return;
-            }
-            IEnumerable<Order> orders = GetCustomerOrders(client, customerId);
-            foreach (var o in orders)
-                PrintOrder(o);
-
-            // Get an order
-            Console.WriteLine("\nGet an order {OrderId}:");
-            int orderId = int.Parse(Console.ReadLine());
-            if (!orders.Any(o => o.OrderId == orderId))
-            {
-                Console.WriteLine("Invalid order id: {0}", orderId);
-                return;
-            }
-            Order order = GetOrder(client, orderId);
-            PrintOrderWithDetails(order);
-
-            // Create a new order
-            Console.WriteLine("\nPress Enter to create a new order for {0}",
-                customerId.ToUpper());
-            Console.ReadLine();
-
-            var newOrder = new Order
-            {
-                CustomerId = customerId,
-                OrderDate = DateTime.Today,
-                ShippedDate = DateTime.Today.AddDays(1),
-                OrderDetails = new ChangeTrackingCollection<OrderDetail>
-                    {
-                        new OrderDetail { ProductId = 1, Quantity = 5, UnitPrice = 10 },
-                        new OrderDetail { ProductId = 2, Quantity = 10, UnitPrice = 20 },
-                        new OrderDetail { ProductId = 4, Quantity = 40, UnitPrice = 40 }
-                    }
-            };
-            var createdOrder = CreateOrder(client, newOrder);
-            PrintOrderWithDetails(createdOrder);
-
-            // Update the order
-            Console.WriteLine("\nPress Enter to update order details");
-            Console.ReadLine();
-
-            // Start change-tracking the order
-            var changeTracker = new ChangeTrackingCollection<Order>(createdOrder);
-
-            // Modify order details
-            createdOrder.OrderDetails[0].UnitPrice++;
-            createdOrder.OrderDetails.RemoveAt(1);
-            createdOrder.OrderDetails.Add(new OrderDetail
-            {
-                OrderId = createdOrder.OrderId,
-                ProductId = 3,
-                Quantity = 15,
-                UnitPrice = 30
-            });
-
-            // Submit changes
-            var changedOrder = changeTracker.GetChanges().SingleOrDefault();
-            var updatedOrder = UpdateOrder(client, changedOrder);
-
-            // Merge changes
-            changeTracker.MergeChanges(updatedOrder);
-            Console.WriteLine("Updated order:");
-            PrintOrderWithDetails(createdOrder);
-
-            // Delete the order
-            Console.WriteLine("\nPress Enter to delete the order");
-            Console.ReadLine();
-            DeleteOrder(client, createdOrder);
-
-            // Verify order was deleted
-            var deleted = VerifyOrderDeleted(client, createdOrder.OrderId);
-            Console.WriteLine(deleted ?
-                "Order was successfully deleted" :
-                "Order was not deleted");
+            // Perform updates on a M-1 property
+            Console.WriteLine("\nPART B: Many-to-One Relation: Order.Customer");
+            Console.WriteLine("Update M-1 relation property? {Y/N}");
+            if (Console.ReadLine().ToUpper() == "Y")
+                ManyToOneRelation(client);
 
             // Keep console open
             Console.WriteLine("Press any key to exit");
             Console.ReadKey(true);
         }
 
-        private static IEnumerable<Customer> GetCustomers(HttpClient client)
+        private static void OneToOneRelation(HttpClient client)
         {
-            const string request = "api/Customer";
+            Console.WriteLine("\nPress Enter to create a new customer");
+            Console.ReadLine();
+
+            // Create a new customer
+            var customer = new Customer
+            {
+                CustomerId = "ABCDE",
+                CompanyName = "Acme Company",
+                ContactName = "John Doe",
+                City = "Dallas",
+                Country = "USA"
+            };
+
+            // Add to change tracker to mark as Added
+            var customerChangeTracker = new ChangeTrackingCollection<Customer>(true) { customer };
+
+            // Insert customer and merge
+            Customer updatedCustomer = CreateEntity(client, customer);
+            customerChangeTracker.MergeChanges(updatedCustomer);
+            PrintCustomer(customer);
+
+            Console.WriteLine("\nPress Enter to add a new setting");
+            Console.ReadLine();
+
+            // Add a new customer setting
+            // NOTE: To add a 1-1 property, you must manually mark it as Added. 
+            customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = " Test Setting",
+                TrackingState = TrackingState.Added // Mark as added
+            };
+
+            // Update customer, then accept changes
+            updatedCustomer = UpdateTEntity(client, customer);
+            Console.WriteLine("\tCustomer setting added: {0}",
+                updatedCustomer.CustomerSetting != null);
+            customer.AcceptChanges();
+            PrintCustomer(customer);
+
+            // Add new customer setting
+            Console.WriteLine("\nPress Enter to modify the setting");
+            Console.ReadLine();
+
+            // Modify customer setting
+            var newSetting = customer.CustomerSetting.Setting += " - Changed";
+
+            // Update customer, then accept changes
+            updatedCustomer = UpdateTEntity(client, customer);
+            Console.WriteLine("\tCustomer setting modified: {0}", 
+                updatedCustomer.CustomerSetting.Setting == newSetting);
+            customer.AcceptChanges();
+            PrintCustomer(customer);
+
+            // Remove existing customer setting
+            Console.WriteLine("\nPress Enter to remove the existing setting");
+            Console.ReadLine();
+
+            // Delete existing customer setting
+            // NOTE: To remove a 1-1 property, you must manually mark it as Deleted. 
+            customer.CustomerSetting.TrackingState = TrackingState.Deleted;
+
+            // Update customer, then set 1-1 property to null
+            updatedCustomer = UpdateTEntity(client, customer);
+            Console.WriteLine("\tCustomer setting removed: {0}",
+                updatedCustomer.CustomerSetting == null);
+            customer.CustomerSetting = null;
+            PrintCustomer(customer);
+
+            // Delete the customer
+            Console.WriteLine("\nPress Enter to delete the customer");
+            Console.ReadLine();
+            DeleteTEntity<Customer, string>(client, customer.CustomerId);
+
+            // Verify order was deleted
+            var deleted = VerifyEntityDeleted<Customer, string>(client, customer.CustomerId);
+            Console.WriteLine(deleted ?
+                "Customer was successfully deleted" :
+                "Customer was NOT deleted");
+        }
+
+        private static void ManyToOneRelation(HttpClient client)
+        {
+            Console.WriteLine("\nPress Enter to create a new order for an existing customer");
+            Console.ReadLine();
+
+            // Create a new order for an existing customer
+            var order = new Order {CustomerId = "ALFKI", OrderDate = DateTime.Today, ShippedDate = DateTime.Today.AddDays(1)};
+
+            // Add to change tracker to mark as Added
+            var orderChangeTracker = new ChangeTrackingCollection<Order>(true) {order};
+
+            // Insert order and merge
+            Order updatedOrder = CreateEntity(client, order);
+            orderChangeTracker.MergeChanges(updatedOrder);
+            PrintOrder(order);
+
+            Console.WriteLine("\nPress Enter to add a new customer to the order");
+            Console.ReadLine();
+
+            // Create a new customer
+            // NOTE: To add a M-1 property, you must manually mark it as Added.
+            const string customerId = "WXYZ";
+            var customer = new Customer
+            {
+                CustomerId = customerId,
+                CompanyName = "Widget Company",
+                ContactName = "Jane Doe",
+                City = "New York",
+                Country = "USA",
+                TrackingState = TrackingState.Added // Mark as added
+            };
+            order.Customer = customer; // new customer will be created
+            order.CustomerId = customerId; // cust will be assigned to order
+
+            // Update order, then accept changes
+            updatedOrder = UpdateTEntity(client, order);
+            var updatedCustomer = GetEntity<Customer, string>(client, customerId);
+            Console.WriteLine("\tOrder's customer added: {0}", updatedCustomer != null);
+            order.AcceptChanges();
+            PrintOrder(order);
+            PrintCustomer(order.Customer);
+
+            Console.WriteLine("\nPress Enter to modify order's customer");
+            Console.ReadLine();
+
+            // Modify order customer
+            var newCompanyName = order.Customer.CompanyName += " - Changed";
+
+            // Update order, then accept changes
+            UpdateTEntity(client, order);
+            updatedCustomer = GetEntity<Customer, string>(client, customerId);
+            Console.WriteLine("\tOrder customer's name modified: {0}",
+                updatedCustomer.CompanyName == newCompanyName);
+            customer.AcceptChanges();
+            PrintCustomer(customer);
+
+            // Delete the order and customer
+            Console.WriteLine("\nPress Enter to delete the order and customer");
+            Console.ReadLine();
+
+            // Delete order and verify
+            DeleteTEntity<Order, int>(client, order.OrderId);
+            var orderDeleted = VerifyEntityDeleted<Order, int>(client, order.OrderId);
+            Console.WriteLine(orderDeleted ?
+                "Order was successfully deleted" :
+                "Order was NOT deleted");
+
+            // Delete order and verify
+            DeleteTEntity<Customer, string>(client, customer.CustomerId);
+            var customerDeleted = VerifyEntityDeleted<Customer, string>(client, customer.CustomerId);
+            Console.WriteLine(customerDeleted ?
+                "Customer was successfully deleted" :
+                "Customer was NOT deleted");
+        }
+
+        #region Helper Methods
+
+        private static IEnumerable<TEntity> GetEntities<TEntity>(HttpClient client)
+        {
+            string request = string.Format("api/{0}", typeof(TEntity).Name);
             var response = client.GetAsync(request).Result;
             response.EnsureSuccessStatusCode();
-            var result = response.Content.ReadAsAsync<IEnumerable<Customer>>().Result;
+            var result = response.Content.ReadAsAsync<IEnumerable<TEntity>>().Result;
             return result;
         }
 
-        private static IEnumerable<Order> GetCustomerOrders
-            (HttpClient client, string customerId)
+        private static TEntity GetEntity<TEntity, TKey>(HttpClient client, TKey id)
         {
-            string request = "api/Order?customerId=" + customerId;
+            string request = string.Format("api/{0}/{1}", typeof(TEntity).Name, id);
             var response = client.GetAsync(request).Result;
             response.EnsureSuccessStatusCode();
-            var result = response.Content.ReadAsAsync<IEnumerable<Order>>().Result;
+            var result = response.Content.ReadAsAsync<TEntity>().Result;
             return result;
         }
 
-        private static Order GetOrder(HttpClient client, int orderId)
+        private static TEntity CreateEntity<TEntity>(HttpClient client, TEntity entity)
         {
-            string request = "api/Order/" + orderId;
-            var response = client.GetAsync(request).Result;
+            string request = string.Format("api/{0}", typeof(TEntity).Name);
+            var response = client.PostAsJsonAsync(request, entity).Result;
             response.EnsureSuccessStatusCode();
-            var result = response.Content.ReadAsAsync<Order>().Result;
+            var result = response.Content.ReadAsAsync<TEntity>().Result;
             return result;
         }
 
-        private static Order CreateOrder(HttpClient client, Order order)
+        private static TEntity UpdateTEntity<TEntity>(HttpClient client, TEntity entity)
         {
-            string request = "api/Order";
-            var response = client.PostAsJsonAsync(request, order).Result;
+            string request = string.Format("api/{0}", typeof(TEntity).Name);
+            var response = client.PutAsJsonAsync(request, entity).Result;
             response.EnsureSuccessStatusCode();
-            var result = response.Content.ReadAsAsync<Order>().Result;
+            var result = response.Content.ReadAsAsync<TEntity>().Result;
             return result;
         }
 
-        private static Order UpdateOrder(HttpClient client, Order order)
+        private static void DeleteTEntity<TEntity, TKey>(HttpClient client, TKey id)
         {
-            string request = "api/Order";
-            var response = client.PutAsJsonAsync(request, order).Result;
-            response.EnsureSuccessStatusCode();
-            var result = response.Content.ReadAsAsync<Order>().Result;
-            return result;
-        }
-
-        private static void DeleteOrder(HttpClient client, Order order)
-        {
-            string request = "api/Order/" + order.OrderId;
+            string request = string.Format("api/{0}/{1}", typeof(TEntity).Name, id);
             var response = client.DeleteAsync(request);
             response.Result.EnsureSuccessStatusCode();
         }
 
-        private static bool VerifyOrderDeleted(HttpClient client, int orderId)
+        private static bool VerifyEntityDeleted<TEntity, TKey>(HttpClient client, TKey id)
         {
-            string request = "api/Order/" + orderId;
+            string request = string.Format("api/{0}/{1}", typeof(TEntity).Name, id);
             var response = client.GetAsync(request).Result;
             if (response.IsSuccessStatusCode) return false;
             return true;
@@ -174,33 +250,21 @@ namespace WebApiSample.Client.ConsoleApp
 
         private static void PrintCustomer(Customer c)
         {
-            Console.WriteLine("{0} {1} {2} {3}",
+            Console.WriteLine("\t{0} {1} {2} {3} {4}",
                 c.CustomerId,
                 c.CompanyName,
                 c.ContactName,
-                c.City);
+                c.City,
+                c.CustomerSetting != null ? c.CustomerSetting.Setting : string.Empty);
         }
 
         private static void PrintOrder(Order o)
         {
-            Console.WriteLine("{0} {1}",
+            Console.WriteLine("\t{0} {1}",
                 o.OrderId,
                 o.OrderDate.GetValueOrDefault().ToShortDateString());
         }
 
-        private static void PrintOrderWithDetails(Order o)
-        {
-            Console.WriteLine("{0} {1}",
-                o.OrderId,
-                o.OrderDate.GetValueOrDefault().ToShortDateString());
-            foreach (var od in o.OrderDetails)
-            {
-                Console.WriteLine("\t{0} {1} {2} {3}",
-                    od.OrderDetailId,
-                    od.Product.ProductName,
-                    od.Quantity,
-                    od.UnitPrice.ToString("c"));
-            }
-        }
+        #endregion
     }
 }
