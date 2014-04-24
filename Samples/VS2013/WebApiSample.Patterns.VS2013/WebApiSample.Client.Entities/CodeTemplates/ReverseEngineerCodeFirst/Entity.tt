@@ -1,7 +1,6 @@
 <#@ template  debug="true" hostSpecific="true" #>
 <#@ output extension=".cs" #>
-<#@ include file="EF.Utility.CS.ttinclude" #>
-<#
+<#@ include file="EF.Utility.CS.ttinclude" #><#
 
     var efHost = (EfTextTemplateHost)Host;
     var code = new CodeGenerationTools(this);
