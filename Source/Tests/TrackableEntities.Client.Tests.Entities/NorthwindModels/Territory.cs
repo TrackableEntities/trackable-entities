@@ -65,6 +65,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
                 _area = value;
                 AreaChangeTracker = _area == null ? null
                     : new ChangeTrackingCollection<Area> { _area };
+                NotifyPropertyChanged(m => m.Area);
             }
         }
         private ChangeTrackingCollection<Area> AreaChangeTracker { get; set; }

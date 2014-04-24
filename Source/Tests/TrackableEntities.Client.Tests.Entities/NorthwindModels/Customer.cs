@@ -54,9 +54,6 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             }
         }
 
-        // NOTE: Reference properties are change-tracked but do not call 
-        // NotifyPropertyChanged because it is called by foreign key's property setter.
-
         private CustomerSetting _customerSetting;
         public CustomerSetting CustomerSetting
         {
@@ -67,6 +64,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
                 _customerSetting = value;
                 CustomerSettingChangeTracker = _customerSetting == null ? null
                     : new ChangeTrackingCollection<CustomerSetting> { _customerSetting };
+                NotifyPropertyChanged(m => m.CustomerSetting);
             }
         }
         private ChangeTrackingCollection<CustomerSetting> CustomerSettingChangeTracker { get; set; }

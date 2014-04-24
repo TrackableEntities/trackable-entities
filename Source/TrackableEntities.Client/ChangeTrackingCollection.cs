@@ -115,8 +115,19 @@ namespace TrackableEntities.Client
             if (Tracking)
             {
                 var entity = sender as ITrackable;
-                if (entity != null
-                    && e.PropertyName != Constants.TrackingProperties.TrackingState
+                if (entity == null) return;
+
+                // Enable tracking on reference properties
+                var prop = entity.GetType().GetProperty(e.PropertyName);
+                if (prop != null && typeof (ITrackable).IsAssignableFrom(prop.PropertyType))
+                {
+                    ITrackingCollection refPropChangeTracker = entity.GetRefPropertyChangeTracker(e.PropertyName);
+                    if (refPropChangeTracker != null)
+                        refPropChangeTracker.Tracking = Tracking;
+                    return;
+                }
+
+                if (e.PropertyName != Constants.TrackingProperties.TrackingState
                     && e.PropertyName != Constants.TrackingProperties.ModifiedProperties
                     && !ExcludedProperties.Contains(e.PropertyName))
                 {

@@ -41,6 +41,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
                 _product = value;
                 ProductChangeTracker = _product == null ? null
                     : new ChangeTrackingCollection<Product> { _product };
+                NotifyPropertyChanged(m => m.Product);
             }
         }
         private ChangeTrackingCollection<Product> ProductChangeTracker { get; set; }
