@@ -2,7 +2,7 @@
   <TemplateData>
     <DefaultName>IDatabaseContext.cs</DefaultName>
     <Name>Database Context Interface</Name>
-    <Description>Database Context Interface for Service.EF project. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
+    <Description>Database Context Interface for Patterns EF project. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
     <ProjectType>CSharp</ProjectType>
     <SortOrder>10</SortOrder>
     <Icon>__TemplateIcon.png</Icon>

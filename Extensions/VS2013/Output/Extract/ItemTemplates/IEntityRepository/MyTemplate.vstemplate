@@ -2,7 +2,7 @@
   <TemplateData>
     <DefaultName>IEntityRepository.cs</DefaultName>
     <Name>Entity Repository Interface</Name>
-    <Description>Entity Repository Interface for Service.Persistence project. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
+    <Description>Entity Repository Interface for Patterns Persistence project. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
     <ProjectType>CSharp</ProjectType>
     <SortOrder>10</SortOrder>
     <Icon>__TemplateIcon.png</Icon>

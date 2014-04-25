@@ -2,7 +2,7 @@
   <TemplateData>
     <DefaultName>ExampleUnitOfWork.cs</DefaultName>
     <Name>Example Unit of Work Class</Name>
-    <Description>Example Unit of Work Class for Service.EF project. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
+    <Description>Example Unit of Work Class for Patterns EF project. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
     <ProjectType>CSharp</ProjectType>
     <SortOrder>10</SortOrder>
     <Icon>__TemplateIcon.png</Icon>
