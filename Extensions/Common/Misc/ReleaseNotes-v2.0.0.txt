@@ -1,4 +1,6 @@
 ﻿Release Notes for Trackable Entities v 2.0.0
+IMPORTANT: Trackable Entities currently requires the Entity Framework Power Tools. Support will be added in a future release for Code First from Database with the EF 6.1 Tools.  
+As of v 2.0 use of MVC scaffolding foe adding Web API controllers has been discontinued. Instead you must select Add New Item and select "Entity Web API Controller"
 1. Support for 1-M, 1-1, M-1 and M-M Relationships.
    - Both client and server libraries have been updated to support all entity relations, including One-to-Many, One-to-One, Many-to-One, and Many-to-Many.
    - Reference properties are now change-tracked on the client side, including any downstream changes on the object graph. For example, Order.Customer will be marked as modified if CustomerName is changed, and if Customer has reference or child entities, those will be change-tracked as well.
@@ -16,7 +18,6 @@
    - The asynchronous version executes database queries using EF6's async capabilities.
 5. Support for Entity Framework v 6.1
    - All packages now reference the EF 6.1 runtime.
-   - The process to reverse engineer Code First classes from an existing database is supported by the consolidated 6.1 model designer. This is performed in the same manner as with the EF Power Tools. Therefore, Trackable Entities is compatible with both the EF Power Tools and the EF 6.1 Tools for Visual Studio, but you need to use the Entity Framework context menu in both cases.
 6. Templates and Samples
    - Client T4 code-generation templates have been updated to support change-tracking of reference properties.
    - Both client and service T4 templates have been updated to support correlation of entities with an entity identifier for merging changes after performing updates.
