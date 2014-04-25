@@ -120,7 +120,8 @@ namespace TrackableEntities.TemplateWizard
         private string GetTemplateFilePath(string fileName)
         {
             string dirPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string filePath = Path.Combine(dirPath, fileName);
+            string parentPath = Directory.GetParent(dirPath).FullName;
+            string filePath = Path.Combine(parentPath, fileName);
             return filePath;
         }
 
