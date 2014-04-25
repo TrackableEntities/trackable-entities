@@ -5,9 +5,11 @@ and Unit of Work patterns to abstract away the underlying data access
 technology.  This allows for greater flexibility and the ability to switch
 from one data provider to another without re-writing application code.
 
-NOTE: You must first install either the Entity Framework Power Tools,
-or the EF 6.1 Tools for Visual Studio. These steps use a scaled down version
-of the Northwind database, which you can get here: http://bit.ly/northwindslim.
+NOTE: You must first install the Entity Framework Power Tools.
+Support for EF 6.1 Tools for Visual Studio will be added in a future version.
+
+These steps use a scaled down version of the Northwind database, which you 
+can get here: http://bit.ly/northwindslim.
 
 Before starting the client Console app, build the solution, then right-click 
 on the Web Api project and select View in Browser. This will start the service 
