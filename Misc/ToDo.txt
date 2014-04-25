@@ -4,46 +4,39 @@ Release v2.0: Apr-2014
 
 TODO:
 
-* NorthwindSlim.sql
-  - Remove added products (> 70?), orders
-* TE add asm Description
-* VSIX: Change Description
-* Test concurrency?
-* Test relationships
-   
+* Update ReadMe's re: EF Power Tools dependency
+  > NOTE: TE does not yet support Code First from Database with EF 6.1 Tools
+* Replace Web API controller T4 template with Controller Item Template
+  > Remove t4 templates from WebApi samples and project templates
+  > Add new Controller Item template
+  > Update VSIX projects with new project and item templates
+  > Update ReadMe's regarding use of Controller item template
+* Update NuGet packages for Web API projects to 5.1.2 (VS 2013 Update 2)
+
 1) VSIX
 
-  > BUG: Solution ReadMe file in:
+  > DONE: Solution ReadMe file in:
     %ProgramFiles%\Microsoft Visual Studio 12.0\Common7\IDE\PrivateAssemblies
 
-  > * Update VSIX Description:
+  > DONE: Update VSIX Description:
       Visual Studio project and item templates for quickly building n-tier applications using Entity Framework with entities that are change-tracked on the client and persisted on the server.
 
-  > Item templates org: 
+  > DONE: Item templates org: 
     - Trackable\Patterns, WCF folders (VS 2013 only) (rollup 2)
-  > Project templates org:
 
-      Trackable Client Entities Library (rollup 1)
-      Trackable Service Entities Library (rollup 1)
-      Trackable WCF Service Application (no rollup) -> Trackable, WCF folders
-      Trackable Web API Application (no rollup) -> Trackable, Web folders
-
-  > TODO: Update ReadMe files
+  > DONE: Update ReadMe files
   > TODO: Release Notes
 
-  > NOT SURE: VS2012: Delete Models and Mapping folders
   > NO REPRO: Delete asm in item template reflection code
   > DONE:
     Make item template dialogs expandable with anchored controls
     Remove EF Power Tools dependency
     NuGet Packages
     
-2) Updated sample for M-1, 1-1, M-M relationships
+2) DONE: Updated sample for M-1, 1-1, M-M relationships
 
 3) VS2013 Update 2 RC
-   - Make VM snapshot
-   - Install Web Essentials update
-   - Test everything
+   - Create system restore point
    
 DOCS:
 - Getting Started Guides
