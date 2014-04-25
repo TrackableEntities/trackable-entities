@@ -75,11 +75,6 @@
           <ProjectItem ReplaceParameters="true" TargetFileName="XmlDocumentationProvider.cs">XmlDocumentationProvider.cs</ProjectItem>
         </Folder>
       </Folder>
-      <Folder Name="CodeTemplates" TargetFolderName="CodeTemplates">
-        <Folder Name="ApiControllerWithContext" TargetFolderName="ApiControllerWithContext">
-          <ProjectItem ReplaceParameters="false" TargetFileName="Controller.cs.t4">Controller.cs.t4</ProjectItem>
-        </Folder>
-      </Folder>
       <Folder Name="Content" TargetFolderName="Content">
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap-theme.css">bootstrap-theme.css</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap-theme.min.css">bootstrap-theme.min.css</ProjectItem>
