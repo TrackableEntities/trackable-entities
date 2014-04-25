@@ -171,7 +171,7 @@
     <Content Include="Packages\EntityFramework.5.0.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="ItemTemplates\Trackable\TrackableWcfServiceType.zip">
+    <Content Include="ItemTemplates\Trackable\WCF\TrackableWcfServiceType.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -217,6 +217,10 @@
     <Content Include="ProjectTemplates\Trackable\TrackableWebApi.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ItemTemplates\Trackable\Web\WebApiController.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>

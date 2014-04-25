@@ -12,6 +12,14 @@ namespace TrackableEntities.ItemWizard
             public const int DialogWidth = 650;
         }
 
+        public static class WebApiController
+        {
+            public const string Title = "Entity Web API Controller";
+            public const string Message = "Add an Entity Web API Controller to the WebApi project.";
+            public const bool GetDbContextName = true;
+            public const int DialogWidth = 550;
+        }
+
         public static class EntityController
         {
             public const string Title = "Entity Web API Controller";

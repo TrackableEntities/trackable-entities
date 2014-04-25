@@ -14,7 +14,7 @@
     <ProjectItem SubType="" TargetFileName="$fileinputname$.cs" ReplaceParameters="true">IEntityRepository.cs</ProjectItem>
   </TemplateContent>
   <WizardExtension>
-    <Assembly>TrackableEntities.ItemWizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e</Assembly>
+    <Assembly>TrackableEntities.ItemWizard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e</Assembly>
     <FullClassName>TrackableEntities.ItemWizard.EntityRepoInterfaceWizard</FullClassName>
   </WizardExtension>
 </VSTemplate>
