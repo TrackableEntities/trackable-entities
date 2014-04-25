@@ -1,7 +1,7 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Item">
   <TemplateData>
     <DefaultName>IExampleUnitOfWork.cs</DefaultName>
-    <Name>Example Unit of Work Interface</Name>
+    <Name>Example Unit of Work Interface (Patterns)</Name>
     <Description>Example Unit of Work Interface for Patterns Persistence project. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
     <ProjectType>CSharp</ProjectType>
     <SortOrder>10</SortOrder>

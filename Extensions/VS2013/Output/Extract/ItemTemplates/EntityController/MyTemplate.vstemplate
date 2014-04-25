@@ -1,7 +1,7 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Item">
   <TemplateData>
     <DefaultName>EntityController.cs</DefaultName>
-    <Name>Entity Web API Controller</Name>
+    <Name>Entity Web API Controller (Patterns)</Name>
     <Description>Entity Web API Controller for Patterns WebApi project. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
     <ProjectType>CSharp</ProjectType>
     <SortOrder>10</SortOrder>

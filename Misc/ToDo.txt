@@ -4,6 +4,13 @@ Release v2.0: Apr-2014
 
 TODO:
 
+* Update Release Notes:
+  IMPORTANT: Trackable Entities currently requires the Entity Framework Power Tools.
+  Support will be added in a future release for Code First from Database with the EF 6.1 Tools.
+  
+  As of v 2.0 use of MVC scaffolding foe adding Web API controllers has been discontinued.
+  Instead you must select Add New Item and select "Entity Web API Controller"
+  
 * Update ReadMe's re: EF Power Tools dependency
   > NOTE: TE does not yet support Code First from Database with EF 6.1 Tools
 * Replace Web API controller T4 template with Controller Item Template
