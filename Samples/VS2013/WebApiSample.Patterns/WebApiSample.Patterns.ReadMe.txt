@@ -1,5 +1,11 @@
 Web API Patterns Sample ReadMe
 
+NOTE: You must first install the Entity Framework Power Tools.
+Support for EF 6.1 Tools for Visual Studio will be added in a future version.
+
+These steps use a scaled down version of the Northwind database, 
+which you can get here: http://bit.ly/northwindslim.
+
 This solutions demonstrates using Trackable Entities with the Repository
 and Unit of Work patterns to abstract away the underlying data access
 technology.  This allows for greater flexibility and the ability to switch

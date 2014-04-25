@@ -73,11 +73,6 @@
           <ProjectItem ReplaceParameters="true" TargetFileName="XmlDocumentationProvider.cs">XmlDocumentationProvider.cs</ProjectItem>
         </Folder>
       </Folder>
-      <Folder Name="CodeTemplates" TargetFolderName="CodeTemplates">
-        <Folder Name="AddController" TargetFolderName="AddController">
-          <ProjectItem ReplaceParameters="false" TargetFileName="ApiControllerWithContext.tt">ApiControllerWithContext.tt</ProjectItem>
-        </Folder>
-      </Folder>
       <Folder Name="Content" TargetFolderName="Content">
         <ProjectItem ReplaceParameters="true" TargetFileName="Site.css">Site.css</ProjectItem>
         <Folder Name="themes" TargetFolderName="themes">

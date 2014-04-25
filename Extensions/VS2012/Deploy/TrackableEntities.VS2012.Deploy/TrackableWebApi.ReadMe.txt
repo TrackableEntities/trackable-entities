@@ -4,9 +4,11 @@ This solution containts everything you need to create an ASP.NET Web API
 service that uses trackable entities. At this time only C# is supported
 using Visual Studio 2012 or 2013.
 
-NOTE: You must first install either the Entity Framework Power Tools,
-or the EF 6.1 Tools for Visual Studio. These steps use a scaled down version
-of the Northwind database, which you can get here: http://bit.ly/northwindslim.
+NOTE: You must first install the Entity Framework Power Tools.
+Support for EF 6.1 Tools for Visual Studio will be added in a future version.
+
+These steps use a scaled down version of the Northwind database, which you 
+can get here: http://bit.ly/northwindslim.
 
 Before starting the client Console app, build the solution, then right-click 
 on the Web Api project and select View in Browser. This will start the service 
@@ -25,10 +27,8 @@ using the IIS Express web server.
 
 3. Add a new Web API controller using Entity Framework
    - Right-click the Controllers folder in the Web Api project
-	 and select Add, Controller
+     and select Add New Item, then choose "Entity Web API Controller".
    - Enter Orders for the contoller name
-	 > For Template: select API controller with read/write actions,
-	   using Entity Framework
 	 > For Model class: select the Order class
 	 > For Data context class: select NorthwindSlimContext
    - The code-generated API controller class is only slightly different

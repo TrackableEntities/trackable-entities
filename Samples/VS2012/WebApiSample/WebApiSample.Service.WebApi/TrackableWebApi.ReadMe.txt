@@ -1,7 +1,7 @@
 Trackable Web Api ReadMe
 
-NOTE: You must first install the Entity Framework Power Tools,
-or the EF 6.1 Tools for Visual Studio.
+NOTE: You must first install the Entity Framework Power Tools.
+Support for EF 6.1 Tools for Visual Studio will be added in a future version.
 
 Follow these steps to use the Web API project template.
 
@@ -19,8 +19,7 @@ Follow these steps to use the Web API project template.
    section of the web.config file in the Web API project.
 
 3. Add an API controller (right-click the Controllers folder)
-   - For the template select:
-     API controller with read/write actions, using Entity Framework
+   - Select Add New Item, then choose "Entity Web API Controller"
    - Select a class from the Service.Entities project as the model
    - Select a Data context derived class from the ServiceEntities project
      > The generated API controller will include actions which leverage
@@ -29,7 +28,7 @@ Follow these steps to use the Web API project template.
        action will include code which calls the ApplyChanges extension
        method on DbContext in order to update the object graph entity state
        based on the TrackingState property of each entity.
-     > Delete action includes a TODO item for setting the concurrency property
+     > Delete action can include a TODO item for setting the concurrency property
        of the new entity from the parameter entity.
 
 4. Press Ctrl+F5 to launch the Web API service
