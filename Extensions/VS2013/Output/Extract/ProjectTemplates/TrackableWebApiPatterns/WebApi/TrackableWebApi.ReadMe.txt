@@ -1,7 +1,7 @@
 Trackable Web Api Patterns ReadMe
 
-NOTE: You must first install the Entity Framework Power Tools,
-or the EF 6.1 Tools for Visual Studio.
+NOTE: You must first install the Entity Framework Power Tools.
+Support for EF 6.1 Tools for Visual Studio will be added in a future version.
 
 Follow these steps to use the Web API project template.
 
