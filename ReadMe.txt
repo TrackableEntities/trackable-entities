@@ -11,6 +11,12 @@ packages, to set items to Unchanged after persisting updates.
 Also included is a MergeChanges on ChangeTrackingCollection,
 which merges original and updated entities.
 
+Version 1.03 included templates for Repository and Unit of Work.
+
+Version 2.0.0 added support for all relationship types:
+1-M, 1-1, M-1, and M-M. Improved MergeChanges was added,
+as well as LoadRelatedEntities DbContext extension method.
+
 The repository contains source code, NuGet packages, samples,
 and Visual Studio Extension projects.
 
