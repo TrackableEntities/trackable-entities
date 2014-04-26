@@ -1,8 +1,5 @@
 Trackable Web Api ReadMe
 
-NOTE: You must first install the Entity Framework Power Tools.
-Support for EF 6.1 Tools for Visual Studio will be added in a future version.
-
 Follow these steps to use the Web API project template.
 
 1. Reverse engineer service entities.

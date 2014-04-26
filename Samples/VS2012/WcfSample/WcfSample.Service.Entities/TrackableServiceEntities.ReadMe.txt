@@ -1,7 +1,7 @@
 Trackable Service Entities ReadMe
 
-NOTE: You must first install the Entity Framework Power Tools,
-or the EF 6.1 Tools for Visual Studio.
+NOTE: You must first install the Entity Framework Power Tools.
+Support for EF 6.1 Tools for Visual Studio may be added in a future version.
 
 This project template functions as a Data Access Layer and can be
 referenced either by a Repositories class library or directly by

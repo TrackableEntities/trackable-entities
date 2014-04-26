@@ -4,8 +4,8 @@ This sample demonstrates how to create a WCF service
 that uses trackable entities. At this time only C# is supported
 using Visual Studio 2012 or 2013.
 
-NOTE: You must first install either the Entity Framework Power Tools,
-or the EF 6.1 Tools for Visual Studio.
+NOTE: You must first install the Entity Framework Power Tools.
+Support for EF 6.1 Tools for Visual Studio may be added in a future version.
 
 By default LocalDb is used and the NorthwindSlim databased is
 created and seeded with a small amount of data when you first

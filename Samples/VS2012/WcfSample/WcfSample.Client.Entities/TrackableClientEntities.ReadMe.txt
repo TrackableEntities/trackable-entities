@@ -1,7 +1,7 @@
 Trackable Client Entities ReadMe
 
-NOTE: You must first install the Entity Framework Power Tools,
-or the EF 6.1 Tools for Visual Studio.
+NOTE: You must first install the Entity Framework Power Tools.
+Support for EF 6.1 Tools for Visual Studio may be added in a future version.
 
 This project template references the TrackableEntities.Client NuGet
 package, which contains a ChangeTrackingCollection<T> that sets the

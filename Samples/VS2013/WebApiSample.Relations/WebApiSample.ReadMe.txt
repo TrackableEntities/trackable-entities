@@ -4,7 +4,7 @@ This sample demonstrates how to update 1-1, M-1 and M-M relations
 using Trackable Entities.
 
 NOTE: You must first install the Entity Framework Power Tools.
-Support for EF 6.1 Tools for Visual Studio will be added in a future version.
+Support for EF 6.1 Tools for Visual Studio may be added in a future version.
 
 These steps use a scaled down version of the Northwind database, 
 which you can get here: http://bit.ly/northwindslim.

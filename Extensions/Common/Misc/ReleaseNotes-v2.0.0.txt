@@ -1,5 +1,5 @@
 ﻿Release Notes for Trackable Entities v 2.0.0
-IMPORTANT: Trackable Entities currently requires the Entity Framework Power Tools. Support will be added in a future release for Code First from Database with the EF 6.1 Tools.  
+IMPORTANT: Trackable Entities currently requires the Entity Framework Power Tools. Support may be added in a future release for Code First from Database with the EF 6.1 Tools.  
 As of v 2.0 use of MVC scaffolding foe adding Web API controllers has been discontinued. Instead you must select Add New Item and select "Entity Web API Controller"
 1. Support for 1-M, 1-1, M-1 and M-M Relationships.
    - Both client and server libraries have been updated to support all entity relations, including One-to-Many, One-to-One, Many-to-One, and Many-to-Many.
