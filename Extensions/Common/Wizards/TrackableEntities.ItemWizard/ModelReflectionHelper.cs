@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Globalization;
@@ -29,14 +30,24 @@ namespace TrackableEntities.ItemWizard
 
             AppDomain childDomain = BuildChildDomain(AppDomain.CurrentDomain);
 
+            // Use of assembly resolver is needed for VS 2013 Update 2
+            AppDomain.CurrentDomain.AssemblyResolve += ChildDomainOnAssemblyResolve;
+
             try
             {
+                // Create asm loader in child AppDomain
                 Type loaderType = typeof(AssemblyLoader);
-                var loader = (AssemblyLoader)childDomain.
-                        CreateInstanceFrom(
-                        loaderType.Assembly.Location,
+                object loaderObj = childDomain
+                    .CreateInstanceFrom(loaderType.Assembly.Location,
                         loaderType.FullName).Unwrap();
 
+                // Method will be null if there are loading problems
+                //var method = loaderObj.GetType().GetMethod("GetVersionInfo",
+                //    BindingFlags.Instance | BindingFlags.Public);
+                //object info = method.Invoke(loaderObj, null);
+
+                // Get info on types for specified assembly
+                var loader = (AssemblyLoader)loaderObj;
                 loader.LoadAssembly(assemblyLocation.FullName);
                 var types = loader.GetModelTypeInfo(
                     assemblyLocation.Directory.FullName);
@@ -47,6 +58,24 @@ namespace TrackableEntities.ItemWizard
             {
                 AppDomain.Unload(childDomain);
             }
+
+        }
+
+        private static Assembly ChildDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            try
+            {
+                Assembly assembly = Assembly.Load(args.Name);
+                if (assembly != null) return assembly;
+            }
+            // ReSharper disable once EmptyGeneralCatchClause
+            catch { } // Ignore load error
+
+            // In case Load doesn't work, fall back to LoadFrom
+            var parts = args.Name.Split(',');
+            string file = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +
+                "\\" + parts[0].Trim() + ".dll";
+            return Assembly.LoadFrom(file);
         }
 
         private static AppDomain BuildChildDomain(AppDomain parentDomain)
@@ -74,6 +103,16 @@ namespace TrackableEntities.ItemWizard
 
         class AssemblyLoader : MarshalByRefObject
         {
+            // Call via reflection to diagnose loading problems
+            internal string GetVersionInfo()
+            {
+                return ".NET Version: " + Environment.Version.ToString() + "\r\n" +
+                "wwReflection Assembly: " + typeof(AssemblyLoader).Assembly.CodeBase.Replace("file:///", "").Replace("/", "\\") + "\r\n" +
+                "Assembly Cur Dir: " + Directory.GetCurrentDirectory() + "\r\n" +
+                "ApplicationBase: " + AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "\r\n" +
+                "App Domain: " + AppDomain.CurrentDomain.FriendlyName + "\r\n";
+            }
+            
             internal List<ModelTypeInfo> GetModelTypeInfo(string path)
             {
                 var types = new List<ModelTypeInfo>();
