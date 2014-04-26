@@ -75,10 +75,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\..\Common\Misc\ReleaseNotes-v2.0.0.txt">
-      <Link>ReleaseNotes-v2.0.0.txt</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Packages\jQuery.1.8.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -221,6 +217,11 @@
     <Content Include="ItemTemplates\Trackable\Web\WebApiController.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\Common\Misc\ReleaseNotes-v2.0.0.rtf">
+      <Link>ReleaseNotes-v2.0.0.rtf</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
