@@ -10,8 +10,7 @@ using TrackableEntities.EF6;
 using TrackableEntities.Common;
 using $baseNamespace$.Entities.Models;
 
-// NOTE: Add Trackable Entities EF Nuget package, then reference 
-// Trackable Service Entities project and System.ServiceModel.
+// NOTE: Primary key name and/or type may need to be set manually.
 
 namespace $rootnamespace$
 {
@@ -46,17 +45,17 @@ namespace $rootnamespace$
 
         public async Task<IEnumerable<$entityName$>> Get$entitySetName$()
         {
-            // TODO: Include related entities if needed
             IEnumerable<$entityName$> entities = await _dbContext.$entitySetName$
+    			// TODO: Add Includes for reference and/or collection properties
                 .ToListAsync();
             return entities;
         }
 
         public async Task<$entityName$> Get$entityName$(int id)
         {
-            // TODO: Include related entities if needed
             $entityName$ entity = await _dbContext.$entitySetName$
-                .SingleOrDefaultAsync(x => x.$entityName$Id == id);
+    			// TODO: Add Includes for reference and/or collection properties
+                .SingleOrDefaultAsync(e => e.$entityName$Id == id);
             return entity;
         }
 
@@ -99,9 +98,9 @@ namespace $rootnamespace$
 
         public async Task<bool> Delete$entityName$(int id)
         {
-            // TODO: Include related entities if needed
             $entityName$ entity = await _dbContext.$entitySetName$
-                .SingleOrDefaultAsync(x => x.$entityName$Id == id);
+			    // TODO: Include child entities if any
+                .SingleOrDefaultAsync(e => e.$entityName$Id == id);
             if (entity == null)
                 return false;
 

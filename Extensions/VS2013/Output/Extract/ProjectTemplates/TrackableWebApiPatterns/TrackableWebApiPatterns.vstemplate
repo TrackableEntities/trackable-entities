@@ -1,6 +1,6 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="ProjectGroup">
   <TemplateData>
-    <Name>Trackable Web Api Application with Repository and Unit of Work</Name>
+    <Name>Trackable Web API Application with Repository and Unit of Work</Name>
     <Description>Solution containing Web API, trackable entities and client projects, using Repository and Unit of Work patterns with an IoC container. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
     <ProjectType>CSharp</ProjectType>
     <TemplateGroupID>Trackable</TemplateGroupID>

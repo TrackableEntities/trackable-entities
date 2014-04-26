@@ -1,7 +1,7 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="ProjectGroup">
   <TemplateData>
-    <Name>Trackable Web Api Application</Name>
-    <Description>Solution containing Web API, trackable entities and client projects, with templates for creating Api Controllers that use trackable entities. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
+    <Name>Trackable Web API Application</Name>
+    <Description>Solution containing Web API, trackable entities and client projects, with templates for creating API Controllers that use trackable entities. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
     <ProjectType>CSharp</ProjectType>
     <TemplateGroupID>Trackable</TemplateGroupID>
     <SortOrder>1000</SortOrder>
