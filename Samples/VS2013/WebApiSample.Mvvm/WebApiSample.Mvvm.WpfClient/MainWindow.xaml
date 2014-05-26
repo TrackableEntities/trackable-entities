@@ -1,0 +1,12 @@
+﻿<Window x:Class="WebApiSample.Mvvm.WpfClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:my="clr-namespace:WebApiSample.Mvvm.WpfClient"
+        Title="Simple MVVM Application with Trackable Entities"
+        Height="470" Width="525"
+        DataContext="{Binding Source={StaticResource Locator}, Path=MainPageViewModel}">
+    <StackPanel>
+        <TextBlock Text="{Binding Path=BannerText}" FontFamily="Verdana" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,15,0,0" />
+        <my:CustomerView />
+    </StackPanel>
+</Window>
