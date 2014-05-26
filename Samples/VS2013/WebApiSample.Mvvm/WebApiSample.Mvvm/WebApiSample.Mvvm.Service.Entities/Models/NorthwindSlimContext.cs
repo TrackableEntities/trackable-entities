@@ -7,7 +7,7 @@ namespace WebApiSample.Mvvm.Service.Entities.Models
     {
         static NorthwindSlimContext()
         {
-            Database.SetInitializer(new NorthwindSlimDatabaseInitializer());
+            Database.SetInitializer(new NullDatabaseInitializer<NorthwindSlimContext>());
         }
 
         public NorthwindSlimContext()
