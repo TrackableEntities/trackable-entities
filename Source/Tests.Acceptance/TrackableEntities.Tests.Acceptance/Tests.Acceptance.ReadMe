@@ -1,0 +1,10 @@
+﻿Acceptance Tests ReadMe
+
+Execute the following command at an admin prompt:
+
+- To See url reservations:
+  netsh http show urlacl
+
+- To add url reservation (with port number from Contants):
+  netsh http add urlacl url=http://+:56789/ user=machine\username
+
