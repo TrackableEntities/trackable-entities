@@ -23,7 +23,7 @@ namespace TrackableEntities.EF.Tests.Contexts
                     Database.SetInitializer(new NorthwindDbInitializer());
                     break;
                 case CreateDbOptions.DropCreateDatabaseIfModelChanges:
-                    Database.SetInitializer(new DropCreateDatabaseIfModelChanges<FamilyDbContext>());
+                    Database.SetInitializer(new DropCreateDatabaseIfModelChanges<NorthwindDbContext>());
                     break;
                 default:
                     Database.SetInitializer(new DropCreateDatabaseAlways<NorthwindDbContext>());
@@ -39,5 +39,13 @@ namespace TrackableEntities.EF.Tests.Contexts
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Territory> Territories { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CustomerSetting>()
+                .HasRequired(x => x.Customer)
+                .WithOptional(x => x.CustomerSetting);
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

@@ -774,10 +774,8 @@ namespace TrackableEntities.EF5.Tests
 		}
 
 		[Test]
-		public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Modified_And_Deleted_Setting_As_Deleted()
+		public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Deleted_Setting_As_Deleted()
 		{
-			// NOTE: Removing setting property sets customer to modified
-
 			// Arrange
 			var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
 			var nw = new MockNorthwind();
@@ -790,7 +788,7 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Modified, context.Entry(customer).State);
+			Assert.AreEqual(EntityState.Unchanged, context.Entry(customer).State);
 			Assert.AreEqual(EntityState.Deleted, context.Entry(setting).State);
 			Assert.IsNull(customer.CustomerSetting);
 		}
@@ -877,7 +875,7 @@ namespace TrackableEntities.EF5.Tests
 		}
 
 		[Test]
-		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Unchanged_Setting_As_Unchanged()
+		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Unchanged_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
 
@@ -894,12 +892,12 @@ namespace TrackableEntities.EF5.Tests
 
 			// Assert
 			Assert.AreEqual(EntityState.Deleted, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(setting).State);
+			Assert.AreEqual(EntityState.Deleted, context.Entry(setting).State);
 			Assert.IsNull(customer.CustomerSetting);
 		}
 
 		[Test]
-		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Unchanged()
+		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
 
@@ -916,12 +914,12 @@ namespace TrackableEntities.EF5.Tests
 
 			// Assert
 			Assert.AreEqual(EntityState.Deleted, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(setting).State);
+			Assert.AreEqual(EntityState.Deleted, context.Entry(setting).State);
 			Assert.IsNull(customer.CustomerSetting);
 		}
 
 		[Test]
-		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Deleted_Setting_As_Unchanged()
+		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Deleted_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
 
@@ -938,7 +936,7 @@ namespace TrackableEntities.EF5.Tests
 
 			// Assert
 			Assert.AreEqual(EntityState.Deleted, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(setting).State);
+			Assert.AreEqual(EntityState.Deleted, context.Entry(setting).State);
 			Assert.IsNull(customer.CustomerSetting);
 		}
 

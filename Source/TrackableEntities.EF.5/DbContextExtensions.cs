@@ -98,14 +98,14 @@ namespace TrackableEntities.EF5
                 && (parent.TrackingState == TrackingState.Added
                     || parent.TrackingState == TrackingState.Deleted)
                 && !context.IsRelatedProperty(parent.GetType().Name,
-                    propertyName, RelationshipType.ManyToOneOrOneToOne))
+                    propertyName, RelationshipType.ManyToOne))
                 return;
 
             // If it is a M-1 relation and item state is deleted,
             // set to unchanged and exit
             if (parent != null
                 && (context.IsRelatedProperty(parent.GetType().Name,
-                    propertyName, RelationshipType.ManyToOneOrOneToOne)
+                    propertyName, RelationshipType.ManyToOne)
                     && item.TrackingState == TrackingState.Deleted))
             {
                 context.Entry(item).State = EntityState.Unchanged;
@@ -447,7 +447,12 @@ namespace TrackableEntities.EF5
                 // Stop recursion if trackable is same type as parent
                 if (trackableReference != null
                     && (parent == null || trackableReference.GetType() != parent.GetType()))
+                {
                     context.ApplyChanges(trackableReference, item, prop.Name);
+                    if (context.IsRelatedProperty(item.GetType().Name, prop.Name, RelationshipType.OneToOne))
+                        context.SetChanges(trackableReference, state, item, prop.Name);
+                }
+
 
                 // Apply changes to 1-M and M-M properties
                 var items = prop.GetValue(item, null) as IList;
@@ -496,7 +501,11 @@ namespace TrackableEntities.EF5
 
             switch (relationshipType)
             {
-                case RelationshipType.ManyToOneOrOneToOne:
+                case RelationshipType.OneToOne:
+                    return navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One
+                           && (navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.ZeroOrOne
+                            || navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One);
+                case RelationshipType.ManyToOne:
                     return navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many
                            && (navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.ZeroOrOne
                             || navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One);
@@ -533,8 +542,9 @@ namespace TrackableEntities.EF5
 
         enum RelationshipType
         {
-            ManyToOneOrOneToOne,
-            ManyToMany
+            ManyToOne,
+            OneToOne,
+            ManyToMany,
         }
 
         #endregion

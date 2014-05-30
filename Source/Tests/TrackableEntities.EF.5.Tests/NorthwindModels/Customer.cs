@@ -6,7 +6,7 @@ namespace TrackableEntities.EF.Tests.NorthwindModels
 {
     public class Customer : ITrackable
     {
-        [Key, ForeignKey("CustomerSetting")]
+        [Key]
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
 
