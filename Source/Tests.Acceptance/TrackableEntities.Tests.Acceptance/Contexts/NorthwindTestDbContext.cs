@@ -1,36 +1,34 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
+using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.NorthwindModels;
 
-namespace TrackableEntities.EF.Tests.Contexts
+namespace TrackableEntities.Tests.Acceptance.Contexts
 {
-    public class NorthwindDbContext : DbContext
+    public class NorthwindTestDbContext : DbContext
     {
-#if EF_6
-        private const string TestDbName = "NorthwindTestDbv6";        
-#else
-        private const string TestDbName = "NorthwindTestDbv5";        
-#endif
+        private const string TestDbName = "NorthwindAcceptTestDb";
 
-        public NorthwindDbContext(CreateDbOptions createDbOptions = CreateDbOptions.CreateDatabaseIfNotExists)
+        public NorthwindTestDbContext(CreateDbOptions createDbOptions = CreateDbOptions.CreateDatabaseIfNotExists)
             : base(TestDbName)
         {
             switch (createDbOptions)
             {
                 case CreateDbOptions.DropCreateDatabaseAlways:
-                    Database.SetInitializer(new DropCreateDatabaseAlways<NorthwindDbContext>());
+                    Database.SetInitializer(new DropCreateDatabaseAlways<NorthwindTestDbContext>());
                     break;
                 case CreateDbOptions.DropCreateDatabaseSeed:
                     Database.SetInitializer(new NorthwindDbInitializer());
                     break;
                 case CreateDbOptions.DropCreateDatabaseIfModelChanges:
-                    Database.SetInitializer(new DropCreateDatabaseIfModelChanges<NorthwindDbContext>());
+                    Database.SetInitializer(new DropCreateDatabaseIfModelChanges<NorthwindTestDbContext>());
                     break;
                 default:
-                    Database.SetInitializer(new DropCreateDatabaseAlways<NorthwindDbContext>());
+                    Database.SetInitializer(new DropCreateDatabaseAlways<NorthwindTestDbContext>());
                     break;
             }
         }
-        
+
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Customer> Customers { get; set; }

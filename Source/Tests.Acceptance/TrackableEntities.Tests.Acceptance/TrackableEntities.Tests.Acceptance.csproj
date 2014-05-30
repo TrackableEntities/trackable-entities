@@ -72,17 +72,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\Contexts\NorthwindDbContext.cs">
-      <Link>Contexts\NorthwindDbContext.cs</Link>
-    </Compile>
     <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\CreateDbOptions.cs">
       <Link>CreateDbOptions.cs</Link>
     </Compile>
     <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\Mocks\MockNorthwind.cs">
       <Link>Mocks\MockNorthwind.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindDbInitializer.cs">
-      <Link>NorthwindDbInitializer.cs</Link>
     </Compile>
     <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\Area.cs">
       <Link>NorthwindModels\Area.cs</Link>
@@ -120,6 +114,8 @@
     <Compile Include="ClientEntities\OrderDetail.cs" />
     <Compile Include="ClientEntities\Product.cs" />
     <Compile Include="ClientEntities\Territory.cs" />
+    <Compile Include="Contexts\NorthwindDbInitializer.cs" />
+    <Compile Include="Contexts\NorthwindTestDbContext.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Features\OneToOneRelationsFeature.feature.cs">

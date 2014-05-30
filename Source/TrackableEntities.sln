@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{320BE240-F2E9-493B-959A-ECDA9A06123E}"
+	ProjectSection(SolutionItems) = preProject
+		Tests.ReadMe.txt = Tests.ReadMe.txt
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Common", "TrackableEntities.Common\TrackableEntities.Common.csproj", "{A59939C3-B823-43D1-84F1-74D6A9DDC598}"
 EndProject

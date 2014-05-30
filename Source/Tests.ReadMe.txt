@@ -1,0 +1,13 @@
+Tests ReadMe
+
+When using the ReSharper test runner, you should configure it to use a separate
+AppDomain for each test assembly. This will ensure that EF5 and EF5 can run
+in parallel.
+
+ReSharper, Options, Tools, Unit Testing:
+Check - Use separate AppDomain for each assembly with tests
+
+Without checking this option, the following error may occur when running all tests:
+System.TypeInitializationException : The type initializer for 
+'System.Data.Entity.Internal.AppConfig' threw an exception.
+System.InvalidCastException

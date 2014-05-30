@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using TrackableEntities.Common;
-using TrackableEntities.EF.Tests.Contexts;
 using TrackableEntities.EF.Tests.NorthwindModels;
 using TrackableEntities.EF6;
+using TrackableEntities.Tests.Acceptance.Contexts;
 
 namespace TrackableEntities.Tests.Acceptance.Controllers
 {
     public class CustomerController : ApiController
     {
-        private readonly NorthwindDbContext _dbContext = new NorthwindDbContext();
+        private readonly NorthwindTestDbContext _dbContext = new NorthwindTestDbContext();
 
         // GET api/Customer
         [ResponseType(typeof(IEnumerable<Customer>))]

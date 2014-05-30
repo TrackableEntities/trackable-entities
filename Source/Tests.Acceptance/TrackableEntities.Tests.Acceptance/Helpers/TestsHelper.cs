@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using TrackableEntities.EF.Tests;
-using TrackableEntities.EF.Tests.Contexts;
 using TrackableEntities.EF.Tests.NorthwindModels;
+using TrackableEntities.Tests.Acceptance.Contexts;
 
 namespace TrackableEntities.Tests.Acceptance.Helpers
 {
@@ -12,10 +12,10 @@ namespace TrackableEntities.Tests.Acceptance.Helpers
     {
         private const CreateDbOptions CreateNorthwindDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
 
-        public static NorthwindDbContext CreateNorthwindDbContext(CreateDbOptions createDbOptions)
+        public static NorthwindTestDbContext CreateNorthwindDbContext(CreateDbOptions createDbOptions)
         {
             // Create new context for all tests
-            var context = new NorthwindDbContext(createDbOptions);
+            var context = new NorthwindTestDbContext(createDbOptions);
             Assert.GreaterOrEqual(context.Products.Count(), 0);
             return context;
         }
