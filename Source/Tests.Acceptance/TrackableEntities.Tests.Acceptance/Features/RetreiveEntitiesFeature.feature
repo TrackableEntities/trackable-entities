@@ -17,7 +17,7 @@ Scenario: Retreive Customer Orders
 	Given the following customers
 	| CustomerId | CustomerName       |
 	| ABCD       | Test Customer ABCD |
-	And the following orders
+	And the following customer orders
 	| CustomerId |
 	| ABCD       |
 	When I submit a GET request for customer orders

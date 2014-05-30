@@ -47,7 +47,7 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             ScenarioContext.Current.Add("CustIds", custIds);
         }
 
-        [Given(@"the following orders")]
+        [Given(@"the following customer orders")]
         public void GivenTheFollowingOrders(Table table)
         {
             var custOrders = new List<Order>();

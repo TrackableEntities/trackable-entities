@@ -118,7 +118,7 @@ this.ScenarioSetup(scenarioInfo);
             table3.AddRow(new string[] {
                         "ABCD"});
 #line 20
- testRunner.And("the following orders", ((string)(null)), table3, "And ");
+ testRunner.And("the following customer orders", ((string)(null)), table3, "And ");
 #line 23
  testRunner.When("I submit a GET request for customer orders", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 24
