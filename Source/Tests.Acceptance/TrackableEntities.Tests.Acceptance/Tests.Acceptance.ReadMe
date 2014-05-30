@@ -6,5 +6,6 @@ Execute the following command at an admin prompt:
   netsh http show urlacl
 
 - To add url reservation (with port number from Contants):
-  netsh http add urlacl url=http://+:56789/ user=machine\username
+  netsh http add urlacl url=http://+:56791/ user=machine\username
+  netsh http add urlacl url=http://+:56792/ user=machine\username
 

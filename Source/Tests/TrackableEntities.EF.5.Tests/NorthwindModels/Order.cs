@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrackableEntities.EF.Tests.NorthwindModels
 {
-    public class Order : ITrackable
+    public partial class Order : ITrackable
     {
         [Key]
         public int OrderId { get; set; }

@@ -17,12 +17,13 @@ namespace TrackableEntities.Tests.Acceptance.Steps
     {
         private HttpClient _client;
         private HttpSelfHostServer _server;
+        private const int PortNumber = 56791;
 
         [BeforeScenario]
         public void Setup()
         {
-            _client = WebHostClient.Create();
-            _server = WebHostServer.Create();
+            _client = WebHostClient.Create(PortNumber);
+            _server = WebHostServer.Create(PortNumber);
             _server.OpenAsync().Wait();
         }
 

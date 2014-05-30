@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrackableEntities.EF.Tests.NorthwindModels
 {
-    public class Customer : ITrackable
+    public partial class Customer : ITrackable
     {
         [Key]
         public string CustomerId { get; set; }

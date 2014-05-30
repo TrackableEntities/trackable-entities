@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrackableEntities.EF.Tests.NorthwindModels
 {
-    public class Employee : ITrackable
+    public partial class Employee : ITrackable
     {
         [Key]
         public int EmployeeId { get; set; }

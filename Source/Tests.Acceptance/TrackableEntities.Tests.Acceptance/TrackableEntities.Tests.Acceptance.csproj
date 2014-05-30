@@ -84,6 +84,33 @@
     <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindDbInitializer.cs">
       <Link>NorthwindDbInitializer.cs</Link>
     </Compile>
+    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\Area.cs">
+      <Link>NorthwindModels\Area.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\Category.cs">
+      <Link>NorthwindModels\Category.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\Customer.cs">
+      <Link>NorthwindModels\Customer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\CustomerSetting.cs">
+      <Link>NorthwindModels\CustomerSetting.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\Employee.cs">
+      <Link>NorthwindModels\Employee.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\Order.cs">
+      <Link>NorthwindModels\Order.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\OrderDetail.cs">
+      <Link>NorthwindModels\OrderDetail.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\Product.cs">
+      <Link>NorthwindModels\Product.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\Territory.cs">
+      <Link>NorthwindModels\Territory.cs</Link>
+    </Compile>
     <Compile Include="ClientEntities\Area.cs" />
     <Compile Include="ClientEntities\Category.cs" />
     <Compile Include="ClientEntities\Customer.cs" />
@@ -95,6 +122,11 @@
     <Compile Include="ClientEntities\Territory.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Features\OneToOneRelationsFeature.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OneToOneRelationsFeature.feature</DependentUpon>
+    </Compile>
     <Compile Include="Features\RetreiveEntitiesFeature.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -107,16 +139,18 @@
     </Compile>
     <Compile Include="Helpers\EntityExtensions.cs" />
     <Compile Include="Helpers\TestsHelper.cs" />
-    <Compile Include="NorthwindModels\Area.cs" />
-    <Compile Include="NorthwindModels\Category.cs" />
-    <Compile Include="NorthwindModels\Customer.cs" />
-    <Compile Include="NorthwindModels\CustomerSetting.cs" />
-    <Compile Include="NorthwindModels\Employee.cs" />
-    <Compile Include="NorthwindModels\Order.cs" />
-    <Compile Include="NorthwindModels\OrderDetail.cs" />
-    <Compile Include="NorthwindModels\Product.cs" />
-    <Compile Include="NorthwindModels\Territory.cs" />
+    <Compile Include="Helpers\HttpClientExtensions.cs" />
+    <Compile Include="ModelExtensions\Area.cs" />
+    <Compile Include="ModelExtensions\Category.cs" />
+    <Compile Include="ModelExtensions\Customer.cs" />
+    <Compile Include="ModelExtensions\CustomerSetting.cs" />
+    <Compile Include="ModelExtensions\Employee.cs" />
+    <Compile Include="ModelExtensions\Order.cs" />
+    <Compile Include="ModelExtensions\OrderDetail.cs" />
+    <Compile Include="ModelExtensions\Product.cs" />
+    <Compile Include="ModelExtensions\Territory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Steps\RelationsFeatureSteps.cs" />
     <Compile Include="Steps\BasicFeatureSteps.cs" />
     <Compile Include="WebHost\Constants.cs" />
     <Compile Include="WebHost\WebHostClient.cs" />
@@ -124,6 +158,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Features\OneToOneRelationsFeature.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>OneToOneRelationsFeature.feature.cs</LastGenOutput>
+    </None>
     <None Include="Features\RetreiveEntitiesFeature.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>RetreiveEntitiesFeature.feature.cs</LastGenOutput>

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrackableEntities.EF.Tests.NorthwindModels
 {
-    public class Territory : ITrackable
+    public partial class Territory : ITrackable
     {
         public Territory()
         {

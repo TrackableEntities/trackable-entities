@@ -7,18 +7,17 @@ namespace TrackableEntities.Tests.Acceptance.WebHost
     {
         private WebHostServer() { }
 
-        public static HttpSelfHostServer Create()
+        public static HttpSelfHostServer Create(int portNumber)
         {
-            var config = GetHostConfig();
+            var config = GetHostConfig(portNumber);
             var server = new HttpSelfHostServer(config);
             return server;
         }
 
-        private static HttpSelfHostConfiguration GetHostConfig()
+        private static HttpSelfHostConfiguration GetHostConfig(int portNumber)
         {
             var baseAddress = string.Format("http://{0}:{1}",
-                Constants.WebHost.HostName, 
-                Constants.WebHost.PortNumber);
+                Constants.WebHost.HostName, portNumber);
             var config = new HttpSelfHostConfiguration(baseAddress);
             config.Routes.MapHttpRoute(
                 "DefaultApi",

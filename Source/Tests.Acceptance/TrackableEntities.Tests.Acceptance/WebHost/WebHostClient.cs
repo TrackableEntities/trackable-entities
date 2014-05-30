@@ -7,10 +7,10 @@ namespace TrackableEntities.Tests.Acceptance.WebHost
     {
         private WebHostClient() { }
 
-        public static HttpClient Create()
+        public static HttpClient Create(int portNumber)
         {
             string baseAddress = string.Format("http://{0}:{1}/",
-                Constants.WebHost.HostName, Constants.WebHost.PortNumber);
+                Constants.WebHost.HostName, portNumber);
             var client = new HttpClient { BaseAddress = new Uri(baseAddress) };
             return client;
         }
