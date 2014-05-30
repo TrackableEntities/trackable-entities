@@ -22,3 +22,14 @@ Scenario: Retreive Customer Orders
 	| ABCD       |
 	When I submit a GET request for customer orders
 	Then the request should return the orders
+
+@retrieve_entities
+Scenario: Retreive Order
+	Given the following customers
+	| CustomerId | CustomerName       |
+	| ABCD       | Test Customer ABCD |
+	And the following customer orders
+	| CustomerId |
+	| ABCD       |
+	When I submit a GET request for an order
+	Then the request should return the orders

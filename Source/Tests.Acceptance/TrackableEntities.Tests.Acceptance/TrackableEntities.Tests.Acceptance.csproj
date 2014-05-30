@@ -61,6 +61,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.SelfHost.5.1.2\lib\net45\System.Web.Http.SelfHost.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -83,6 +84,15 @@
     <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindDbInitializer.cs">
       <Link>NorthwindDbInitializer.cs</Link>
     </Compile>
+    <Compile Include="ClientEntities\Area.cs" />
+    <Compile Include="ClientEntities\Category.cs" />
+    <Compile Include="ClientEntities\Customer.cs" />
+    <Compile Include="ClientEntities\CustomerSetting.cs" />
+    <Compile Include="ClientEntities\Employee.cs" />
+    <Compile Include="ClientEntities\Order.cs" />
+    <Compile Include="ClientEntities\OrderDetail.cs" />
+    <Compile Include="ClientEntities\Product.cs" />
+    <Compile Include="ClientEntities\Territory.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Features\RetreiveEntitiesFeature.feature.cs">
@@ -90,6 +100,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RetreiveEntitiesFeature.feature</DependentUpon>
     </Compile>
+    <Compile Include="Features\UpdateOrderFeature.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UpdateOrderFeature.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\EntityExtensions.cs" />
     <Compile Include="Helpers\TestsHelper.cs" />
     <Compile Include="NorthwindModels\Area.cs" />
     <Compile Include="NorthwindModels\Category.cs" />
@@ -101,7 +117,7 @@
     <Compile Include="NorthwindModels\Product.cs" />
     <Compile Include="NorthwindModels\Territory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Steps\RetreiveEntitiesFeatureSteps.cs" />
+    <Compile Include="Steps\BasicFeatureSteps.cs" />
     <Compile Include="WebHost\Constants.cs" />
     <Compile Include="WebHost\WebHostClient.cs" />
     <Compile Include="WebHost\WebHostServer.cs" />
@@ -112,10 +128,18 @@
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>RetreiveEntitiesFeature.feature.cs</LastGenOutput>
     </None>
+    <None Include="Features\UpdateOrderFeature.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>UpdateOrderFeature.feature.cs</LastGenOutput>
+    </None>
     <None Include="packages.config" />
     <None Include="Tests.Acceptance.ReadMe" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TrackableEntities.Client\TrackableEntities.Client.csproj">
+      <Project>{ff4a77e7-2f00-426f-b626-07251756e0bb}</Project>
+      <Name>TrackableEntities.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TrackableEntities.Common\TrackableEntities.Common.csproj">
       <Project>{a59939c3-b823-43d1-84f1-74d6a9ddc598}</Project>
       <Name>TrackableEntities.Common</Name>

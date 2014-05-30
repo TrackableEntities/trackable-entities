@@ -126,6 +126,39 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Retreive Order")]
+        [NUnit.Framework.CategoryAttribute("retrieve_entities")]
+        public virtual void RetreiveOrder()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Retreive Order", new string[] {
+                        "retrieve_entities"});
+#line 27
+this.ScenarioSetup(scenarioInfo);
+#line hidden
+            TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                        "CustomerId",
+                        "CustomerName"});
+            table4.AddRow(new string[] {
+                        "ABCD",
+                        "Test Customer ABCD"});
+#line 28
+ testRunner.Given("the following customers", ((string)(null)), table4, "Given ");
+#line hidden
+            TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                        "CustomerId"});
+            table5.AddRow(new string[] {
+                        "ABCD"});
+#line 31
+ testRunner.And("the following customer orders", ((string)(null)), table5, "And ");
+#line 34
+ testRunner.When("I submit a GET request for an order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 35
+ testRunner.Then("the request should return the orders", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

@@ -21,7 +21,7 @@ namespace TrackableEntities.Tests.Acceptance.WebHost
                 Constants.WebHost.PortNumber);
             var config = new HttpSelfHostConfiguration(baseAddress);
             config.Routes.MapHttpRoute(
-                "Api",
+                "DefaultApi",
                 "api/{controller}/{id}",
                 new
                 {

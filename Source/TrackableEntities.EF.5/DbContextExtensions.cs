@@ -556,6 +556,7 @@ namespace TrackableEntities.EF5
         {
             // Get entity sql
             string entitySql = context.GetRelatedEntitiesSql(items, entityTypeName, propertyName, propertyTypeName);
+            if (string.IsNullOrWhiteSpace(entitySql)) return new List<object>();
 
             // Get related entities
             List<object> entities = context.ExecuteQueryEntitySql(entitySql);
@@ -569,6 +570,7 @@ namespace TrackableEntities.EF5
         {
             // Get entity sql
             string entitySql = context.GetRelatedEntitiesSql(items, entityTypeName, propertyName, propertyTypeName);
+            if (string.IsNullOrWhiteSpace(entitySql)) return new List<object>();
 
             // Get related entities
             List<object> entities = await context.ExecuteQueryEntitySqlAsync(entitySql, cancellationToken);
@@ -699,6 +701,7 @@ namespace TrackableEntities.EF5
         private static string GetQueryEntitySql(string entitySetName,
             string foreignKeyName, params object[] keyValues)
         {
+            if (keyValues.Length == 0) return null;
             var ids = from k in keyValues
                       select k is string ? string.Format("'{0}'", k) : k.ToString();
             string csvIds = string.Join(",", ids.ToArray());
