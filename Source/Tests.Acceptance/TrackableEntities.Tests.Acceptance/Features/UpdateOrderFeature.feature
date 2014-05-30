@@ -19,3 +19,11 @@ Scenario: Modify Order
 	And the order is modified
 	When I submit a PUT to modify an order
 	Then the request should return the modified order
+
+@update_orders
+Scenario: Delete Order
+	Given the following existing customer orders
+	| CustomerId |
+	| ABCD       |
+	When I submit a DELETE to delete an order
+	Then the order should be deleted

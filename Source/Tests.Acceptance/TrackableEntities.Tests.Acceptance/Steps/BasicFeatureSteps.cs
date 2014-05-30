@@ -175,6 +175,15 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             ScenarioContext.Current.Add("CustomerOrdersResult", new List<ClientEntities.Order>{ clientOrder});
         }
 
+        [When(@"I submit a DELETE to delete an order")]
+        public void WhenISubmitDeleteToDeleteAnOrder()
+        {
+            var clientOrder = ScenarioContext.Current.Get<List<ClientEntities.Order>>("ExistingCustOrders").First();
+            string request = "api/Order/" + clientOrder.OrderId;
+            var response = _client.DeleteAsync(request);
+            response.Result.EnsureSuccessStatusCode();
+        }
+        
         [Then(@"the request should return the customers")]
         public void ThenTheRequestShouldReturnTheCustomers()
         {
@@ -214,6 +223,15 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             Assert.AreEqual(modifiedOrder.OrderDetails[0].UnitPrice, updatedOrder.OrderDetails[0].UnitPrice);
             Assert.IsTrue(updatedOrder.OrderDetails.Any(d => d.ProductId == addedDetail.ProductId));
             Assert.IsFalse(updatedOrder.OrderDetails.Any(d => d.ProductId == deletedDetail.ProductId));
+        }
+
+        [Then(@"the order should be deleted")]
+        public void ThenTheOrderShouldBeDeleted()
+        {
+            var clientOrder = ScenarioContext.Current.Get<List<ClientEntities.Order>>("ExistingCustOrders").First();
+            string request = "api/Order/" + clientOrder.OrderId;
+            var response = _client.GetAsync(request).Result;
+            Assert.IsFalse(response.IsSuccessStatusCode);
         }
     }
 }

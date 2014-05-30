@@ -114,6 +114,30 @@ this.ScenarioSetup(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Delete Order")]
+        [NUnit.Framework.CategoryAttribute("update_orders")]
+        public virtual void DeleteOrder()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Delete Order", new string[] {
+                        "update_orders"});
+#line 24
+this.ScenarioSetup(scenarioInfo);
+#line hidden
+            TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                        "CustomerId"});
+            table3.AddRow(new string[] {
+                        "ABCD"});
+#line 25
+ testRunner.Given("the following existing customer orders", ((string)(null)), table3, "Given ");
+#line 28
+ testRunner.When("I submit a DELETE to delete an order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 29
+ testRunner.Then("the order should be deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore
