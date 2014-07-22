@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.TemplateWizard", "TrackableEntities.TemplateWizard\TrackableEntities.TemplateWizard.csproj", "{C9646BE1-E999-47BD-8A9D-083017E6269A}"
 EndProject
@@ -20,7 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.ItemWizar
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE3D5481-3CE4-453B-BABF-600E12EE8B65}"
 	ProjectSection(SolutionItems) = preProject
-		DebugInfo.txt = DebugInfo.txt
+		..\..\Common\Misc\DebugInfo.txt = ..\..\Common\Misc\DebugInfo.txt
+		..\..\Common\Misc\DevSetup.txt = ..\..\Common\Misc\DevSetup.txt
 	EndProjectSection
 EndProject
 Global
