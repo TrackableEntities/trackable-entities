@@ -277,23 +277,14 @@
     <ProjectReference Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ItemTemplateParametersWizard.csproj">
       <Project>{046940fe-cc75-43e2-9c41-346aebbbb03b}</Project>
       <Name>ItemTemplateParametersWizard</Name>
-      <VSIXSubPath>Wizards</VSIXSubPath>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\TrackableEntities.ItemWizard.csproj">
-      <Project>{68806a44-8d64-4e20-9438-c618e33459c1}</Project>
+      <Project>{8e21f5fd-3941-45a6-b8f8-9628b8a58594}</Project>
       <Name>TrackableEntities.ItemWizard</Name>
-      <VSIXSubPath>Wizards</VSIXSubPath>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
     <ProjectReference Include="..\TrackableEntities.TemplateWizard\TrackableEntities.TemplateWizard.csproj">
       <Project>{c9646be1-e999-47bd-8a9d-083017e6269a}</Project>
       <Name>TrackableEntities.TemplateWizard</Name>
-      <VSIXSubPath>Wizards</VSIXSubPath>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
