@@ -10,27 +10,36 @@ namespace WebApiSample.Service.Entities.Models
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
     public partial class OrderDetail : ITrackable
     {
-        [DataMember]
+		[DataMember]
         public int OrderDetailId { get; set; }
-        [DataMember]
+
+		[DataMember]
         public int OrderId { get; set; }
-        [DataMember]
+
+		[DataMember]
         public int ProductId { get; set; }
-        [DataMember]
+
+		[DataMember]
         public decimal UnitPrice { get; set; }
-        [DataMember]
+
+		[DataMember]
         public short Quantity { get; set; }
-        [DataMember]
+
+		[DataMember]
         public float Discount { get; set; }
-        [DataMember]
+
+		[DataMember]
         public Order Order { get; set; }
-        [DataMember]
+
+		[DataMember]
         public Product Product { get; set; }
 
         [DataMember]
         public TrackingState TrackingState { get; set; }
+
         [DataMember]
         public ICollection<string> ModifiedProperties { get; set; }
+
         [JsonProperty, DataMember]
         private Guid EntityIdentifier { get; set; }
     }

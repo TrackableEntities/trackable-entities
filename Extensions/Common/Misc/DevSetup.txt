@@ -1,0 +1,3 @@
+Developer Setup for Deploy Projects
+
+Install VS SDK's for both VS 2012 and VS 2013.

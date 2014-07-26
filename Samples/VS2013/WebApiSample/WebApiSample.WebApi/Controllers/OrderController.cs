@@ -16,7 +16,7 @@ namespace WebApiSample.Service.WebApi.Controllers
 {
     public class OrderController : ApiController
     {
-        private readonly NorthwindSlimContext _dbContext = new NorthwindSlimContext();
+        private readonly NorthwindSlim _dbContext = new NorthwindSlim();
 
         // GET api/Order
         [ResponseType(typeof(IEnumerable<Order>))]

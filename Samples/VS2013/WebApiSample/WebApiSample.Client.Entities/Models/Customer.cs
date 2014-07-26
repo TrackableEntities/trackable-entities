@@ -11,10 +11,10 @@ namespace WebApiSample.Client.Entities.Models
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
     public partial class Customer : ModelBase<Customer>, IEquatable<Customer>, ITrackable
     {
-		public Customer()
-		{
-			this.Orders = new ChangeTrackingCollection<Order>();
-		}
+        public Customer()
+        {
+            Orders = new ChangeTrackingCollection<Order>();
+        }
 
 		[DataMember]
 		public string CustomerId
@@ -81,6 +81,7 @@ namespace WebApiSample.Client.Entities.Models
 		}
 		private string _Country;
 
+
 		[DataMember]
 		public CustomerSetting CustomerSetting
 		{
@@ -134,6 +135,7 @@ namespace WebApiSample.Client.Entities.Models
 				return EntityIdentifier == other.EntityIdentifier;
 			return false;
 		}
+
         #endregion
-	}
+    }
 }

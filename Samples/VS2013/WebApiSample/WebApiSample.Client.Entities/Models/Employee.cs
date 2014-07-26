@@ -11,10 +11,10 @@ namespace WebApiSample.Client.Entities.Models
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
     public partial class Employee : ModelBase<Employee>, IEquatable<Employee>, ITrackable
     {
-		public Employee()
-		{
-			this.Territories = new ChangeTrackingCollection<Territory>();
-		}
+        public Employee()
+        {
+            Territories = new ChangeTrackingCollection<Territory>();
+        }
 
 		[DataMember]
 		public int EmployeeId
@@ -56,7 +56,7 @@ namespace WebApiSample.Client.Entities.Models
 		private string _FirstName;
 
 		[DataMember]
-		public Nullable<System.DateTime> BirthDate
+		public DateTime? BirthDate
 		{ 
 			get { return _BirthDate; }
 			set
@@ -66,10 +66,10 @@ namespace WebApiSample.Client.Entities.Models
 				NotifyPropertyChanged(m => m.BirthDate);
 			}
 		}
-		private Nullable<System.DateTime> _BirthDate;
+		private DateTime? _BirthDate;
 
 		[DataMember]
-		public Nullable<System.DateTime> HireDate
+		public DateTime? HireDate
 		{ 
 			get { return _HireDate; }
 			set
@@ -79,7 +79,7 @@ namespace WebApiSample.Client.Entities.Models
 				NotifyPropertyChanged(m => m.HireDate);
 			}
 		}
-		private Nullable<System.DateTime> _HireDate;
+		private DateTime? _HireDate;
 
 		[DataMember]
 		public string City
@@ -113,7 +113,6 @@ namespace WebApiSample.Client.Entities.Models
 			get { return _Territories; }
 			set
 			{
-				if (value != null) value.Parent = this;
 				if (Equals(value, _Territories)) return;
 				_Territories = value;
 				NotifyPropertyChanged(m => m.Territories);
@@ -145,6 +144,7 @@ namespace WebApiSample.Client.Entities.Models
 				return EntityIdentifier == other.EntityIdentifier;
 			return false;
 		}
+
         #endregion
-	}
+    }
 }

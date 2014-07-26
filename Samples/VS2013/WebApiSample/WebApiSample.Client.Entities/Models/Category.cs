@@ -11,10 +11,10 @@ namespace WebApiSample.Client.Entities.Models
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
     public partial class Category : ModelBase<Category>, IEquatable<Category>, ITrackable
     {
-		public Category()
-		{
-			this.Products = new ChangeTrackingCollection<Product>();
-		}
+        public Category()
+        {
+            Products = new ChangeTrackingCollection<Product>();
+        }
 
 		[DataMember]
 		public int CategoryId
@@ -79,6 +79,7 @@ namespace WebApiSample.Client.Entities.Models
 				return EntityIdentifier == other.EntityIdentifier;
 			return false;
 		}
+
         #endregion
-	}
+    }
 }

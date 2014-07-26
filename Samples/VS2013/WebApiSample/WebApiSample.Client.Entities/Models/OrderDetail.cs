@@ -89,6 +89,7 @@ namespace WebApiSample.Client.Entities.Models
 		}
 		private float _Discount;
 
+
 		[DataMember]
 		public Order Order
 		{
@@ -104,6 +105,7 @@ namespace WebApiSample.Client.Entities.Models
 		}
 		private Order _Order;
 		private ChangeTrackingCollection<Order> OrderChangeTracker { get; set; }
+
 
 		[DataMember]
 		public Product Product
@@ -145,6 +147,7 @@ namespace WebApiSample.Client.Entities.Models
 				return EntityIdentifier == other.EntityIdentifier;
 			return false;
 		}
+
         #endregion
-	}
+    }
 }

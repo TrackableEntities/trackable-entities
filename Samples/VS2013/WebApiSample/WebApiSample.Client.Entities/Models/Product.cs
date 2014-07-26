@@ -11,10 +11,10 @@ namespace WebApiSample.Client.Entities.Models
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
     public partial class Product : ModelBase<Product>, IEquatable<Product>, ITrackable
     {
-		public Product()
-		{
-			this.OrderDetails = new ChangeTrackingCollection<OrderDetail>();
-		}
+        public Product()
+        {
+            OrderDetails = new ChangeTrackingCollection<OrderDetail>();
+        }
 
 		[DataMember]
 		public int ProductId
@@ -43,7 +43,7 @@ namespace WebApiSample.Client.Entities.Models
 		private string _ProductName;
 
 		[DataMember]
-		public Nullable<int> CategoryId
+		public int? CategoryId
 		{ 
 			get { return _CategoryId; }
 			set
@@ -53,10 +53,10 @@ namespace WebApiSample.Client.Entities.Models
 				NotifyPropertyChanged(m => m.CategoryId);
 			}
 		}
-		private Nullable<int> _CategoryId;
+		private int? _CategoryId;
 
 		[DataMember]
-		public Nullable<decimal> UnitPrice
+		public decimal? UnitPrice
 		{ 
 			get { return _UnitPrice; }
 			set
@@ -66,7 +66,7 @@ namespace WebApiSample.Client.Entities.Models
 				NotifyPropertyChanged(m => m.UnitPrice);
 			}
 		}
-		private Nullable<decimal> _UnitPrice;
+		private decimal? _UnitPrice;
 
 		[DataMember]
 		public bool Discontinued
@@ -93,6 +93,7 @@ namespace WebApiSample.Client.Entities.Models
 			}
 		}
 		private byte[] _RowVersion;
+
 
 		[DataMember]
 		public Category Category
@@ -147,6 +148,7 @@ namespace WebApiSample.Client.Entities.Models
 				return EntityIdentifier == other.EntityIdentifier;
 			return false;
 		}
+
         #endregion
-	}
+    }
 }

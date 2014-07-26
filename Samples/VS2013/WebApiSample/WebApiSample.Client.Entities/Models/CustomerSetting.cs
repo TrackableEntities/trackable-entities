@@ -37,6 +37,7 @@ namespace WebApiSample.Client.Entities.Models
 		}
 		private string _Setting;
 
+
 		[DataMember]
 		public Customer Customer
 		{
@@ -77,6 +78,7 @@ namespace WebApiSample.Client.Entities.Models
 				return EntityIdentifier == other.EntityIdentifier;
 			return false;
 		}
+
         #endregion
-	}
+    }
 }
