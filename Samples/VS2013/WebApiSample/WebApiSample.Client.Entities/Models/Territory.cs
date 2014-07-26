@@ -11,10 +11,10 @@ namespace WebApiSample.Client.Entities.Models
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
     public partial class Territory : ModelBase<Territory>, IEquatable<Territory>, ITrackable
     {
-		public Territory()
-		{
-			this.Employees = new ChangeTrackingCollection<Employee>();
-		}
+        public Territory()
+        {
+            Employees = new ChangeTrackingCollection<Employee>();
+        }
 
 		[DataMember]
 		public string TerritoryId
@@ -48,7 +48,6 @@ namespace WebApiSample.Client.Entities.Models
 			get { return _Employees; }
 			set
 			{
-				if (value != null) value.Parent = this;
 				if (Equals(value, _Employees)) return;
 				_Employees = value;
 				NotifyPropertyChanged(m => m.Employees);
@@ -80,6 +79,7 @@ namespace WebApiSample.Client.Entities.Models
 				return EntityIdentifier == other.EntityIdentifier;
 			return false;
 		}
+
         #endregion
-	}
+    }
 }

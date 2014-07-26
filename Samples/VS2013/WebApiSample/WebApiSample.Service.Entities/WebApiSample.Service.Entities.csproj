@@ -34,20 +34,21 @@
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -62,28 +63,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contexts\NorthwindSlim.Mappings.cs" />
     <Compile Include="Models\Category.cs" />
+    <Compile Include="Contexts\NorthwindSlimDatabaseInitializer.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\CustomerSetting.cs" />
     <Compile Include="Models\Employee.cs" />
-    <Compile Include="Models\Mapping\CategoryMap.cs" />
-    <Compile Include="Models\Mapping\CustomerMap.cs" />
-    <Compile Include="Models\Mapping\CustomerSettingMap.cs" />
-    <Compile Include="Models\Mapping\EmployeeMap.cs" />
-    <Compile Include="Models\Mapping\OrderDetailMap.cs" />
-    <Compile Include="Models\Mapping\OrderMap.cs" />
-    <Compile Include="Models\Mapping\ProductMap.cs" />
-    <Compile Include="Models\Mapping\TerritoryMap.cs" />
-    <Compile Include="Contexts\NorthwindSlimContext.cs" />
-    <Compile Include="Contexts\NorthwindSlimDatabaseInitializer.cs" />
+    <Compile Include="Contexts\NorthwindSlim.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />
     <Compile Include="Models\Product.cs" />
-    <Compile Include="Models\Territory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Models\Territory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="CodeTemplates\EFModelFromDatabase\Context.cs.t4" />
+    <None Include="CodeTemplates\EFModelFromDatabase\EntityType.cs.t4" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Context.tt">
       <LastGenOutput>Context.cs</LastGenOutput>
     </None>

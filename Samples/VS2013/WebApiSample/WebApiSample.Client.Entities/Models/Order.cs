@@ -11,10 +11,10 @@ namespace WebApiSample.Client.Entities.Models
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
     public partial class Order : ModelBase<Order>, IEquatable<Order>, ITrackable
     {
-		public Order()
-		{
-			this.OrderDetails = new ChangeTrackingCollection<OrderDetail>();
-		}
+        public Order()
+        {
+            OrderDetails = new ChangeTrackingCollection<OrderDetail>();
+        }
 
 		[DataMember]
 		public int OrderId
@@ -43,7 +43,7 @@ namespace WebApiSample.Client.Entities.Models
 		private string _CustomerId;
 
 		[DataMember]
-		public Nullable<System.DateTime> OrderDate
+		public DateTime? OrderDate
 		{ 
 			get { return _OrderDate; }
 			set
@@ -53,10 +53,10 @@ namespace WebApiSample.Client.Entities.Models
 				NotifyPropertyChanged(m => m.OrderDate);
 			}
 		}
-		private Nullable<System.DateTime> _OrderDate;
+		private DateTime? _OrderDate;
 
 		[DataMember]
-		public Nullable<System.DateTime> ShippedDate
+		public DateTime? ShippedDate
 		{ 
 			get { return _ShippedDate; }
 			set
@@ -66,10 +66,10 @@ namespace WebApiSample.Client.Entities.Models
 				NotifyPropertyChanged(m => m.ShippedDate);
 			}
 		}
-		private Nullable<System.DateTime> _ShippedDate;
+		private DateTime? _ShippedDate;
 
 		[DataMember]
-		public Nullable<int> ShipVia
+		public int? ShipVia
 		{ 
 			get { return _ShipVia; }
 			set
@@ -79,10 +79,10 @@ namespace WebApiSample.Client.Entities.Models
 				NotifyPropertyChanged(m => m.ShipVia);
 			}
 		}
-		private Nullable<int> _ShipVia;
+		private int? _ShipVia;
 
 		[DataMember]
-		public Nullable<decimal> Freight
+		public decimal? Freight
 		{ 
 			get { return _Freight; }
 			set
@@ -92,7 +92,8 @@ namespace WebApiSample.Client.Entities.Models
 				NotifyPropertyChanged(m => m.Freight);
 			}
 		}
-		private Nullable<decimal> _Freight;
+		private decimal? _Freight;
+
 
 		[DataMember]
 		public Customer Customer
@@ -147,6 +148,7 @@ namespace WebApiSample.Client.Entities.Models
 				return EntityIdentifier == other.EntityIdentifier;
 			return false;
 		}
+
         #endregion
-	}
+    }
 }

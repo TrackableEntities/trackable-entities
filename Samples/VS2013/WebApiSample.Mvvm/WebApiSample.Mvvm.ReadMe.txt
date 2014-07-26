@@ -1,0 +1,190 @@
+Trackable Entities Web API with Simple MVVM ReadMe
+
+This solution containts everything you need to create an ASP.NET Web API
+service that uses trackable entities. At this time only C# is supported
+using Visual Studio 2012 or 2013.
+
+NOTE: You must first install the Entity Framework Power Tools.
+Support for EF 6.1 Tools for Visual Studio may be added in a future version.
+
+These steps use a scaled down version of the Northwind database, which you 
+can get here: http://bit.ly/northwindslim.
+
+Before starting the client Console app, build the solution, then right-click 
+on the Web Api project and select View in Browser. This will start the service 
+using the IIS Express web server.
+
+Part A: Service Entities and Web API Aapplication
+
+1. Reverse engineer a database for the Service.Entities project
+   - Right-click on the project, select Entity Framework,
+	 Reverse Engineer Code First.
+	 > Enter the connection information: server, database name
+	 > For these steps we are using the NorthwindSlim database
+   - Build the solution
+
+2. Copy the connection string from App.config in Service.Entities
+   - Paste it into the connectionStrings section of the web.config
+	 file in the Service.WebApi project
+
+3. Add a new Web API controller 
+   - Right-click the Controllers folder in the Web Api project
+	 and select Add, New Item
+     > Under Trackable, Web, select Entity Web API Controller
+	 > Select entity, enter entity set name
+	 > Select DbContext class - for example, NorthwindSlimContext
+   - Add controllers for the following:
+     Customer
+	 Product
+	 Order
+   - Modify the GetOrders method to include related OrderDetails and Products:
+		IEnumerable<Order> orders = await _dbContext.Orders.Include(o => o.Customer)
+			.Include("OrderDetails.Product")
+			.Where(o => o.CustomerId == customerId)
+			.ToListAsync();
+	 > Do the same for the GetOrder method:
+		Order order = await _dbContext.Orders.Include(o => o.Customer)
+			.Include("OrderDetails.Product")
+			.SingleOrDefaultAsync(o => o.OrderId == id);
+   - Add a GetOrders method that accepts a customerId:
+		// GET api/Orders?customerId=ABCD
+		public async Task<IEnumerable<Order>> GetOrders(string customerId)
+		{
+			IEnumerable<Order> orders = await _dbContext.Orders.Include(o => o.Customer)
+				.Include("OrderDetails.Product")
+				.Where(o => o.CustomerId == customerId)
+				.ToListAsync();
+			return orders;
+		}
+   - Add code to DeleteOrder to include order details:
+		// Include order details
+		Order order = _dbContext.Orders
+		.Include(o => o.OrderDetails)
+		.SingleOrDefaultAsync(o => o.OrderId == id);
+
+4. Run the Web Api project to test the controller
+	- Click the API link on the home page
+	- Select an operation, such as GetOrders or GetOrder
+	- Click the Test API button, fill out the form and click Send
+	  > You should see Json for the response body
+
+Part B: Client Entities and WPF Client MVVM Application
+
+1. Reverse engineer trackable entities for Client.Entities project
+   - Right-click, Entity Framework, Reverse Engineer Code First
+	 > Enter the connection information: server, database name
+	 > For this sample we are using the NorthwindSlim database
+   - Delete the Mapping folder
+   - Delete the data context class: NorthwindSlimContext
+   - Build the solution
+
+2. Optionally, flesh out code in the ConsoleClient project to invoke
+   controller actions for the Web API service.
+   - Uncomment code in Program.Main
+   - Replace the port number for HttpClient with that shown in the
+	 Web API home page.
+
+3. Add a Simple MVVM WPF application
+   - Remove Models folder and Customer.cs file.
+   - Add the following NuGet packages:
+     TrackableEntities.Client
+	 Microsoft.AspNet.WebApi.Client
+   - Reference the Client.Entities project.
+
+4. Add the following service agent interfaces to the Services folder:
+   - ICustomerServiceAgent
+     Task<IEnumerable<Customer>> GetCustomers();
+   - IProductServiceAgent
+     Task<IEnumerable<Product>> GetProducts();
+   - IOrderServiceAgent
+     Task<IEnumerable<Order>> GetCustomerOrders(string customerId);
+     Task<Order> GetOrder(int orderId);
+     Task<Order> CreateOrder(Order order);
+     Task<Order> UpdateOrder(Order order);
+     Task DeleteOrder(int orderId);
+     Task<bool> VerifyOrderDeleted(int orderId);
+     
+5. Implement the above service agent interfaces
+   by pasting code from Program Main in the ConsoleClient project
+   > The main difference is that we will await async methods,
+     and each method will be marked as async
+   - CustomerServiceAgent
+   - ProductServiceAgent
+   - OrderServiceAgent
+
+6. Add view models to the ViewModels folder
+   - CustomerOrdersViewModel
+     > Ctor should accept customer and order service agent interfaces
+	 > Add mvvm properties (using the mvvmprop code snippet):
+	   ChangeTrackingCollection<Order> CustomerOrders
+	   List<Customer> Customers
+	   Customer SelectedCustomer
+	   Order SelectedOrder
+	   int SelectedCustomerIndex
+	   int SelectedOrderIndex
+	 > Add methods to the view model for retrieving data
+	   LoadCustomers()
+	   LoadCustomerOrders()
+	 > Add events for communicating with the view
+	   CreateOrderNotice
+	   ModifyOrderNotice
+	   DeleteOrderNotice
+	   DeleteVerifiedNotice
+	 > Add methods to notify the view
+	   CreateNewOrder()
+	   ModifyOrder()
+	   DeleteOrder()
+	 > Add completion callback method to delete an order
+	   OnDeleteNoticeCompleted(bool confirmed)
+
+7. Add controls to CustomerView.xaml with data binding to the view model
+   - Customers combo box with a Load button
+   - Orders DataGrid (master)
+   - OrderDetails DataGrid (child)
+   - Buttons to create, modify and delete orders
+   - Code behind in CustomerView.xaml.cs
+     > Subscribe to view model notification events in the ctor
+	 > Unsubscribe to view model events in the Unloaded event
+	 > Method responding to view model events
+	   OnCreateOrderNotice
+	   OnModifyOrderNotice
+	   OnDeleteOrderNotice
+	   - These methods will show model dialogs, including the Order Detail view
+
+8. Add an OrderViewModelDetail to the ViewModels folder
+   - Set the type argument TModel to Order
+   - Pass to the ctor order and product service agent interfaces
+   - Add properties:
+     string CustomerName
+	 bool IsNew
+	 ChangeTrackingCollection<Order> ChangeTracker
+	 List<Product> Products
+   - Add method Initialize(Order order):
+     Set Model to order
+	 Set IsNew if OrderId == 0
+	 Set customer name, window title
+	 If not new, begin editing, begin change tracking,
+	   subscribe to collection changed on order details
+   - Add methods to confirm or cancel saves
+   - Edit the code behind in OrderDetailView.xaml.cs
+     > Add property: OrderViewModelDetail ViewModel
+	 > In ctor set ViewModel = (OrderViewModelDetail)DataContext,
+	   then call ViewModel.Initialize(order), and subscribe to ViewModel.ResultNotice
+	 > In OnResultNotice, set DialogResult = eventArgs.Data
+
+9. Edit ViewModelLocator in the Locators folder
+   - Add properties for CustomerOrdersViewModel and OrderViewModelDetail
+
+10. To run the app, first start the WebApi project
+   - Make sure PortNumber in Constants.cs matches the Web API project port number
+   - Start the WebApi project by selecting File, View in Browser
+   - Set WpfClient project as the startup project for the solution
+   - Then press F5 (with debugging) or Ctrl+F5 (without debugging)
+   - Click the Load button to load the customers combo box
+   - Click Create Order to create a new order
+     > Clicking OK on the Add Order dialog will save the new order
+   - Click Modify Order to edit the current order
+     > Add, remove and modify order details
+	 > Clicking OK will save the modified order
+   - Click Delete Order to delete the current order
+     > Clicking OK on the confirmation dialog will delete the order
