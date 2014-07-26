@@ -12,20 +12,24 @@ namespace WebApiSample.Service.Entities.Models
     {
         public Territory()
         {
-            this.Employees = new List<Employee>();
+            Employees = new HashSet<Employee>();
         }
 
-        [DataMember]
+		[DataMember]
         public string TerritoryId { get; set; }
-        [DataMember]
+
+		[DataMember]
         public string TerritoryDescription { get; set; }
-        [DataMember]
-        public List<Employee> Employees { get; set; }
+
+		[DataMember]
+        public ICollection<Employee> Employees { get; set; }
 
         [DataMember]
         public TrackingState TrackingState { get; set; }
+
         [DataMember]
         public ICollection<string> ModifiedProperties { get; set; }
+
         [JsonProperty, DataMember]
         private Guid EntityIdentifier { get; set; }
     }

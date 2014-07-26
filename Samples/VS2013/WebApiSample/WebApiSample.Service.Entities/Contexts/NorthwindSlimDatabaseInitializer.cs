@@ -5,9 +5,9 @@ using WebApiSample.Service.Entities.Models;
 
 namespace WebApiSample.Service.Entities.Contexts
 {
-    public class NorthwindSlimDatabaseInitializer : DropCreateDatabaseIfModelChanges<NorthwindSlimContext>
+    public class NorthwindSlimDatabaseInitializer : DropCreateDatabaseIfModelChanges<NorthwindSlim>
     {
-        protected override void Seed(NorthwindSlimContext context)
+        protected override void Seed(NorthwindSlim context)
         {
             AddCategories(context);
             AddProducts(context);
@@ -17,7 +17,7 @@ namespace WebApiSample.Service.Entities.Contexts
             AddEmployees(context);
         }
 
-        private void AddOrders(NorthwindSlimContext context)
+        private void AddOrders(NorthwindSlim context)
         {
             context.Orders.Add(new Order
             {
@@ -95,7 +95,7 @@ namespace WebApiSample.Service.Entities.Contexts
             });
         }
 
-        private void AddCustomers(NorthwindSlimContext context)
+        private void AddCustomers(NorthwindSlim context)
         {
             context.Customers.Add(new Customer
             {
@@ -123,7 +123,7 @@ namespace WebApiSample.Service.Entities.Contexts
             });
         }
 
-        private void AddCustomerSettings(NorthwindSlimContext context)
+        private void AddCustomerSettings(NorthwindSlim context)
         {
             context.CustomerSettings.Add(new CustomerSetting
             {
@@ -142,7 +142,7 @@ namespace WebApiSample.Service.Entities.Contexts
             });
         }
 
-        private void AddProducts(NorthwindSlimContext context)
+        private void AddProducts(NorthwindSlim context)
         {
             context.Products.Add(new Product
             {
@@ -174,7 +174,7 @@ namespace WebApiSample.Service.Entities.Contexts
             });
         }
 
-        private void AddCategories(NorthwindSlimContext context)
+        private void AddCategories(NorthwindSlim context)
         {
             context.Categories.Add(new Category
             {
@@ -218,7 +218,7 @@ namespace WebApiSample.Service.Entities.Contexts
             });
         }
 
-        private void AddEmployees(NorthwindSlimContext context)
+        private void AddEmployees(NorthwindSlim context)
         {
             var territory1 = new Territory
             {

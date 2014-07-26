@@ -12,30 +12,39 @@ namespace WebApiSample.Service.Entities.Models
     {
         public Product()
         {
-            this.OrderDetails = new List<OrderDetail>();
+            OrderDetails = new HashSet<OrderDetail>();
         }
 
-        [DataMember]
+		[DataMember]
         public int ProductId { get; set; }
-        [DataMember]
+
+		[DataMember]
         public string ProductName { get; set; }
-        [DataMember]
-        public Nullable<int> CategoryId { get; set; }
-        [DataMember]
-        public Nullable<decimal> UnitPrice { get; set; }
-        [DataMember]
+
+		[DataMember]
+        public int? CategoryId { get; set; }
+
+		[DataMember]
+        public decimal? UnitPrice { get; set; }
+
+		[DataMember]
         public bool Discontinued { get; set; }
-        [DataMember]
+
+		[DataMember]
         public byte[] RowVersion { get; set; }
-        [DataMember]
+
+		[DataMember]
         public Category Category { get; set; }
-        [DataMember]
-        public List<OrderDetail> OrderDetails { get; set; }
+
+		[DataMember]
+        public ICollection<OrderDetail> OrderDetails { get; set; }
 
         [DataMember]
         public TrackingState TrackingState { get; set; }
+
         [DataMember]
         public ICollection<string> ModifiedProperties { get; set; }
+
         [JsonProperty, DataMember]
         private Guid EntityIdentifier { get; set; }
     }
