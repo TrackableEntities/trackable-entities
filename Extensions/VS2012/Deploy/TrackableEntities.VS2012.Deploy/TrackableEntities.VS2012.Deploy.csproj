@@ -223,6 +223,9 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="..\..\..\Common\Misc\ReleaseNotes-v2.1.0.rtf">
+      <Link>ReleaseNotes-v2.1.0.rtf</Link>
+    </None>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
