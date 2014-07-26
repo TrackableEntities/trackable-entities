@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using TrackableEntities;
-using TrackableEntities.Client;
-
-namespace WebApiSample.Client.Entities.Models
+namespace WebApiSample.Client.Entities.Temp
 {
+    using System;
+    using System.Collections.Generic;
+	using System.Runtime.Serialization;
+	using Newtonsoft.Json;
+	using TrackableEntities;
+	using TrackableEntities.Client;
+
     [JsonObject(IsReference = true)]
     [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
     public partial class Product : ModelBase<Product>, IEquatable<Product>, ITrackable
