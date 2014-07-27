@@ -63,12 +63,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contexts\NorthwindSlim.Mappings.cs" />
     <Compile Include="Models\Category.cs" />
-    <Compile Include="Contexts\NorthwindSlimDatabaseInitializer.cs" />
+    <Compile Include="Contexts\NorthwindSlim.Mappings.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\CustomerSetting.cs" />
     <Compile Include="Models\Employee.cs" />
+    <Compile Include="Contexts\NorthwindSlimDatabaseInitializer.cs" />
     <Compile Include="Contexts\NorthwindSlim.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />

@@ -1,4 +1,5 @@
 using System.Data.Entity;
+using TrackableEntities;
 using WebApiSample.Service.Entities.Models;
 
 namespace WebApiSample.Service.Entities.Contexts
@@ -11,7 +12,7 @@ namespace WebApiSample.Service.Entities.Contexts
         }
 
         public NorthwindSlim()
-            : base("name=NorthwindSlim")
+            : base("name=NorthwindSlimContext")
         {
             Configuration.ProxyCreationEnabled = false;
         }
