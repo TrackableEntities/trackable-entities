@@ -11,7 +11,7 @@
     <AppendDefaultFileExtension>true</AppendDefaultFileExtension>
     <NumberOfParentCategoriesToRollUp>2</NumberOfParentCategoriesToRollUp>
     <RequiredFrameworkVersion>4.0</RequiredFrameworkVersion>
-    <TemplateID>TrackableEntities.Service.CSharp_DbContext_Types_EF6</TemplateID>
+    <TemplateID>Microsoft.Data.Entity.Design.DbContextInTheBox.CS_V6.0</TemplateID>
   </TemplateData>
 
   <TemplateContent>
