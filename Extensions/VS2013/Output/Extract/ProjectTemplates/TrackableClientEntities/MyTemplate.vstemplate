@@ -19,6 +19,10 @@
     <Project TargetFileName="TrackableEntities.ClientTemplate.csproj" File="TrackableEntities.ClientTemplate.csproj" ReplaceParameters="true">
       <ProjectItem ReplaceParameters="true" TargetFileName="App.config">App.config</ProjectItem>
       <Folder Name="CodeTemplates" TargetFolderName="CodeTemplates">
+        <Folder Name="EFModelFromDatabase" TargetFolderName="EFModelFromDatabase">
+          <ProjectItem ReplaceParameters="false" TargetFileName="Context.cs.t4">Context.cs.t4</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="EntityType.cs.t4">EntityType.cs.t4</ProjectItem>
+        </Folder>
         <Folder Name="ReverseEngineerCodeFirst" TargetFolderName="ReverseEngineerCodeFirst">
           <ProjectItem ReplaceParameters="false" TargetFileName="Entity.tt">Entity.tt</ProjectItem>
         </Folder>

@@ -65,9 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="CodeTemplates\ReverseEngineerCodeFirst\Context.tt">
-      <LastGenOutput>Context.cs</LastGenOutput>
-    </None>
+    <None Include="CodeTemplates\EFModelFromDatabase\Context.cs.t4" />
+    <None Include="CodeTemplates\EFModelFromDatabase\EntityType.cs.t4" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\Context.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Mapping.tt" />
     <None Include="packages.config" />

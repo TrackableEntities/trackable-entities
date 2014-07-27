@@ -41,10 +41,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework">
-      <HintPath>..\..\..\VS2012\Deploy\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\..\..\VS2013\Deploy\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\..\..\VS2012\Deploy\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\..\..\VS2013\Deploy\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -67,7 +67,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="TrackableEntities.Common">
-      <HintPath>..\..\..\VS2012\Deploy\packages\TrackableEntities.Common.2.0.0.0\lib\portable-net40+sl5+win8+windowsphone8\TrackableEntities.Common.dll</HintPath>
+      <HintPath>..\..\..\VS2013\Deploy\packages\TrackableEntities.Common.2.1.0.0\lib\portable-net40+sl5+win8+windowsphone8\TrackableEntities.Common.dll</HintPath>
     </Reference>
     <Reference Include="VSLangProj, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
