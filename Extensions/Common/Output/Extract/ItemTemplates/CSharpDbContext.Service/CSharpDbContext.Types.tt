@@ -49,7 +49,7 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
         foreach (var navigationProperty in collectionNavigationProperties)
         {
 #>
-        this.<#=code.Escape(navigationProperty)#> = new HashSet<<#=typeMapper.GetTypeName(navigationProperty.ToEndMember.GetEntityType())#>>();
+        this.<#=code.Escape(navigationProperty)#> = new List<<#=typeMapper.GetTypeName(navigationProperty.ToEndMember.GetEntityType())#>>();
 <#
         }
 
