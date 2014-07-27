@@ -148,42 +148,9 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Packages\EntityFramework.6.1.0.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\Microsoft.AspNet.WebApi.Client.5.1.2.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\Newtonsoft.Json.6.0.2.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\TrackableEntities.Client.2.0.0.0.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\TrackableEntities.Client.Net4.2.0.0.0.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\TrackableEntities.Common.2.0.0.0.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\TrackableEntities.EF.6.2.0.0.0.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\TrackableEntities.Patterns.2.0.0.0.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\TrackableEntities.Patterns.EF.6.2.0.0.0.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="ItemTemplates\Trackable\Web\WebApiController.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Packages\bootstrap.3.1.1.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\jQuery.2.1.0.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Packages\jQuery.UI.Combined.1.10.4.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -191,25 +158,7 @@
     <Content Include="Packages\knockoutjs.3.1.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Packages\Microsoft.AspNet.Mvc.5.1.2.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\Microsoft.AspNet.Razor.3.1.2.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Packages\Microsoft.AspNet.Web.Optimization.1.1.3.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\Microsoft.AspNet.WebApi.5.1.2.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\Microsoft.AspNet.WebApi.Core.5.1.2.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\Microsoft.AspNet.WebApi.WebHost.5.1.2.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\Microsoft.AspNet.WebPages.3.1.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Packages\Modernizr.2.7.2.nupkg">
@@ -226,9 +175,76 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="..\..\..\Common\Misc\ReleaseNotes-v2.1.0.rtf">
+    <Content Include="..\..\..\Common\Misc\ReleaseNotes-v2.1.0.rtf">
       <Link>ReleaseNotes-v2.1.0.rtf</Link>
-    </None>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="ItemTemplates\Trackable\Data\CSharpDbContext.Client.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ItemTemplates\Trackable\Data\CSharpDbContext.Service.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Packages\bootstrap.3.2.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\EntityFramework.5.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\EntityFramework.6.1.1.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\jQuery.2.1.1.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\Microsoft.AspNet.Mvc.5.2.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\Microsoft.AspNet.Razor.3.2.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\Microsoft.AspNet.WebApi.5.2.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\Microsoft.AspNet.WebApi.Client.5.2.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\Microsoft.AspNet.WebApi.Core.5.2.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\Microsoft.AspNet.WebApi.WebHost.5.2.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\Microsoft.AspNet.WebPages.3.2.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\Newtonsoft.Json.6.0.3.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.Client.2.1.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.Client.Net4.2.1.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.Common.2.1.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.EF.5.2.1.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.EF.6.2.1.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.Patterns.2.1.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.Patterns.EF.6.2.1.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
