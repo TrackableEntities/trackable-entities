@@ -106,8 +106,7 @@ namespace TrackableEntities.TemplateWizard
             string solutionDir = new FileInfo(solutionPath).DirectoryName;
             if (string.IsNullOrWhiteSpace(solutionDir)) return null;
             string readMeFileName = GetReadMeFileName(templateName);
-            string destReadMePath = Path.Combine(solutionDir, readMeFileName);
-            return destReadMePath;
+            return Path.Combine(solutionDir, readMeFileName);
         }
 
         private string GetReadMeFileName(string templateName)
@@ -136,9 +135,7 @@ namespace TrackableEntities.TemplateWizard
         private string GetTemplateFilePath(string fileName)
         {
             string dirPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string parentPath = Directory.GetParent(dirPath).FullName;
-            string filePath = Path.Combine(parentPath, fileName);
-            return filePath;
+            return Path.Combine(dirPath, fileName);
         }
     }
 }
