@@ -2,7 +2,7 @@
 
   <TemplateData>
     <Name>Service Trackable Entities EF 6.x Model First Generator</Name>
-    <Description>A project item to generate a strongly-typed DbContext class and service trackable entity classes. This template requires EF 6.x.</Description>
+    <Description>Template for generating service trackable entity classes from an ADO.NET Entity Data Model.</Description>
     <DefaultName>Model.tt</DefaultName>
     <ProjectType>CSharp</ProjectType>
     <Icon>__TemplateIcon.png</Icon>
@@ -11,7 +11,7 @@
     <AppendDefaultFileExtension>true</AppendDefaultFileExtension>
     <NumberOfParentCategoriesToRollUp>2</NumberOfParentCategoriesToRollUp>
     <RequiredFrameworkVersion>4.0</RequiredFrameworkVersion>
-    <TemplateID>Microsoft.Data.Entity.Design.DbContextInTheBox.CS_V6.0</TemplateID>
+    <TemplateID>TrackableEntities.DbContext.Service.EF6</TemplateID>
   </TemplateData>
 
   <TemplateContent>

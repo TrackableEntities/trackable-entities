@@ -2,7 +2,7 @@
 
   <TemplateData>
     <Name>Client Trackable Entities EF 6.x Model First Generator</Name>
-    <Description>A project item to generate client trackable entity classes. This template requires EF 6.x.</Description>
+    <Description>Template for generating client trackable entity classes from an ADO.NET Entity Data Model.</Description>
     <DefaultName>Model.tt</DefaultName>
     <ProjectType>CSharp</ProjectType>
     <Icon>__TemplateIcon.png</Icon>
@@ -11,7 +11,7 @@
     <AppendDefaultFileExtension>true</AppendDefaultFileExtension>
     <NumberOfParentCategoriesToRollUp>2</NumberOfParentCategoriesToRollUp>
     <RequiredFrameworkVersion>4.0</RequiredFrameworkVersion>
-    <TemplateID>Microsoft.Data.Entity.Design.DbContextInTheBox.CS_V6.0</TemplateID>
+    <TemplateID>TrackableEntities.DbContext.Client.EF6</TemplateID>
   </TemplateData>
 
   <TemplateContent>
@@ -22,6 +22,9 @@
       </Reference>
       <Reference>
         <Assembly>System.Data</Assembly>
+      </Reference>
+      <Reference>
+        <Assembly>System.Windows</Assembly>
       </Reference>
     </References>
 
@@ -43,9 +46,9 @@
     <packages repository="extension"
               repositoryId="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7">
       <package id="Newtonsoft.Json" version="6.0.3" />
-      <package id="EntityFramework" version="6.1.2" />
+      <package id="EntityFramework" version="6.1.1" />
       <package id="TrackableEntities.Common" version="2.1.0.0" />
-      <package id="TrackableEntities.EF.6" version="2.1.0.0" />
+      <package id="TrackableEntities.Client" version="2.1.0.0" />
     </packages>
   </WizardData>
 
