@@ -3,8 +3,15 @@ Web API Relations Sample ReadMe
 This sample demonstrates how to update 1-1, M-1 and M-M relations 
 using Trackable Entities.
 
-NOTE: You must first install the Entity Framework Power Tools.
-Support for EF 6.1 Tools for Visual Studio may be added in a future version.
+NOTE: You should first install the Entity Framework Power Tools.
+Support for EF 6.1 Tools for Visual Studio has also be added,
+so that you can add an "ADO.NET Entity Data Model" to the
+Service.Entities project. However, because the EF Power Tools
+are not compatible with Portable Class Libraries, you can either
+use the EF Power Tools to generate client entities, or copy
+the Code Tempaltes folder to a .NET 4.5 Class Library project
+and generate model classes there, then copy or link them to the
+Client.Entities project.
 
 These steps use a scaled down version of the Northwind database, 
 which you can get here: http://bit.ly/northwindslim.

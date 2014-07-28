@@ -4,7 +4,16 @@ This sample demonstrates how to create an ASP.NET Web API service
 that uses trackable entities. At this time only C# is supported
 using Visual Studio 2012 or 2013.
 
-NOTE: You must first install the Entity Framework Power Tools.
+NOTE: You should first install the Entity Framework Power Tools.
+Support for EF 6.1 Tools for Visual Studio has also be added,
+so that you can add an "ADO.NET Entity Data Model" to the
+Service.Entities project. However, because the EF Power Tools
+are not compatible with Portable Class Libraries, you can either
+use the EF Power Tools to generate client entities, or copy
+the Code Tempaltes folder to a .NET 4.5 Class Library project
+and generate model classes there, then copy or link them to the
+Client.Entities project.
+
 By default LocalDb is used and the NorthwindSlim databased is
 created and seeded with a small amount of data when you first
 run the WebApi service. Optionally, you can use SQL Express (or
