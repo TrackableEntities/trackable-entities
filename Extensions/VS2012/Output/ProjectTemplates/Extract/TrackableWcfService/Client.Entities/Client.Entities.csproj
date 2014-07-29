@@ -35,6 +35,8 @@
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
     <None Include="App.config" />
+    <None Include="CodeTemplates\EFModelFromDatabase\Context.cs.t4" />
+    <None Include="CodeTemplates\EFModelFromDatabase\EntityType.cs.t4" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
     <None Include="packages.config" />
   </ItemGroup>

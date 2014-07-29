@@ -83,6 +83,8 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="CodeTemplates\EFModelFromDatabase\Context.cs.t4" />
+    <None Include="CodeTemplates\EFModelFromDatabase\EntityType.cs.t4" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Context.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Mapping.tt" />

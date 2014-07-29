@@ -4,8 +4,15 @@ This sample demonstrates how to create a WCF service
 that uses trackable entities. At this time only C# is supported
 using Visual Studio 2012 or 2013.
 
-NOTE: You must first install the Entity Framework Power Tools.
-Support for EF 6.1 Tools for Visual Studio may be added in a future version.
+NOTE: You can use the EF 6.x Tools for Visual Studio to reverse
+engineer both client and service trackable entities:
+http://www.microsoft.com/en-us/download/confirmation.aspx?id=40762.
+Add an "ADO.NET Entity Data Model" and select "Code First from Database."
+However, the EF 6.x Tools are not compatible with the Client.Entities
+project, which is a Portable Class Library. Either add client entities
+to a .NET 4.5 Class Library and copy or link them to Client.Entities,
+or use the Entity Framework Power Tools to generate client entities:
+http://visualstudiogallery.msdn.microsoft.com/72a60b14-1581-4b9b-89f2-846072eff19d.
 
 These steps use a scaled down version of the Northwind database, which you 
 can get here: http://bit.ly/northwindslim.
