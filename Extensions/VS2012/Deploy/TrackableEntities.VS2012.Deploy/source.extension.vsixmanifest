@@ -16,7 +16,7 @@
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
-    <Dependency d:Source="Manual" DisplayName="NuGet Package Manager for Visual Studio 2012" d:InstallSource="Download" Location="http://visualstudiogallery.msdn.microsoft.com/27077b70-9dad-4c64-adcf-c7cf6bc9970c/file/37502/34/NuGet.Tools.vsix" Id="NuPackToolsVsix.Microsoft.67e54e40-0ae3-42c5-a949-fddf5739e7a5" Version="[2.8.50313.31,)" />
+    <Dependency d:Source="Manual" DisplayName="NuGet Package Manager for Visual Studio 2012" d:InstallSource="Download" Location="http://visualstudiogallery.msdn.microsoft.com/27077b70-9dad-4c64-adcf-c7cf6bc9970c/file/37502/34/NuGet.Tools.vsix" Id="NuPackToolsVsix.Microsoft.67e54e40-0ae3-42c5-a949-fddf5739e7a5" Version="[2.6.40627.9000,)" />
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableClientEntities.zip" />

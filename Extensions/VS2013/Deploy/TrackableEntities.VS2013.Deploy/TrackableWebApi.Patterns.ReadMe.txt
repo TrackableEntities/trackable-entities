@@ -15,6 +15,14 @@ to a .NET 4.5 Class Library and copy or link them to Client.Entities,
 or use the Entity Framework Power Tools to generate client entities:
 http://visualstudiogallery.msdn.microsoft.com/72a60b14-1581-4b9b-89f2-846072eff19d.
 
+You can also generate client and service trackable entities using a Model-
+First approach, by adding an ADO.NET Entity Data Model and selecting
+"EF Designer from Database." Then right-click the model design surface,
+select "Add Code Generation Item," and choose either a Client or Service
+Trackable Entities EF 6.x Model First Generator, entering the same name
+as the existing model and responding "Yes" to the prompts to replace
+existing .tt files.
+
 These steps use a scaled down version of the Northwind database, which you 
 can get here: http://bit.ly/northwindslim.
 

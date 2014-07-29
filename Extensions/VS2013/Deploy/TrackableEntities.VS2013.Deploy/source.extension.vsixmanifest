@@ -16,7 +16,7 @@
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
-    <Dependency d:Source="Installed" Id="NuGet.67e54e40-0ae3-42c5-a949-fddf5739e6a5" DisplayName="NuGet Package Manager for Visual Studio 2013" Version="[2.7.40911.287,3.0)" d:InstallSource="Download" Location="http://visualstudiogallery.msdn.microsoft.com/4ec1526c-4a8c-4a84-b702-b21a8f5293ca/file/105933/3/NuGet.Tools.2013.vsix" />
+    <Dependency d:Source="File" Version="[2.7.40911.287,3.0)" d:InstallSource="Download" d:Path="Dependencies\NuGet.Tools.2013.vsix" DisplayName="NuGet Package Manager for Visual Studio 2013" Id="NuGet.67e54e40-0ae3-42c5-a949-fddf5739e6a5" Location="http://visualstudiogallery.msdn.microsoft.com/4ec1526c-4a8c-4a84-b702-b21a8f5293ca/file/105933/3/NuGet.Tools.2013.vsix" />
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableClientEntities.zip" />

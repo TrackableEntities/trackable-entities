@@ -237,6 +237,9 @@
     <Content Include="Packages\TrackableEntities.EF.6.2.1.0.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Dependencies\NuGet.Tools.vsix">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
