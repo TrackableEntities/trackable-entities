@@ -13,9 +13,14 @@ which merges original and updated entities.
 
 Version 1.03 included templates for Repository and Unit of Work.
 
-Version 2.0.0 added support for all relationship types:
+Version 2.0 added support for all relationship types:
 1-M, 1-1, M-1, and M-M. Improved MergeChanges was added,
 as well as LoadRelatedEntities DbContext extension method.
+
+Version 2.1 added support for the EF 6.x Tools for Visual
+Studio, including both Code First from Database and EF Designer
+from Database (aka Model First, or Database First). All NuGet
+packages were updated in the samples and templates.
 
 The repository contains source code, NuGet packages, samples,
 and Visual Studio Extension projects.
