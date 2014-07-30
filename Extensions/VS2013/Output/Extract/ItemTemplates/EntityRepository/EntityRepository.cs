@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Threading.Tasks;
 using TrackableEntities.Patterns.EF6;
+using $entitiesNamespace$;
 using $baseNamespace$.EF.Contexts;
-using $baseNamespace$.Entities.Models;
 using $baseNamespace$.Persistence.Repositories;
 
 namespace $rootnamespace$

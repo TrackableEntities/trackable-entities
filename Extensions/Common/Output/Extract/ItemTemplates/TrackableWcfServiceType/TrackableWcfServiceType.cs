@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using TrackableEntities;
 using TrackableEntities.EF6;
 using TrackableEntities.Common;
-using $baseNamespace$.Entities.Models;
+using $entitiesNamespace$;
 
 // NOTE: Primary key name and/or type may need to be set manually.
 

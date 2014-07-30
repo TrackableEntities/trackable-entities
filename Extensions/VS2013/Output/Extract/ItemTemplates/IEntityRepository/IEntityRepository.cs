@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TrackableEntities.Patterns;
-using $baseNamespace$.Entities.Models;
+using $entitiesNamespace$;
 
 namespace $rootnamespace$
 {

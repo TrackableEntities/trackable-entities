@@ -42,8 +42,11 @@ namespace ItemTemplateParametersWizard
                 contextComboBox)) return null;
 
             // Get info
-            string entityNamespace = ((ModelTypeInfo) entityComboBox.SelectedItem).Namespace;
-            string baseNamespace = entityNamespace.Substring(0, entityNamespace.IndexOf(".Entities.Models"));
+            string entitiesNamespace = ((ModelTypeInfo) entityComboBox.SelectedItem).Namespace;
+            string baseNamespace = entitiesNamespace;
+            int namespaceEnd = entitiesNamespace.IndexOf(".Entities.Models", StringComparison.OrdinalIgnoreCase);
+            if (namespaceEnd < 0) namespaceEnd = entitiesNamespace.IndexOf(".Entities", StringComparison.OrdinalIgnoreCase);
+            if (namespaceEnd >= 0) baseNamespace = entitiesNamespace.Substring(0, namespaceEnd);
             string entityName = ((ModelTypeInfo)entityComboBox.SelectedItem).Name;
             string entitySetName = entitySetTextBox.Text;
             string dbContextName = null;
@@ -53,10 +56,11 @@ namespace ItemTemplateParametersWizard
             }
             var info = new ModelTypesDialogInfo
             {
-                BaseNamespace = baseNamespace,
                 EntityName = entityName,
                 EntitySetName = entitySetName,
-                DbContextName = dbContextName
+                DbContextName = dbContextName,
+                BaseNamespace = baseNamespace,
+                EntitiesNamespace = entitiesNamespace,
             };
             return info;
         }

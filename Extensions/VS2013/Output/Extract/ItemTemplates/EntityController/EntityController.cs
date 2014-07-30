@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using TrackableEntities.Common;
-using $baseNamespace$.Entities.Models;
+using $entitiesNamespace$;
 using $baseNamespace$.Persistence.Exceptions;
 using $baseNamespace$.Persistence.UnitsOfWork;
 

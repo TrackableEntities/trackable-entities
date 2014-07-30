@@ -50,15 +50,17 @@ namespace TrackableEntities.ItemWizard
                 throw new WizardBackoutException();
 
             var modelTypesDialog = ((IModelTypes) dialog);
-            string baseNamespace = modelTypesDialog.ModelTypesDialogInfo.BaseNamespace;
             string entityName = modelTypesDialog.ModelTypesDialogInfo.EntityName;
             string entitySetName = modelTypesDialog.ModelTypesDialogInfo.EntitySetName;
             string dbContextName = modelTypesDialog.ModelTypesDialogInfo.DbContextName;
+            string baseNamespace = modelTypesDialog.ModelTypesDialogInfo.BaseNamespace;
+            string entitiesNamespace = modelTypesDialog.ModelTypesDialogInfo.EntitiesNamespace;
 
-            replacementsDictionary.Add("$baseNamespace$", baseNamespace);
             replacementsDictionary.Add("$entityName$", entityName);
             replacementsDictionary.Add("$entitySetName$", entitySetName);
             replacementsDictionary.Add("$dbContextName$", dbContextName);
+            replacementsDictionary.Add("$baseNamespace$", baseNamespace);
+            replacementsDictionary.Add("$entitiesNamespace$", entitiesNamespace);
         }
 
         private static IEnumerable<ModelTypeInfo> GetReferencedTypes(DTE2 dte2)
