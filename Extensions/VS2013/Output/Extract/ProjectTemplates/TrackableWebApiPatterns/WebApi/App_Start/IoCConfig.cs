@@ -1,12 +1,12 @@
-﻿using System;
-using System.Web.Http;
+﻿using System.Web.Http;
 using TinyIoC;
 using $safeprojectname$.DependencyResolution;
-//using $saferootprojectname$.Service.EF.Contexts;
-//using $saferootprojectname$.Service.EF.Repositories;
-//using $saferootprojectname$.Service.EF.UnitsOfWork;
-//using $saferootprojectname$.Service.Persistence.Repositories;
-//using $saferootprojectname$.Service.Persistence.UnitsOfWork;
+
+//using TrackableWebApiPatterns.Service.EF.Contexts;
+//using TrackableWebApiPatterns.Service.EF.Repositories;
+//using TrackableWebApiPatterns.Service.EF.UnitsOfWork;
+//using TrackableWebApiPatterns.Service.Persistence.Repositories;
+//using TrackableWebApiPatterns.Service.Persistence.UnitsOfWork;
 
 namespace $safeprojectname$
 {

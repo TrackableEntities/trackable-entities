@@ -35,6 +35,22 @@
           <ProjectItem ReplaceParameters="true" TargetFileName="HelpPage.css">HelpPage.css</ProjectItem>
           <ProjectItem ReplaceParameters="true" TargetFileName="HelpPageAreaRegistration.cs">HelpPageAreaRegistration.cs</ProjectItem>
           <ProjectItem ReplaceParameters="true" TargetFileName="HelpPageConfigurationExtensions.cs">HelpPageConfigurationExtensions.cs</ProjectItem>
+          <Folder Name="ModelDescriptions" TargetFolderName="ModelDescriptions">
+            <ProjectItem ReplaceParameters="true" TargetFileName="CollectionModelDescription.cs">CollectionModelDescription.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="ComplexTypeModelDescription.cs">ComplexTypeModelDescription.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="DictionaryModelDescription.cs">DictionaryModelDescription.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="EnumTypeModelDescription.cs">EnumTypeModelDescription.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="EnumValueDescription.cs">EnumValueDescription.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="IModelDocumentationProvider.cs">IModelDocumentationProvider.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="KeyValuePairModelDescription.cs">KeyValuePairModelDescription.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="ModelDescription.cs">ModelDescription.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="ModelDescriptionGenerator.cs">ModelDescriptionGenerator.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="ModelNameAttribute.cs">ModelNameAttribute.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="ModelNameHelper.cs">ModelNameHelper.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="ParameterAnnotation.cs">ParameterAnnotation.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="ParameterDescription.cs">ParameterDescription.cs</ProjectItem>
+            <ProjectItem ReplaceParameters="true" TargetFileName="SimpleTypeModelDescription.cs">SimpleTypeModelDescription.cs</ProjectItem>
+          </Folder>
           <Folder Name="Models" TargetFolderName="Models">
             <ProjectItem ReplaceParameters="true" TargetFileName="HelpPageApiModel.cs">HelpPageApiModel.cs</ProjectItem>
           </Folder>
@@ -54,16 +70,24 @@
               <ProjectItem ReplaceParameters="true" TargetFileName="Api.cshtml">Api.cshtml</ProjectItem>
               <Folder Name="DisplayTemplates" TargetFolderName="DisplayTemplates">
                 <ProjectItem ReplaceParameters="true" TargetFileName="ApiGroup.cshtml">ApiGroup.cshtml</ProjectItem>
+                <ProjectItem ReplaceParameters="true" TargetFileName="CollectionModelDescription.cshtml">CollectionModelDescription.cshtml</ProjectItem>
+                <ProjectItem ReplaceParameters="true" TargetFileName="ComplexTypeModelDescription.cshtml">ComplexTypeModelDescription.cshtml</ProjectItem>
+                <ProjectItem ReplaceParameters="true" TargetFileName="DictionaryModelDescription.cshtml">DictionaryModelDescription.cshtml</ProjectItem>
+                <ProjectItem ReplaceParameters="true" TargetFileName="EnumTypeModelDescription.cshtml">EnumTypeModelDescription.cshtml</ProjectItem>
                 <ProjectItem ReplaceParameters="true" TargetFileName="HelpPageApiModel.cshtml">HelpPageApiModel.cshtml</ProjectItem>
                 <ProjectItem ReplaceParameters="true" TargetFileName="ImageSample.cshtml">ImageSample.cshtml</ProjectItem>
                 <ProjectItem ReplaceParameters="true" TargetFileName="InvalidSample.cshtml">InvalidSample.cshtml</ProjectItem>
+                <ProjectItem ReplaceParameters="true" TargetFileName="KeyValuePairModelDescription.cshtml">KeyValuePairModelDescription.cshtml</ProjectItem>
+                <ProjectItem ReplaceParameters="true" TargetFileName="ModelDescriptionLink.cshtml">ModelDescriptionLink.cshtml</ProjectItem>
                 <ProjectItem ReplaceParameters="true" TargetFileName="Parameters.cshtml">Parameters.cshtml</ProjectItem>
                 <ProjectItem ReplaceParameters="true" TargetFileName="Samples.cshtml">Samples.cshtml</ProjectItem>
+                <ProjectItem ReplaceParameters="true" TargetFileName="SimpleTypeModelDescription.cshtml">SimpleTypeModelDescription.cshtml</ProjectItem>
                 <ProjectItem ReplaceParameters="true" TargetFileName="TestClientDialogs.cshtml">TestClientDialogs.cshtml</ProjectItem>
                 <ProjectItem ReplaceParameters="true" TargetFileName="TestClientReferences.cshtml">TestClientReferences.cshtml</ProjectItem>
                 <ProjectItem ReplaceParameters="true" TargetFileName="TextSample.cshtml">TextSample.cshtml</ProjectItem>
               </Folder>
               <ProjectItem ReplaceParameters="true" TargetFileName="Index.cshtml">Index.cshtml</ProjectItem>
+              <ProjectItem ReplaceParameters="true" TargetFileName="ResourceModel.cshtml">ResourceModel.cshtml</ProjectItem>
             </Folder>
             <Folder Name="Shared" TargetFolderName="Shared">
               <ProjectItem ReplaceParameters="true" TargetFileName="_Layout.cshtml">_Layout.cshtml</ProjectItem>
@@ -75,8 +99,10 @@
       </Folder>
       <Folder Name="Content" TargetFolderName="Content">
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap-theme.css">bootstrap-theme.css</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap-theme.css.map">bootstrap-theme.css.map</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap-theme.min.css">bootstrap-theme.min.css</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap.css">bootstrap.css</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap.css.map">bootstrap.css.map</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap.min.css">bootstrap.min.css</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="Site.css">Site.css</ProjectItem>
         <Folder Name="themes" TargetFolderName="themes">
@@ -164,6 +190,7 @@
       </Folder>
       <ProjectItem ReplaceParameters="true" TargetFileName="Global.asax">Global.asax</ProjectItem>
       <ProjectItem ReplaceParameters="true" TargetFileName="Global.asax.cs">Global.asax.cs</ProjectItem>
+      <Folder Name="Models" TargetFolderName="Models" />
       <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
       <ProjectItem ReplaceParameters="true" TargetFileName="Project_Readme.html">Project_Readme.html</ProjectItem>
       <Folder Name="Properties" TargetFolderName="Properties">
@@ -173,16 +200,18 @@
         <ProjectItem ReplaceParameters="true" TargetFileName="_references.js">_references.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap.js">bootstrap.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap.min.js">bootstrap.min.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.0.3.intellisense.js">jquery-2.0.3.intellisense.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.0.3.js">jquery-2.0.3.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.0.3.min.js">jquery-2.0.3.min.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.0.3.min.map">jquery-2.0.3.min.map</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-ui-1.10.3.js">jquery-ui-1.10.3.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-ui-1.10.3.min.js">jquery-ui-1.10.3.min.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="knockout-3.0.0.debug.js">knockout-3.0.0.debug.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="knockout-3.0.0.js">knockout-3.0.0.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="modernizr-2.6.2.js">modernizr-2.6.2.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.intellisense.js">jquery-2.1.1.intellisense.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.js">jquery-2.1.1.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.min.js">jquery-2.1.1.min.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.min.map">jquery-2.1.1.min.map</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-ui-1.10.4.js">jquery-ui-1.10.4.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-ui-1.10.4.min.js">jquery-ui-1.10.4.min.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="knockout-3.1.0.debug.js">knockout-3.1.0.debug.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="knockout-3.1.0.js">knockout-3.1.0.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="modernizr-2.7.2.js">modernizr-2.7.2.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="respond.js">respond.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="respond.matchmedia.addListener.js">respond.matchmedia.addListener.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="respond.matchmedia.addListener.min.js">respond.matchmedia.addListener.min.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="respond.min.js">respond.min.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="WebApiTestClient.js">WebApiTestClient.js</ProjectItem>
       </Folder>
@@ -222,7 +251,7 @@
       <package id="Microsoft.AspNet.WebApi" version="5.2.0" />
       <package id="Microsoft.AspNet.WebApi.Client" version="5.2.0" />
       <package id="Microsoft.AspNet.WebApi.Core" version="5.2.0" />
-      <package id="Microsoft.AspNet.WebApi.HelpPage" version="5.0.0" />
+      <package id="Microsoft.AspNet.WebApi.HelpPage" version="5.2.0" />
       <package id="Microsoft.AspNet.WebApi.WebHost" version="5.2.0" />
       <package id="Microsoft.AspNet.WebPages" version="3.2.0" />
       <package id="Microsoft.Web.Infrastructure" version="1.0.0.0" />
