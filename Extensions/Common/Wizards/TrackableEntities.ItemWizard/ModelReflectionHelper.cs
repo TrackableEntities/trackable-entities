@@ -13,8 +13,12 @@ namespace TrackableEntities.ItemWizard
 {
     public static class ModelReflectionHelper
     {
+        private static string _assemblyFullName;
+
         public static List<ModelTypeInfo> GetModelTypes(FileInfo assemblyLocation)
         {
+            _assemblyFullName = assemblyLocation.FullName;
+
             if (string.IsNullOrEmpty(assemblyLocation.Directory.FullName))
             {
                 throw new InvalidOperationException("Directory can't be null or empty.");
@@ -72,10 +76,7 @@ namespace TrackableEntities.ItemWizard
             catch { } // Ignore load error
 
             // In case Load doesn't work, fall back to LoadFrom
-            var parts = args.Name.Split(',');
-            string file = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +
-                "\\" + parts[0].Trim() + ".dll";
-            return Assembly.LoadFrom(file);
+            return Assembly.LoadFrom(_assemblyFullName);
         }
 
         private static AppDomain BuildChildDomain(AppDomain parentDomain)
