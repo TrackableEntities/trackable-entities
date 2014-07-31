@@ -1,0 +1,123 @@
+Web API Inheritance Sample ReadMe
+
+This sample demonstrates how to create an ASP.NET Web API service
+that uses trackable entities with inheritance.
+
+NOTE: As of v 2.1, Trackable Entities does not formally support inheritance
+with entities. The client-side change tracker needs to be updated, as well
+as T4 templates for shared entities between client and server. In addition,
+the item template wizard for adding Web API controllers throws an exception
+when displaying client entities for a Web API service.  However, this example
+demonstrates some limited capabilities for handling inheritance with shared
+entities.
+
+Before starting the client Console app, build the solution, then
+right-click on the Web Api project and select View in Browser.
+This will start the service using the development web server.
+
+The following items illustrate how to use Trackable Entities
+with model classes that use inheritance.
+
+1. Open SQL Mant Studio and create a database called "NorthwindSlimInheritance".
+   - Locate the NorthwindSlimInheritance.sql file in the Entities project,
+     then open execute the script to create tables and populate them with data.
+   - Note that it is also possible to create the model classes and create the
+     database based on the class definitions.
+   - By default Code First uses the Table-Per-Hierarchy inheritance strategy,
+     but it is also possible to configure it to use Table-Per-Type.
+   - While the Web project includes a database file (mdf) in the App_Data folder,
+     it is possible to create a replica in SQL Server (Express or Standard)
+	 to use for generating Code-First or Model-First classes.
+
+2. Start by creating a new project and selecting "Trackable Web API Application."
+   - Reverse engineer service and client entities using either the EF Power Tools,
+     or the EF 6.x Tools for Visual Studio (either Code First or Model First).
+   - Add Category and Product controllers to the WebApi project
+     > Run the WebApi project to test each controller.
+
+   NOTE: Currently, controllers must be added using the Services.Entities project
+   included with the project template. The "Trackable Web API Controller" item
+   template does not yet function with client entities on the service-side. After
+   adding controllers, the Service.Entities project may be removed.
+
+3. Add a Class Library project to the solution with the ".Entities" suffix.
+   - Add the following NuGet packages:
+     TrackableEntities.Client
+	 TrackableEntities.EF.6
+   - Add a reference to System.Windows
+   - Copy the CodeTemplates folder from the Client.Entities project.
+   - Add an ADO.NET Entity Data Model to the project.
+     > Select "Code First from Database" and enter NorthwindSlimInheritance
+	 > Select the NorthwindSlimInheritance database you created earlier
+	 > Select Category and Product tables
+
+   NOTE: Client entities will not include attributes used by Code First
+   for configuring entity properties.  Until a consolidated template is provided,
+   you should copy attributes from classes in the Service.Entities project.
+
+3. Modify model classes to use inheritance.
+   - Add a DiscontinuedProduct class that inherits from Product
+   - Move the following property from Product to DiscontinuedProduct:
+	 DiscontinuedDate
+   - Remove the following property from Product:
+     Discriminator
+   - Edit DiscontinuedProduct as follows:
+     > Copy code in the Change Tracking region from Product
+	 > Add the following event:
+	   public event PropertyChangedEventHandler PropertyChanged;
+     > Implement the following interfaces:
+	   IEquatable<DiscontinuedProduct>, INotifyPropertyChanged
+	 > Change the code in the DiscontinuedDate property setter:
+
+		if (Equals(value, _DiscontinuedDate)) return;
+		_DiscontinuedDate = value;
+		if (PropertyChanged != null)
+			PropertyChanged(this, new PropertyChangedEventArgs("DiscontinuedDate"));
+	   
+4. Remove both the Client.Entities and Service.Entities projects from the solution
+   - Add project references to the Entities project to the these projects:
+     TrackableWebApi.Inheritance.WebApi
+	 TrackableWebApi.Inheritance.ConsoleClient
+   - Add a reference to System.Windows to the WebApi project
+   - Add the TrackableEntities.Client Nuget package to the WebApi project
+
+5. Update the WebApi project to use return trackable entities.
+   - Build the Web API project
+   - Copy the connection string from the Entities project to web.config file
+     of the WebApi project
+   - Add controllers for the following entities: Category, Product
+     > Right-click the Controllers folder, select Add New Item
+	 > Under Trackable, Web select "Entity Web API Controller"
+   - Add the following code to the WebApiConfig.cs file (App_Start):
+     > This will allow Json.Net to handle class hierarchies
+
+	config.Formatters.JsonFormatter.SerializerSettings.TypeNameHandling =
+		TypeNameHandling.Auto;
+
+   - Test the WebApi project
+     > Right-click, select View In Browser
+	 > Click the API link, GET api/Product, Test API button, Send button
+	 > You should see Json representing products
+
+6. Configure ConsoleClient to consume the Web API service.
+   - Add the following methods:
+     > This will allow Json.Net on the client to handle class hierarchies
+
+    private static async Task<T> ReadContentAsAsync<T>(HttpResponseMessage response)
+    {
+        var jsonFormatter = new JsonMediaTypeFormatter { SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto } };
+        var result = await response.Content.ReadAsAsync<T>(new MediaTypeFormatter[] { jsonFormatter });
+        return result;
+    }
+
+    private static ObjectContent<T> GetObjectContent<T>(T entity)
+    {
+        var jsonFormatter = new JsonMediaTypeFormatter { SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto } };
+        var content = new ObjectContent<T>(entity, jsonFormatter);
+        return content;
+    }
+
+   - Add code to retrieve and update products
+     > You should be able to treat Product and DiscontinuedProduct polymorphically
+	 > Use "is" and "as" C# keywords to test for type compatibility
+

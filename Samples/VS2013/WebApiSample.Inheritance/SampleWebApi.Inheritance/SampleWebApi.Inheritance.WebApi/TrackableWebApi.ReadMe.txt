@@ -1,0 +1,35 @@
+Trackable Web Api ReadMe
+
+Follow these steps to use the Web API project template.
+
+1. Reverse engineer service entities.
+   - Right-click on the ServiceEntities project, select EntityFramework,
+     Reverse Engineer Code First.
+	 > Enter a server name (for example, .\sqlexpress)
+	 > Select a database
+   - This will generate a DbContext-derived class, mapping classes,
+     and entities using the supplied code templates.
+	 > Entities will implement the ITrackable interface
+
+2. Copy the connection string from the App.config file in the
+   ServiceEntities project, and paste it into the ConnectionString
+   section of the web.config file in the Web API project.
+
+3. Add an API controller (right-click the Controllers folder)
+   - For the template select:
+     API controller with read/write actions, using Entity Framework
+   - Select a class from the Service.Entities project as the model
+   - Select a Data context derived class from the ServiceEntities project
+     > The generated API controller will include actions which leverage
+       trackable entitites for persistence of an entire object graph.
+     > Get, Post and Delete actions will mostly be the same, but the Put
+       action will include code which calls the ApplyChanges extension
+       method on DbContext in order to update the object graph entity state
+       based on the TrackingState property of each entity.
+     > Delete action can have a TODO item for setting the concurrency property
+       of the new entity from the parameter entity.
+
+4. Press Ctrl+F5 to launch the Web API service
+   - Click the API link to see a description of controllers and actions
+   - Click the Test API button to execute an action.\
+     > Add parameters and/or a body as needed, then click Send
