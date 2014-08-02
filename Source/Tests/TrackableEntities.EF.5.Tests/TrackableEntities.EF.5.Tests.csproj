@@ -86,6 +86,8 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <EntityDeploy Include="Edmx\NorthwindModel.edmx" />
+    <EntityDeploy Include="Edmx\DummyModel.edmx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

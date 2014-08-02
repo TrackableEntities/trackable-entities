@@ -136,6 +136,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EntityDeploy Include="..\TrackableEntities.EF.5.Tests\Edmx\DummyModel.edmx">
+      <Link>Edmx\DummyModel.edmx</Link>
+    </EntityDeploy>
+    <EntityDeploy Include="..\TrackableEntities.EF.5.Tests\Edmx\NorthwindModel.edmx">
+      <Link>Edmx\NorthwindModel.edmx</Link>
+    </EntityDeploy>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>

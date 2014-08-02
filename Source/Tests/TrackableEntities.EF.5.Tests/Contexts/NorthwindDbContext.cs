@@ -11,6 +11,11 @@ namespace TrackableEntities.EF.Tests.Contexts
         private const string TestDbName = "NorthwindTestDbv5";        
 #endif
 
+        public NorthwindDbContext(string connectionString)
+            : base(connectionString)
+        {
+        }
+
         public NorthwindDbContext(CreateDbOptions createDbOptions = CreateDbOptions.CreateDatabaseIfNotExists)
             : base(TestDbName)
         {
