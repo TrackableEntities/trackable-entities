@@ -485,15 +485,24 @@ namespace TrackableEntities.EF5
             context.Entry(item).State = state;
         }
 
+        private static EntityType GetEdmSpaceType(this DbContext dbContext, Type entityType)
+        {
+            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
+                .ObjectContext.MetadataWorkspace;
+
+            StructuralType oType = workspace.GetItems<StructuralType>(DataSpace.OSpace)
+                .Where(e => e.FullName == entityType.FullName).FirstOrDefault();
+
+            if (oType == null) return null;
+
+            return workspace.GetEdmSpaceType(oType) as EntityType;
+        }
+
         private static bool IsRelatedProperty(this DbContext dbContext,
             Type entityType, string propertyName, RelationshipType relationshipType)
         {
             // Get navigation property
-            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
-                .ObjectContext.MetadataWorkspace;
-            var entityTypes = workspace.GetItems<EntityType>(DataSpace.CSpace);
-            if (entityTypes == null) return false;
-            var edmEntityType = entityTypes.SingleOrDefault(e => e.Name == entityType.Name);
+            var edmEntityType = dbContext.GetEdmSpaceType(entityType);
             if (edmEntityType == null) return false;
             var navProp = edmEntityType.NavigationProperties
                 .SingleOrDefault(p => p.Name == propertyName);
@@ -655,19 +664,14 @@ namespace TrackableEntities.EF5
             var entitySetName =
                 (from c in containers
                  from es in c.BaseEntitySets
-                 where es.ElementType.Name == propertyType.Name
+                 where es.ElementType == dbContext.GetEdmSpaceType(propertyType)
                  select es.EntityContainer.Name + "." + es.Name).SingleOrDefault();
             return entitySetName;
         }
 
         private static string GetPrimaryKeyName(this DbContext dbContext, Type entityType)
         {
-            // Get navigation property association
-            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
-                .ObjectContext.MetadataWorkspace;
-            var entityTypes = workspace.GetItems<EntityType>(DataSpace.CSpace);
-            if (entityTypes == null) return null;
-            var edmEntityType = entityTypes.SingleOrDefault(e => e.Name == entityType.Name);
+            var edmEntityType = dbContext.GetEdmSpaceType(entityType);
             if (edmEntityType == null) return null;
 
             // We're not supporting multiple primary keys for reference types
@@ -682,11 +686,7 @@ namespace TrackableEntities.EF5
             Type entityType, string propertyName)
         {
             // Get navigation property association
-            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
-                .ObjectContext.MetadataWorkspace;
-            var entityTypes = workspace.GetItems<EntityType>(DataSpace.CSpace);
-            if (entityTypes == null) return null;
-            var edmEntityType = entityTypes.SingleOrDefault(e => e.Name == entityType.Name);
+            var edmEntityType = dbContext.GetEdmSpaceType(entityType);
             if (edmEntityType == null) return null;
             var navProp = edmEntityType.NavigationProperties
                 .SingleOrDefault(p => p.Name == propertyName);
