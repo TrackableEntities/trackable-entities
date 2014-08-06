@@ -652,11 +652,12 @@ namespace TrackableEntities.EF5
             MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
                 .ObjectContext.MetadataWorkspace;
             var containers = workspace.GetItems<EntityContainer>(DataSpace.CSpace);
-            if (containers == null) return null;
-            var entitySet = containers.First().BaseEntitySets
-                .SingleOrDefault(es => es.ElementType.Name == propertyTypeName);
-            if (entitySet == null) return null;
-            return entitySet.Name;
+            var entitySetName =
+                (from c in containers
+                 from es in c.BaseEntitySets
+                 where es.ElementType.Name == propertyTypeName
+                 select es.EntityContainer.Name + "." + es.Name).SingleOrDefault();
+            return entitySetName;
         }
 
         private static string GetPrimaryKeyName(this DbContext dbContext, string entityTypeName)
