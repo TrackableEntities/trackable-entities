@@ -1,4 +1,4 @@
-﻿Feature: OneToOne Relations Feature
+﻿Feature: OneToOne Relations
 	In order to update entity relations
 	As a Web API client
 	I want to save one-to-one relations to the database

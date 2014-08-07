@@ -119,20 +119,20 @@
     <Compile Include="Contexts\NorthwindTestDbContext.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
-    <Compile Include="Features\OneToOneRelationsFeature.feature.cs">
+    <Compile Include="Features\OneToOneRelations.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>OneToOneRelationsFeature.feature</DependentUpon>
+      <DependentUpon>OneToOneRelations.feature</DependentUpon>
     </Compile>
-    <Compile Include="Features\RetreiveEntitiesFeature.feature.cs">
+    <Compile Include="Features\RetreiveEntities.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>RetreiveEntitiesFeature.feature</DependentUpon>
+      <DependentUpon>RetreiveEntities.feature</DependentUpon>
     </Compile>
-    <Compile Include="Features\UpdateOrderFeature.feature.cs">
+    <Compile Include="Features\UpdateOrder.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>UpdateOrderFeature.feature</DependentUpon>
+      <DependentUpon>UpdateOrder.feature</DependentUpon>
     </Compile>
     <Compile Include="Helpers\EntityExtensions.cs" />
     <Compile Include="Helpers\TestsHelper.cs" />
@@ -155,17 +155,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Features\OneToOneRelationsFeature.feature">
+    <None Include="Features\OneToOneRelations.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>OneToOneRelationsFeature.feature.cs</LastGenOutput>
+      <LastGenOutput>OneToOneRelations.feature.cs</LastGenOutput>
     </None>
-    <None Include="Features\RetreiveEntitiesFeature.feature">
+    <None Include="Features\RetreiveEntities.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>RetreiveEntitiesFeature.feature.cs</LastGenOutput>
+      <LastGenOutput>RetreiveEntities.feature.cs</LastGenOutput>
     </None>
-    <None Include="Features\UpdateOrderFeature.feature">
+    <None Include="Features\UpdateOrder.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>UpdateOrderFeature.feature.cs</LastGenOutput>
+      <LastGenOutput>UpdateOrder.feature.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
     <None Include="Tests.Acceptance.ReadMe" />

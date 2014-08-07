@@ -112,6 +112,33 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             order.OrderDetails.Add(addedDetail);
             ScenarioContext.Current.Add("ChangeTracker", changeTracker);
         }
+
+        [Given(@"order details are added")]
+        public void GivenOrderDetailsAreAdded()
+        {
+            var order = ScenarioContext.Current.Get<List<ClientEntities.Order>>("ExistingCustOrders").First();
+            var changeTracker = new ChangeTrackingCollection<ClientEntities.Order>(order);
+            int[] productIds = ScenarioContext.Current.Get<int[]>("ProductIds");
+            var addedDetail1 = new ClientEntities.OrderDetail
+            {
+                OrderId = order.OrderId,
+                ProductId = productIds[3],
+                Quantity = 15,
+                UnitPrice = 30
+            };
+            var addedDetail2 = new ClientEntities.OrderDetail
+            {
+                OrderId = order.OrderId,
+                ProductId = productIds[4],
+                Quantity = 20,
+                UnitPrice = 40
+            };
+            ScenarioContext.Current.Add("AddedDetail1", addedDetail1);
+            ScenarioContext.Current.Add("AddedDetail2", addedDetail2);
+            order.OrderDetails.Add(addedDetail1);
+            order.OrderDetails.Add(addedDetail2);
+            ScenarioContext.Current.Add("ChangeTracker", changeTracker);
+        }
         
         [When(@"I submit a GET request for customers")]
         public void WhenISubmitGetRequestForCustomers()
@@ -226,6 +253,19 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             Assert.IsFalse(updatedOrder.OrderDetails.Any(d => d.ProductId == deletedDetail.ProductId));
         }
 
+        [Then(@"the request should return the added order details")]
+        public void ThenTheRequestShouldReturnTheAddedOrderDetails()
+        {
+            var modifiedOrder = ScenarioContext.Current.Get<List<ClientEntities.Order>>("ExistingCustOrders").Single();
+            var updatedOrder = ScenarioContext.Current.Get<List<ClientEntities.Order>>("CustomerOrdersResult").Single();
+            var addedDetail1 = ScenarioContext.Current.Get<ClientEntities.OrderDetail>("AddedDetail1");
+            var addedDetail2 = ScenarioContext.Current.Get<ClientEntities.OrderDetail>("AddedDetail2");
+
+            Assert.AreEqual(modifiedOrder.OrderDetails[0].UnitPrice, updatedOrder.OrderDetails[0].UnitPrice);
+            Assert.IsTrue(updatedOrder.OrderDetails.Any(d => d.ProductId == addedDetail1.ProductId));
+            Assert.IsTrue(updatedOrder.OrderDetails.Any(d => d.ProductId == addedDetail2.ProductId));
+        }
+        
         [Then(@"the order should be deleted")]
         public void ThenTheOrderShouldBeDeleted()
         {

@@ -19,20 +19,20 @@ namespace TrackableEntities.Tests.Acceptance.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "1.9.0.77")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("OneToOne Relations Feature")]
-    public partial class OneToOneRelationsFeatureFeature
+    [NUnit.Framework.DescriptionAttribute("OneToOne Relations")]
+    public partial class OneToOneRelations
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "OneToOneRelationsFeature.feature"
+#line 1 "OneToOneRelations.feature"
 #line hidden
         
         [NUnit.Framework.TestFixtureSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "OneToOne Relations Feature", "In order to update entity relations\r\nAs a Web API client\r\nI want to save one-to-o" +
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "OneToOne Relations", "In order to update entity relations\r\nAs a Web API client\r\nI want to save one-to-o" +
                     "ne relations to the database", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
