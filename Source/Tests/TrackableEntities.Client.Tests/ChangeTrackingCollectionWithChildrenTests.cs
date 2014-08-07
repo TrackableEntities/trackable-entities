@@ -42,6 +42,38 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Test]
+        public void Existing_Parent_With_Added_Children_Should_Have_Children_Marked_As_Added()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
+            var addedDetail1 = new OrderDetail
+            {
+                ProductId = 1,
+                Product = database.Products[0],
+                Quantity = 10,
+                UnitPrice = 20M
+            };
+            var addedDetail2 = new OrderDetail
+            {
+                ProductId = 2,
+                Product = database.Products[1],
+                Quantity = 20,
+                UnitPrice = 30M
+            };
+
+            // Act
+            orderDetails.Add(addedDetail1);
+            orderDetails.Add(addedDetail2);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Added, addedDetail1.TrackingState);
+            Assert.AreEqual(TrackingState.Added, addedDetail2.TrackingState);
+        }
+
+        [Test]
         public void Added_Parent_With_Children_Should_Have_Children_Marked_As_Added()
         {
             // Arrange
