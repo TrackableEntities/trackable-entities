@@ -371,7 +371,27 @@ namespace TrackableEntities.EF5.Tests
 			Assert.AreEqual(EntityState.Unchanged, context.Entry(detail4).State);
 		}
 
-		#endregion
+        [Test]
+        public void Apply_Changes_Should_Mark_Multiple_OrderDetails_Added()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new MockNorthwind().Orders[0];
+            var detail1 = order.OrderDetails[0];
+            var detail2 = order.OrderDetails[1];
+            detail1.TrackingState = TrackingState.Added;
+            detail2.TrackingState = TrackingState.Added;
+
+            // Act
+            context.ApplyChanges(order);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(detail1).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(detail2).State);
+        }
+
+        #endregion
 
 		#region Employee-Territory: Many to Many
 
