@@ -51,7 +51,8 @@ namespace TrackableEntities.EF5
         }
 
         private static void ApplyChanges(this DbContext context,
-            ITrackable item, ITrackable parent, string propertyName)
+            ITrackable item, ITrackable parent, string propertyName,
+            TrackingState? state = null)
         {
             // Check for null args
             if (context == null)
@@ -113,7 +114,8 @@ namespace TrackableEntities.EF5
             }
 
             // Set state to Added on parent only
-            if (item.TrackingState == TrackingState.Added)
+            if (item.TrackingState == TrackingState.Added
+                && (state == null || state == TrackingState.Added))
             {
                 context.Entry(item).State = EntityState.Added;
                 context.ApplyChangesOnProperties(item, parent);
@@ -121,7 +123,8 @@ namespace TrackableEntities.EF5
             }
 
             // Set state to Deleted on children and parent
-            if (item.TrackingState == TrackingState.Deleted)
+            if (item.TrackingState == TrackingState.Deleted
+                && (state == null || state == TrackingState.Deleted))
             {
                 context.SetChanges(item, EntityState.Unchanged, parent);
                 context.SetChanges(item, EntityState.Deleted, parent);
@@ -130,6 +133,7 @@ namespace TrackableEntities.EF5
 
             // Set modified properties
             if (item.TrackingState == TrackingState.Modified
+                && (state == null || state == TrackingState.Modified)
                 && item.ModifiedProperties != null
                 && item.ModifiedProperties.Count > 0)
             {
@@ -138,14 +142,23 @@ namespace TrackableEntities.EF5
                 foreach (var property in item.ModifiedProperties)
                     context.Entry(item).Property(property).IsModified = true;
             }
-            // Set entity state
-            else
-            {
-                context.Entry(item).State = item.TrackingState.ToEntityState();
-            }
 
-            // Set state for child collections
-            context.ApplyChangesOnProperties(item, parent);
+            // Set entity state
+            else if (state == null
+                || state == TrackingState.Unchanged 
+                || state == TrackingState.Modified)
+            {
+                // Set added state for reference or child properties
+                context.ApplyChangesOnProperties(item, parent, TrackingState.Added);
+
+                // Set entity state
+                context.Entry(item).State = item.TrackingState.ToEntityState();
+
+                // Set other state for reference or child properties
+                context.ApplyChangesOnProperties(item, parent, TrackingState.Unchanged);
+                context.ApplyChangesOnProperties(item, parent, TrackingState.Modified);
+                context.ApplyChangesOnProperties(item, parent, TrackingState.Deleted);
+            }
         }
 
         /// <summary>
@@ -404,7 +417,7 @@ namespace TrackableEntities.EF5
         #region ApplyChanges Helpers
 
         private static void ApplyChangesOnProperties(this DbContext context,
-            ITrackable item, ITrackable parent)
+            ITrackable item, ITrackable parent, TrackingState? state = null)
         {
             // Recursively apply changes
             foreach (var prop in item.GetType().GetProperties())
@@ -415,7 +428,7 @@ namespace TrackableEntities.EF5
                 // Stop recursion if trackable is same type as parent
                 if (trackableReference != null
                     && (parent == null || trackableReference.GetType() != parent.GetType()))
-                    context.ApplyChanges(trackableReference, item, prop.Name);
+                    context.ApplyChanges(trackableReference, item, prop.Name, state);
 
                 // Apply changes to 1-M and M-M properties
                 var items = prop.GetValue(item, null) as IList;
@@ -428,7 +441,7 @@ namespace TrackableEntities.EF5
                         var trackableChild = items[i] as ITrackable;
                         if (trackableChild != null
                             && (parent == null || trackableChild.GetType() != parent.GetType()))
-                            context.ApplyChanges(trackableChild, item, prop.Name);
+                            context.ApplyChanges(trackableChild, item, prop.Name, state);
                     }
                 }
             }

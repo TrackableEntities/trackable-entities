@@ -56,6 +56,7 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             foreach (var row in table.Rows)
             {
                 string custId = row["CustomerId"];
+                TestsHelper.EnsureTestCustomer(custId, "Test Customer " + custId);
                 var order = TestsHelper.EnsureTestOrder(custId);
                 orders.Add(order);
             }
@@ -84,6 +85,7 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             foreach (var row in table.Rows)
             {
                 string custId = row["CustomerId"];
+                TestsHelper.EnsureTestCustomer(custId, "Test Customer " + custId);
                 int[] productIds = TestsHelper.CreateTestProducts();
                 ScenarioContext.Current.Add("ProductIds", productIds);
                 var order = TestsHelper.CreateTestOrder(custId, productIds);

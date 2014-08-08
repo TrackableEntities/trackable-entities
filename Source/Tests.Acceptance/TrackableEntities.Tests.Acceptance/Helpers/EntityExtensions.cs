@@ -55,6 +55,7 @@ namespace TrackableEntities.Tests.Acceptance.Helpers
             if (detail == null) return null;
             return new ClientEntities.OrderDetail
             {
+                OrderDetailId = detail.OrderDetailId,
                 OrderId = detail.OrderId,
                 ProductId = detail.ProductId,
                 Quantity = detail.Quantity,

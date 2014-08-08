@@ -352,6 +352,7 @@ namespace TrackableEntities.EF5.Tests
 			var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
 			var order = new MockNorthwind().Orders[0];
 			var detail1 = order.OrderDetails[0];
+		    detail1.OrderDetailId = 0;
 			var detail2 = order.OrderDetails[1];
 			var detail3 = order.OrderDetails[2];
 			var detail4 = order.OrderDetails[3];
@@ -379,6 +380,8 @@ namespace TrackableEntities.EF5.Tests
             var order = new MockNorthwind().Orders[0];
             var detail1 = order.OrderDetails[0];
             var detail2 = order.OrderDetails[1];
+            detail1.OrderDetailId = 0;
+            detail2.OrderDetailId = 0;
             detail1.TrackingState = TrackingState.Added;
             detail2.TrackingState = TrackingState.Added;
 

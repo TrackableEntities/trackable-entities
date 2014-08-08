@@ -34,8 +34,8 @@ namespace TrackableEntities.Tests.Acceptance.Helpers
                         CustomerName = customerName
                     };
                     context.Customers.Add(customer);
+                    context.SaveChanges();
                 }
-                context.SaveChanges();
             }
         }
 
