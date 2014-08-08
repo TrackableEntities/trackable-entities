@@ -396,6 +396,34 @@ namespace TrackableEntities.Client
             }
         }
 
+        private class CollectionSerializationHelper<T>
+        {
+            [JsonProperty]
+            public IEnumerable<T> Result;
+        }
+
+        /// <summary>
+        /// Performs a deep copy using Json binary serializer.
+        /// </summary>
+        /// <typeparam name="T">Entity type</typeparam>
+        /// <param name="items">Collection of Trackable objects</param>
+        /// <returns>Cloned collection of Trackable object</returns>
+        public static IEnumerable<T> Clone<T>(this IEnumerable<T> items)
+            where T : class, ITrackable
+        {
+            var helper = new CollectionSerializationHelper<T>() { Result = items };
+            using (var stream = new MemoryStream())
+            {
+                var ser = new JsonSerializer();
+                var writer = new BsonWriter(stream);
+                ser.Serialize(writer, helper);
+                stream.Position = 0;
+                var reader = new BsonReader(stream);
+                var copy = ser.Deserialize<CollectionSerializationHelper<T>>(reader);
+                return copy.Result;
+            }
+        }
+
         /// <summary>
         /// Determines if two entities have the same identifier.
         /// </summary>
