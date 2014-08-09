@@ -131,20 +131,8 @@ namespace TrackableEntities.EF5
                 return;
             }
 
-            // Set modified properties
-            if (item.TrackingState == TrackingState.Modified
-                && (state == null || state == TrackingState.Modified)
-                && item.ModifiedProperties != null
-                && item.ModifiedProperties.Count > 0)
-            {
-                // Mark modified properties
-                context.Entry(item).State = EntityState.Unchanged;
-                foreach (var property in item.ModifiedProperties)
-                    context.Entry(item).Property(property).IsModified = true;
-            }
-
             // Set entity state
-            else if (state == null
+            if (state == null
                 || state == TrackingState.Unchanged 
                 || state == TrackingState.Modified)
             {
@@ -158,6 +146,16 @@ namespace TrackableEntities.EF5
                 context.ApplyChangesOnProperties(item, parent, TrackingState.Unchanged);
                 context.ApplyChangesOnProperties(item, parent, TrackingState.Modified);
                 context.ApplyChangesOnProperties(item, parent, TrackingState.Deleted);
+
+                // Set modified properties
+                if (item.TrackingState == TrackingState.Modified
+                    && item.ModifiedProperties != null
+                    && item.ModifiedProperties.Count > 0)
+                {
+                    // Mark modified properties
+                    foreach (var property in item.ModifiedProperties)
+                        context.Entry(item).Property(property).IsModified = true;
+                }
             }
         }
 

@@ -346,7 +346,7 @@ namespace TrackableEntities.EF5.Tests
 		}
 
 		[Test]
-		public void Apply_Changes_Should_Mark_OrderDetails_Added_Modified_Deleted_Unchanged()
+		public void Apply_Changes_Should_Mark_Order_Unchanged_With_OrderDetails_Added_Modified_Deleted_Unchanged()
 		{
 			// Arrange
 			var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -373,7 +373,35 @@ namespace TrackableEntities.EF5.Tests
 		}
 
         [Test]
-        public void Apply_Changes_Should_Mark_Multiple_OrderDetails_Added()
+        public void Apply_Changes_Should_Mark_Order_Modified_With_OrderDetails_Added_Modified_Deleted_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new MockNorthwind().Orders[0];
+            var detail1 = order.OrderDetails[0];
+            detail1.OrderDetailId = 0;
+            var detail2 = order.OrderDetails[1];
+            var detail3 = order.OrderDetails[2];
+            var detail4 = order.OrderDetails[3];
+            order.TrackingState = TrackingState.Modified;
+            detail1.TrackingState = TrackingState.Added;
+            detail2.TrackingState = TrackingState.Modified;
+            detail3.TrackingState = TrackingState.Deleted;
+            detail4.TrackingState = TrackingState.Unchanged;
+
+            // Act
+            context.ApplyChanges(order);
+
+            // Assert
+            Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(detail1).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(detail2).State);
+            Assert.AreEqual(EntityState.Deleted, context.Entry(detail3).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail4).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Unchanged_Order_With_Multiple_OrderDetails_Added()
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -390,6 +418,30 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(detail1).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(detail2).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Modified_Order_With_Multiple_OrderDetails_Added()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new MockNorthwind().Orders[0];
+            var detail1 = order.OrderDetails[0];
+            var detail2 = order.OrderDetails[1];
+            detail1.OrderDetailId = 0;
+            detail2.OrderDetailId = 0;
+            detail1.TrackingState = TrackingState.Added;
+            detail2.TrackingState = TrackingState.Added;
+            order.TrackingState = TrackingState.Modified;
+            order.ModifiedProperties = new List<string> {"OrderDate"};
+
+            // Act
+            context.ApplyChanges(order);
+
+            // Assert
+            Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
             Assert.AreEqual(EntityState.Added, context.Entry(detail1).State);
             Assert.AreEqual(EntityState.Added, context.Entry(detail2).State);
         }
