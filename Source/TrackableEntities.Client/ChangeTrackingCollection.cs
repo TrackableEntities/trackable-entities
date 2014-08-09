@@ -226,7 +226,7 @@ namespace TrackableEntities.Client
             this.RestoreDeletes();
 
             // Clone items in change tracker
-            var items = this.Clone().ToList();
+            var items = this.Select(e => e.Clone<TEntity>()).ToList();
 
             // Remove deletes
             this.RemoveRestoredDeletes();
