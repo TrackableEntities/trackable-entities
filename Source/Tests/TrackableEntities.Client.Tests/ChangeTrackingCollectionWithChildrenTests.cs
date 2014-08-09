@@ -292,7 +292,10 @@ namespace TrackableEntities.Client.Tests
             // Arrange
             var database = new MockNorthwind();
             var order = database.Orders[0];
-            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var order3 = database.Orders[3];
+            var changeTracker = new ChangeTrackingCollection<Order>(order, order3);
+            order3.OrderDate += new System.TimeSpan(1, 0, 0, 0); // + one day
+            order3.Customer.CustomerName += " (test)";
             var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
             var unchangedDetail = orderDetails[0];
             var modifiedDetail = orderDetails[1];
@@ -313,6 +316,7 @@ namespace TrackableEntities.Client.Tests
 
             // Assert
             var changedOrder = changes.First();
+            var changedOrder3 = changes[1];
             var changedModifiedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == modifiedDetail.ProductId);
             var changedAddedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == addedDetail.ProductId);
             var changedDeletedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == deletedDetail.ProductId);
@@ -322,6 +326,13 @@ namespace TrackableEntities.Client.Tests
             Assert.AreEqual(TrackingState.Added, changedAddedDetail.TrackingState);
             Assert.AreEqual(TrackingState.Deleted, changedDeletedDetail.TrackingState);
             Assert.That(changedOrder.OrderDetails, Has.No.Member(unchangedDetail));
+            Assert.IsNotNull(order.Customer);
+            Assert.IsNotNull(order3.Customer);
+            Assert.IsNotNull(changedOrder.Customer);
+            Assert.IsNotNull(changedOrder3.Customer);
+            Assert.IsTrue(object.ReferenceEquals(order.Customer, order3.Customer));
+            Assert.IsFalse(object.ReferenceEquals(order.Customer, changedOrder.Customer));
+            Assert.IsTrue(object.ReferenceEquals(changedOrder.Customer, changedOrder3.Customer));
         }
 
         [Test]
