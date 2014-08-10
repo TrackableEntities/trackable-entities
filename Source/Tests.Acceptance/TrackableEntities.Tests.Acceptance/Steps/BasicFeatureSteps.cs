@@ -109,7 +109,6 @@ namespace TrackableEntities.Tests.Acceptance.Steps
                 UnitPrice = 30
             };
             ScenarioContext.Current.Add("AddedDetail", addedDetail);
-            order.OrderDate = order.OrderDate.AddDays(1);
             order.OrderDetails[0].UnitPrice++;
             order.OrderDetails.RemoveAt(1);
             order.OrderDetails.Add(addedDetail);
@@ -250,8 +249,7 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             var updatedOrder = ScenarioContext.Current.Get<List<ClientEntities.Order>>("CustomerOrdersResult").Single();
             var addedDetail = ScenarioContext.Current.Get<ClientEntities.OrderDetail>("AddedDetail");
             var deletedDetail = ScenarioContext.Current.Get<ClientEntities.OrderDetail>("DeletedDetail");
-
-            Assert.AreEqual(modifiedOrder.OrderDate, updatedOrder.OrderDate);
+            
             Assert.AreEqual(modifiedOrder.OrderDetails[0].UnitPrice, updatedOrder.OrderDetails[0].UnitPrice);
             Assert.IsTrue(updatedOrder.OrderDetails.Any(d => d.ProductId == addedDetail.ProductId));
             Assert.IsFalse(updatedOrder.OrderDetails.Any(d => d.ProductId == deletedDetail.ProductId));
