@@ -106,7 +106,7 @@ namespace TrackableEntities.Client.Tests.Entities.Mocks
                                 new OrderDetail{ ProductId = 51, OrderId = 10250, Quantity = 12, UnitPrice = 42.4000M, Product = Products[24] },
                                 new OrderDetail{ ProductId = 65, OrderId = 10250, Quantity = 12, UnitPrice = 16.8000M, Product = Products[27] }
                             }},
-                    new Order { OrderId = 10251, OrderDate = DateTime.Parse("1996-07-08"), CustomerId = "VICTE", Customer = Customers[13],
+                    new Order { OrderId = 10251, OrderDate = DateTime.Parse("1996-07-08"), CustomerId = "VICTE", Customer = Customers[14],
                         OrderDetails = new ChangeTrackingCollection<OrderDetail>
                             {
                                 new OrderDetail{ ProductId = 22, OrderId = 10251, Quantity = 6, UnitPrice = 16.8000M, Product = Products[20] },
