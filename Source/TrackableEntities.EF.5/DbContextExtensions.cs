@@ -140,12 +140,7 @@ namespace TrackableEntities.EF5
                 context.ApplyChangesOnProperties(item, parent, TrackingState.Added);
 
                 // Set entity state
-                context.Entry(item).State = item.TrackingState.ToEntityState();
-
-                // Set other state for reference or child properties
-                context.ApplyChangesOnProperties(item, parent, TrackingState.Unchanged);
-                context.ApplyChangesOnProperties(item, parent, TrackingState.Modified);
-                context.ApplyChangesOnProperties(item, parent, TrackingState.Deleted);
+                context.Entry(item).State = EntityState.Unchanged;
 
                 // Set modified properties
                 if (item.TrackingState == TrackingState.Modified
@@ -156,6 +151,11 @@ namespace TrackableEntities.EF5
                     foreach (var property in item.ModifiedProperties)
                         context.Entry(item).Property(property).IsModified = true;
                 }
+
+                // Set other state for reference or child properties
+                context.ApplyChangesOnProperties(item, parent, TrackingState.Unchanged);
+                context.ApplyChangesOnProperties(item, parent, TrackingState.Modified);
+                context.ApplyChangesOnProperties(item, parent, TrackingState.Deleted);
             }
         }
 
