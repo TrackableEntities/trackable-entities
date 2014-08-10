@@ -108,7 +108,7 @@ namespace TrackableEntities.EF.Tests.Mocks
                                 new OrderDetail{ OrderDetailId = 8, ProductId = 51, OrderId = 10250, Quantity = 12, UnitPrice = 42.4000M, Product = Products[24] },
                                 new OrderDetail{ OrderDetailId = 9, ProductId = 65, OrderId = 10250, Quantity = 12, UnitPrice = 16.8000M, Product = Products[27] }
                             }},
-                    new Order { OrderId = 10251, OrderDate = DateTime.Parse("1996-07-08"), CustomerId = "VICTE", Customer = Customers[14],
+                    new Order { OrderId = 10251, OrderDate = DateTime.Parse("1996-07-08"), CustomerId = "VICTE", Customer = Customers[13],
                         OrderDetails = new List<OrderDetail>
                             {
                                 new OrderDetail{ OrderDetailId = 10, ProductId = 22, OrderId = 10251, Quantity = 6, UnitPrice = 16.8000M, Product = Products[20] },
