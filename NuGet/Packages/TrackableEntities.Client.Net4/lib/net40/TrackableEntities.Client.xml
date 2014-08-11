@@ -315,6 +315,14 @@
             <param name="item">Trackable object</param>
             <returns>Cloned Trackable object</returns>
         </member>
+        <member name="M:TrackableEntities.Client.TrackableExtensions.Clone``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Performs a deep copy using Json binary serializer.
+            </summary>
+            <typeparam name="T">Entity type</typeparam>
+            <param name="items">Collection of Trackable objects</param>
+            <returns>Cloned collection of Trackable object</returns>
+        </member>
         <member name="M:TrackableEntities.Client.TrackableExtensions.IsEquatable(TrackableEntities.ITrackable,TrackableEntities.ITrackable)">
             <summary>
             Determines if two entities have the same identifier.
