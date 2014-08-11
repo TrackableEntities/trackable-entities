@@ -197,7 +197,7 @@ namespace TrackableEntities.Client
         private static IEnumerable<T> CloneEntities<T>(this IEnumerable<T> items)
             where T : class, ITrackable
         {
-            return items.Select(item => item.Clone());
+            return items.Clone();
         }
 
         private static ITrackable GetEquatableItem

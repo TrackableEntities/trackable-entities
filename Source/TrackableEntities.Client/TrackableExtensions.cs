@@ -384,6 +384,30 @@ namespace TrackableEntities.Client
         public static T Clone<T>(this T item)
             where T : class, ITrackable
         {
+            return CloneObject(item);
+        }
+
+        /// <summary>
+        /// Performs a deep copy using Json binary serializer.
+        /// </summary>
+        /// <typeparam name="T">Entity type</typeparam>
+        /// <param name="items">Collection of Trackable objects</param>
+        /// <returns>Cloned collection of Trackable object</returns>
+        public static IEnumerable<T> Clone<T>(this IEnumerable<T> items)
+            where T : class, ITrackable
+        {
+            return CloneObject(new CollectionSerializationHelper<T>() { Result = items }).Result;
+        }
+
+        private class CollectionSerializationHelper<T>
+        {
+            [JsonProperty]
+            public IEnumerable<T> Result;
+        }
+
+        private static T CloneObject<T>(T item)
+            where T : class
+        {
             using (var stream = new MemoryStream())
             {
                 var ser = new JsonSerializer();
