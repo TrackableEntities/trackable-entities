@@ -164,6 +164,25 @@ namespace TrackableEntities.EF5
         }
 
         /// <summary>
+        /// For the given entity type return the EntitySet name qualified by container name.
+        /// </summary>
+        /// <param name="context">Used to query and save changes to a database</param>
+        /// <param name="entityType">Type of an entity</param>
+        /// <returns></returns>
+        public static string GetEntitySetName(this DbContext dbContext, Type entityType)
+        {
+            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
+                .ObjectContext.MetadataWorkspace;
+            var containers = workspace.GetItems<EntityContainer>(DataSpace.CSpace);
+            var entitySetName =
+                (from c in containers
+                 from es in c.BaseEntitySets
+                 where es.ElementType == dbContext.GetEdmSpaceType(entityType)
+                 select es.EntityContainer.Name + "." + es.Name).SingleOrDefault();
+            return entitySetName;
+        }
+
+        /// <summary>
         /// Load related entities for an object graph.
         /// </summary>
         /// <param name="context">Used to query and save changes to a database</param>
@@ -416,6 +435,19 @@ namespace TrackableEntities.EF5
             }
         }
 
+        private static EntityType GetEdmSpaceType(this DbContext dbContext, Type entityType)
+        {
+            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
+                .ObjectContext.MetadataWorkspace;
+
+            StructuralType oType = workspace.GetItems<StructuralType>(DataSpace.OSpace)
+                .Where(e => e.FullName == entityType.FullName).SingleOrDefault();
+
+            if (oType == null) return null;
+
+            return workspace.GetEdmSpaceType(oType) as EntityType;
+        }
+
         #region ApplyChanges Helpers
 
         private static void ApplyChangesOnProperties(this DbContext context,
@@ -498,19 +530,6 @@ namespace TrackableEntities.EF5
 
             // Set entity state
             context.Entry(item).State = state;
-        }
-
-        private static EntityType GetEdmSpaceType(this DbContext dbContext, Type entityType)
-        {
-            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
-                .ObjectContext.MetadataWorkspace;
-
-            StructuralType oType = workspace.GetItems<StructuralType>(DataSpace.OSpace)
-                .Where(e => e.FullName == entityType.FullName).FirstOrDefault();
-
-            if (oType == null) return null;
-
-            return workspace.GetEdmSpaceType(oType) as EntityType;
         }
 
         private static bool IsRelatedProperty(this DbContext dbContext,
@@ -669,19 +688,6 @@ namespace TrackableEntities.EF5
                          let prop = item.GetType().GetProperty(foreignKeyName)
                          select prop != null ? prop.GetValue(item) : null;
             return values.Where(v => v != null).Distinct().ToArray();
-        }
-
-        private static string GetEntitySetName(this DbContext dbContext, Type propertyType)
-        {
-            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
-                .ObjectContext.MetadataWorkspace;
-            var containers = workspace.GetItems<EntityContainer>(DataSpace.CSpace);
-            var entitySetName =
-                (from c in containers
-                 from es in c.BaseEntitySets
-                 where es.ElementType == dbContext.GetEdmSpaceType(propertyType)
-                 select es.EntityContainer.Name + "." + es.Name).SingleOrDefault();
-            return entitySetName;
         }
 
         private static string GetPrimaryKeyName(this DbContext dbContext, Type entityType)
