@@ -75,9 +75,7 @@ namespace TrackableEntities.Client
         /// <param name="item">Trackable object</param>
         /// <param name="state">Change-tracking state of an entity</param>
         /// <param name="parent">ITrackable parent of item</param>
-        /// <param name="changeTracker">Change-tracking collection this item is being added to, removed from, or is a member of</param>
-        public static void SetState(this ITrackable item, TrackingState state, ITrackable parent,
-            ITrackingCollection changeTracker)
+        public static void SetState(this ITrackable item, TrackingState state, ITrackable parent)
         {
             // Recurively set state for added or deleted items,
             // or if recursion has already begun.
@@ -104,14 +102,14 @@ namespace TrackableEntities.Client
                                     // Cascade unchanged and added state
                                     case TrackingState.Unchanged:
                                     case TrackingState.Added:
-                                        trackableChild.SetState(state, item, trackingColl);
+                                        trackableChild.SetState(state, item);
                                         break;
                                     case TrackingState.Deleted:
                                         // Cascade deleted state for 1-M properties
                                         // Deleting an added item will mark it as Unchanged (that is, not added)
                                         if (!IsManyToManyChildCollection(trackingColl))
                                             trackableChild.SetState((trackableChild.TrackingState == TrackingState.Added)
-                                                ? TrackingState.Unchanged : state, item, trackingColl);
+                                                ? TrackingState.Unchanged : state, item);
                                         // Set deleted for M-M as unchanged state for added.
                                         // (Cached M-M child deletes will remain deleted.)
                                         else if (trackableChild.TrackingState == TrackingState.Added)

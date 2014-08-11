@@ -170,7 +170,7 @@ namespace TrackableEntities.Client
                 item.SetTracking(Tracking, Parent);
 
                 // Mark item and trackable collection properties
-                item.SetState(TrackingState.Added, Parent, this);
+                item.SetState(TrackingState.Added, Parent);
 
                 // Fire EntityChanged event
                 if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
@@ -202,7 +202,7 @@ namespace TrackableEntities.Client
                 item.SetTracking(false, Parent);
 
                 // Mark item and trackable collection properties
-                item.SetState(TrackingState.Deleted, Parent, this);
+                item.SetState(TrackingState.Deleted, Parent);
 
                 // Fire EntityChanged event
                 if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);

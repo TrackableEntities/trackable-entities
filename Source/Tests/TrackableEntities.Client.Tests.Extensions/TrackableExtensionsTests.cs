@@ -100,7 +100,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             var parent = _family.Parent;
 
             // Act
-            parent.SetState(TrackingState.Added, null, null);
+            parent.SetState(TrackingState.Added, null);
 
             // Assert
             IEnumerable<TrackingState> trackings = GetStates(parent);
@@ -114,7 +114,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             var parent = _family.Parent;
 
             // Act
-            parent.SetState(TrackingState.Deleted, null, null);
+            parent.SetState(TrackingState.Deleted, null);
 
             // Assert
             IEnumerable<TrackingState> trackings = GetStates(parent);
@@ -144,7 +144,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             });
 
             // Act
-            parent.SetState(TrackingState.Deleted, null, null);
+            parent.SetState(TrackingState.Deleted, null);
 
             // Assert
             IEnumerable<TrackingState> trackings = GetStates(parent);
