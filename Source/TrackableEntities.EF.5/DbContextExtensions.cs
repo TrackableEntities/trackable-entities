@@ -166,7 +166,7 @@ namespace TrackableEntities.EF5
         /// <summary>
         /// For the given entity type return the EntitySet name qualified by container name.
         /// </summary>
-        /// <param name="context">Used to query and save changes to a database</param>
+        /// <param name="dbContext">Used to query and save changes to a database</param>
         /// <param name="entityType">Type of an entity</param>
         /// <returns></returns>
         public static string GetEntitySetName(this DbContext dbContext, Type entityType)
