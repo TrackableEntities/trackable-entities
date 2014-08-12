@@ -270,40 +270,40 @@ namespace TrackableEntities.EF5
             ITrackable[] items, ITrackable parent, bool loadAll)
         {
             // Return if no items
-            if (items == null || items.Length == 0) return;
+            if (items == null) return;
+
+            // Get selected items
+            var selectedItems = loadAll ? items
+                : items.Where(t => t.TrackingState == TrackingState.Added
+                    || (parent != null && parent.TrackingState == TrackingState.Added)).ToArray();
+            var entities = selectedItems.Cast<object>().ToArray();
+
+            // Collection 'items' can contain entities of different types (due to inheritance)
+            // We collect a superset of all properties of all items of type ITrackable
+            var allProps = (from entity in entities
+                            from prop in entity.GetType().GetProperties()
+                            where typeof(ITrackable).IsAssignableFrom(prop.PropertyType)
+                            select prop).Distinct();
 
             // Populate related entities on all items
-            var entity = items[0];
-            foreach (var prop in entity.GetType().GetProperties())
+            foreach (var prop in allProps)
             {
-                // Continue if prop is not ITrackable
-                if (!typeof(ITrackable).IsAssignableFrom(prop.PropertyType))
-                    continue;
-
                 // Continue if trackable prop is same type as parent
                 if (parent != null && prop.PropertyType == parent.GetType())
                     continue;
 
-                // Get selected items
-                var selectedItems = loadAll ? items
-                    : items.Where(t => t.TrackingState == TrackingState.Added
-                        || (parent != null && parent.TrackingState == TrackingState.Added)).ToArray();
-                if (selectedItems.Length == 0) continue;
-                var entities = selectedItems.Cast<object>().ToArray();
-
                 // Get related entities
-                Type entityType = entity.GetType();
                 string propertyName = prop.Name;
                 Type propertyType = prop.PropertyType;
                 List<object> relatedEntities = context.GetRelatedEntities(entities,
-                    entityType, propertyName, propertyType);
+                    prop.DeclaringType, propertyName, propertyType);
 
                 // Continue if there are no related entities
                 if (!relatedEntities.Any()) continue;
 
                 // Set related entities
                 context.SetRelatedEntities(entities, relatedEntities, prop,
-                    entityType, propertyName, propertyType);
+                    prop.DeclaringType, propertyName, propertyType);
             }
 
             // Recursively populate related entities on ref and child properties
@@ -321,40 +321,40 @@ namespace TrackableEntities.EF5
             ITrackable[] items, ITrackable parent, CancellationToken cancellationToken, bool loadAll)
         {
             // Return if no items
-            if (items == null || items.Length == 0) return;
+            if (items == null) return;
+
+            // Get selected items
+            var selectedItems = loadAll ? items
+                : items.Where(t => t.TrackingState == TrackingState.Added
+                    || (parent != null && parent.TrackingState == TrackingState.Added)).ToArray();
+            var entities = selectedItems.Cast<object>().ToArray();
+
+            // Collection 'items' can contain entities of different types (due to inheritance)
+            // We collect a superset of all properties of all items of type ITrackable
+            var allProps = (from entity in entities
+                            from prop in entity.GetType().GetProperties()
+                            where typeof(ITrackable).IsAssignableFrom(prop.PropertyType)
+                            select prop).Distinct();
 
             // Populate related entities on all items
-            var entity = items[0];
-            foreach (var prop in entity.GetType().GetProperties())
+            foreach (var prop in allProps)
             {
-                // Continue if prop is not ITrackable
-                if (!typeof(ITrackable).IsAssignableFrom(prop.PropertyType))
-                    continue;
-
                 // Continue if trackable prop is same type as parent
                 if (parent != null && prop.PropertyType == parent.GetType())
                     continue;
 
-                // Get selected items
-                var selectedItems = loadAll ? items
-                    : items.Where(t => t.TrackingState == TrackingState.Added
-                        || (parent != null && parent.TrackingState == TrackingState.Added)).ToArray();
-                if (selectedItems.Length == 0) continue;
-                var entities = selectedItems.Cast<object>().ToArray();
-
                 // Get related entities
-                Type entityType = entity.GetType();
                 string propertyName = prop.Name;
                 Type propertyType = prop.PropertyType;
                 List<object> relatedEntities = await context.GetRelatedEntitiesAsync(entities,
-                    entityType, propertyName, propertyType, cancellationToken);
+                    prop.DeclaringType, propertyName, propertyType, cancellationToken);
 
                 // Continue if there are no related entities
                 if (!relatedEntities.Any()) continue;
 
                 // Set related entities
                 context.SetRelatedEntities(entities, relatedEntities, prop,
-                    entityType, propertyName, propertyType);
+                    prop.DeclaringType, propertyName, propertyType);
             }
 
             // Recursively populate related entities on ref and child properties
