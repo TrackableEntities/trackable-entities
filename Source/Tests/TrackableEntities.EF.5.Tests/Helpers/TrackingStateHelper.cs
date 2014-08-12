@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TrackableEntities.Common;
 
 namespace TrackableEntities.EF.Tests
 {
@@ -8,15 +9,19 @@ namespace TrackableEntities.EF.Tests
     {
         // Recursively set tracking state
         public static void SetTrackingState(this ITrackable item,
-            TrackingState state, ITrackable parent = null)
+            TrackingState state, ObjectVisitationHelper visitationHelper = null)
         {
+            // Prevent endless recursion
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+            if (visitationHelper.IsVisited(item)) return;
+            visitationHelper = visitationHelper.With(item);
+
             foreach (var prop in item.GetType().GetProperties())
             {
                 var trackableRef = prop.GetValue(item, null) as ITrackable;
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                if (trackableRef != null)
                 {
-                    trackableRef.SetTrackingState(state, parent);
+                    trackableRef.SetTrackingState(state, visitationHelper);
                     trackableRef.TrackingState = state;
                 }
 
@@ -25,11 +30,8 @@ namespace TrackableEntities.EF.Tests
                 {
                     foreach (ITrackable child in trackingColl)
                     {
-                        if (parent == null || child.GetType() != parent.GetType())
-                        {
-                            child.SetTrackingState(state, parent);
-                            child.TrackingState = state;
-                        }
+                        child.SetTrackingState(state, visitationHelper);
+                        child.TrackingState = state;
                     }
                 }
             }
@@ -38,15 +40,19 @@ namespace TrackableEntities.EF.Tests
         // Recursively get tracking states
         public static IEnumerable<TrackingState> GetTrackingStates
             (this ITrackable item, TrackingState? trackingState = null,
-            ITrackable parent = null)
+            ObjectVisitationHelper visitationHelper = null)
         {
+            // Prevent endless recursion
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+            if (visitationHelper.IsVisited(item)) yield break;
+            visitationHelper = visitationHelper.With(item);
+
             foreach (var prop in item.GetType().GetProperties())
             {
                 var trackableRef = prop.GetValue(item, null) as ITrackable;
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                if (trackableRef != null)
                 {
-                    foreach (var state in trackableRef.GetTrackingStates(parent: item))
+                    foreach (var state in trackableRef.GetTrackingStates(visitationHelper: visitationHelper))
                     {
                         if (trackingState == null || state == trackingState)
                             yield return state;
@@ -58,13 +64,10 @@ namespace TrackableEntities.EF.Tests
                 {
                     foreach (ITrackable child in trackingColl)
                     {
-                        if (parent == null || child.GetType() != parent.GetType())
+                        foreach (var state in child.GetTrackingStates(visitationHelper: visitationHelper))
                         {
-                            foreach (var state in child.GetTrackingStates(parent: item))
-                            {
-                                if (trackingState == null || state == trackingState)
-                                    yield return state;
-                            }
+                            if (trackingState == null || state == trackingState)
+                                yield return state;
                         }
                     }
                 }
@@ -74,15 +77,19 @@ namespace TrackableEntities.EF.Tests
 
         // Recursively get modified properties
         public static IEnumerable<IEnumerable<string>> GetModifiedProperties
-            (this ITrackable item, ITrackable parent = null)
+            (this ITrackable item, ObjectVisitationHelper visitationHelper = null)
         {
+            // Prevent endless recursion
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+            if (visitationHelper.IsVisited(item)) yield break;
+            visitationHelper = visitationHelper.With(item);
+
             foreach (var prop in item.GetType().GetProperties())
             {
                 var trackableRef = prop.GetValue(item, null) as ITrackable;
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                if (trackableRef != null)
                 {
-                    foreach (var modifiedProps in trackableRef.GetModifiedProperties(item))
+                    foreach (var modifiedProps in trackableRef.GetModifiedProperties(visitationHelper))
                     {
                         yield return modifiedProps;
                     }
@@ -93,12 +100,9 @@ namespace TrackableEntities.EF.Tests
                 {
                     foreach (ITrackable child in trackingColl)
                     {
-                        if (parent == null || child.GetType() != parent.GetType())
+                        foreach (var modifiedProps in child.GetModifiedProperties(visitationHelper))
                         {
-                            foreach (var modifiedProps in child.GetModifiedProperties(item))
-                            {
-                                yield return modifiedProps;
-                            }
+                            yield return modifiedProps;
                         }
                     }
                 }
