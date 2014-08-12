@@ -641,10 +641,10 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                             { 
-                                Children = new ChangeTrackingCollection<GrandChild>
+                                Children = new ChangeTrackingCollection<Child>
                                 { 
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 } 
                             }, 
                         new Child("Child2")
@@ -669,10 +669,10 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                             { 
-                                Children = new ChangeTrackingCollection<GrandChild>
+                                Children = new ChangeTrackingCollection<Child>
                                 { 
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 } 
                             }, 
                         new Child("Child2")
@@ -698,17 +698,17 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                             { 
-                                Children = new ChangeTrackingCollection<GrandChild>
+                                Children = new ChangeTrackingCollection<Child>
                                 { 
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 } 
                             }, 
                         new Child("Child2")
                     }
             };
             var changeTracker = new ChangeTrackingCollection<Parent>(parent);
-            parent.Children[0].Children.Add(new GrandChild("Grandchild3"));
+            parent.Children[0].Children.Add(new Child("Grandchild3"));
 
             // Act
             bool hasChanges = parent.HasChanges();
@@ -727,10 +727,10 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                             { 
-                                Children = new ChangeTrackingCollection<GrandChild>
+                                Children = new ChangeTrackingCollection<Child>
                                 { 
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 } 
                             }, 
                         new Child("Child2")

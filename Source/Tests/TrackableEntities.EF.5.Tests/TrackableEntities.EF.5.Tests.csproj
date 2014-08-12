@@ -60,8 +60,6 @@
     <Compile Include="DbContextTests.cs" />
     <Compile Include="CreateDbOptions.cs" />
     <Compile Include="FamilyModels\Child.cs" />
-    <Compile Include="FamilyModels\GrandChild.cs" />
-    <Compile Include="FamilyModels\GrandGrandChild.cs" />
     <Compile Include="FamilyModels\Parent.cs" />
     <Compile Include="Mocks\MockFamily.cs" />
     <Compile Include="Mocks\MockNorthwind.cs" />

@@ -47,8 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FamilyModels\Child.cs" />
-    <Compile Include="FamilyModels\GrandChild.cs" />
-    <Compile Include="FamilyModels\GrandGrandChild.cs" />
     <Compile Include="FamilyModels\Parent.cs" />
     <Compile Include="Mocks\BogusCustomer.cs" />
     <Compile Include="Mocks\MockFamily.cs" />

@@ -13,7 +13,7 @@ namespace TrackableEntities.EF.Tests.FamilyModels
 
         [Key]
         public string Name { get; set; }
-        public List<GrandChild> Children { get; set; }
+        public List<Child> Children { get; set; }
 
         public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }

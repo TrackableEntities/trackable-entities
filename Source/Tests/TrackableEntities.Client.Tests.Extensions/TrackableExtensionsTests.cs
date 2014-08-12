@@ -394,10 +394,10 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                         { 
-                            Children = new ChangeTrackingCollection<GrandChild>
+                            Children = new ChangeTrackingCollection<Child>
                                 {
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 }
                         }
                     }
@@ -423,10 +423,10 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                         { 
-                            Children = new ChangeTrackingCollection<GrandChild>
+                            Children = new ChangeTrackingCollection<Child>
                                 {
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 }
                         }
                     }
