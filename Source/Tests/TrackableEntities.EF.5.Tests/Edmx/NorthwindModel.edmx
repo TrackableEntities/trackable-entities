@@ -56,9 +56,9 @@
         </EntityType>
         <EntityType Name="OrderDetails">
           <Key>
-            <PropertyRef Name="OrderId" />
-            <PropertyRef Name="ProductId" />
+            <PropertyRef Name="OrderDetailId" />
           </Key>
+          <Property Name="OrderDetailId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="OrderId" Type="int" Nullable="false" />
           <Property Name="ProductId" Type="int" Nullable="false" />
           <Property Name="UnitPrice" Type="decimal" Precision="18" Scale="2" Nullable="false" />
@@ -311,9 +311,9 @@
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
-            <PropertyRef Name="OrderId" />
-            <PropertyRef Name="ProductId" />
+            <PropertyRef Name="OrderDetailId" />
           </Key>
+          <Property Name="OrderDetailId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="OrderId" Type="Int32" Nullable="false" />
           <Property Name="ProductId" Type="Int32" Nullable="false" />
           <Property Name="UnitPrice" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
@@ -545,6 +545,7 @@
           <EntitySetMapping Name="OrderDetails">
             <EntityTypeMapping TypeName="TrackableEntities.EF.Tests.NorthwindModels.OrderDetail">
               <MappingFragment StoreEntitySet="OrderDetails">
+                <ScalarProperty Name="OrderDetailId" ColumnName="OrderDetailId" />
                 <ScalarProperty Name="OrderId" ColumnName="OrderId" />
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
                 <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
