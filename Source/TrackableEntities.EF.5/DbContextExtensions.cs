@@ -288,10 +288,6 @@ namespace TrackableEntities.EF5
             // Populate related entities on all items
             foreach (var prop in allProps)
             {
-                // Continue if trackable prop is same type as parent
-                if (parent != null && prop.PropertyType == parent.GetType())
-                    continue;
-
                 // Get related entities
                 string propertyName = prop.Name;
                 Type propertyType = prop.PropertyType;
@@ -339,10 +335,6 @@ namespace TrackableEntities.EF5
             // Populate related entities on all items
             foreach (var prop in allProps)
             {
-                // Continue if trackable prop is same type as parent
-                if (parent != null && prop.PropertyType == parent.GetType())
-                    continue;
-
                 // Get related entities
                 string propertyName = prop.Name;
                 Type propertyType = prop.PropertyType;
