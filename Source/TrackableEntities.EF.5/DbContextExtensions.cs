@@ -209,7 +209,7 @@ namespace TrackableEntities.EF5
         public static void LoadRelatedEntities(this DbContext context, IEnumerable<ITrackable> items,
             bool loadAll = false)
         {
-            LoadRelatedEntities(context, items.ToArray(), null, CreateVisitationHelperWithIdMatching(context), loadAll);
+            LoadRelatedEntities(context, items, null, CreateVisitationHelperWithIdMatching(context), loadAll);
         }
 
 #if EF_6
@@ -252,7 +252,7 @@ namespace TrackableEntities.EF5
         public static Task LoadRelatedEntitiesAsync(this DbContext context,
             IEnumerable<ITrackable> items, bool loadAll = false)
         {
-            return LoadRelatedEntitiesAsync(context, items.ToArray(), null, CreateVisitationHelperWithIdMatching(context),
+            return LoadRelatedEntitiesAsync(context, items, null, CreateVisitationHelperWithIdMatching(context),
                 CancellationToken.None, loadAll);
         }
 
@@ -267,25 +267,25 @@ namespace TrackableEntities.EF5
         public static Task LoadRelatedEntitiesAsync(this DbContext context, IEnumerable<ITrackable> items,
             CancellationToken cancellationToken, bool loadAll = false)
         {
-            return LoadRelatedEntitiesAsync(context, items.ToArray(), null, CreateVisitationHelperWithIdMatching(context),
+            return LoadRelatedEntitiesAsync(context, items, null, CreateVisitationHelperWithIdMatching(context),
                 cancellationToken, loadAll);
         }
 #endif
 
-        private static void LoadRelatedEntities(this DbContext context, 
-            ITrackable[] items, ITrackable parent, ObjectVisitationHelper visitationHelper, bool loadAll)
+        private static void LoadRelatedEntities(this DbContext context,
+            IEnumerable<ITrackable> items, ITrackable parent, ObjectVisitationHelper visitationHelper, bool loadAll)
         {
             // Return if no items
             if (items == null) return;
 
             // Prevent endless recursion
-            items = items.Where(i => !visitationHelper.IsVisited(i)).ToArray();
+            items = items.Where(i => !visitationHelper.IsVisited(i));
 
             // Get selected items
             var selectedItems = loadAll ? items
                 : items.Where(t => t.TrackingState == TrackingState.Added
-                    || (parent != null && parent.TrackingState == TrackingState.Added)).ToArray();
-            var entities = selectedItems.Cast<object>().ToArray();
+                    || (parent != null && parent.TrackingState == TrackingState.Added));
+            var entities = selectedItems.Cast<object>();
 
             // Collection 'items' can contain entities of different types (due to inheritance)
             // We collect a superset of all properties of all items of type ITrackable
@@ -323,20 +323,20 @@ namespace TrackableEntities.EF5
 
 #if EF_6
         private static async Task LoadRelatedEntitiesAsync(this DbContext context,
-            ITrackable[] items, ITrackable parent, ObjectVisitationHelper visitationHelper,
+            IEnumerable<ITrackable> items, ITrackable parent, ObjectVisitationHelper visitationHelper,
             CancellationToken cancellationToken, bool loadAll)
         {
             // Return if no items
             if (items == null) return;
 
             // Prevent endless recursion
-            items = items.Where(i => !visitationHelper.IsVisited(i)).ToArray();
+            items = items.Where(i => !visitationHelper.IsVisited(i));
 
             // Get selected items
             var selectedItems = loadAll ? items
                 : items.Where(t => t.TrackingState == TrackingState.Added
-                    || (parent != null && parent.TrackingState == TrackingState.Added)).ToArray();
-            var entities = selectedItems.Cast<object>().ToArray();
+                    || (parent != null && parent.TrackingState == TrackingState.Added));
+            var entities = selectedItems.Cast<object>();
 
             // Collection 'items' can contain entities of different types (due to inheritance)
             // We collect a superset of all properties of all items of type ITrackable
@@ -391,7 +391,7 @@ namespace TrackableEntities.EF5
                 var childItems = prop.GetValue(item, null) as IList;
                 if (childItems != null)
                 {
-                    var trackableChildren = childItems.OfType<ITrackable>().ToArray();
+                    var trackableChildren = childItems.OfType<ITrackable>();
                     await context.LoadRelatedEntitiesAsync(trackableChildren, item, visitationHelper,
                         cancellationToken, loadAll);
                 }
@@ -416,7 +416,7 @@ namespace TrackableEntities.EF5
                 var childItems = prop.GetValue(item, null) as IList;
                 if (childItems != null)
                 {
-                    var trackableChildren = childItems.OfType<ITrackable>().ToArray();
+                    var trackableChildren = childItems.OfType<ITrackable>();
                     context.LoadRelatedEntities(trackableChildren, item, visitationHelper, loadAll);
                 }
             }
@@ -578,7 +578,7 @@ namespace TrackableEntities.EF5
         #region LoadRelatedEntities Helpers
 
         private static List<object> GetRelatedEntities(this DbContext context,
-            object[] items, Type entityType, string propertyName, Type propertyType)
+            IEnumerable<object> items, Type entityType, string propertyName, Type propertyType)
         {
             // Get entity sql
             string entitySql = context.GetRelatedEntitiesSql(items, entityType, propertyName, propertyType);
@@ -591,7 +591,7 @@ namespace TrackableEntities.EF5
 
 #if EF_6
         private static async Task<List<object>> GetRelatedEntitiesAsync(this DbContext context,
-            object[] items, Type entityType, string propertyName, Type propertyType,
+            IEnumerable<object> items, Type entityType, string propertyName, Type propertyType,
             CancellationToken cancellationToken)
         {
             // Get entity sql
@@ -605,7 +605,7 @@ namespace TrackableEntities.EF5
 #endif
 
         private static string GetRelatedEntitiesSql(this DbContext context,
-            object[] items, Type entityType, string propertyName, Type propertyType)
+            IEnumerable<object> items, Type entityType, string propertyName, Type propertyType)
         {
             // Get entity set name
             string entitySetName = context.GetEntitySetName(propertyType);
@@ -665,7 +665,7 @@ namespace TrackableEntities.EF5
             return primaryKeyValue.Equals(foreignKeyValue);
         }
 
-        private static object[] GetKeyValues(string foreignKeyName, params object[] items)
+        private static object[] GetKeyValues(string foreignKeyName, IEnumerable<object> items)
         {
             var values = from item in items
                          let prop = item.GetType().GetProperty(foreignKeyName)
@@ -709,7 +709,7 @@ namespace TrackableEntities.EF5
             if (keyValues.Length == 0) return null;
             var ids = from k in keyValues
                       select k is string ? string.Format("'{0}'", k) : k.ToString();
-            string csvIds = string.Join(",", ids.ToArray());
+            string csvIds = string.Join(",", ids);
             string entitySql = string.Format
                 ("SELECT VALUE x FROM {0} AS x WHERE x.{1} IN {{{2}}}",
                 entitySetName, foreignKeyName, csvIds);
