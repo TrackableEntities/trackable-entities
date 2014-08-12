@@ -30,18 +30,21 @@ namespace TrackableEntities.Common
                 item.AcceptChanges(null);
         }
 
-        private static void AcceptChanges(this ITrackable item, ITrackable parent)
+        private static void AcceptChanges(this ITrackable item, ObjectVisitationHelper visitationHelper)
         {
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+
+            // Prevent endless recursion
+            if (visitationHelper.IsVisited(item)) return;
+
             // Set tracking state for child collections
             foreach (var prop in item.GetType().GetProperties())
             {
                 // Apply changes to 1-1 and M-1 properties
                 var trackableRef = prop.GetValue(item, null) as ITrackable;
 
-                // Stop recursion if trackable is same type as parent
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
-                    trackableRef.AcceptChanges(item);
+                if (trackableRef != null)
+                    trackableRef.AcceptChanges(visitationHelper.With(item));
 
                 // Apply changes to 1-M properties
                 var items = prop.GetValue(item, null) as IList;
@@ -50,17 +53,17 @@ namespace TrackableEntities.Common
                     var count = items.Count;
                     for (int i = count - 1; i > -1; i--)
                     {
-                        // Stop recursion if trackable is same type as parent
+                        // Stop recursion if trackable hasn't been visited
                         var trackable = items[i] as ITrackable;
-                        if (trackable != null 
-                            && (parent == null || trackable.GetType() != parent.GetType()))
+                        if (trackable != null
+                            && (!visitationHelper.IsVisited(trackable)))
                         {
                             if (trackable.TrackingState == TrackingState.Deleted)
                                 // Remove items marked as deleted
                                 items.RemoveAt(i);
                             else
                                 // Recursively accept changes on trackable
-                                trackable.AcceptChanges(item);
+                                trackable.AcceptChanges(visitationHelper.With(item));
                         }
                     }
                 }

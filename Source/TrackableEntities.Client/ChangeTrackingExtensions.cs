@@ -58,11 +58,16 @@ namespace TrackableEntities.Client
         }
 
         private static void MergeChanges(this ITrackingCollection originalChangeTracker,
-            IEnumerable<ITrackable> updatedItems, ITrackable updatedItemParent, bool isTrackableRef = false)
+            IEnumerable<ITrackable> updatedItems, ObjectVisitationHelper visitationHelper, bool isTrackableRef = false)
         {
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+
             // Process each updated item
             foreach (var updatedItem in updatedItems)
             {
+                // Prevent endless recursion
+                if (visitationHelper.IsVisited(updatedItem)) continue;
+
                 // Get matching orig item
                 var origItem = originalChangeTracker.Cast<ITrackable>()
                     .GetEquatableItem(updatedItem, isTrackableRef);
@@ -85,29 +90,21 @@ namespace TrackableEntities.Client
                     // Set to 1-1 and M-1 properties
                     var updatedTrackableRef = prop.GetValue(updatedItem, null) as ITrackable;
 
-                    // Continue recursion if trackable is not same type as parent
-                    if (updatedTrackableRef != null && (updatedItemParent == null
-                        || updatedTrackableRef.GetType() != updatedItemParent.GetType()))
+                    // Continue recursion
+                    if (updatedTrackableRef != null)
                     {
                         ITrackingCollection refPropChangeTracker = GetRefPropChangeTracker(origItem, prop.Name);
                         if (refPropChangeTracker != null)
-                            refPropChangeTracker.MergeChanges(new[] { updatedTrackableRef }, updatedItem, true);
+                            refPropChangeTracker.MergeChanges(new[] { updatedTrackableRef }, visitationHelper.With(updatedItem), true);
                     }
 
                     // Set 1-M and M-M properties
                     var updatedChildItems = prop.GetValue(updatedItem, null) as IList;
                     var origItemsChangeTracker = prop.GetValue(origItem, null) as ITrackingCollection;
-                    if (updatedChildItems != null && origItemsChangeTracker != null
-                        && updatedChildItems.Count > 0)
+                    if (updatedChildItems != null && origItemsChangeTracker != null)
                     {
-                        // Continue recursion if trackable is not same type as parent
-                        var updatedTrackableChild = updatedChildItems[0] as ITrackable;
-                        if (updatedTrackableChild != null && (updatedItemParent == null
-                            || updatedTrackableChild.GetType() != updatedItemParent.GetType()))
-                        {
-                            // Merge changes into trackable children
-                            origItemsChangeTracker.MergeChanges(updatedChildItems.Cast<ITrackable>(), updatedItem);
-                        }
+                        // Merge changes into trackable children
+                        origItemsChangeTracker.MergeChanges(updatedChildItems.Cast<ITrackable>(), visitationHelper.With(updatedItem));
                     }
                 }
 
@@ -129,12 +126,29 @@ namespace TrackableEntities.Client
         /// <returns>True if there are changes in the object graph</returns>
         public static bool HasChanges(this ITrackable item)
         {
-            bool hasChanges = item.HasChanges(null);
+            var visitationHelper = new ObjectVisitationHelper();
+            bool hasChanges = item.HasChanges(visitationHelper,
+                new Dictionary<ITrackable, bool>(visitationHelper.EqualityComparer));
             return hasChanges;
         }
 
-        private static bool HasChanges(this ITrackable item, ITrackable parent)
+        private static bool HasChanges(this ITrackable item,
+            ObjectVisitationHelper visitationHelper,
+            Dictionary<ITrackable, bool> cachedResults)
         {
+            // Prevent endless recursion
+            if (visitationHelper.IsVisited(item))
+            {
+                bool result;
+                if (cachedResults.TryGetValue(item, out result)) return result;
+
+                // if the circle closes and we reach again the item for which
+                // we are currently determining "HasChanges" and so far we encounter
+                // no changed items along the way, then just assume "no change".
+                // However after inspection of other branches this result may still be corrected.
+                return false;
+            }
+
             // See if item has changes
             bool itemHasChanges = item.TrackingState != TrackingState.Unchanged;
             if (itemHasChanges) return true;
@@ -145,12 +159,12 @@ namespace TrackableEntities.Client
                 // Process 1-1 and M-1 properties
                 var trackableRef = prop.GetValue(item, null) as ITrackable;
 
-                // Continue recursion if trackable is not same type as parent
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                // Continue recursion
+                if (trackableRef != null)
                 {
                     // See if ref prop has changes
-                    bool refPropHasChanges = trackableRef.HasChanges(item);
+                    bool refPropHasChanges = trackableRef.HasChanges(visitationHelper.With(item), cachedResults);
+                    cachedResults[trackableRef] = refPropHasChanges;
                     if (refPropHasChanges) return true;
                 }
 
@@ -165,11 +179,12 @@ namespace TrackableEntities.Client
                     // See if child entities have changes
                     foreach (ITrackable trackableChild in trackingColl)
                     {
-                        // Continue recursion if trackable is not same type as parent
-                        if (trackableChild != null &&
-                            (parent == null || (trackableChild.GetType() != parent.GetType())))
+                        // Continue recursion
+                        // REVISIT: shall we make a "shallow" scan in case of M-M?
+                        if (trackableChild != null)
                         {
-                            bool childHasChanges = trackableChild.HasChanges(item);
+                            bool childHasChanges = trackableChild.HasChanges(visitationHelper.With(item), cachedResults);
+                            cachedResults[trackableChild] = childHasChanges;
                             if (childHasChanges) return true;
                         }
                     }

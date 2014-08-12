@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using TrackableEntities.Common;
 
 namespace TrackableEntities.Client
 {
@@ -86,21 +87,30 @@ namespace TrackableEntities.Client
             }
             set
             {
-                // Get notified when an item in the collection has changed
-                foreach (TEntity item in this)
-                {
-                    // Property change notification
-                    if (value) item.PropertyChanged += OnPropertyChanged;
-                    else item.PropertyChanged -= OnPropertyChanged;
-
-                    // Enable tracking on trackable collection properties
-                    item.SetTracking(value, Parent);
-
-                    // Set entity identifier
-                    item.SetEntityIdentifier();
-                }
-                _tracking = value;
+                this.SetTracking(value, new ObjectVisitationHelper());
             }
+        }
+
+        /// <summary>
+        /// For internal use.
+        /// Turn change-tracking on and off with proper circular reference checking.
+        /// </summary>
+        public void SetTracking(bool value, ObjectVisitationHelper visitationHelper)
+        {
+            // Get notified when an item in the collection has changed
+            foreach (TEntity item in this)
+            {
+                // Property change notification
+                if (value) item.PropertyChanged += OnPropertyChanged;
+                else item.PropertyChanged -= OnPropertyChanged;
+
+                // Enable tracking on trackable collection properties
+                item.SetTracking(value, visitationHelper);
+
+                // Set entity identifier
+                item.SetEntityIdentifier();
+            }
+            _tracking = value;
         }
         private bool _tracking;
 
@@ -167,10 +177,10 @@ namespace TrackableEntities.Client
                 item.PropertyChanged += OnPropertyChanged;
 
                 // Enable tracking on trackable properties
-                item.SetTracking(Tracking, Parent);
+                item.SetTracking(Tracking, new ObjectVisitationHelper());
 
                 // Mark item and trackable collection properties
-                item.SetState(TrackingState.Added, Parent);
+                item.SetState(TrackingState.Added, new ObjectVisitationHelper(Parent)); // TRICKY: don't visit Parent
 
                 // Fire EntityChanged event
                 if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
@@ -193,16 +203,16 @@ namespace TrackableEntities.Client
 
                 // Remove modified properties
                 item.ModifiedProperties = null;
-                item.SetModifiedProperties(null, Parent);
+                item.SetModifiedProperties(null, new ObjectVisitationHelper());
 
                 // Stop listening for property changes
                 item.PropertyChanged -= OnPropertyChanged;
 
                 // Disable tracking on trackable properties
-                item.SetTracking(false, Parent);
+                item.SetTracking(false, new ObjectVisitationHelper());
 
                 // Mark item and trackable collection properties
-                item.SetState(TrackingState.Deleted, Parent);
+                item.SetState(TrackingState.Deleted, new ObjectVisitationHelper(Parent)); // TRICKY: don't visit Parent
 
                 // Fire EntityChanged event
                 if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
@@ -232,7 +242,7 @@ namespace TrackableEntities.Client
             this.RemoveRestoredDeletes();
 
             // Get changed items
-            List<TEntity> entities = items.GetChanges(null).Cast<TEntity>().ToList();
+            List<TEntity> entities = items.GetChanges(new ObjectVisitationHelper()).Cast<TEntity>().ToList();
 
             // Return new change tracking collection with tracking disabled
             return new ChangeTrackingCollection<TEntity>(entities, true);
