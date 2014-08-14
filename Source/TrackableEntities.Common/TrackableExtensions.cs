@@ -35,8 +35,7 @@ namespace TrackableEntities.Common
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
 
             // Prevent endless recursion
-            if (visitationHelper.IsVisited(item)) return;
-            visitationHelper = visitationHelper.With(item);
+            if (!visitationHelper.TryVisit(item)) return;
 
             // Set tracking state for child collections
             foreach (var prop in item.GetType().GetProperties())

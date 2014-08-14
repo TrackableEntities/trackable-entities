@@ -61,8 +61,7 @@ namespace TrackableEntities.Client
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
 
             // Prevent endless recursion
-            if (visitationHelper.IsVisited(item)) return;
-            visitationHelper = visitationHelper.With(item);
+            if (!visitationHelper.TryVisit(item)) return;
 
             // Recurively set state for unchanged, added or deleted items,
             // but not for M-M child item
@@ -120,8 +119,7 @@ namespace TrackableEntities.Client
         {
             // Prevent endless recursion
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
-            if (visitationHelper.IsVisited(item)) return;
-            visitationHelper = visitationHelper.With(item);
+            if (!visitationHelper.TryVisit(item)) return;
 
             // Include private props to get ref prop change tracker
             foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
@@ -161,8 +159,7 @@ namespace TrackableEntities.Client
                 if (item == null) continue;
 
                 // Prevent endless recursion
-                if (visitationHelper.IsVisited(item)) continue;
-                visitationHelper = visitationHelper.With(item);
+                if (!visitationHelper.TryVisit(item)) continue;
 
                 // Iterate entity properties
                 foreach (var prop in item.GetType().GetProperties())
@@ -232,8 +229,7 @@ namespace TrackableEntities.Client
             foreach (var item in changeTracker.Cast<ITrackable>())
             {
                 // Prevent endless recursion
-                if (visitationHelper.IsVisited(item)) continue;
-                visitationHelper = visitationHelper.With(item);
+                if (!visitationHelper.TryVisit(item)) continue;
 
                 // Iterate entity properties
                 foreach (var prop in item.GetType().GetProperties())
@@ -272,17 +268,15 @@ namespace TrackableEntities.Client
         /// <returns>Collection containing only added, modified or deleted entities</returns>
         internal static IEnumerable<ITrackable> GetChanges(this IEnumerable<ITrackable> items, ObjectVisitationHelper visitationHelper)
         {
-            // Prevent endless recursion
-            if (visitationHelper.IsVisited(items)) yield break;
-            visitationHelper = visitationHelper.With(items);
+            // Prevent endless recursion by collection
+            if (!visitationHelper.TryVisit(items)) yield break;
+
+            // Prevent endless recursion by item
+            items = items.Where(i => visitationHelper.TryVisit(i)).ToList();
 
             // Iterate items in change-tracking collection
             foreach (ITrackable item in items)
             {
-                // Prevent endless recursion
-                if (visitationHelper.IsVisited(item)) continue;
-                visitationHelper = visitationHelper.With(item);
-
                 // Downstream changes flag
                 bool hasDownstreamChanges = false;
 

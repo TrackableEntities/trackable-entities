@@ -103,8 +103,7 @@ namespace TrackableEntities.Client
             foreach (TEntity item in this)
             {
                 // Prevent endless recursion
-                if (visitationHelper.IsVisited(item)) continue;
-                visitationHelper = visitationHelper.With(item);
+                if (!visitationHelper.TryVisit(item)) continue;
 
                 // Property change notification
                 if (value) item.PropertyChanged += OnPropertyChanged;

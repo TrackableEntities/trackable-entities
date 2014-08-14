@@ -56,7 +56,7 @@ namespace TrackableEntities.EF5
             string propertyName, TrackingState? state = null)
         {
             // Prevent endless recursion
-            if (visitationHelper.IsVisited(item)) return;
+            if (!visitationHelper.TryVisit(item)) return;
 
             // Check for null args
             if (context == null)
@@ -95,7 +95,7 @@ namespace TrackableEntities.EF5
                 }
 
                 // Set state for child collections
-                context.ApplyChangesOnProperties(item, visitationHelper.With(item));
+                context.ApplyChangesOnProperties(item, visitationHelper);
                 return;
             }   
 
@@ -124,7 +124,7 @@ namespace TrackableEntities.EF5
                 && (state == null || state == TrackingState.Added))
             {
                 context.Entry(item).State = EntityState.Added;
-                context.ApplyChangesOnProperties(item, visitationHelper.With(item));
+                context.ApplyChangesOnProperties(item, visitationHelper);
                 return;
             }
 
@@ -132,7 +132,7 @@ namespace TrackableEntities.EF5
             if (item.TrackingState == TrackingState.Deleted
                 && (state == null || state == TrackingState.Deleted))
             {
-                context.SetChanges(item, EntityState.Unchanged, visitationHelper);
+                context.SetChanges(item, EntityState.Unchanged, visitationHelper.Clone()); // Clone to avoid interference
                 context.SetChanges(item, EntityState.Deleted, visitationHelper);
                 return;
             }
@@ -143,7 +143,7 @@ namespace TrackableEntities.EF5
                 || state == TrackingState.Modified)
             {
                 // Set added state for reference or child properties
-                context.ApplyChangesOnProperties(item, visitationHelper.With(item), TrackingState.Added);
+                context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Added); // Clone to avoid interference
 
                 // Set modified properties
                 if (item.TrackingState == TrackingState.Modified
@@ -163,9 +163,9 @@ namespace TrackableEntities.EF5
                 }
 
                 // Set other state for reference or child properties
-                context.ApplyChangesOnProperties(item, visitationHelper.With(item), TrackingState.Unchanged);
-                context.ApplyChangesOnProperties(item, visitationHelper.With(item), TrackingState.Modified);
-                context.ApplyChangesOnProperties(item, visitationHelper.With(item), TrackingState.Deleted);
+                context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Unchanged); // Clone to avoid interference
+                context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Modified); // Clone to avoid interference
+                context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Deleted);
             }
         }
 
@@ -315,8 +315,7 @@ namespace TrackableEntities.EF5
             foreach (var item in items)
             {
                 // Avoid endless recursion
-                if (visitationHelper.IsVisited(item)) continue;
-                visitationHelper = visitationHelper.With(item);
+                if (!visitationHelper.TryVisit(item)) continue;
 
                 bool loadAllRelated = loadAll 
                     || item.TrackingState == TrackingState.Added
@@ -370,8 +369,7 @@ namespace TrackableEntities.EF5
             foreach (var item in items)
             {
                 // Avoid endless recursion
-                if (visitationHelper.IsVisited(item)) continue;
-                visitationHelper = visitationHelper.With(item);
+                if (!visitationHelper.TryVisit(item)) continue;
 
                 bool loadAllRelated = loadAll
                     || item.TrackingState == TrackingState.Added
@@ -476,17 +474,13 @@ namespace TrackableEntities.EF5
             ObjectVisitationHelper visitationHelper,
             ITrackable parent = null, string propertyName = null)
         {
-            // Prevent endless recursion
-            if (visitationHelper.IsVisited(item)) return;
-
-            visitationHelper = visitationHelper.With(item);
-
             // Set state for child collections
             foreach (var prop in item.GetType().GetProperties())
             {
                 // Apply changes to 1-1 and M-1 properties
                 var trackableReference = prop.GetValue(item, null) as ITrackable;
-                if (trackableReference != null)
+                if (trackableReference != null
+                    && !visitationHelper.IsVisited(trackableReference))
                 {
                     context.ApplyChanges(trackableReference, item, visitationHelper, prop.Name);
                     if (context.IsRelatedProperty(item.GetType(), prop.Name, RelationshipType.OneToOne))
@@ -502,7 +496,15 @@ namespace TrackableEntities.EF5
                     {
                         var trackableChild = items[i] as ITrackable;
                         if (trackableChild != null)
-                            context.SetChanges(trackableChild, state, visitationHelper, item, prop.Name);
+                        {
+                            // Prevent endless recursion
+                            if (visitationHelper.TryVisit(trackableChild))
+                            {
+                                // TRICKY: we have just visited the item
+                                // As a side effect, ApplyChanges will never be called for it.
+                                context.SetChanges(trackableChild, state, visitationHelper, item, prop.Name);
+                            }
+                        }
                     }
                 }
             }
@@ -776,10 +778,10 @@ namespace TrackableEntities.EF5
 
         private static ObjectVisitationHelper CreateVisitationHelperWithIdMatching(DbContext dbContext)
         {
-            var visitationHelper = new ObjectVisitationHelper();
-            visitationHelper.EqualityComparer = new IdMatcher() { DbContext = dbContext };
+            var visitationHelper = new ObjectVisitationHelper(new IdMatcher() { DbContext = dbContext });
             return visitationHelper;
         }
+
         #endregion
     }
 }

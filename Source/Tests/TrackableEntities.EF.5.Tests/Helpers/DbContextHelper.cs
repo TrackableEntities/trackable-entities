@@ -24,8 +24,7 @@ namespace TrackableEntities.EF.Tests
         {
             // Prevent endless recursion
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
-            if (visitationHelper.IsVisited(item)) yield break;
-            visitationHelper = visitationHelper.With(item);
+            if (!visitationHelper.TryVisit(item)) yield break;
 
             foreach (var prop in item.GetType().GetProperties())
             {

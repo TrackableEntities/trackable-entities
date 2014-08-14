@@ -66,8 +66,7 @@ namespace TrackableEntities.Client
             foreach (var updatedItem in updatedItems)
             {
                 // Prevent endless recursion
-                if (visitationHelper.IsVisited(updatedItem)) continue;
-                visitationHelper = visitationHelper.With(updatedItem);
+                if (!visitationHelper.TryVisit(updatedItem)) continue;
 
                 // Get matching orig item
                 var origItem = originalChangeTracker.Cast<ITrackable>()
@@ -129,7 +128,7 @@ namespace TrackableEntities.Client
         {
             var visitationHelper = new ObjectVisitationHelper();
             bool hasChanges = item.HasChanges(visitationHelper,
-                new Dictionary<ITrackable, bool>(visitationHelper.EqualityComparer));
+                new Dictionary<ITrackable, bool>(visitationHelper));
             return hasChanges;
         }
 
@@ -138,7 +137,7 @@ namespace TrackableEntities.Client
             Dictionary<ITrackable, bool> cachedResults)
         {
             // Prevent endless recursion
-            if (visitationHelper.IsVisited(item))
+            if (!visitationHelper.TryVisit(item))
             {
                 bool result;
                 if (cachedResults.TryGetValue(item, out result)) return result;
@@ -149,7 +148,6 @@ namespace TrackableEntities.Client
                 // However after inspection of other branches this result may still be corrected.
                 return false;
             }
-            visitationHelper = visitationHelper.With(item);
 
             // See if item has changes
             bool itemHasChanges = item.TrackingState != TrackingState.Unchanged;

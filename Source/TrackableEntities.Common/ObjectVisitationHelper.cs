@@ -6,30 +6,10 @@ namespace TrackableEntities.Common
 {
     /// <summary>
     /// This class facilitates proper checking for circular references when iterating the graph nodes.
-    /// It is designed as an immutable collection of visited node. Thus it is not possible to add
-    /// new objects into an existing collection, but the proper way is always to create a new
-    /// instance of ObjectVisitationHelper which contains all the previous nodes plus the new one.
-    /// Such design significantly reduced the complexity of the graph visitation algorithms.
     /// </summary>
     public class ObjectVisitationHelper : IEqualityComparer<object>
     {
-        private readonly IEnumerable<object> _objectSet;
-        private IEqualityComparer<object> _equalityComparer;
-
-        /// <summary>
-        /// Customizable equality comparer used by IsVisited method
-        /// </summary>
-        public IEqualityComparer<object> EqualityComparer
-        {
-            get
-            {
-                return _equalityComparer ?? this;
-            }
-            set
-            {
-                _equalityComparer = value;
-            }
-        }
+        private readonly Dictionary<object, object> _objectSet;
 
         /// <summary>
         /// Helper method which initializes the given reference to ObjectVisitationHelper
@@ -48,29 +28,48 @@ namespace TrackableEntities.Common
         /// </summary>
         public ObjectVisitationHelper(object obj = null)
         {
-            _objectSet = Enumerable.Repeat<object>(obj, obj == null ? 0 : 1);
+            _objectSet = new Dictionary<object, object>(this);
+            if (obj != null)
+                _objectSet.Add(obj, obj);
         }
 
         /// <summary>
-        /// Constructs a new collection which contains all the previously visited nodes plus the new one.
-        /// An attempt to add the same object twice will throw InvalidOperationException.
-        /// <param name="obj">New object to be put into the collection</param>
+        /// Initializes an empty collection with custom equality comparer.
         /// </summary>
-        /// <returns>The new collection</returns>
-        public ObjectVisitationHelper With(object obj)
+        public ObjectVisitationHelper(IEqualityComparer<object> comparer)
         {
-            return new ObjectVisitationHelper(this, obj);
+            _objectSet = new Dictionary<object, object>(comparer);
         }
 
-        private ObjectVisitationHelper(ObjectVisitationHelper other, object obj)
+        /// <summary>
+        /// Creates a shallow copy of self
+        /// </summary>
+        public ObjectVisitationHelper Clone()
         {
-            if (obj == null)
-                throw new NullReferenceException("obj");
-            if (other.IsVisited(obj))
-                throw new InvalidOperationException(string.Format("Object {0} has beed already visited", obj));
+            return new ObjectVisitationHelper(this);
+        }
 
-            _equalityComparer = other._equalityComparer;
-            _objectSet = other._objectSet.Union(Enumerable.Repeat<object>(obj, 1), EqualityComparer);
+        private ObjectVisitationHelper(ObjectVisitationHelper other)
+        {
+            _objectSet = other._objectSet.ToDictionary(
+                x => x.Key,
+                y => y.Value,
+                other._objectSet.Comparer);
+        }
+
+        /// <summary>
+        /// Checks if the given graph node has already been visited (is contained in the collection)
+        /// If not, then the object will be visited straight away, otherwise NOP and return false.
+        /// <param name="obj">An object to be visited</param>
+        /// </summary>
+        public bool TryVisit(object obj)
+        {
+            // Already visited? Return false
+            if (IsVisited(obj)) return false;
+            
+            // If not yet visited, then visit
+            _objectSet.Add(obj, obj);
+            return true;
         }
 
         /// <summary>
@@ -81,18 +80,22 @@ namespace TrackableEntities.Common
         {
             if (obj == null)
                 throw new NullReferenceException("obj");
-            return _objectSet.Contains(obj, EqualityComparer);
+
+            return _objectSet.ContainsKey(obj);
         }
 
         /// <summary>
-        /// Finds a visited object which matches the given object by EqualityComparer
+        /// Finds a visited object which matches the given object by the current EqualityComparer
         /// <param name="obj">An object to be found</param>
         /// </summary>
         public object FindVisited(object obj)
         {
             if (obj == null)
                 throw new NullReferenceException("obj");
-            return _objectSet.Where(o => EqualityComparer.Equals(o, obj)).SingleOrDefault();
+
+            object result;
+            if (_objectSet.TryGetValue(obj, out result)) return result;
+            return null;
         }
 
         #region Default IEqualityComparer based on object references
