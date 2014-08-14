@@ -741,6 +741,7 @@ namespace TrackableEntities.EF5
 
             bool IEqualityComparer<object>.Equals(object x, object y)
             {
+                if (!x.GetType().Equals(y.GetType())) return false;
                 return KeyValuesAreEqual(GetKeyValue(x), GetKeyValue(y));
             }
 
@@ -748,20 +749,20 @@ namespace TrackableEntities.EF5
             {
                 object primaryKeyValue = GetKeyValue(obj);
 
-                // Normalized strings
+                // Normalized string PKs
                 if (primaryKeyValue is string)
                 {
-                    return ((string)primaryKeyValue).Normalize().GetHashCode();
+                    primaryKeyValue = ((string)primaryKeyValue).Normalize();
                 }
 
-                return primaryKeyValue.GetHashCode();
+                return Tuple.Create(obj.GetType(), primaryKeyValue).GetHashCode();
             }
 
             private object GetKeyValue(object entity)
             {
                 Type entityType = entity.GetType();
                 string primaryKeyName = DbContext.GetPrimaryKeyName(entityType);
-                return entityType.GetProperty(primaryKeyName);
+                return entityType.GetProperty(primaryKeyName).GetValue(entity);
             }
         }
 
