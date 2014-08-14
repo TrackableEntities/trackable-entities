@@ -278,14 +278,11 @@ namespace TrackableEntities.EF5
             // Return if no items
             if (items == null) return;
 
-            // Prevent endless recursion
-            items = items.Where(i => !visitationHelper.IsVisited(i));
-
             // Get selected items
             var selectedItems = loadAll ? items
                 : items.Where(t => t.TrackingState == TrackingState.Added
                     || (parent != null && parent.TrackingState == TrackingState.Added));
-            var entities = selectedItems.Cast<object>();
+            var entities = selectedItems.Cast<object>().Where(i => !visitationHelper.IsVisited(i));
 
             // Collection 'items' can contain entities of different types (due to inheritance)
             // We collect a superset of all properties of all items of type ITrackable
@@ -300,11 +297,14 @@ namespace TrackableEntities.EF5
                 // Get related entities
                 string propertyName = prop.Name;
                 Type propertyType = prop.PropertyType;
-                List<object> relatedEntities = context.GetRelatedEntities(entities,
+                IEnumerable<object> relatedEntities = context.GetRelatedEntities(entities,
                     prop.DeclaringType, propertyName, propertyType);
 
                 // Continue if there are no related entities
                 if (!relatedEntities.Any()) continue;
+
+                // ObjectVisitationHelper serves here as an identity cache
+                relatedEntities = relatedEntities.Select(e => visitationHelper.FindVisited(e) ?? e);
 
                 // Set related entities
                 context.SetRelatedEntities(entities, relatedEntities, prop,
@@ -314,10 +314,14 @@ namespace TrackableEntities.EF5
             // Recursively populate related entities on ref and child properties
             foreach (var item in items)
             {
+                // Avoid endless recursion
+                if (visitationHelper.IsVisited(item)) continue;
+                visitationHelper = visitationHelper.With(item);
+
                 bool loadAllRelated = loadAll 
                     || item.TrackingState == TrackingState.Added
                     || (parent  != null && parent.TrackingState == TrackingState.Added);
-                context.LoadRelatedEntitiesOnProperties(item, visitationHelper.With(item), loadAllRelated);
+                context.LoadRelatedEntitiesOnProperties(item, visitationHelper, loadAllRelated);
             }
         }
 
@@ -329,14 +333,11 @@ namespace TrackableEntities.EF5
             // Return if no items
             if (items == null) return;
 
-            // Prevent endless recursion
-            items = items.Where(i => !visitationHelper.IsVisited(i));
-
             // Get selected items
             var selectedItems = loadAll ? items
                 : items.Where(t => t.TrackingState == TrackingState.Added
                     || (parent != null && parent.TrackingState == TrackingState.Added));
-            var entities = selectedItems.Cast<object>();
+            var entities = selectedItems.Cast<object>().Where(i => !visitationHelper.IsVisited(i));
 
             // Collection 'items' can contain entities of different types (due to inheritance)
             // We collect a superset of all properties of all items of type ITrackable
@@ -351,11 +352,14 @@ namespace TrackableEntities.EF5
                 // Get related entities
                 string propertyName = prop.Name;
                 Type propertyType = prop.PropertyType;
-                List<object> relatedEntities = await context.GetRelatedEntitiesAsync(entities,
+                IEnumerable<object> relatedEntities = await context.GetRelatedEntitiesAsync(entities,
                     prop.DeclaringType, propertyName, propertyType, cancellationToken);
 
                 // Continue if there are no related entities
                 if (!relatedEntities.Any()) continue;
+
+                // ObjectVisitationHelper serves here as an identity cache
+                relatedEntities = relatedEntities.Select(e => visitationHelper.FindVisited(e) ?? e);
 
                 // Set related entities
                 context.SetRelatedEntities(entities, relatedEntities, prop,
@@ -365,10 +369,14 @@ namespace TrackableEntities.EF5
             // Recursively populate related entities on ref and child properties
             foreach (var item in items)
             {
+                // Avoid endless recursion
+                if (visitationHelper.IsVisited(item)) continue;
+                visitationHelper = visitationHelper.With(item);
+
                 bool loadAllRelated = loadAll
                     || item.TrackingState == TrackingState.Added
                     || (parent != null && parent.TrackingState == TrackingState.Added);
-                await context.LoadRelatedEntitiesOnPropertiesAsync(item, visitationHelper.With(item),
+                await context.LoadRelatedEntitiesOnPropertiesAsync(item, visitationHelper,
                     cancellationToken, loadAllRelated);
             }
         }
@@ -621,7 +629,7 @@ namespace TrackableEntities.EF5
         }
 
         private static void SetRelatedEntities(this DbContext context, 
-            IEnumerable<object> entities, List<object> relatedEntities, PropertyInfo referenceProperty,
+            IEnumerable<object> entities, IEnumerable<object> relatedEntities, PropertyInfo referenceProperty,
             Type entityType, string propertyName, Type propertyType)
         {
             // Get names of entity foreign key and related entity primary key
