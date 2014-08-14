@@ -79,7 +79,20 @@ namespace TrackableEntities.Common
         /// </summary>
         public bool IsVisited(object obj)
         {
+            if (obj == null)
+                throw new NullReferenceException("obj");
             return _objectSet.Contains(obj, EqualityComparer);
+        }
+
+        /// <summary>
+        /// Finds a visited object which matches the given object by EqualityComparer
+        /// <param name="obj">An object to be found</param>
+        /// </summary>
+        public object FindVisited(object obj)
+        {
+            if (obj == null)
+                throw new NullReferenceException("obj");
+            return _objectSet.Where(o => EqualityComparer.Equals(o, obj)).SingleOrDefault();
         }
 
         #region Default IEqualityComparer based on object references
