@@ -97,9 +97,15 @@ namespace TrackableEntities.Client
         /// </summary>
         public void SetTracking(bool value, ObjectVisitationHelper visitationHelper)
         {
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+
             // Get notified when an item in the collection has changed
             foreach (TEntity item in this)
             {
+                // Prevent endless recursion
+                if (visitationHelper.IsVisited(item)) continue;
+                visitationHelper = visitationHelper.With(item);
+
                 // Property change notification
                 if (value) item.PropertyChanged += OnPropertyChanged;
                 else item.PropertyChanged -= OnPropertyChanged;
@@ -209,7 +215,7 @@ namespace TrackableEntities.Client
                 item.PropertyChanged -= OnPropertyChanged;
 
                 // Disable tracking on trackable properties
-                item.SetTracking(false, new ObjectVisitationHelper());
+                item.SetTracking(false, new ObjectVisitationHelper(Parent)); // TRICKY: don't visit Parent
 
                 // Mark item and trackable collection properties
                 item.SetState(TrackingState.Deleted, new ObjectVisitationHelper(Parent)); // TRICKY: don't visit Parent

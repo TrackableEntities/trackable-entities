@@ -36,6 +36,7 @@ namespace TrackableEntities.Common
 
             // Prevent endless recursion
             if (visitationHelper.IsVisited(item)) return;
+            visitationHelper = visitationHelper.With(item);
 
             // Set tracking state for child collections
             foreach (var prop in item.GetType().GetProperties())
@@ -44,7 +45,7 @@ namespace TrackableEntities.Common
                 var trackableRef = prop.GetValue(item, null) as ITrackable;
 
                 if (trackableRef != null)
-                    trackableRef.AcceptChanges(visitationHelper.With(item));
+                    trackableRef.AcceptChanges(visitationHelper);
 
                 // Apply changes to 1-M properties
                 var items = prop.GetValue(item, null) as IList;
@@ -55,15 +56,14 @@ namespace TrackableEntities.Common
                     {
                         // Stop recursion if trackable hasn't been visited
                         var trackable = items[i] as ITrackable;
-                        if (trackable != null
-                            && (!visitationHelper.IsVisited(trackable)))
+                        if (trackable != null)
                         {
                             if (trackable.TrackingState == TrackingState.Deleted)
                                 // Remove items marked as deleted
                                 items.RemoveAt(i);
                             else
                                 // Recursively accept changes on trackable
-                                trackable.AcceptChanges(visitationHelper.With(item));
+                                trackable.AcceptChanges(visitationHelper);
                         }
                     }
                 }

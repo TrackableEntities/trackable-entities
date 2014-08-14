@@ -67,6 +67,7 @@ namespace TrackableEntities.Client
             {
                 // Prevent endless recursion
                 if (visitationHelper.IsVisited(updatedItem)) continue;
+                visitationHelper = visitationHelper.With(updatedItem);
 
                 // Get matching orig item
                 var origItem = originalChangeTracker.Cast<ITrackable>()
@@ -95,7 +96,7 @@ namespace TrackableEntities.Client
                     {
                         ITrackingCollection refPropChangeTracker = GetRefPropChangeTracker(origItem, prop.Name);
                         if (refPropChangeTracker != null)
-                            refPropChangeTracker.MergeChanges(new[] { updatedTrackableRef }, visitationHelper.With(updatedItem), true);
+                            refPropChangeTracker.MergeChanges(new[] { updatedTrackableRef }, visitationHelper, true);
                     }
 
                     // Set 1-M and M-M properties
@@ -104,7 +105,7 @@ namespace TrackableEntities.Client
                     if (updatedChildItems != null && origItemsChangeTracker != null)
                     {
                         // Merge changes into trackable children
-                        origItemsChangeTracker.MergeChanges(updatedChildItems.Cast<ITrackable>(), visitationHelper.With(updatedItem));
+                        origItemsChangeTracker.MergeChanges(updatedChildItems.Cast<ITrackable>(), visitationHelper);
                     }
                 }
 
@@ -148,6 +149,7 @@ namespace TrackableEntities.Client
                 // However after inspection of other branches this result may still be corrected.
                 return false;
             }
+            visitationHelper = visitationHelper.With(item);
 
             // See if item has changes
             bool itemHasChanges = item.TrackingState != TrackingState.Unchanged;
@@ -163,7 +165,7 @@ namespace TrackableEntities.Client
                 if (trackableRef != null)
                 {
                     // See if ref prop has changes
-                    bool refPropHasChanges = trackableRef.HasChanges(visitationHelper.With(item), cachedResults);
+                    bool refPropHasChanges = trackableRef.HasChanges(visitationHelper, cachedResults);
                     cachedResults[trackableRef] = refPropHasChanges;
                     if (refPropHasChanges) return true;
                 }
@@ -183,7 +185,7 @@ namespace TrackableEntities.Client
                         // REVISIT: shall we make a "shallow" scan in case of M-M?
                         if (trackableChild != null)
                         {
-                            bool childHasChanges = trackableChild.HasChanges(visitationHelper.With(item), cachedResults);
+                            bool childHasChanges = trackableChild.HasChanges(visitationHelper, cachedResults);
                             cachedResults[trackableChild] = childHasChanges;
                             if (childHasChanges) return true;
                         }
