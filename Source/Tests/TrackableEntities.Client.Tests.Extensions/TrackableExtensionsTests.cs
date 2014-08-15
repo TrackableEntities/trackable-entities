@@ -534,15 +534,16 @@ namespace TrackableEntities.Client.Tests.Extensions
             customer1.SetEntityIdentifier();
             Guid entityIdentifier = GetEntityIdentifier(customer1);
             customer2.SetEntityIdentifier(entityIdentifier);
-
-            customer1.SetEntityIdentifier(default(Guid)); // Cleared
-            customer1.SetEntityIdentifier(); // Reset
+            bool wereEquatable = customer1.IsEquatable(customer2);
 
             // Act
+            customer1.SetEntityIdentifier(default(Guid)); // Cleared
+            customer1.SetEntityIdentifier(); // Reset
             bool areEquatable = customer1.IsEquatable(customer2);
 
             // Assert
-            Assert.IsTrue(areEquatable);
+            Assert.IsTrue(wereEquatable);
+            Assert.IsFalse(areEquatable);
         }
 
         #endregion

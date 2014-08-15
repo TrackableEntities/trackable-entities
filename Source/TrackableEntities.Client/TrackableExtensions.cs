@@ -462,8 +462,6 @@ namespace TrackableEntities.Client
             // Set entity identifier prop value explicitly
             if (value != null)
             {
-                if ((Guid)value != default(Guid))
-                    item.SetEntityIdentity((Guid)value);
                 property.SetValue(item, value, null);
                 return;
             }
@@ -478,30 +476,6 @@ namespace TrackableEntities.Client
                 var entityIdentity = item.GetOrSetEntityIdentity();
                 property.SetValue(item, entityIdentity, null);
             }
-        }
-
-        /// <summary>
-        /// Get value of entity identity used for setting EntityIdentifier.
-        /// </summary>
-        /// <param name="item">ITrackable object</param>
-        /// <returns>Value of entity identity field</returns>
-        public static Guid GetEntityIdentity(this ITrackable item)
-        {
-            var field = GetEntityIdentifyField(item.GetType());
-            if (field == null) return default(Guid);
-            return (Guid)field.GetValue(item);
-        }
-
-        /// <summary>
-        /// Set value of entity identity used for setting EntityIdentifier.
-        /// </summary>
-        /// <param name="item">ITrackable object</param>
-        /// <param name="value">Value for entity identity field</param>
-        public static void SetEntityIdentity(this ITrackable item, Guid value)
-        {
-            var field = GetEntityIdentifyField(item.GetType());
-            if (field == null) return;
-            field.SetValue(item, value);
         }
 
         /// <summary>
@@ -551,23 +525,16 @@ namespace TrackableEntities.Client
             return property;
         }
 
-        private static FieldInfo GetEntityIdentifyField(Type type)
-        {
-            var property = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
-                .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifyField);
-            return property;
-        }
-
         private static Guid GetOrSetEntityIdentity(this ITrackable item)
         {
             var newIdentity = Guid.NewGuid();
-            var field = GetEntityIdentifyField(item.GetType());
-            if (field != null)
+            var property = GetEntityIdentifierProperty(item.GetType());
+            if (property != null)
             {
-                var entityIdentity = (Guid)field.GetValue(item);
+                var entityIdentity = (Guid)property.GetValue(item, null);
                 if (entityIdentity != default(Guid))
                     return entityIdentity;
-                field.SetValue(item, newIdentity);
+                property.SetValue(item, newIdentity, null);
             }
             return newIdentity;
         }

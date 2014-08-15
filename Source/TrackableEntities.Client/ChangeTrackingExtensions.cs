@@ -74,8 +74,7 @@ namespace TrackableEntities.Client
                     if (updatedItem.GetEntityIdentifier() == default(Guid))
                     {
                         Guid origEntityIdentifier = origItem.GetEntityIdentifier();
-                        updatedItem.SetEntityIdentity(origEntityIdentifier);
-                        updatedItem.SetEntityIdentifier(); 
+                        updatedItem.SetEntityIdentifier(origEntityIdentifier); 
                     }
                 }
                 
