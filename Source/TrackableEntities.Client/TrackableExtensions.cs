@@ -326,9 +326,7 @@ namespace TrackableEntities.Client
                         if (!visitationHelper.IsVisited(trackingColl))
                         {
                             // Get changes on child collection
-                            var trackingCollChanges = IsManyToManyChildCollection(trackingColl) ?
-                                trackingColl.Cast<ITrackable>().Where(t => t.TrackingState != TrackingState.Unchanged).ToList() :
-                                trackingColl.Cast<ITrackable>().GetChanges(visitationHelper).ToList();
+                            var trackingCollChanges = trackingColl.Cast<ITrackable>().GetChanges(visitationHelper).ToList();
 
                             // Set flag for downstream changes
                             hasDownstreamChanges = hasDownstreamChanges || trackingCollChanges.Any();
