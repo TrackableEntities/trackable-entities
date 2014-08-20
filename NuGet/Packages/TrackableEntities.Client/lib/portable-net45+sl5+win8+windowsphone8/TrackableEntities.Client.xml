@@ -26,6 +26,11 @@
             Interface implemented by trackable collections.
             </summary>
         </member>
+        <member name="M:TrackableEntities.Client.ITrackingCollection.SetTracking(System.Boolean,TrackableEntities.Common.ObjectVisitationHelper)">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
         <member name="M:TrackableEntities.Client.ITrackingCollection.GetChanges(System.Boolean)">
             <summary>
             Get entities that have been marked as Added, Modified or Deleted.
@@ -85,6 +90,12 @@
             </summary>
             <param name="entities">Entities being change-tracked</param>
             <param name="disableTracking">Disable tracking after entities are added</param>
+        </member>
+        <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.SetTracking(System.Boolean,TrackableEntities.Common.ObjectVisitationHelper)">
+            <summary>
+            For internal use.
+            Turn change-tracking on and off with proper circular reference checking.
+            </summary>
         </member>
         <member name="M:TrackableEntities.Client.ChangeTrackingCollection`1.InsertItem(System.Int32,`0)">
             <summary>
@@ -259,52 +270,52 @@
             <typeparam name="TEntity">Trackable entity type</typeparam>
             <returns>Deep copy of the ChangeTrackingCollection</returns>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.SetTracking(TrackableEntities.ITrackable,System.Boolean,TrackableEntities.ITrackable)">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.SetTracking(TrackableEntities.ITrackable,System.Boolean,TrackableEntities.Common.ObjectVisitationHelper)">
             <summary>
             Recursively enable or disable tracking on trackable entities in an object graph.
             </summary>
             <param name="item">Trackable object</param>
             <param name="enableTracking">Enable or disable change-tracking</param>
-            <param name="parent">ITrackable parent of item</param>
+            <param name="visitationHelper">Circular reference checking helper</param>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.SetState(TrackableEntities.ITrackable,TrackableEntities.TrackingState,TrackableEntities.ITrackable,TrackableEntities.Client.ITrackingCollection)">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.SetState(TrackableEntities.ITrackable,TrackableEntities.TrackingState,TrackableEntities.Common.ObjectVisitationHelper,System.Boolean)">
             <summary>
             Recursively set tracking state on trackable entities in an object graph.
             </summary>
             <param name="item">Trackable object</param>
             <param name="state">Change-tracking state of an entity</param>
-            <param name="parent">ITrackable parent of item</param>
-            <param name="changeTracker">Change-tracking collection this item is being added to, removed from, or is a member of</param>
+            <param name="visitationHelper">Circular reference checking helper</param>
+            <param name="isManyToManyItem">True is an item is treated as part of an M-M collection</param>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.SetModifiedProperties(TrackableEntities.ITrackable,System.Collections.Generic.ICollection{System.String},TrackableEntities.ITrackable)">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.SetModifiedProperties(TrackableEntities.ITrackable,System.Collections.Generic.ICollection{System.String},TrackableEntities.Common.ObjectVisitationHelper)">
             <summary>
             Recursively set tracking state on trackable properties in an object graph.
             </summary>
             <param name="item">Trackable object</param>
             <param name="modified">Properties on an entity that have been modified</param>
-            <param name="parent">ITrackable parent of item</param>
+            <param name="visitationHelper">Circular reference checking helper</param>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.RemoveRestoredDeletes(TrackableEntities.Client.ITrackingCollection,TrackableEntities.ITrackable)">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.RemoveRestoredDeletes(TrackableEntities.Client.ITrackingCollection,TrackableEntities.Common.ObjectVisitationHelper)">
             <summary>
             Recursively remove items marked as deleted.
             </summary>
             <param name="changeTracker">Change-tracking collection</param>
-            <param name="parent">Parent ITrackable object</param>
+            <param name="visitationHelper">Circular reference checking helper</param>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.RestoreDeletes(TrackableEntities.Client.ITrackingCollection,TrackableEntities.ITrackable)">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.RestoreDeletes(TrackableEntities.Client.ITrackingCollection,TrackableEntities.Common.ObjectVisitationHelper)">
             <summary>
             Restore items marked as deleted.
             </summary>
             <param name="changeTracker">Change-tracking collection</param>
-            <param name="parent">Parent ITrackable object</param>
+            <param name="visitationHelper">Circular reference checking helper</param>
         </member>
-        <member name="M:TrackableEntities.Client.TrackableExtensions.GetChanges(System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable},TrackableEntities.ITrackable)">
+        <member name="M:TrackableEntities.Client.TrackableExtensions.GetChanges(System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable},TrackableEntities.Common.ObjectVisitationHelper)">
             <summary>
             Get entities that have been added, modified or deleted, including trackable 
             reference and child entities.
             </summary>
             <param name="items">Collection of ITrackable objects</param>
-            <param name="parent">Parent ITrackable object</param>
+            <param name="visitationHelper">Circular reference checking helper</param>
             <returns>Collection containing only added, modified or deleted entities</returns>
         </member>
         <member name="M:TrackableEntities.Client.TrackableExtensions.Clone``1(``0)">
