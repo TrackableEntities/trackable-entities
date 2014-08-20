@@ -795,6 +795,39 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Test]
+        public void GetChanges_On_Existing_Employee_With_Territory_And_Modified_Area_Should_Return_Marked_Territory()
+        {
+            // Ensure that changes are retrieved across M-M relationships.
+
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var territory = employee.Territories[0];
+            var area = new Area
+            {
+                AreaId = 1,
+                AreaName = "Northern",
+                TrackingState = TrackingState.Modified
+            };
+            territory.AreaId = 1;
+            territory.Area = area;
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            area.AreaName = "xxx"; // Modify area
+
+            // Act
+            var changes = changeTracker.GetChanges();
+            var changedEmployee = changes.First();
+            var changedTerritory = changedEmployee.Territories.Single(t => t.TerritoryId == territory.TerritoryId);
+            var changedArea = changedTerritory.Area;
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, changedEmployee.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, changedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Modified, changedArea.TrackingState);
+            Assert.Contains("AreaName", (ICollection)area.ModifiedProperties);
+        }
+
+        [Test]
         public void GetChanges_On_Modified_Employee_With_Unchanged_Territories_Should_Return_No_Territories()
         {
             // Arrange

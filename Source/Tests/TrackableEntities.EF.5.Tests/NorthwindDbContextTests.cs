@@ -493,7 +493,39 @@ namespace TrackableEntities.EF5.Tests
 			Assert.AreEqual(EntityState.Modified, context.Entry(territory3).State);
 		}
 
-		[Test]
+        [Test]
+        public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Unchanged_Territories_With_Modified_Area_As_Modified()
+        {
+            // Ensure that changes are applied across M-M relationships.
+
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            var area = new Area
+            {
+                AreaId = 1,
+                AreaName = "Northern",
+                TrackingState = TrackingState.Modified
+            };
+            territory3.AreaId = 1;
+            territory3.Area = area;
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(area).State);
+        }
+
+        [Test]
 		public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Added_Territories_As_Unchanged()
 		{
 			// NOTE: With M-M properties there is no way to tell if the related entity is new or should 
