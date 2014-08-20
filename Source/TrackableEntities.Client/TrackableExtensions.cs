@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
+using TrackableEntities.Common;
 
 namespace TrackableEntities.Client
 {
@@ -16,9 +17,9 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="item">Trackable object</param>
         /// <param name="enableTracking">Enable or disable change-tracking</param>
-        /// <param name="parent">ITrackable parent of item</param>
-        public static void SetTracking(this ITrackable item, 
-            bool enableTracking, ITrackable parent = null)
+        /// <param name="visitationHelper">Circular reference checking helper</param>
+        public static void SetTracking(this ITrackable item,
+            bool enableTracking, ObjectVisitationHelper visitationHelper = null)
         {
             // Iterator entity properties
             foreach (var prop in item.GetType().GetProperties())
@@ -26,18 +27,15 @@ namespace TrackableEntities.Client
                 // Set tracking on 1-1 and M-1 properties
                 var trackableRef = prop.GetValue(item, null) as ITrackable;
 
-                // Continue recursion if trackable is not same type as parent
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                // Continue recursion
+                if (trackableRef != null)
                 {
                     // Get ref prop change tracker
                     ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
                     if (refChangeTracker != null)
                     {
                         // Set tracking on ref prop change tracker
-                        refChangeTracker.Parent = item;
-                        refChangeTracker.Tracking = enableTracking;
-                        refChangeTracker.Parent = null; 
+                        refChangeTracker.SetTracking(enableTracking, visitationHelper);
                     }
                 }
 
@@ -45,26 +43,7 @@ namespace TrackableEntities.Client
                 var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
                 if (trackingColl != null)
                 {
-                    // Recursively set change-tracking
-                    bool stopRecursion = false;
-                    foreach (ITrackable child in trackingColl)
-                    {
-                        // Stop recursion if trackable is same type as parent
-                        if (parent != null && (child.GetType() == parent.GetType()))
-                        {
-                            stopRecursion = true;
-                            break;
-                        }
-                    }
-
-                    // Enable tracking if we have not stopped recursion
-                    if (!stopRecursion)
-                    {
-                        bool isManyToMany = IsManyToManyChildCollection(trackingColl);
-                        if (!isManyToMany) trackingColl.Parent = item;
-                        trackingColl.Tracking = enableTracking;
-                        if (!isManyToMany) trackingColl.Parent = null;
-                    }
+                    trackingColl.SetTracking(enableTracking, visitationHelper);
                 }
             }
         }
@@ -74,14 +53,19 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="item">Trackable object</param>
         /// <param name="state">Change-tracking state of an entity</param>
-        /// <param name="parent">ITrackable parent of item</param>
-        /// <param name="changeTracker">Change-tracking collection this item is being added to, removed from, or is a member of</param>
-        public static void SetState(this ITrackable item, TrackingState state, ITrackable parent,
-            ITrackingCollection changeTracker)
+        /// <param name="visitationHelper">Circular reference checking helper</param>
+        /// <param name="isManyToManyItem">True is an item is treated as part of an M-M collection</param>
+        public static void SetState(this ITrackable item, TrackingState state, ObjectVisitationHelper visitationHelper,
+            bool isManyToManyItem = false)
         {
-            // Recurively set state for added or deleted items,
-            // or if recursion has already begun.
-            if (parent != null || state == TrackingState.Added || state == TrackingState.Deleted)
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+
+            // Prevent endless recursion
+            if (!visitationHelper.TryVisit(item)) return;
+
+            // Recurively set state for unchanged, added or deleted items,
+            // but not for M-M child item
+            if (!isManyToManyItem && state != TrackingState.Modified)
             {
                 // Iterate entity properties
                 foreach (var prop in item.GetType().GetProperties())
@@ -91,45 +75,37 @@ namespace TrackableEntities.Client
                     if (trackingColl != null)
                     {
                         // Set state on child entities
+                        bool isManyToManyChildCollection = IsManyToManyChildCollection(trackingColl);
                         foreach (ITrackable trackableChild in trackingColl)
                         {
-                            // Continue recursion if trackable is not same type as parent
-                            if (trackableChild != null &&
-                                (parent == null || (trackableChild.GetType() != parent.GetType())))
-                            {
-                                // Cascade state for Unchanged - AcceptChanges
-                                // Also cascade state for Added, Deleted
-                                switch (state)
-                                {
-                                    // Cascade unchanged and added state
-                                    case TrackingState.Unchanged:
-                                    case TrackingState.Added:
-                                        trackableChild.SetState(state, item, trackingColl);
-                                        break;
-                                    case TrackingState.Deleted:
-                                        // Cascade deleted state for 1-M properties
-                                        // Deleting an added item will mark it as Unchanged (that is, not added)
-                                        if (!IsManyToManyChildCollection(trackingColl))
-                                            trackableChild.SetState((trackableChild.TrackingState == TrackingState.Added)
-                                                ? TrackingState.Unchanged : state, item, trackingColl);
-                                        // Set deleted for M-M as unchanged state for added.
-                                        // (Cached M-M child deletes will remain deleted.)
-                                        else if (trackableChild.TrackingState == TrackingState.Added)
-                                            trackableChild.TrackingState = TrackingState.Unchanged;
-                                        break;
-                                }
-                            }
+                            trackableChild.SetState(state, visitationHelper,
+                                isManyToManyChildCollection);
                         }
                     }
                 }
             }
 
-            // When deleting added item, set state to unchanged,
-            // otherwise set entity state
-            if (state == TrackingState.Deleted && item.TrackingState == TrackingState.Added)
-                item.TrackingState = TrackingState.Unchanged;
-            else
-                item.TrackingState = state;
+            // Deleted items are treated a bit specially
+            if (state == TrackingState.Deleted)
+            {
+                if (isManyToManyItem)
+                {
+                    // With M-M properties there is no way to tell if the related entity should be deleted
+                    // or simply removed from the relationship, because it is an independent association.
+                    // Therefore, deleted children are marked unchanged.
+                    if (item.TrackingState != TrackingState.Modified)
+                        item.TrackingState = TrackingState.Unchanged;
+                    return;
+                }
+                // When deleting added item, set state to unchanged
+                else if (item.TrackingState == TrackingState.Added)
+                {
+                    item.TrackingState = TrackingState.Unchanged;
+                    return;
+                }
+            }
+
+            item.TrackingState = state;
         }
 
         /// <summary>
@@ -137,10 +113,14 @@ namespace TrackableEntities.Client
         /// </summary>
         /// <param name="item">Trackable object</param>
         /// <param name="modified">Properties on an entity that have been modified</param>
-        /// <param name="parent">ITrackable parent of item</param>
+        /// <param name="visitationHelper">Circular reference checking helper</param>
         public static void SetModifiedProperties(this ITrackable item,
-            ICollection<string> modified, ITrackable parent = null)
+            ICollection<string> modified, ObjectVisitationHelper visitationHelper = null)
         {
+            // Prevent endless recursion
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+            if (!visitationHelper.TryVisit(item)) return;
+
             // Include private props to get ref prop change tracker
             foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
                 | BindingFlags.Public | BindingFlags.NonPublic))
@@ -151,10 +131,7 @@ namespace TrackableEntities.Client
                     // Recursively set modified
                     foreach (ITrackable child in trackingColl)
                     {
-                        // Stop recursion if trackable is same type as parent
-                        if (parent != null && (child.GetType() == parent.GetType()))
-                            break;
-                        child.SetModifiedProperties(modified, item);
+                        child.SetModifiedProperties(modified, visitationHelper);
                         child.ModifiedProperties = modified;
                     }
                 }
@@ -165,9 +142,11 @@ namespace TrackableEntities.Client
         /// Recursively remove items marked as deleted.
         /// </summary>
         /// <param name="changeTracker">Change-tracking collection</param>
-        /// <param name="parent">Parent ITrackable object</param>
-        public static void RemoveRestoredDeletes(this ITrackingCollection changeTracker, ITrackable parent = null)
+        /// <param name="visitationHelper">Circular reference checking helper</param>
+        public static void RemoveRestoredDeletes(this ITrackingCollection changeTracker, ObjectVisitationHelper visitationHelper = null)
         {
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+
             // Iterate items in change-tracking collection
             var items = changeTracker as IList;
             if (items == null) return;
@@ -179,38 +158,32 @@ namespace TrackableEntities.Client
                 var item = items[i] as ITrackable;
                 if (item == null) continue;
 
+                // Prevent endless recursion
+                if (!visitationHelper.TryVisit(item)) continue;
+
                 // Iterate entity properties
                 foreach (var prop in item.GetType().GetProperties())
                 {
                     // Process 1-1 and M-1 properties
                     var trackableRef = prop.GetValue(item, null) as ITrackable;
 
-                    // Continue recursion if trackable is not same type as parent
-                    if (trackableRef != null
-                        && (parent == null || trackableRef.GetType() != parent.GetType()))
+                    // Continue recursion
+                    if (trackableRef != null)
                     {
                         // Get changed ref prop
                         ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
 
                         // Remove deletes on rep prop
-                        if (refChangeTracker != null) refChangeTracker.RemoveRestoredDeletes(parent: item);
+                        if (refChangeTracker != null) refChangeTracker.RemoveRestoredDeletes(visitationHelper);
                     }
 
                     // Process 1-M and M-M properties
-                    var trackingItems = prop.GetValue(item, null) as IList;
-                    var trackingColl = trackingItems as ITrackingCollection;
+                    var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
 
                     // Remove deletes on child collection
-                    if (trackingItems != null && trackingColl != null
-                        && trackingColl.Count > 0)
+                    if (trackingColl != null)
                     {
-                        // Continue recursion if trackable is not same type as parent
-                        var trackableChild = trackingItems[0] as ITrackable;
-                        if (parent == null || (trackableChild != null && trackableChild.GetType() != parent.GetType()))
-                        {
-                            // Remove deletes on child collection
-                            trackingColl.RemoveRestoredDeletes(parent: item);
-                        }
+                        trackingColl.RemoveRestoredDeletes(visitationHelper);
                     }
                 }
 
@@ -231,9 +204,11 @@ namespace TrackableEntities.Client
         /// Restore items marked as deleted.
         /// </summary>
         /// <param name="changeTracker">Change-tracking collection</param>
-        /// <param name="parent">Parent ITrackable object</param>
-        public static void RestoreDeletes(this ITrackingCollection changeTracker, ITrackable parent = null)
+        /// <param name="visitationHelper">Circular reference checking helper</param>
+        public static void RestoreDeletes(this ITrackingCollection changeTracker, ObjectVisitationHelper visitationHelper = null)
         {
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+
             // Get cached deletes
             var removedDeletes = changeTracker.GetChanges(true).Cast<ITrackable>().ToList();
 
@@ -253,21 +228,23 @@ namespace TrackableEntities.Client
 
             foreach (var item in changeTracker.Cast<ITrackable>())
             {
+                // Prevent endless recursion
+                if (!visitationHelper.TryVisit(item)) continue;
+
                 // Iterate entity properties
                 foreach (var prop in item.GetType().GetProperties())
                 {
                     // Process 1-1 and M-1 properties
                     var trackableRef = prop.GetValue(item, null) as ITrackable;
 
-                    // Continue recursion if trackable is not same type as parent
-                    if (trackableRef != null
-                        && (parent == null || trackableRef.GetType() != parent.GetType()))
+                    // Continue recursion
+                    if (trackableRef != null)
                     {
                         // Get changed ref prop
                         ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
                         
                         // Restore deletes on rep prop
-                        if (refChangeTracker != null) refChangeTracker.RestoreDeletes(item);
+                        if (refChangeTracker != null) refChangeTracker.RestoreDeletes(visitationHelper);
                     }
 
                     // Process 1-M and M-M properties
@@ -276,16 +253,7 @@ namespace TrackableEntities.Client
                     // Restore deletes on child collection
                     if (trackingColl != null)
                     {
-                        // Continue recursion if trackable is not same type as parent
-                        var trackableChild = trackingColl.Cast<ITrackable>().FirstOrDefault();
-                        var deletedChild = trackingColl.GetChanges(true).Cast<ITrackable>().FirstOrDefault();
-                        if (parent == null || 
-                            (trackableChild != null && trackableChild.GetType() != parent.GetType()) ||
-                            (deletedChild != null && deletedChild.GetType() != parent.GetType()))
-                        {
-                            // Remove deletes on child collection
-                            trackingColl.RestoreDeletes(item);
-                        }
+                        trackingColl.RestoreDeletes(visitationHelper);
                     }
                 }
             }
@@ -296,10 +264,16 @@ namespace TrackableEntities.Client
         /// reference and child entities.
         /// </summary>
         /// <param name="items">Collection of ITrackable objects</param>
-        /// <param name="parent">Parent ITrackable object</param>
+        /// <param name="visitationHelper">Circular reference checking helper</param>
         /// <returns>Collection containing only added, modified or deleted entities</returns>
-        public static IEnumerable<ITrackable> GetChanges(this IEnumerable<ITrackable> items, ITrackable parent)
+        internal static IEnumerable<ITrackable> GetChanges(this IEnumerable<ITrackable> items, ObjectVisitationHelper visitationHelper)
         {
+            // Prevent endless recursion by collection
+            if (!visitationHelper.TryVisit(items)) yield break;
+
+            // Prevent endless recursion by item
+            items = items.Where(i => visitationHelper.TryVisit(i)).ToList();
+
             // Iterate items in change-tracking collection
             foreach (ITrackable item in items)
             {
@@ -312,9 +286,9 @@ namespace TrackableEntities.Client
                     // Process 1-1 and M-1 properties
                     var trackableRef = prop.GetValue(item, null) as ITrackable;
 
-                    // Continue recursion if trackable is not same type as parent
+                    // Continue recursion if trackable hasn't been visited
                     if (trackableRef != null
-                        && (parent == null || trackableRef.GetType() != parent.GetType()))
+                        && (!visitationHelper.IsVisited(trackableRef)))
                     {
                         // Get changed ref prop
                         ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
@@ -322,7 +296,7 @@ namespace TrackableEntities.Client
                         {
                             // Get downstream changes
                             IEnumerable<ITrackable> refPropItems = refChangeTracker.Cast<ITrackable>();
-                            IEnumerable<ITrackable> refPropChanges = refPropItems.GetChanges(item);
+                            IEnumerable<ITrackable> refPropChanges = refPropItems.GetChanges(visitationHelper);
 
                             // Set flag for downstream changes
                             hasDownstreamChanges = refPropChanges.Any(t => t.TrackingState != TrackingState.Deleted) ||
@@ -348,12 +322,11 @@ namespace TrackableEntities.Client
                     if (trackingItems != null && trackingColl != null
                         && trackingColl.Count > 0)
                     {
-                        // Continue recursion if trackable is not same type as parent
-                        var trackableChild = trackingItems[0] as ITrackable;
-                        if (parent == null || (trackableChild != null && trackableChild.GetType() != parent.GetType()))
+                        // Continue recursion if trackable hasn't been visited
+                        if (!visitationHelper.IsVisited(trackingColl))
                         {
                             // Get changes on child collection
-                            var trackingCollChanges = trackingColl.Cast<ITrackable>().GetChanges(item).ToList();
+                            var trackingCollChanges = trackingColl.Cast<ITrackable>().GetChanges(visitationHelper).ToList();
 
                             // Set flag for downstream changes
                             hasDownstreamChanges = hasDownstreamChanges || trackingCollChanges.Any();

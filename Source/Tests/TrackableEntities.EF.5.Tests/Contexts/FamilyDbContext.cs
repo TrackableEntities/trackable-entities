@@ -30,13 +30,9 @@ namespace TrackableEntities.EF.Tests.Contexts
             }
             //Parents = Set<Parent>();
             //Children = Set<Child>();
-            //GrandChildren = Set<GrandChild>();
-            //GrandGrandChildren = Set<GrandGrandChild>();
         }
 
         public DbSet<Parent> Parents { get; set; }
         public DbSet<Child> Children { get; set; }
-        public DbSet<GrandChild> GrandChildren { get; set; }
-        public DbSet<GrandGrandChild> GrandGrandChildren { get; set; }
     }
 }

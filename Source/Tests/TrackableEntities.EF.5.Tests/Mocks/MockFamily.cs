@@ -9,48 +9,48 @@ namespace TrackableEntities.EF.Tests.Mocks
 
         public MockFamily()
         {
-            var child1 = new Child("Child1") { Children = new List<GrandChild>(CreateGrandChildren("Child1")) };
-            var child2 = new Child("Child2") { Children = new List<GrandChild>(CreateGrandChildren("Child2")) };
-            var child3 = new Child("Child3") { Children = new List<GrandChild>(CreateGrandChildren("Child3")) };
+            var child1 = new Child("Child1") { Children = new List<Child>(CreateGrandChildren("Child1")) };
+            var child2 = new Child("Child2") { Children = new List<Child>(CreateGrandChildren("Child2")) };
+            var child3 = new Child("Child3") { Children = new List<Child>(CreateGrandChildren("Child3")) };
             Parent = new Parent("Parent")
                 {
                     Children = new List<Child> { child1, child2, child3 }
                 };
         }
 
-        IEnumerable<GrandChild> CreateGrandChildren(string childName)
+        IEnumerable<Child> CreateGrandChildren(string childName)
         {
             var grandChild1Name = childName + "-" + "GrandChild1";
-            var grandChild1 = new GrandChild(grandChild1Name)
+            var grandChild1 = new Child(grandChild1Name)
             {
-                Children = new List<GrandGrandChild>
+                Children = new List<Child>
                         {
-                            new GrandGrandChild(grandChild1Name + "-" + "GrandGrandChild1"),
-                            new GrandGrandChild(grandChild1Name + "-" + "GrandGrandChild2"),
-                            new GrandGrandChild(grandChild1Name + "-" + "GrandGrandChild3")
+                            new Child(grandChild1Name + "-" + "GrandGrandChild1"),
+                            new Child(grandChild1Name + "-" + "GrandGrandChild2"),
+                            new Child(grandChild1Name + "-" + "GrandGrandChild3")
                         }
             };
             var grandChild2Name = childName + "-" + "GrandChild2";
-            var grandChild2 = new GrandChild(grandChild2Name)
+            var grandChild2 = new Child(grandChild2Name)
             {
-                Children = new List<GrandGrandChild>
+                Children = new List<Child>
                         {
-                            new GrandGrandChild(grandChild2Name + "-" + "GrandGrandChild1"),
-                            new GrandGrandChild(grandChild2Name + "-" + "GrandGrandChild2"),
-                            new GrandGrandChild(grandChild2Name + "-" + "GrandGrandChild3")
+                            new Child(grandChild2Name + "-" + "GrandGrandChild1"),
+                            new Child(grandChild2Name + "-" + "GrandGrandChild2"),
+                            new Child(grandChild2Name + "-" + "GrandGrandChild3")
                         }
             };
             var grandChild3Name = childName + "-" + "GrandChild3";
-            var grandChild3 = new GrandChild(grandChild3Name)
+            var grandChild3 = new Child(grandChild3Name)
             {
-                Children = new List<GrandGrandChild>
+                Children = new List<Child>
                         {
-                            new GrandGrandChild(grandChild3Name + "-" + "GrandGrandChild1"),
-                            new GrandGrandChild(grandChild3Name + "-" + "GrandGrandChild2"),
-                            new GrandGrandChild(grandChild3Name + "-" + "GrandGrandChild3")
+                            new Child(grandChild3Name + "-" + "GrandGrandChild1"),
+                            new Child(grandChild3Name + "-" + "GrandGrandChild2"),
+                            new Child(grandChild3Name + "-" + "GrandGrandChild3")
                         }
             };
-            var result = new List<GrandChild> {grandChild1, grandChild2, grandChild3};
+            var result = new List<Child> {grandChild1, grandChild2, grandChild3};
             return result;
         }
     }

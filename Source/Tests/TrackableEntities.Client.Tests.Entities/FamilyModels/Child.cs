@@ -24,8 +24,8 @@ namespace TrackableEntities.Client.Tests.Entities.FamilyModels
             }
         }
 
-        private ChangeTrackingCollection<GrandChild> _children;
-        public ChangeTrackingCollection<GrandChild> Children
+        private ChangeTrackingCollection<Child> _children;
+        public ChangeTrackingCollection<Child> Children
         {
             get { return _children; }
             set

@@ -355,6 +355,8 @@ namespace TrackableEntities.EF5.Tests
             // Assert
             Assert.IsNotNull(order.Customer.CustomerSetting);
             Assert.AreEqual(order.Customer.CustomerId, order.Customer.CustomerSetting.CustomerId);
+            Assert.IsNotNull(order.Customer.CustomerSetting.Customer);
+            Assert.IsTrue(ReferenceEquals(order.Customer, order.Customer.CustomerSetting.Customer));
         }
 
 #if EF_6

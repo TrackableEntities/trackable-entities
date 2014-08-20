@@ -70,12 +70,6 @@
     <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\Child.cs">
       <Link>FamilyModels\Child.cs</Link>
     </Compile>
-    <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\GrandChild.cs">
-      <Link>FamilyModels\GrandChild.cs</Link>
-    </Compile>
-    <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\GrandGrandChild.cs">
-      <Link>FamilyModels\GrandGrandChild.cs</Link>
-    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\Parent.cs">
       <Link>FamilyModels\Parent.cs</Link>
     </Compile>
