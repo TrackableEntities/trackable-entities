@@ -5,7 +5,8 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Territory : ModelBase<Territory>, ITrackable, IEquatable<Territory>
+    public class Territory : ModelBase<Territory>, ITrackable, IEquatable<Territory>,
+        IRefPropertyChangeTrackerResolver
     {
         private string _territoryId;
         public string TerritoryId
@@ -111,5 +112,10 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
         [JsonProperty]
         private Guid _entityIdentity = default(Guid);
 #pragma warning restore 414
+
+        ITrackingCollection IRefPropertyChangeTrackerResolver.GetRefPropertyChangeTracker(string propertyName)
+        {
+            return propertyName == "Area" ? AreaChangeTracker_NON_STANDARD : null;
+        }
     }
 }
