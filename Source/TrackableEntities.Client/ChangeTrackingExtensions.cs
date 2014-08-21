@@ -93,7 +93,7 @@ namespace TrackableEntities.Client
                     // Continue recursion
                     if (updatedTrackableRef != null)
                     {
-                        ITrackingCollection refPropChangeTracker = GetRefPropChangeTracker(origItem, prop.Name);
+                        ITrackingCollection refPropChangeTracker = origItem.GetRefPropertyChangeTracker(prop.Name);
                         if (refPropChangeTracker != null)
                             refPropChangeTracker.MergeChanges(new[] { updatedTrackableRef }, visitationHelper, true);
                     }
@@ -221,21 +221,6 @@ namespace TrackableEntities.Client
             // Get first matching item
             if (isTrackableRef) return sourceItems.FirstOrDefault();
             return sourceItems.FirstOrDefault(t => t.IsEquatable(sourceItem));
-        }
-
-        private static ITrackingCollection GetRefPropChangeTracker(ITrackable originalItem, string propertyName)
-        {
-            PropertyInfo refChangeTrackerProp = GetRefChangeTrackerProperty(originalItem.GetType(), propertyName);
-            if (refChangeTrackerProp == null) return null;
-            var refPropChangeTracker = refChangeTrackerProp.GetValue(originalItem, null) as ITrackingCollection;
-            return refPropChangeTracker;
-        }
-
-        private static PropertyInfo GetRefChangeTrackerProperty(Type type, string propertyName)
-        {
-            var prop = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-                .SingleOrDefault(p => p.Name == propertyName + "ChangeTracker");
-            return prop;
         }
 
         private static void SetEntityProperties(this ITrackable targetItem, ITrackable sourceItem,
