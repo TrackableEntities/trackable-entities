@@ -485,6 +485,10 @@ namespace TrackableEntities.Client
         /// <returns>Reference property change tracker</returns>
         public static ITrackingCollection GetRefPropertyChangeTracker(this ITrackable item, string propertyName)
         {
+            var resolver = item as IRefPropertyChangeTrackerResolver;
+            if (resolver != null)
+                return resolver.GetRefPropertyChangeTracker(propertyName);
+
             var property = GetChangeTrackingProperty(item.GetType(), propertyName);
             if (property == null) return null;
             return property.GetValue(item, null) as ITrackingCollection;
