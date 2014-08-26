@@ -13,10 +13,5 @@
         <description>Assembly containing ITrackable interface and TrackingState enum.</description>
         <language>en-US</language>
         <tags>change-tracking entity-framework n-tier wcf web-api</tags>
-        <files>
-          <file src="bin\$configuration$\$id$.dll" target="lib\portable-net40+sl5+win8+windowsphone8\" />
-          <file src="bin\$configuration$\$id$.pdb" target="lib\portable-net40+sl5+win8+windowsphone8\" />
-          <file src="bin\$configuration$\$id$.xml" target="lib\portable-net40+sl5+win8+windowsphone8\" />
-        </files>
     </metadata>
 </package>
