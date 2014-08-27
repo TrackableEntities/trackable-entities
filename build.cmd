@@ -24,6 +24,10 @@ REM TrackableEntities.EF.5:
 call Build\Source\Scripts\TrackableEntities.EF.5.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
+REM TrackableEntities.EF.6:
+call Build\Source\Scripts\TrackableEntities.EF.6.cmd %debug%
+if not "%errorlevel%"=="0" goto failure
+
 :success
 if "%debug%"=="0" exit 0
 

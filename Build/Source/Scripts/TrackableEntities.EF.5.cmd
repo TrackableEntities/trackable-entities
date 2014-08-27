@@ -19,6 +19,7 @@ REM Build:
 if "%debug%"=="1" pause
 mkdir Build\Source\Output\TrackableEntities.EF.5\net45
 %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Source\TrackableEntities.EF.5\TrackableEntities.EF.5.csproj /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=Build\Source\Output\TrackableEntities.EF.5\net45\msbuild.log;Verbosity=Normal /nr:false
+if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
 REM Package:
