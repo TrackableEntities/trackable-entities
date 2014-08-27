@@ -1,4 +1,3 @@
-set Config=Release
 set PackageVersion=2.1.1-test
-set Debug=1
-build.cmd
+build.cmd -debug
+rem build.cmd
