@@ -7,6 +7,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 using TrackableEntities.Common;
+using Newtonsoft.Json.Serialization;
 
 namespace TrackableEntities.Client
 {
@@ -388,13 +389,37 @@ namespace TrackableEntities.Client
         {
             using (var stream = new MemoryStream())
             {
-                var ser = new JsonSerializer();
+                var set = new JsonSerializerSettings { ContractResolver = new EntityNavigationPropertyResolver() };
+                var ser = JsonSerializer.Create(set);
                 var writer = new BsonWriter(stream);
                 ser.Serialize(writer, item);
                 stream.Position = 0;
                 var reader = new BsonReader(stream);
                 var copy = ser.Deserialize<T>(reader);
                 return copy;
+            }
+        }
+
+        private class EntityNavigationPropertyResolver : DefaultContractResolver
+        {
+            protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+            {
+                JsonProperty property = base.CreateProperty(member, memberSerialization);
+                property.ShouldSerialize =
+                    instance =>
+                        {
+                            var entity = instance as ITrackable;
+                            if (entity == null) return true;
+
+                            // The current property is a navigation property and its value is null
+                            bool isEmptyNavProp = 
+                                (from np in entity.GetNavigationProperties(false)
+                                 where np.Property == member
+                                 select np.ValueIsNull).Any(isNull => isNull);
+
+                            return !isEmptyNavProp;
+                        };
+                return property;
             }
         }
 

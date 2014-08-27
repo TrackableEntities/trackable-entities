@@ -43,7 +43,7 @@ namespace TrackableEntities.Common
             if (refProp == null) yield break;
 
             var entity = refProp.EntityReference as TEntity;
-            if (entity == null && refProp.EntityReference != null) yield break;
+            if (entity == null && !refProp.ValueIsNull) yield break;
 
             yield return new EntityReferenceProperty<TEntity>(refProp.Property, entity);
         }
@@ -68,7 +68,7 @@ namespace TrackableEntities.Common
             if (collProp == null) yield break;
 
             var coll = collProp.EntityCollection as TEntityCollection;
-            if (coll == null && collProp.EntityCollection != null) yield break;
+            if (coll == null && !collProp.ValueIsNull) yield break;
 
             yield return new EntityCollectionProperty<TEntityCollection>(collProp.Property, coll);
         }
@@ -81,6 +81,11 @@ namespace TrackableEntities.Common
         {
             return AsCollectionProperty<IEnumerable<ITrackable>>();
         }
+
+        /// <summary>
+        /// True if the property value is null
+        /// </summary>
+        public abstract bool ValueIsNull { get; }
 
         internal EntityNavigationProperty(PropertyInfo propertyInfo)
         {
@@ -107,6 +112,14 @@ namespace TrackableEntities.Common
             : base(propertyInfo)
         {
             EntityReference = entityReference;
+        }
+
+        /// <summary>
+        /// True if the property value is null
+        /// </summary>
+        public override bool ValueIsNull
+        {
+            get { return EntityReference == null; }
         }
     }
 
@@ -148,6 +161,14 @@ namespace TrackableEntities.Common
             : base(propertyInfo)
         {
             EntityCollection = entityCollection;
+        }
+
+        /// <summary>
+        /// True if the property value is null
+        /// </summary>
+        public override bool ValueIsNull
+        {
+            get { return EntityCollection == null; }
         }
     }
 
