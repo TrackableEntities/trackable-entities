@@ -17,11 +17,15 @@ if %config% == "" (
 set version="%PackageVersion%"
 
 REM TrackableEntities.Common:
-call Build\Scripts\TrackableEntities.Common.cmd
+call Build\Source\Scripts\TrackableEntities.Common.cmd
 if not "%errorlevel%"=="0" goto failure
 
 REM TrackableEntities.Client:
-call Build\Scripts\TrackableEntities.Client.cmd
+call Build\Source\Scripts\TrackableEntities.Client.cmd
+if not "%errorlevel%"=="0" goto failure
+
+REM TrackableEntities.Client.Net4:
+call Build\Source\Scripts\TrackableEntities.Client.Net4.cmd
 if not "%errorlevel%"=="0" goto failure
 
 :success
