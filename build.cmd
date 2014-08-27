@@ -1,6 +1,5 @@
 @echo On
 
-REM Set Variables:
 set debug=%1
 if "%debug%" == "" (
    set debug=0
@@ -9,23 +8,20 @@ if "%debug%" == "-debug" (
    set debug=1
 )
 
-set config="%Configuration%"
-if %config% == "" (
-   set config=Release
-)
-
-set version="%PackageVersion%"
-
 REM TrackableEntities.Common:
-call Build\Source\Scripts\TrackableEntities.Common.cmd
+call Build\Source\Scripts\TrackableEntities.Common.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
 REM TrackableEntities.Client:
-call Build\Source\Scripts\TrackableEntities.Client.cmd
+call Build\Source\Scripts\TrackableEntities.Client.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
 REM TrackableEntities.Client.Net4:
-call Build\Source\Scripts\TrackableEntities.Client.Net4.cmd
+call Build\Source\Scripts\TrackableEntities.Client.Net4.cmd %debug%
+if not "%errorlevel%"=="0" goto failure
+
+REM TrackableEntities.EF.5:
+call Build\Source\Scripts\TrackableEntities.EF.5.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
 :success
