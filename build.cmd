@@ -32,6 +32,10 @@ REM TrackableEntities.Patterns:
 call Build\Source\Scripts\TrackableEntities.Patterns.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
+REM TrackableEntities.Patterns.EF.6:
+call Build\Source\Scripts\TrackableEntities.Patterns.EF.6.cmd %debug%
+if not "%errorlevel%"=="0" goto failure
+
 :success
 if "%debug%"=="0" exit 0
 

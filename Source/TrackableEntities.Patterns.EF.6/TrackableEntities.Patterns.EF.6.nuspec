@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata>
+        <id>TrackableEntities.Patterns.EF.6</id>
+    	<version>$PackageVersion$</version>
+        <title>Trackable Entities Patterns for EF6</title>
+        <authors>Tony Sneed</authors>
+        <owners />
+        <licenseUrl>http://trackable.codeplex.com/license</licenseUrl>
+        <projectUrl>http://trackable.codeplex.com</projectUrl>
+        <iconUrl>http://tonysneed.com/images/trackable/tracking-small.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Provides a basic generic implementation of Repository and Unit of Work patterns.</description>
+        <language>en-US</language>
+        <tags>change-tracking entity-framework repository unitofwork patterns</tags>
+        <dependencies>
+            <group targetFramework="net45">
+                <dependency id="EntityFramework" version="6.1.1" />
+                <dependency id="TrackableEntities.Common" version="$PackageVersion$" />
+                <dependency id="TrackableEntities.EF.6" version="$PackageVersion$" />
+                <dependency id="TrackableEntities.Patterns" version="$PackageVersion$" />
+            </group>
+        </dependencies>
+    </metadata>
+</package>
