@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>TrackableEntities.Common</id>
-    	<version>$version$</version>
+    	<version>$PackageVersion$</version>
         <title>Trackable Entities Common</title>
         <authors>Tony Sneed</authors>
         <owners>Tony Sneed</owners>

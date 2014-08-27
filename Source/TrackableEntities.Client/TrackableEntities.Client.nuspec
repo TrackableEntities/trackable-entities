@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>TrackableEntities.Client</id>
-    	<version>$version$</version>
+    	<version>$PackageVersion$</version>
         <title>Trackable Entities Client</title>
         <authors>Tony Sneed</authors>
         <owners>Tony Sneed</owners>
@@ -16,7 +16,7 @@
         <dependencies>
             <group targetFramework=".NETPortable0.0-net45+sl5+win8+windowsphone8">
                 <dependency id="Newtonsoft.Json" version="6.0.3" />
-                <dependency id="TrackableEntities.Common" version="2.1.0.0" />
+                <dependency id="TrackableEntities.Common" version="$PackageVersion$" />
             </group>
         </dependencies>
     </metadata>
