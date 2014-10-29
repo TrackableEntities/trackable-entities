@@ -46,17 +46,20 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
         }
         private ChangeTrackingCollection<Product> ProductChangeTracker { get; set; }
 
-        private Order _order;
         public Order Order
         {
             get { return _order; }
             set
             {
-                if (value == _order) return;
+                if (Equals(value, _order)) return;
                 _order = value;
+                OrderChangeTracker = _order == null ? null
+                    : new ChangeTrackingCollection<Order> { _order };
                 NotifyPropertyChanged(m => m.Order);
             }
         }
+        private Order _order;
+        private ChangeTrackingCollection<Order> OrderChangeTracker { get; set; }
 
         private decimal _unitPrice;
         public decimal UnitPrice
