@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using NUnit.Framework;
 using TrackableEntities.Client.Tests.Entities.Mocks;
@@ -29,11 +30,17 @@ namespace TrackableEntities.Client.Tests
                 };
             var modifiedDetail = orderDetails[0];
             var deletedDetail = orderDetails[1];
+            addedDetail.Order = order;
+            modifiedDetail.Order = order;
+            deletedDetail.Order = order;
 
             // Act
-            orderDetails.Add(addedDetail);
             modifiedDetail.UnitPrice++;
+
+            // BUG: Tracking property is set to false on orderDetails
+            // As a result, adding detail does not mark it as added
             orderDetails.Remove(deletedDetail);
+            orderDetails.Add(addedDetail);
 
             // Assert
             Assert.AreEqual(TrackingState.Added, addedDetail.TrackingState);
@@ -516,8 +523,8 @@ namespace TrackableEntities.Client.Tests
 
             // Set state on orig order details
             origOrder.OrderDetails[0].UnitPrice++;
-            origOrder.OrderDetails.RemoveAt(1);
             origOrder.OrderDetails.Add(addedDetail);
+            origOrder.OrderDetails.RemoveAt(1);
 
             // Act
 
