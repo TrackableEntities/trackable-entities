@@ -253,108 +253,6 @@ namespace TrackableEntities.Client
         }
 
         /// <summary>
-        /// Get entities that have been added, modified or deleted, including trackable 
-        /// reference and child entities.
-        /// </summary>
-        /// <param name="items">Collection of ITrackable objects</param>
-        /// <param name="visitationHelper">Circular reference checking helper</param>
-        /// <returns>Collection containing only added, modified or deleted entities</returns>
-        internal static IEnumerable<ITrackable> GetChanges(this IEnumerable<ITrackable> items, ObjectVisitationHelper visitationHelper)
-        {
-            // Prevent endless recursion by collection
-            if (!visitationHelper.TryVisit(items)) yield break;
-
-            // Prevent endless recursion by item
-            items = items.Where(i => visitationHelper.TryVisit(i)).ToList();
-
-            // Iterate items in change-tracking collection
-            foreach (ITrackable item in items)
-            {
-                // Downstream changes flag
-                bool hasDownstreamChanges = false;
-
-                // Iterate entity properties
-                foreach (var navProp in item.GetNavigationProperties())
-                {
-                    // Process 1-1 and M-1 properties
-                    foreach (var refProp in navProp.AsReferenceProperty())
-                    {
-                        ITrackable trackableRef = refProp.EntityReference;
-
-                        // if already visited and unchanged, set to null
-                        if (visitationHelper.IsVisited(trackableRef))
-                        {
-                            if ((trackableRef.TrackingState == TrackingState.Unchanged
-                                 || trackableRef.TrackingState == TrackingState.Deleted))
-                            {
-                                refProp.Property.SetValue(item, null, null);
-                            }
-                            continue;
-                        }
-
-                        // Get changed ref prop
-                        ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
-                        if (refChangeTracker != null)
-                        {
-                            // Get downstream changes
-                            IEnumerable<ITrackable> refPropItems = refChangeTracker.Cast<ITrackable>();
-                            IEnumerable<ITrackable> refPropChanges = refPropItems.GetChanges(visitationHelper);
-
-                            // Set flag for downstream changes
-                            bool hasLocalDownstreamChanges =
-                                refPropChanges.Any(t => t.TrackingState != TrackingState.Deleted) ||
-                                trackableRef.TrackingState == TrackingState.Added ||
-                                trackableRef.TrackingState == TrackingState.Modified;
-
-                            // Set ref prop to null if unchanged or deleted
-                            if (!hasLocalDownstreamChanges &&
-                                (trackableRef.TrackingState == TrackingState.Unchanged
-                                    || trackableRef.TrackingState == TrackingState.Deleted))
-                            {
-                                refProp.Property.SetValue(item, null, null);
-                                continue;
-                            }
-
-                            // prevent overwrite of hasDownstreamChanges when return from recursion
-                            hasDownstreamChanges |= hasLocalDownstreamChanges;
-                        }
-                    }
-
-                    // Process 1-M and M-M properties
-                    foreach (var colProp in navProp.AsCollectionProperty<IList>())
-                    {
-                        // Get changes on child collection
-                        var trackingItems = colProp.EntityCollection;
-                        if (trackingItems.Count > 0)
-                        {
-                            // Continue recursion if trackable hasn't been visited
-                            if (!visitationHelper.IsVisited(trackingItems))
-                            {
-                                // Get changes on child collection
-                                var trackingCollChanges = trackingItems.Cast<ITrackable>().GetChanges(visitationHelper).ToList();
-
-                                // Set flag for downstream changes
-                                hasDownstreamChanges |= trackingCollChanges.Any();
-
-                                // Remove child items without changes
-                                var count = trackingItems.Count;
-                                for (int i = count - 1; i > -1; i--)
-                                {
-                                    if (!trackingCollChanges.Any(e => ReferenceEquals(trackingItems[i], e)))
-                                        trackingItems.Remove(trackingItems[i]);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Return item if it has changes
-                if (hasDownstreamChanges || item.TrackingState != TrackingState.Unchanged)
-                    yield return item;
-            }
-        }
-
-        /// <summary>
         /// Performs a deep copy using Json binary serializer.
         /// </summary>
         /// <typeparam name="T">Entity type</typeparam>
@@ -384,19 +282,26 @@ namespace TrackableEntities.Client
             public IEnumerable<T> Result;
         }
 
-        private static T CloneObject<T>(T item)
+        internal static T CloneObject<T>(T item, IContractResolver contractResolver = null)
             where T : class
         {
             using (var stream = new MemoryStream())
             {
-                var set = new JsonSerializerSettings { ContractResolver = new EntityNavigationPropertyResolver() };
-                var ser = JsonSerializer.Create(set);
-                var writer = new BsonWriter(stream);
-                ser.Serialize(writer, item);
-                stream.Position = 0;
-                var reader = new BsonReader(stream);
-                var copy = ser.Deserialize<T>(reader);
-                return copy;
+                using (var writer = new BsonWriter(stream))
+                {
+                    var setWr = new JsonSerializerSettings { ContractResolver = contractResolver ?? new EntityNavigationPropertyResolver() };
+                    var serWr = JsonSerializer.Create(setWr);
+                    serWr.Serialize(writer, item);
+
+                    stream.Position = 0;
+                    using (var reader = new BsonReader(stream))
+                    {
+                        var setRd = new JsonSerializerSettings { ContractResolver = new EntityNavigationPropertyResolver() };
+                        var serRd = JsonSerializer.Create(setRd);
+                        var copy = serRd.Deserialize<T>(reader);
+                        return copy;
+                    }
+                }
             }
         }
 
