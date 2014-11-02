@@ -99,6 +99,9 @@ namespace TrackableEntities.Client
         {
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
 
+            // Prevent endless recursion
+            if (!visitationHelper.TryVisit(this)) return;
+
             // Get notified when an item in the collection has changed
             foreach (TEntity item in this)
             {
@@ -181,11 +184,16 @@ namespace TrackableEntities.Client
                 // Listen for property changes
                 item.PropertyChanged += OnPropertyChanged;
 
+                // Exclude this collection and Parent entity (used in M-M relationships)
+                // from recusive algorithms: SetTracking and SetState.
+                var visitationHelper = new ObjectVisitationHelper(Parent);
+                visitationHelper.TryVisit(this);
+
                 // Enable tracking on trackable properties
-                item.SetTracking(Tracking, new ObjectVisitationHelper());
+                item.SetTracking(Tracking, visitationHelper.Clone());
 
                 // Mark item and trackable collection properties
-                item.SetState(TrackingState.Added, new ObjectVisitationHelper(Parent)); // TRICKY: don't visit Parent
+                item.SetState(TrackingState.Added, visitationHelper.Clone());
 
                 // Fire EntityChanged event
                 if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
@@ -206,18 +214,23 @@ namespace TrackableEntities.Client
                 // Get item by index
                 TEntity item = Items[index];
 
+                // Exclude this collection and Parent entity (used in M-M relationships)
+                // from recusive algorithms: SetModifiedProperties, SetTracking and SetState.
+                var visitationHelper = new ObjectVisitationHelper(Parent);
+                visitationHelper.TryVisit(this);
+
                 // Remove modified properties
                 item.ModifiedProperties = null;
-                item.SetModifiedProperties(null, new ObjectVisitationHelper());
+                item.SetModifiedProperties(null, visitationHelper.Clone());
 
                 // Stop listening for property changes
                 item.PropertyChanged -= OnPropertyChanged;
 
                 // Disable tracking on trackable properties
-                item.SetTracking(false, new ObjectVisitationHelper(Parent)); // TRICKY: don't visit Parent
+                item.SetTracking(false, visitationHelper.Clone());
 
                 // Mark item and trackable collection properties
-                item.SetState(TrackingState.Deleted, new ObjectVisitationHelper(Parent)); // TRICKY: don't visit Parent
+                item.SetState(TrackingState.Deleted, visitationHelper.Clone());
 
                 // Fire EntityChanged event
                 if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
