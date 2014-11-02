@@ -35,10 +35,7 @@ namespace TrackableEntities.Client
                     if (refChangeTracker != null)
                     {
                         // Set tracking on ref prop change tracker
-                        // BUG: Must not set tracking on parent
-                        //refChangeTracker.Parent = item
                         refChangeTracker.SetTracking(enableTracking, visitationHelper);
-                        //refChangeTracker.Parent = null
                     }
                 }
 
