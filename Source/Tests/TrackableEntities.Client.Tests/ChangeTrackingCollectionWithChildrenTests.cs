@@ -36,9 +36,6 @@ namespace TrackableEntities.Client.Tests
 
             // Act
             modifiedDetail.UnitPrice++;
-
-            // BUG: Tracking property is set to false on orderDetails
-            // As a result, adding detail does not mark it as added
             orderDetails.Remove(deletedDetail);
             orderDetails.Add(addedDetail);
 
