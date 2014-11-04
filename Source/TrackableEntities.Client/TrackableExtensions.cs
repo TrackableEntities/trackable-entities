@@ -121,15 +121,29 @@ namespace TrackableEntities.Client
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
             if (!visitationHelper.TryVisit(item)) return;
 
-            // Include private props to get ref prop change tracker
-            foreach (var prop in item.GetType().GetProperties(BindingFlags.Instance
-                | BindingFlags.Public | BindingFlags.NonPublic))
+            // Iterate entity properties
+            foreach (var prop in item.GetType().GetProperties())
             {
+                ITrackingCollection trackingCollection = null;
+
+                // 1-1 and M-1 properties
+                var trackableRef = prop.GetValue(item, null) as ITrackable;
+                if (trackableRef != null)
+                {
+                    trackingCollection = item.GetRefPropertyChangeTracker(prop.Name);
+                }
+
+                // 1-M and M-M properties
                 var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
                 if (trackingColl != null)
                 {
-                    // Recursively set modified
-                    foreach (ITrackable child in trackingColl)
+                    trackingCollection = trackingColl;
+                }
+
+                // Recursively set modified
+                if (trackingCollection != null)
+                {
+                    foreach (ITrackable child in trackingCollection)
                     {
                         child.SetModifiedProperties(modified, visitationHelper);
                         child.ModifiedProperties = modified;
@@ -485,6 +499,10 @@ namespace TrackableEntities.Client
         /// <returns>Reference property change tracker</returns>
         public static ITrackingCollection GetRefPropertyChangeTracker(this ITrackable item, string propertyName)
         {
+            var resolver = item as IRefPropertyChangeTrackerResolver;
+            if (resolver != null)
+                return resolver.GetRefPropertyChangeTracker(propertyName);
+
             var property = GetChangeTrackingProperty(item.GetType(), propertyName);
             if (property == null) return null;
             return property.GetValue(item, null) as ITrackingCollection;
