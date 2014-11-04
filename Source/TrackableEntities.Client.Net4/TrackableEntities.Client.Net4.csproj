@@ -66,6 +66,9 @@
     <Compile Include="..\TrackableEntities.Client\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.Client\IRefPropertyChangeTrackerResolver.cs">
+      <Link>IRefPropertyChangeTrackerResolver.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.Client\ITrackingCollection.cs">
       <Link>ITrackingCollection.cs</Link>
     </Compile>
