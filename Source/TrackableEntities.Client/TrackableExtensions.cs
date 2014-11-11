@@ -295,13 +295,8 @@ namespace TrackableEntities.Client
                 bool hasDownstreamChanges = false;
 
                 // Iterate entity properties
-                var propTrackingList = GetITrackableProperties(item.GetType());
-                foreach (var propTracking in propTrackingList)
-                //foreach (var prop in item.GetType().GetProperties())
+                foreach (var prop in item.GetType().GetProperties())
                 {
-                    // Get the property info
-                    var prop = propTracking.PropertyInfo;
-
                     // Process 1-1 and M-1 properties
                     var trackableRef = prop.GetValue(item, null) as ITrackable;
 
@@ -365,54 +360,6 @@ namespace TrackableEntities.Client
                 if (hasDownstreamChanges || item.TrackingState != TrackingState.Unchanged)
                     yield return item;
             }
-        }
-
-        /// <summary>
-        /// Get the ITrackable properties from an entity.
-        /// Use caching to 
-        /// </summary>
-        /// <param name="entityType"></param>
-        /// <returns></returns>
-        internal static IEnumerable<ExtendedPropertyInfo> GetITrackableProperties(Type entityType)
-        {
-            // Resolve from cache
-            List<ExtendedPropertyInfo> aITrackablePropertyList = null;
-            //if (Cache.Items.TryGetValue(entityType, out aITrackablePropertyList))
-            //{
-            //    return aITrackablePropertyList;
-            //}
-
-            // Iterate entity properties
-            aITrackablePropertyList = new List<ExtendedPropertyInfo>();
-            foreach (var prop in entityType.GetProperties())
-            {
-                Type aPropertyType = null;
-                bool IsManyRelation = false;
-                if (typeof(ITrackable).IsAssignableFrom(prop.PropertyType))
-                {
-                    aPropertyType = prop.PropertyType;
-                    IsManyRelation = false;
-                }
-                //else if (typeof(ITrackingCollection).IsAssignableFrom(prop.PropertyType))
-                else if (typeof(IEnumerable<ITrackable>).IsAssignableFrom(prop.PropertyType))
-                {
-                    aPropertyType = prop.PropertyType.GetGenericArguments().First();
-                    IsManyRelation = true;
-                }
-
-                if (aPropertyType != null)
-                {
-                    var aExtendedPropertyInfo = new ExtendedPropertyInfo(prop, aPropertyType);
-                    aExtendedPropertyInfo.IsManyRelation = IsManyRelation;
-                    aITrackablePropertyList.Add(aExtendedPropertyInfo);
-                    //yield return aExtendedPropertyInfo;
-                }
-            }
-
-            // Add to cache
-            //Cache.Items.Add(entityType, aITrackablePropertyList);
-            
-            return aITrackablePropertyList;
         }
 
         /// <summary>
