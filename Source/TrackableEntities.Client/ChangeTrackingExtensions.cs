@@ -251,8 +251,11 @@ namespace TrackableEntities.Client
                 bool isTracking = changeTracker.Tracking;
                 changeTracker.Tracking = false;
 
-                // Set target item prop value
-                prop.SetValue(targetItem, sourceValue, null);
+                // Set target item prop value, if writeable
+                if (prop.CanWrite)
+                {
+                    prop.SetValue(targetItem, sourceValue, null);
+                }                
 
                 // Reset change-tracking
                 changeTracker.Tracking = isTracking;
