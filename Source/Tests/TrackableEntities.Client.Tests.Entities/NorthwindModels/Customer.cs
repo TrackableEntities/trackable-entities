@@ -8,6 +8,20 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
     public class Customer : ModelBase<Customer>, ITrackable, IEquatable<Customer>,
         IRefPropertyChangeTrackerResolver
     {
+        /// <summary>
+        /// Testing read-only calculated property
+        /// </summary>
+        public string CustomerIdAndName
+        {
+            get
+            {
+                return string.Format(
+                    "{0} - {1}",
+                    CustomerId.ToString(),
+                    CustomerName == null ? string.Empty : CustomerName.ToString());
+            }
+        }
+
         private string _customerId;
         public string CustomerId
         {
@@ -26,7 +40,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             get { return _customerName; }
             set
             {
-                if (value == _customerName) return;
+                if (value == _customerName) return; 
                 _customerName = value;
                 NotifyPropertyChanged(m => m.CustomerName);
             }
@@ -113,5 +127,59 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
                 return TerritoryChangeTracker;
             return null;
         }
+
+        #region Testing Non-Trackable properties for performance reflection
+
+        public int NoneTrackableProperty01 { get; set; }
+        public int NoneTrackableProperty02 { get; set; }
+        public int NoneTrackableProperty03 { get; set; }
+        public int NoneTrackableProperty04 { get; set; }
+        public int NoneTrackableProperty05 { get; set; }
+        public int NoneTrackableProperty06 { get; set; }
+        public int NoneTrackableProperty07 { get; set; }
+        public int NoneTrackableProperty08 { get; set; }
+        public int NoneTrackableProperty09 { get; set; }
+
+        public int NoneTrackableProperty11 { get; set; }
+        public int NoneTrackableProperty12 { get; set; }
+        public int NoneTrackableProperty13 { get; set; }
+        public int NoneTrackableProperty14 { get; set; }
+        public int NoneTrackableProperty15 { get; set; }
+        public int NoneTrackableProperty16 { get; set; }
+        public int NoneTrackableProperty17 { get; set; }
+        public int NoneTrackableProperty18 { get; set; }
+        public int NoneTrackableProperty19 { get; set; }
+
+        public int NoneTrackableProperty21 { get; set; }
+        public int NoneTrackableProperty22 { get; set; }
+        public int NoneTrackableProperty23 { get; set; }
+        public int NoneTrackableProperty24 { get; set; }
+        public int NoneTrackableProperty25 { get; set; }
+        public int NoneTrackableProperty26 { get; set; }
+        public int NoneTrackableProperty27 { get; set; }
+        public int NoneTrackableProperty28 { get; set; }
+        public int NoneTrackableProperty29 { get; set; }
+
+        public int NoneTrackableProperty31 { get; set; }
+        public int NoneTrackableProperty32 { get; set; }
+        public int NoneTrackableProperty33 { get; set; }
+        public int NoneTrackableProperty34 { get; set; }
+        public int NoneTrackableProperty35 { get; set; }
+        public int NoneTrackableProperty36 { get; set; }
+        public int NoneTrackableProperty37 { get; set; }
+        public int NoneTrackableProperty38 { get; set; }
+        public int NoneTrackableProperty39 { get; set; }
+
+        public int NoneTrackableProperty41 { get; set; }
+        public int NoneTrackableProperty42 { get; set; }
+        public int NoneTrackableProperty43 { get; set; }
+        public int NoneTrackableProperty44 { get; set; }
+        public int NoneTrackableProperty45 { get; set; }
+        public int NoneTrackableProperty46 { get; set; }
+        public int NoneTrackableProperty47 { get; set; }
+        public int NoneTrackableProperty48 { get; set; }
+        public int NoneTrackableProperty49 { get; set; }
+
+        #endregion 
     }
 }

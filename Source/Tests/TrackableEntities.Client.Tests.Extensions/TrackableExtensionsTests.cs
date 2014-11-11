@@ -253,27 +253,18 @@ namespace TrackableEntities.Client.Tests.Extensions
         public void Collection_GetChanges_Should_Add_Only_Added_Modified_Deleted_Children()
         {
             // Arrange
-            var parent = new Parent("Parent")
-            {
-                Children = new ChangeTrackingCollection<Child>
-                    {
-                        new Child("Child1"), 
-                        new Child("Child2"),
-                        new Child("Child3")
-                    }
-            };
-            var changeTracker = new ChangeTrackingCollection<Parent>(parent);
-            parent.Children.Add(new Child("Child4"));
-            parent.Children[0].Name += "_Changed";
-            parent.Children.RemoveAt(2);
+            var changeTracker = new ChangeTrackingCollection<Customer>(true);
+            for (int i = 0; i < 500; i++)
+			{
+                changeTracker.Add(new Customer() { CustomerId = i.ToString(), CustomerName = "TEST_" + i.ToString() });
+			 
+			}
 
             // Act
             var changes = changeTracker.GetChanges();
-            var changedParent = changes.First();
 
             // Assert
-            Assert.AreEqual(1, changes.Count);
-            Assert.AreEqual(3, changedParent.Children.Count);
+            Assert.AreEqual(500, changes.Count);
         }
 
         #endregion
