@@ -163,31 +163,6 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.Contains("CustomerName", (ICollection)origOrder.Customer.ModifiedProperties);
         }
 
-        [Test]
-        public void MergeChanges_Should_Handle_Readonly_Properties()
-        {
-            // Arrange
-            var database = new MockNorthwind();
-            var origCustomer = database.Customers[0];
-            var changeTracker = new ChangeTrackingCollection<Customer>(origCustomer);
-            var oldCustomerId = origCustomer.CustomerId;
-            origCustomer.CustomerId = "TEST";
-            var updatedCustomer = UpdateCustomers(database, origCustomer)[0];
-
-            // Act: reset the origCustomer so read-only value becomes different
-            changeTracker.Tracking = false;
-            origCustomer.CustomerId = oldCustomerId;
-            changeTracker.Tracking = true;
-            changeTracker.MergeChanges(updatedCustomer);
-
-            // Assert
-            Assert.AreEqual(updatedCustomer.CustomerId, origCustomer.CustomerId);
-            //Assert.AreEqual(updatedCustomer.Customer.CustomerId, origCustomer.Customer.CustomerId);
-            //Assert.AreEqual(updatedCustomer.CustomerDate, origCustomer.CustomerDate);
-        }
-
-        #endregion
-
         #endregion
 
         #region MergeChanges: Multiple Entities
@@ -501,6 +476,8 @@ namespace TrackableEntities.Client.Tests.Extensions
             // Act
             changeTracker.MergeChanges();
         }
+
+        #endregion
 
         #endregion
 
@@ -1217,28 +1194,6 @@ namespace TrackableEntities.Client.Tests.Extensions
                 updatedOrders.Add(updatedOrder);
             }
             return updatedOrders;
-        }
-
-
-        private List<Customer> UpdateCustomers(MockNorthwind database, params Customer[] origCustomers)
-        {
-            var updatedCustomers = new List<Customer>();
-            for (int i = 0; i < origCustomers.Length; i++)
-            {
-                // Simulate serialization
-                var origCustomer = origCustomers[i];
-                var updatedCustomer = origCustomer.Clone<Customer>();
-
-                // Simulate load related entities
-                //string customerId = i == 0 ? "ALFKI" : "ANATR";
-                //updatedCustomer.Customer = database.Customers.Single(c => c.CustomerId == customerId);
-
-                // Simulate db-generated values
-                //updatedCustomer.cust = origCustomer.CustomerDate.AddDays(1);
-                updatedCustomer.AcceptChanges();
-                updatedCustomers.Add(updatedCustomer);
-            }
-            return updatedCustomers;
         }
 
         private List<Order> UpdateOrdersWithDetails(MockNorthwind database, IEnumerable<Order> changes)

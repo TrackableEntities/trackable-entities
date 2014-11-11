@@ -8,20 +8,6 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
     public class Customer : ModelBase<Customer>, ITrackable, IEquatable<Customer>,
         IRefPropertyChangeTrackerResolver
     {
-        /// <summary>
-        /// Testing read-only calculated property
-        /// </summary>
-        public string CustomerIdAndName
-        {
-            get
-            {
-                return string.Format(
-                    "{0} - {1}",
-                    CustomerId.ToString(),
-                    CustomerName == null ? string.Empty : CustomerName.ToString());
-            }
-        }
-
         private string _customerId;
         public string CustomerId
         {
@@ -40,7 +26,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             get { return _customerName; }
             set
             {
-                if (value == _customerName) return; 
+                if (value == _customerName) return;
                 _customerName = value;
                 NotifyPropertyChanged(m => m.CustomerName);
             }
