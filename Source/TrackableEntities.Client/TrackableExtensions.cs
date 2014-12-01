@@ -313,18 +313,20 @@ namespace TrackableEntities.Client
                             IEnumerable<ITrackable> refPropChanges = refPropItems.GetChanges(visitationHelper);
 
                             // Set flag for downstream changes
-                            hasDownstreamChanges = refPropChanges.Any(t => t.TrackingState != TrackingState.Deleted) ||
+                            bool hasLocalDownstreamChanges = refPropChanges.Any(t => t.TrackingState != TrackingState.Deleted) ||
                                                    trackableRef.TrackingState == TrackingState.Added ||
                                                    trackableRef.TrackingState == TrackingState.Modified;
 
                             // Set ref prop to null if unchanged or deleted
-                            if (!hasDownstreamChanges && 
+                            if (!hasLocalDownstreamChanges && 
                                 (trackableRef.TrackingState == TrackingState.Unchanged
                                 || trackableRef.TrackingState == TrackingState.Deleted))
                             {
                                 prop.SetValue(item, null, null);
                                 continue;
                             }
+                            // prevent overwrite of hasDownstreamChanges when return from recursion
+                            hasDownstreamChanges = hasLocalDownstreamChanges || hasDownstreamChanges;
                         }
                     }
 
