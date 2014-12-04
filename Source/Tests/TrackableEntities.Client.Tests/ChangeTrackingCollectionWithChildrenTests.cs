@@ -482,7 +482,7 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Test]
-        public void GetChanges_Should_Return_Modified_Items_in_TrackableItemChilds()
+        public void GetChanges_With_More_Than_One_ITrackable_Members_Should_Return_NonEmpty_Changeset_if_Modified()
         {
             // Arrange
             var family = new Family
@@ -505,12 +505,11 @@ namespace TrackableEntities.Client.Tests
 
             // Act
             family.Father.Name = "Herb";
-            var changes = changeTracker.GetChanges();
+            var changes = changeTracker.GetChanges().SingleOrDefault();
 
             //Assert
-
-            Assert.AreEqual(1, changeTracker.GetChanges().Count);
-            Assert.AreEqual(TrackingState.Modified, changes.ElementAt(0).TrackingState);
+            Assert.NotNull(changes);
+            Assert.AreEqual(TrackingState.Modified, changes.Father.TrackingState);
 
         }
 

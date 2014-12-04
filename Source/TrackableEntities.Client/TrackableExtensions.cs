@@ -301,32 +301,45 @@ namespace TrackableEntities.Client
                     var trackableRef = prop.GetValue(item, null) as ITrackable;
 
                     // Continue recursion if trackable hasn't been visited
-                    if (trackableRef != null
-                        && (!visitationHelper.IsVisited(trackableRef)))
+                    if (trackableRef != null)
                     {
-                        // Get changed ref prop
-                        ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
-                        if (refChangeTracker != null)
+                        if (!visitationHelper.IsVisited(trackableRef))
                         {
-                            // Get downstream changes
-                            IEnumerable<ITrackable> refPropItems = refChangeTracker.Cast<ITrackable>();
-                            IEnumerable<ITrackable> refPropChanges = refPropItems.GetChanges(visitationHelper);
+                            // Get changed ref prop
+                            ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
+                            if (refChangeTracker != null)
+                            {
+                                // Get downstream changes
+                                IEnumerable<ITrackable> refPropItems = refChangeTracker.Cast<ITrackable>();
+                                IEnumerable<ITrackable> refPropChanges = refPropItems.GetChanges(visitationHelper);
 
-                            // Set flag for downstream changes
-                            bool hasLocalDownstreamChanges = refPropChanges.Any(t => t.TrackingState != TrackingState.Deleted) ||
-                                                   trackableRef.TrackingState == TrackingState.Added ||
-                                                   trackableRef.TrackingState == TrackingState.Modified;
+                                // Set flag for downstream changes
+                                bool hasLocalDownstreamChanges =
+                                    refPropChanges.Any(t => t.TrackingState != TrackingState.Deleted) ||
+                                    trackableRef.TrackingState == TrackingState.Added ||
+                                    trackableRef.TrackingState == TrackingState.Modified;
 
-                            // Set ref prop to null if unchanged or deleted
-                            if (!hasLocalDownstreamChanges && 
-                                (trackableRef.TrackingState == TrackingState.Unchanged
-                                || trackableRef.TrackingState == TrackingState.Deleted))
+                                // Set ref prop to null if unchanged or deleted
+                                if (!hasLocalDownstreamChanges &&
+                                    (trackableRef.TrackingState == TrackingState.Unchanged
+                                     || trackableRef.TrackingState == TrackingState.Deleted))
+                                {
+                                    prop.SetValue(item, null, null);
+                                    continue;
+                                }
+                                // prevent overwrite of hasDownstreamChanges when return from recursion
+                                hasDownstreamChanges = hasLocalDownstreamChanges || hasDownstreamChanges;
+                            }
+                        }
+                        else
+                        {
+                            // if already visited and unchanged, set to null
+                            if ((trackableRef.TrackingState == TrackingState.Unchanged
+                                 || trackableRef.TrackingState == TrackingState.Deleted))
                             {
                                 prop.SetValue(item, null, null);
                                 continue;
                             }
-                            // prevent overwrite of hasDownstreamChanges when return from recursion
-                            hasDownstreamChanges = hasLocalDownstreamChanges || hasDownstreamChanges;
                         }
                     }
 
