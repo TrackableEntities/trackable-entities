@@ -505,12 +505,15 @@ namespace TrackableEntities.Client.Tests
 
             // Act
             family.Father.Name = "Herb";
-            var changes = changeTracker.GetChanges().SingleOrDefault();
+            var changedFamily = changeTracker.GetChanges().SingleOrDefault();
 
             //Assert
-            Assert.NotNull(changes);
-            Assert.AreEqual(TrackingState.Modified, changes.Father.TrackingState);
-
+            Assert.NotNull(changedFamily);
+            Assert.AreEqual(TrackingState.Unchanged, changedFamily.TrackingState);
+            Assert.NotNull(changedFamily.Father);
+            Assert.AreEqual(TrackingState.Modified, changedFamily.Father.TrackingState);
+            Assert.IsNull(changedFamily.Mother);
+            Assert.IsNull(changedFamily.Child);
         }
 
         #endregion
