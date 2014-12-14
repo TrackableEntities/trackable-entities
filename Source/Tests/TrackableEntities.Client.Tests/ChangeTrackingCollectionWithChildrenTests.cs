@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using NUnit.Framework;
+using TrackableEntities.Client.Tests.Entities.FamilyModels;
 using TrackableEntities.Client.Tests.Entities.Mocks;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
 
@@ -478,6 +479,38 @@ namespace TrackableEntities.Client.Tests
             Assert.IsTrue(changes[0].IsEquatable(order));
             Assert.IsTrue(changes[0].OrderDetails[0].IsEquatable(order.OrderDetails[0]));
             Assert.IsTrue(changes[0].OrderDetails[0].Product.IsEquatable(order.OrderDetails[0].Product));
+        }
+
+        [Test]
+        public void GetChanges_With_More_Than_One_ITrackable_Members_Should_Return_NonEmpty_Changeset_if_Modified()
+        {
+            // Arrange
+            var family = new Family
+            {
+                Father = new Parent
+                {
+                    Name = "Alan"
+                },
+                Mother = new Parent
+                {
+                    Name = "Judith"
+                },
+                Child = new Child
+                {
+                    Name = "Jake"
+                }
+            };
+
+            var changeTracker = new ChangeTrackingCollection<Family>(family);
+
+            // Act
+            family.Father.Name = "Herb";
+            var changes = changeTracker.GetChanges().SingleOrDefault();
+
+            //Assert
+            Assert.NotNull(changes);
+            Assert.AreEqual(TrackingState.Modified, changes.Father.TrackingState);
+
         }
 
         #endregion
