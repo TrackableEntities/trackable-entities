@@ -22,16 +22,13 @@ namespace TrackableEntities.Client
             bool enableTracking, ObjectVisitationHelper visitationHelper = null)
         {
             // Iterator entity properties
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
                 // Set tracking on 1-1 and M-1 properties
-                var trackableRef = prop.GetValue(item, null) as ITrackable;
-
-                // Continue recursion
-                if (trackableRef != null)
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
                     // Get ref prop change tracker
-                    ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
+                    ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
                     if (refChangeTracker != null)
                     {
                         // Set tracking on ref prop change tracker
@@ -40,10 +37,9 @@ namespace TrackableEntities.Client
                 }
 
                 // Set tracking on 1-M and M-M properties
-                var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
-                if (trackingColl != null)
+                foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
                 {
-                    trackingColl.SetTracking(enableTracking, visitationHelper);
+                    colProp.EntityCollection.SetTracking(enableTracking, visitationHelper);
                 }
             }
         }
@@ -68,19 +64,15 @@ namespace TrackableEntities.Client
             if (!isManyToManyItem && state != TrackingState.Modified)
             {
                 // Iterate entity properties
-                foreach (var prop in item.GetType().GetProperties())
+                foreach (var colProp in item.GetNavigationProperties().OfCollectionType<ITrackingCollection>())
                 {
                     // Process 1-M and M-M properties
-                    var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
-                    if (trackingColl != null)
+                    // Set state on child entities
+                    bool isManyToManyChildCollection = IsManyToManyChildCollection(colProp.EntityCollection);
+                    foreach (ITrackable trackableChild in colProp.EntityCollection)
                     {
-                        // Set state on child entities
-                        bool isManyToManyChildCollection = IsManyToManyChildCollection(trackingColl);
-                        foreach (ITrackable trackableChild in trackingColl)
-                        {
-                            trackableChild.SetState(state, visitationHelper,
-                                isManyToManyChildCollection);
-                        }
+                        trackableChild.SetState(state, visitationHelper,
+                            isManyToManyChildCollection);
                     }
                 }
             }
@@ -122,22 +114,20 @@ namespace TrackableEntities.Client
             if (!visitationHelper.TryVisit(item)) return;
 
             // Iterate entity properties
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
                 ITrackingCollection trackingCollection = null;
 
                 // 1-1 and M-1 properties
-                var trackableRef = prop.GetValue(item, null) as ITrackable;
-                if (trackableRef != null)
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    trackingCollection = item.GetRefPropertyChangeTracker(prop.Name);
+                    trackingCollection = item.GetRefPropertyChangeTracker(refProp.Property.Name);
                 }
 
                 // 1-M and M-M properties
-                var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
-                if (trackingColl != null)
+                foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
                 {
-                    trackingCollection = trackingColl;
+                    trackingCollection = colProp.EntityCollection;
                 }
 
                 // Recursively set modified
@@ -176,28 +166,22 @@ namespace TrackableEntities.Client
                 if (!visitationHelper.TryVisit(item)) continue;
 
                 // Iterate entity properties
-                foreach (var prop in item.GetType().GetProperties())
+                foreach (var navProp in item.GetNavigationProperties())
                 {
                     // Process 1-1 and M-1 properties
-                    var trackableRef = prop.GetValue(item, null) as ITrackable;
-
-                    // Continue recursion
-                    if (trackableRef != null)
+                    foreach (var refProp in navProp.AsReferenceProperty())
                     {
                         // Get changed ref prop
-                        ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
+                        ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
 
                         // Remove deletes on rep prop
                         if (refChangeTracker != null) refChangeTracker.RemoveRestoredDeletes(visitationHelper);
                     }
 
                     // Process 1-M and M-M properties
-                    var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
-
-                    // Remove deletes on child collection
-                    if (trackingColl != null)
+                    foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
                     {
-                        trackingColl.RemoveRestoredDeletes(visitationHelper);
+                        colProp.EntityCollection.RemoveRestoredDeletes(visitationHelper);
                     }
                 }
 
@@ -246,28 +230,22 @@ namespace TrackableEntities.Client
                 if (!visitationHelper.TryVisit(item)) continue;
 
                 // Iterate entity properties
-                foreach (var prop in item.GetType().GetProperties())
+                foreach (var navProp in item.GetNavigationProperties())
                 {
                     // Process 1-1 and M-1 properties
-                    var trackableRef = prop.GetValue(item, null) as ITrackable;
-
-                    // Continue recursion
-                    if (trackableRef != null)
+                    foreach (var refProp in navProp.AsReferenceProperty())
                     {
                         // Get changed ref prop
-                        ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
+                        ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
                         
                         // Restore deletes on rep prop
                         if (refChangeTracker != null) refChangeTracker.RestoreDeletes(visitationHelper);
                     }
 
                     // Process 1-M and M-M properties
-                    var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
-
-                    // Restore deletes on child collection
-                    if (trackingColl != null)
+                    foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
                     {
-                        trackingColl.RestoreDeletes(visitationHelper);
+                        colProp.EntityCollection.RestoreDeletes(visitationHelper);
                     }
                 }
             }
@@ -295,77 +273,75 @@ namespace TrackableEntities.Client
                 bool hasDownstreamChanges = false;
 
                 // Iterate entity properties
-                foreach (var prop in item.GetType().GetProperties())
+                foreach (var navProp in item.GetNavigationProperties())
                 {
                     // Process 1-1 and M-1 properties
-                    var trackableRef = prop.GetValue(item, null) as ITrackable;
-
-                    // Continue recursion if trackable hasn't been visited
-                    if (trackableRef != null)
+                    foreach (var refProp in navProp.AsReferenceProperty())
                     {
-                        if (!visitationHelper.IsVisited(trackableRef))
-                        {
-                            // Get changed ref prop
-                            ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(prop.Name);
-                            if (refChangeTracker != null)
-                            {
-                                // Get downstream changes
-                                IEnumerable<ITrackable> refPropItems = refChangeTracker.Cast<ITrackable>();
-                                IEnumerable<ITrackable> refPropChanges = refPropItems.GetChanges(visitationHelper);
+                        ITrackable trackableRef = refProp.EntityReference;
 
-                                // Set flag for downstream changes
-                                bool hasLocalDownstreamChanges =
-                                    refPropChanges.Any(t => t.TrackingState != TrackingState.Deleted) ||
-                                    trackableRef.TrackingState == TrackingState.Added ||
-                                    trackableRef.TrackingState == TrackingState.Modified;
-
-                                // Set ref prop to null if unchanged or deleted
-                                if (!hasLocalDownstreamChanges &&
-                                    (trackableRef.TrackingState == TrackingState.Unchanged
-                                     || trackableRef.TrackingState == TrackingState.Deleted))
-                                {
-                                    prop.SetValue(item, null, null);
-                                    continue;
-                                }
-                                // prevent overwrite of hasDownstreamChanges when return from recursion
-                                hasDownstreamChanges = hasLocalDownstreamChanges || hasDownstreamChanges;
-                            }
-                        }
-                        else
+                        // if already visited and unchanged, set to null
+                        if (visitationHelper.IsVisited(trackableRef))
                         {
-                            // if already visited and unchanged, set to null
                             if ((trackableRef.TrackingState == TrackingState.Unchanged
                                  || trackableRef.TrackingState == TrackingState.Deleted))
                             {
-                                prop.SetValue(item, null, null);
+                                refProp.Property.SetValue(item, null, null);
+                            }
+                            continue;
+                        }
+
+                        // Get changed ref prop
+                        ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
+                        if (refChangeTracker != null)
+                        {
+                            // Get downstream changes
+                            IEnumerable<ITrackable> refPropItems = refChangeTracker.Cast<ITrackable>();
+                            IEnumerable<ITrackable> refPropChanges = refPropItems.GetChanges(visitationHelper);
+
+                            // Set flag for downstream changes
+                            bool hasLocalDownstreamChanges =
+                                refPropChanges.Any(t => t.TrackingState != TrackingState.Deleted) ||
+                                trackableRef.TrackingState == TrackingState.Added ||
+                                trackableRef.TrackingState == TrackingState.Modified;
+
+                            // Set ref prop to null if unchanged or deleted
+                            if (!hasLocalDownstreamChanges &&
+                                (trackableRef.TrackingState == TrackingState.Unchanged
+                                    || trackableRef.TrackingState == TrackingState.Deleted))
+                            {
+                                refProp.Property.SetValue(item, null, null);
                                 continue;
                             }
+
+                            // prevent overwrite of hasDownstreamChanges when return from recursion
+                            hasDownstreamChanges |= hasLocalDownstreamChanges;
                         }
                     }
 
                     // Process 1-M and M-M properties
-                    var trackingItems = prop.GetValue(item, null) as IList;
-                    var trackingColl = trackingItems as ITrackingCollection;
-
-                    // Get changes on child collection
-                    if (trackingItems != null && trackingColl != null
-                        && trackingColl.Count > 0)
+                    foreach (var colProp in navProp.AsCollectionProperty<IList>())
                     {
-                        // Continue recursion if trackable hasn't been visited
-                        if (!visitationHelper.IsVisited(trackingColl))
+                        // Get changes on child collection
+                        var trackingItems = colProp.EntityCollection;
+                        if (trackingItems.Count > 0)
                         {
-                            // Get changes on child collection
-                            var trackingCollChanges = trackingColl.Cast<ITrackable>().GetChanges(visitationHelper).ToList();
-
-                            // Set flag for downstream changes
-                            hasDownstreamChanges = hasDownstreamChanges || trackingCollChanges.Any();
-
-                            // Remove child items without changes
-                            var count = trackingItems.Count;
-                            for (int i = count - 1; i > -1; i--)
+                            // Continue recursion if trackable hasn't been visited
+                            if (!visitationHelper.IsVisited(trackingItems))
                             {
-                                if (!trackingCollChanges.Any(e => ReferenceEquals(trackingItems[i], e)))
-                                    trackingItems.Remove(trackingItems[i]);
+                                // Get changes on child collection
+                                var trackingCollChanges = trackingItems.Cast<ITrackable>().GetChanges(visitationHelper).ToList();
+
+                                // Set flag for downstream changes
+                                hasDownstreamChanges |= trackingCollChanges.Any();
+
+                                // Remove child items without changes
+                                var count = trackingItems.Count;
+                                for (int i = count - 1; i > -1; i--)
+                                {
+                                    if (!trackingCollChanges.Any(e => ReferenceEquals(trackingItems[i], e)))
+                                        trackingItems.Remove(trackingItems[i]);
+                                }
                             }
                         }
                     }

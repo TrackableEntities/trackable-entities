@@ -15,19 +15,17 @@ namespace TrackableEntities.EF.Tests
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
             if (!visitationHelper.TryVisit(item)) return;
 
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
-                var trackableRef = prop.GetValue(item, null) as ITrackable;
-                if (trackableRef != null)
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    trackableRef.SetTrackingState(state, visitationHelper);
-                    trackableRef.TrackingState = state;
+                    refProp.EntityReference.SetTrackingState(state, visitationHelper);
+                    refProp.EntityReference.TrackingState = state;
                 }
 
-                var trackingColl = prop.GetValue(item, null) as ICollection;
-                if (trackingColl != null)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    foreach (ITrackable child in trackingColl)
+                    foreach (ITrackable child in colProp.EntityCollection)
                     {
                         child.SetTrackingState(state, visitationHelper);
                         child.TrackingState = state;
@@ -45,22 +43,20 @@ namespace TrackableEntities.EF.Tests
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
             if (!visitationHelper.TryVisit(item)) yield break;
 
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
-                var trackableRef = prop.GetValue(item, null) as ITrackable;
-                if (trackableRef != null)
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    foreach (var state in trackableRef.GetTrackingStates(visitationHelper: visitationHelper))
+                    foreach (var state in refProp.EntityReference.GetTrackingStates(visitationHelper: visitationHelper))
                     {
                         if (trackingState == null || state == trackingState)
                             yield return state;
                     }
                 }
 
-                var trackingColl = prop.GetValue(item, null) as ICollection;
-                if (trackingColl != null)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    foreach (ITrackable child in trackingColl)
+                    foreach (ITrackable child in colProp.EntityCollection)
                     {
                         foreach (var state in child.GetTrackingStates(visitationHelper: visitationHelper))
                         {
@@ -81,21 +77,19 @@ namespace TrackableEntities.EF.Tests
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
             if (!visitationHelper.TryVisit(item)) yield break;
 
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
-                var trackableRef = prop.GetValue(item, null) as ITrackable;
-                if (trackableRef != null)
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    foreach (var modifiedProps in trackableRef.GetModifiedProperties(visitationHelper))
+                    foreach (var modifiedProps in refProp.EntityReference.GetModifiedProperties(visitationHelper))
                     {
                         yield return modifiedProps;
                     }
                 }
 
-                var trackingColl = prop.GetValue(item, null) as ICollection;
-                if (trackingColl != null)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    foreach (ITrackable child in trackingColl)
+                    foreach (ITrackable child in colProp.EntityCollection)
                     {
                         foreach (var modifiedProps in child.GetModifiedProperties(visitationHelper))
                         {

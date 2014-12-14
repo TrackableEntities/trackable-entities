@@ -71,6 +71,8 @@
     <Compile Include="..\AssemblyVersion.cs">
       <Link>Properties\AssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="EntityNavigationProperty.cs" />
+    <Compile Include="INavigationPropertyInspector.cs" />
     <Compile Include="ITrackable.cs" />
     <Compile Include="ObjectVisitationHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

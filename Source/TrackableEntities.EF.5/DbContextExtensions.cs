@@ -383,22 +383,19 @@ namespace TrackableEntities.EF5
             ITrackable item, ObjectVisitationHelper visitationHelper, CancellationToken cancellationToken, bool loadAll)
         {
             // Recursively load related entities
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
                 // Apply changes to 1-1 and M-1 properties
-                var trackableRef = prop.GetValue(item) as ITrackable;
-                if (trackableRef != null)
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    await context.LoadRelatedEntitiesAsync(new[] { trackableRef }, item, visitationHelper,
+                    await context.LoadRelatedEntitiesAsync(new[] { refProp.EntityReference }, item, visitationHelper,
                         cancellationToken, loadAll);
                 }
 
                 // Apply changes to 1-M and M-M properties
-                var childItems = prop.GetValue(item, null) as IList;
-                if (childItems != null)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    var trackableChildren = childItems.OfType<ITrackable>();
-                    await context.LoadRelatedEntitiesAsync(trackableChildren, item, visitationHelper,
+                    await context.LoadRelatedEntitiesAsync(colProp.EntityCollection, item, visitationHelper,
                         cancellationToken, loadAll);
                 }
             }
@@ -409,21 +406,18 @@ namespace TrackableEntities.EF5
             ITrackable item, ObjectVisitationHelper visitationHelper, bool loadAll)
         {
             // Recursively load related entities
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
                 // Apply changes to 1-1 and M-1 properties
-                var trackableRef = prop.GetValue(item) as ITrackable;
-                if (trackableRef != null)
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    context.LoadRelatedEntities(new[] { trackableRef }, item, visitationHelper, loadAll);
+                    context.LoadRelatedEntities(new[] { refProp.EntityReference }, item, visitationHelper, loadAll);
                 }
 
                 // Apply changes to 1-M and M-M properties
-                var childItems = prop.GetValue(item, null) as IList;
-                if (childItems != null)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    var trackableChildren = childItems.OfType<ITrackable>();
-                    context.LoadRelatedEntities(trackableChildren, item, visitationHelper, loadAll);
+                    context.LoadRelatedEntities(colProp.EntityCollection, item, visitationHelper, loadAll);
                 }
             }
         }
@@ -447,23 +441,21 @@ namespace TrackableEntities.EF5
             ITrackable item, ObjectVisitationHelper visitationHelper, TrackingState? state = null)
         {
             // Recursively apply changes
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
                 // Apply changes to 1-1 and M-1 properties
-                var trackableReference = prop.GetValue(item, null) as ITrackable;
-                if (trackableReference != null)
-                    context.ApplyChanges(trackableReference, item, visitationHelper, prop.Name, state);
+                foreach (var refProp in navProp.AsReferenceProperty())
+                    context.ApplyChanges(refProp.EntityReference, item, visitationHelper, navProp.Property.Name, state);
 
                 // Apply changes to 1-M and M-M properties
-                var items = prop.GetValue(item, null) as IList;
-                if (items != null)
+                foreach (var colProp in navProp.AsCollectionProperty<IList>())
                 {
-                    var count = items.Count;
+                    var count = colProp.EntityCollection.Count;
                     for (int i = count - 1; i > -1; i--)
                     {
-                        var trackableChild = items[i] as ITrackable;
+                        var trackableChild = colProp.EntityCollection[i] as ITrackable;
                         if (trackableChild != null)
-                            context.ApplyChanges(trackableChild, item, visitationHelper, prop.Name, state);
+                            context.ApplyChanges(trackableChild, item, visitationHelper, navProp.Property.Name, state);
                     }
                 }
             }
@@ -475,35 +467,32 @@ namespace TrackableEntities.EF5
             ITrackable parent = null, string propertyName = null)
         {
             // Set state for child collections
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
+                string propName = navProp.Property.Name;
+
                 // Apply changes to 1-1 and M-1 properties
-                var trackableReference = prop.GetValue(item, null) as ITrackable;
-                if (trackableReference != null
-                    && !visitationHelper.IsVisited(trackableReference))
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    context.ApplyChanges(trackableReference, item, visitationHelper, prop.Name);
-                    if (context.IsRelatedProperty(item.GetType(), prop.Name, RelationshipType.OneToOne))
-                        context.SetChanges(trackableReference, state, visitationHelper, item, prop.Name);
+                    ITrackable trackableReference = refProp.EntityReference;
+                    if (visitationHelper.IsVisited(trackableReference)) continue;
+
+                    context.ApplyChanges(trackableReference, item, visitationHelper, propName);
+                    if (context.IsRelatedProperty(item.GetType(), propName, RelationshipType.OneToOne))
+                        context.SetChanges(trackableReference, state, visitationHelper, item, propName);
                 }
 
-
                 // Apply changes to 1-M and M-M properties
-                var items = prop.GetValue(item, null) as IList;
-                if (items != null)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    for (int i = items.Count - 1; i > -1; i--)
+                    foreach (ITrackable trackableChild in colProp.EntityCollection.Reverse())
                     {
-                        var trackableChild = items[i] as ITrackable;
-                        if (trackableChild != null)
+                        // Prevent endless recursion
+                        if (visitationHelper.TryVisit(trackableChild))
                         {
-                            // Prevent endless recursion
-                            if (visitationHelper.TryVisit(trackableChild))
-                            {
-                                // TRICKY: we have just visited the item
-                                // As a side effect, ApplyChanges will never be called for it.
-                                context.SetChanges(trackableChild, state, visitationHelper, item, prop.Name);
-                            }
+                            // TRICKY: we have just visited the item
+                            // As a side effect, ApplyChanges will never be called for it.
+                            context.SetChanges(trackableChild, state, visitationHelper, item, propName);
                         }
                     }
                 }
