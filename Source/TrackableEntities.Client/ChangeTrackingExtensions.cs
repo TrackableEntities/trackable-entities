@@ -227,7 +227,7 @@ namespace TrackableEntities.Client
             ITrackingCollection changeTracker)
         {
             // Iterate properties
-            foreach (var prop in targetItem.GetType().GetProperties())
+            foreach (var prop in targetItem.GetType().GetProperties().Where(p => p.CanWrite))
             {
                 // Get source item prop value
                 object sourceValue = prop.GetValue(sourceItem, null);
