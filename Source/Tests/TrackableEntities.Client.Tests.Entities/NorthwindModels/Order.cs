@@ -42,6 +42,11 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             }
         }
 
+        public Guid DummyCalculatedProperty
+        {
+            get { return Guid.NewGuid(); }
+        }
+
         private Customer _customer;
         public Customer Customer
         {
