@@ -448,9 +448,49 @@ namespace TrackableEntities.EF5.Tests
 
         #endregion
 
-		#region Employee-Territory: Many to Many
+        #region Order: Many to One to Many
 
-		[Test]
+        [Test]
+        public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Multiple_Addresses_Added()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new MockNorthwind().Orders[0];
+            order.OrderDetails = null;
+            var address1 = new CustomerAddress
+            {
+                CustomerAddressId = 0,
+                Street = "Street1",
+                CustomerId = order.Customer.CustomerId,
+                Customer = order.Customer
+            };
+            var address2 = new CustomerAddress
+            {
+                CustomerAddressId = 0,
+                Street = "Street2",
+                CustomerId = order.Customer.CustomerId,
+                Customer = order.Customer
+            };
+            order.Customer.CustomerAddresses = new List<CustomerAddress>
+                { address1, address2 };
+            address1.TrackingState = TrackingState.Added;
+            address2.TrackingState = TrackingState.Added;
+
+            // Act
+            context.ApplyChanges(order);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
+        }
+
+        #endregion
+
+        #region Employee-Territory: Many to Many
+
+        [Test]
 		public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Unchanged_Territories_As_Unchanged()
 		{
 			// Arrange

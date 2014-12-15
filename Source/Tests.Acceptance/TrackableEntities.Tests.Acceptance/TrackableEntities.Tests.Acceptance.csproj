@@ -88,6 +88,9 @@
     <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\Customer.cs">
       <Link>NorthwindModels\Customer.cs</Link>
     </Compile>
+    <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\CustomerAddress.cs">
+      <Link>NorthwindModels\CustomerAddress.cs</Link>
+    </Compile>
     <Compile Include="..\..\Tests\TrackableEntities.EF.5.Tests\NorthwindModels\CustomerSetting.cs">
       <Link>NorthwindModels\CustomerSetting.cs</Link>
     </Compile>
