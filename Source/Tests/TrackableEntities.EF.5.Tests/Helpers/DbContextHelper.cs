@@ -26,18 +26,14 @@ namespace TrackableEntities.EF.Tests
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
             if (!visitationHelper.TryVisit(item)) yield break;
 
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var colProp in item.GetNavigationProperties().OfCollectionType())
             {
-                var trackingColl = prop.GetValue(item, null) as ICollection;
-                if (trackingColl != null)
+                foreach (ITrackable child in colProp.EntityCollection)
                 {
-                    foreach (ITrackable child in trackingColl)
+                    foreach (var state in context.GetEntityStates(child, visitationHelper: visitationHelper))
                     {
-                        foreach (var state in context.GetEntityStates(child, visitationHelper: visitationHelper))
-                        {
-                            if (entityState == null || state == entityState)
-                                yield return state;
-                        }
+                        if (entityState == null || state == entityState)
+                            yield return state;
                     }
                 }
             }

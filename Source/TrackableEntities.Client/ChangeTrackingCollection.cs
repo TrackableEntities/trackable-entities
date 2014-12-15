@@ -305,16 +305,15 @@ namespace TrackableEntities.Client
         public void MergeChanges(ref TEntity originalItem, TEntity updatedItem)
         {
             // Get unchanged child entities
-            foreach (var prop in typeof(TEntity).GetProperties())
+            foreach (var colProp in updatedItem.GetNavigationProperties().OfCollectionType<IList>())
             {
-                var updatedItems = prop.GetValue(updatedItem, null) as IList;
-                var originalItems = prop.GetValue(originalItem, null) as IList;
-                if (originalItems != null && updatedItems != null)
+                var updatedItems = colProp.EntityCollection;
+                var originalItems = originalItem.GetEntityCollectionProperty(colProp.Property).EntityCollection;
+                if (originalItems != null)
                 {
-                    foreach (object item in originalItems)
+                    foreach (ITrackable origTrackable in originalItems)
                     {
-                        var origTrackable = item as ITrackable;
-                        if (origTrackable != null && origTrackable.TrackingState == TrackingState.Unchanged)
+                        if (origTrackable.TrackingState == TrackingState.Unchanged)
                         {
                             // Add unchanged original item to updated items
                             updatedItems.Add(origTrackable);
@@ -335,20 +334,16 @@ namespace TrackableEntities.Client
             originalItem = updatedItem;
         }
 
-        private void FixUpParentReference(object child, object parent, bool isTracking)
+        private void FixUpParentReference(ITrackable child, ITrackable parent, bool isTracking)
         {
-            foreach (var prop in child.GetType().GetProperties())
+            foreach (var refProp in child.GetNavigationProperties()
+                .OfReferenceType()
+                .Where(rp => rp.Property.PropertyType.IsAssignableFrom(parent.GetType()))
+                .Where(rp => !ReferenceEquals(rp.EntityReference, parent)))
             {
-                if (prop.PropertyType == parent.GetType())
-                {
-                    var childParent = prop.GetValue(child, null);
-                    if (childParent != null && !ReferenceEquals(childParent, parent))
-                    {
-                        Tracking = false;
-                        prop.SetValue(child, parent, null);
-                        Tracking = isTracking;
-                    }
-                }
+                Tracking = false;
+                refProp.Property.SetValue(child, parent, null);
+                Tracking = isTracking;
             }
         }
     }
