@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="143ba2356a084e939fc911015f8e330e" Name="Diagram1">
+        <EntityTypeShape EntityType="Test_TE_EFModel.CultureCodes" Width="1.5" PointX="8" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Test_TE_EFModel.Localization" Width="1.5" PointX="5.875" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Test_TE_EFModel.Product" Width="1.5" PointX="1.25" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Test_TE_EFModel.ResourceKey" Width="1.5" PointX="3.625" PointY="0.75" IsExpanded="true" />
+        <AssociationConnector Association="Test_TE_EFModel.FK_localization_culture_codes" ManuallyRouted="false" />
+        <AssociationConnector Association="Test_TE_EFModel.FK_localization_resource_key" ManuallyRouted="false" />
+        <AssociationConnector Association="Test_TE_EFModel.FK_product_resource_description" ManuallyRouted="false" />
+        <AssociationConnector Association="Test_TE_EFModel.FK_product_resource_title" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Test_TE_EFModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="culture_codes">
+          <Key>
+            <PropertyRef Name="culture_codes_id" />
+          </Key>
+          <Property Name="culture_codes_id" Type="int" Nullable="false" />
+          <Property Name="culture_codes_name" Type="varchar" MaxLength="250" Nullable="false" />
+        </EntityType>
+        <EntityType Name="localization">
+          <Key>
+            <PropertyRef Name="localization_id" />
+          </Key>
+          <Property Name="fk_resource_key" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="resource_value" Type="ntext" Nullable="false" />
+          <Property Name="fk_culture_codes_id" Type="int" Nullable="false" />
+          <Property Name="localization_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="product">
+          <Key>
+            <PropertyRef Name="product_id" />
+          </Key>
+          <Property Name="product_id" Type="int" Nullable="false" />
+          <Property Name="product_title" Type="varchar" MaxLength="250" />
+          <Property Name="product_description" Type="varchar" MaxLength="250" />
+        </EntityType>
+        <EntityType Name="resource_key">
+          <Key>
+            <PropertyRef Name="resource_key_name" />
+          </Key>
+          <Property Name="resource_key_id" Type="int" Nullable="false" />
+          <Property Name="resource_key_name" Type="varchar" MaxLength="250" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_localization_culture_codes">
+          <End Role="culture_codes" Type="Self.culture_codes" Multiplicity="1" />
+          <End Role="localization" Type="Self.localization" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="culture_codes">
+              <PropertyRef Name="culture_codes_id" />
+            </Principal>
+            <Dependent Role="localization">
+              <PropertyRef Name="fk_culture_codes_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_localization_resource_key">
+          <End Role="resource_key" Type="Self.resource_key" Multiplicity="1" />
+          <End Role="localization" Type="Self.localization" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="resource_key">
+              <PropertyRef Name="resource_key_name" />
+            </Principal>
+            <Dependent Role="localization">
+              <PropertyRef Name="fk_resource_key" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_product_resource_description">
+          <End Role="resource_key" Type="Self.resource_key" Multiplicity="0..1" />
+          <End Role="product" Type="Self.product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="resource_key">
+              <PropertyRef Name="resource_key_name" />
+            </Principal>
+            <Dependent Role="product">
+              <PropertyRef Name="product_description" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_product_resource_title">
+          <End Role="resource_key" Type="Self.resource_key" Multiplicity="0..1" />
+          <End Role="product" Type="Self.product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="resource_key">
+              <PropertyRef Name="resource_key_name" />
+            </Principal>
+            <Dependent Role="product">
+              <PropertyRef Name="product_title" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Test_TE_EFModelStoreContainer">
+          <EntitySet Name="culture_codes" EntityType="Self.culture_codes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="localization" EntityType="Self.localization" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="product" EntityType="Self.product" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="resource_key" EntityType="Self.resource_key" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_localization_culture_codes" Association="Self.FK_localization_culture_codes">
+            <End Role="culture_codes" EntitySet="culture_codes" />
+            <End Role="localization" EntitySet="localization" />
+          </AssociationSet>
+          <AssociationSet Name="FK_localization_resource_key" Association="Self.FK_localization_resource_key">
+            <End Role="resource_key" EntitySet="resource_key" />
+            <End Role="localization" EntitySet="localization" />
+          </AssociationSet>
+          <AssociationSet Name="FK_product_resource_description" Association="Self.FK_product_resource_description">
+            <End Role="resource_key" EntitySet="resource_key" />
+            <End Role="product" EntitySet="product" />
+          </AssociationSet>
+          <AssociationSet Name="FK_product_resource_title" Association="Self.FK_product_resource_title">
+            <End Role="resource_key" EntitySet="resource_key" />
+            <End Role="product" EntitySet="product" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Test_TE_EFModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CultureCodes">
+          <Key>
+            <PropertyRef Name="culture_codes_id" />
+          </Key>
+          <Property Name="culture_codes_id" Type="Int32" Nullable="false" />
+          <Property Name="culture_codes_name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Localization">
+          <Key>
+            <PropertyRef Name="localization_id" />
+          </Key>
+          <Property Name="fk_resource_key" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="resource_value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="fk_culture_codes_id" Type="Int32" Nullable="false" />
+          <Property Name="localization_id" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="culture_codes" Relationship="Self.FK_localization_culture_codes" FromRole="localization" ToRole="culture_codes" />
+        </EntityType>
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="product_id" />
+          </Key>
+          <Property Name="product_id" Type="Int32" Nullable="false" />
+          <Property Name="product_title" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="product_description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="description_resource" Relationship="Self.FK_product_resource_description" FromRole="product" ToRole="resource_key" />
+          <NavigationProperty Name="title_resource" Relationship="Self.FK_product_resource_title" FromRole="product" ToRole="resource_key" />
+        </EntityType>
+        <EntityType Name="ResourceKey">
+          <Key>
+            <PropertyRef Name="resource_key_name" />
+          </Key>
+          <Property Name="resource_key_id" Type="Int32" Nullable="false" />
+          <Property Name="resource_key_name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="localization" Relationship="Self.FK_localization_resource_key" FromRole="resource_key" ToRole="localization" />
+        </EntityType>
+        <Association Name="FK_localization_culture_codes">
+          <End Role="culture_codes" Type="Test_TE_EFModel.CultureCodes" Multiplicity="1" />
+          <End Role="localization" Type="Test_TE_EFModel.Localization" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="culture_codes">
+              <PropertyRef Name="culture_codes_id" />
+            </Principal>
+            <Dependent Role="localization">
+              <PropertyRef Name="fk_culture_codes_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_localization_resource_key">
+          <End Role="resource_key" Type="Test_TE_EFModel.ResourceKey" Multiplicity="1" />
+          <End Role="localization" Type="Test_TE_EFModel.Localization" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="resource_key">
+              <PropertyRef Name="resource_key_name" />
+            </Principal>
+            <Dependent Role="localization">
+              <PropertyRef Name="fk_resource_key" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_product_resource_description">
+          <End Role="resource_key" Type="Test_TE_EFModel.ResourceKey" Multiplicity="0..1" />
+          <End Role="product" Type="Test_TE_EFModel.Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="resource_key">
+              <PropertyRef Name="resource_key_name" />
+            </Principal>
+            <Dependent Role="product">
+              <PropertyRef Name="product_description" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_product_resource_title">
+          <End Role="resource_key" Type="Test_TE_EFModel.ResourceKey" Multiplicity="0..1" />
+          <End Role="product" Type="Test_TE_EFModel.Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="resource_key">
+              <PropertyRef Name="resource_key_name" />
+            </Principal>
+            <Dependent Role="product">
+              <PropertyRef Name="product_title" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ProductsModelContext" annotation:LazyLoadingEnabled="false">
+          <EntitySet Name="CultureCodes" EntityType="Test_TE_EFModel.CultureCodes" />
+          <EntitySet Name="Localization" EntityType="Test_TE_EFModel.Localization" />
+          <EntitySet Name="Product" EntityType="Test_TE_EFModel.Product" />
+          <EntitySet Name="ResourceKeys" EntityType="Test_TE_EFModel.ResourceKey" />
+          <AssociationSet Name="FK_localization_culture_codes" Association="Self.FK_localization_culture_codes">
+            <End Role="culture_codes" EntitySet="CultureCodes" />
+            <End Role="localization" EntitySet="Localization" />
+          </AssociationSet>
+          <AssociationSet Name="FK_localization_resource_key" Association="Self.FK_localization_resource_key">
+            <End Role="resource_key" EntitySet="ResourceKeys" />
+            <End Role="localization" EntitySet="Localization" />
+          </AssociationSet>
+          <AssociationSet Name="FK_product_resource_description" Association="Self.FK_product_resource_description">
+            <End Role="resource_key" EntitySet="ResourceKeys" />
+            <End Role="product" EntitySet="Product" />
+          </AssociationSet>
+          <AssociationSet Name="FK_product_resource_title" Association="Self.FK_product_resource_title">
+            <End Role="resource_key" EntitySet="ResourceKeys" />
+            <End Role="product" EntitySet="Product" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Test_TE_EFModelStoreContainer" CdmEntityContainer="ProductsModelContext">
+          <EntitySetMapping Name="CultureCodes">
+            <EntityTypeMapping TypeName="Test_TE_EFModel.CultureCodes">
+              <MappingFragment StoreEntitySet="culture_codes">
+                <ScalarProperty Name="culture_codes_id" ColumnName="culture_codes_id" />
+                <ScalarProperty Name="culture_codes_name" ColumnName="culture_codes_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Localization">
+            <EntityTypeMapping TypeName="Test_TE_EFModel.Localization">
+              <MappingFragment StoreEntitySet="localization">
+                <ScalarProperty Name="fk_resource_key" ColumnName="fk_resource_key" />
+                <ScalarProperty Name="resource_value" ColumnName="resource_value" />
+                <ScalarProperty Name="fk_culture_codes_id" ColumnName="fk_culture_codes_id" />
+                <ScalarProperty Name="localization_id" ColumnName="localization_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Product">
+            <EntityTypeMapping TypeName="Test_TE_EFModel.Product">
+              <MappingFragment StoreEntitySet="product">
+                <ScalarProperty Name="product_id" ColumnName="product_id" />
+                <ScalarProperty Name="product_title" ColumnName="product_title" />
+                <ScalarProperty Name="product_description" ColumnName="product_description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ResourceKeys">
+            <EntityTypeMapping TypeName="Test_TE_EFModel.ResourceKey">
+              <MappingFragment StoreEntitySet="resource_key">
+                <ScalarProperty Name="resource_key_id" ColumnName="resource_key_id" />
+                <ScalarProperty Name="resource_key_name" ColumnName="resource_key_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
