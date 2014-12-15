@@ -31,9 +31,6 @@ namespace TrackableEntities.Client
 
             /// <summary>Entity identifier property</summary>
             public const string EntityIdentifierProperty = "EntityIdentifier";
-
-            /// <summary>Entity identify field</summary>
-            public const string EntityIdentifyField = "_entityIdentity";
         }
 
         /// <summary>
