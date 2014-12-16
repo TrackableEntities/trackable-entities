@@ -451,7 +451,7 @@ namespace TrackableEntities.EF5.Tests
         #region Order: Many to One to Many
 
         [Test]
-        public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Multiple_Addresses_Added()
+        public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Addresses_Multiple_Added()
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -487,7 +487,7 @@ namespace TrackableEntities.EF5.Tests
         }
 
         [Test]
-        public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Multiple_Addresses_Added_And_Modified()
+        public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Addresses_Mutliple_Added_And_Modified()
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -535,6 +535,61 @@ namespace TrackableEntities.EF5.Tests
             Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
             Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
             Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(address3).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(address4).State);
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Addresses_Multiple_Added_And_Modified_Deleted()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new MockNorthwind().Orders[0];
+            order.OrderDetails = null;
+            var address1 = new CustomerAddress
+            {
+                CustomerAddressId = 0,
+                Street = "Street1",
+                CustomerId = order.Customer.CustomerId,
+                Customer = order.Customer
+            };
+            var address2 = new CustomerAddress
+            {
+                CustomerAddressId = 0,
+                Street = "Street2",
+                CustomerId = order.Customer.CustomerId,
+                Customer = order.Customer
+            };
+            var address3 = new CustomerAddress
+            {
+                CustomerAddressId = 1,
+                Street = "Street3",
+                CustomerId = order.Customer.CustomerId,
+                Customer = order.Customer
+            };
+            var address4 = new CustomerAddress
+            {
+                CustomerAddressId = 2,
+                Street = "Street4",
+                CustomerId = order.Customer.CustomerId,
+                Customer = order.Customer
+            };
+            order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3, address4 };
+            address1.TrackingState = TrackingState.Added;
+            address2.TrackingState = TrackingState.Added;
+            address3.TrackingState = TrackingState.Modified;
+            address4.TrackingState = TrackingState.Deleted;
+
+            // Act
+            context.ApplyChanges(order);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
+            Assert.AreEqual(EntityState.Modified, context.Entry(address3).State);
+            Assert.AreEqual(EntityState.Deleted, context.Entry(address4).State);
         }
 
         #endregion
