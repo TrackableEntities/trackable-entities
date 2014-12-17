@@ -142,12 +142,11 @@ namespace TrackableEntities.EF5
                 || state == TrackingState.Unchanged
                 || state == TrackingState.Modified
                 || (state == TrackingState.Added
-                    && item.TrackingState != TrackingState.Modified
                     && item.TrackingState != TrackingState.Deleted))
             {
                 // Set added state for reference or child properties
                 context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Added); // Clone to avoid interference
-
+                    
                 // Set modified properties
                 if (item.TrackingState == TrackingState.Modified
                     && (state == null || state == TrackingState.Modified)
