@@ -514,18 +514,10 @@ namespace TrackableEntities.EF5.Tests
                 CustomerId = order.Customer.CustomerId,
                 Customer = order.Customer
             };
-            var address4 = new CustomerAddress
-            {
-                CustomerAddressId = 2,
-                Street = "Street4",
-                CustomerId = order.Customer.CustomerId,
-                Customer = order.Customer
-            };
-            order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3, address4 };
+            order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3 };
             address1.TrackingState = TrackingState.Added;
             address2.TrackingState = TrackingState.Added;
             address3.TrackingState = TrackingState.Modified;
-            address4.TrackingState = TrackingState.Modified;
 
             // Act
             context.ApplyChanges(order);
@@ -536,11 +528,10 @@ namespace TrackableEntities.EF5.Tests
             Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
             Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
             Assert.AreEqual(EntityState.Modified, context.Entry(address3).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(address4).State);
         }
 
         [Test]
-        public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Addresses_Multiple_Added_And_Modified_Deleted()
+        public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Addresses_Multiple_Added_And_Deleted()
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -567,18 +558,10 @@ namespace TrackableEntities.EF5.Tests
                 CustomerId = order.Customer.CustomerId,
                 Customer = order.Customer
             };
-            var address4 = new CustomerAddress
-            {
-                CustomerAddressId = 2,
-                Street = "Street4",
-                CustomerId = order.Customer.CustomerId,
-                Customer = order.Customer
-            };
-            order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3, address4 };
+            order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2, address3 };
             address1.TrackingState = TrackingState.Added;
             address2.TrackingState = TrackingState.Added;
-            address3.TrackingState = TrackingState.Modified;
-            address4.TrackingState = TrackingState.Deleted;
+            address3.TrackingState = TrackingState.Deleted;
 
             // Act
             context.ApplyChanges(order);
@@ -588,8 +571,7 @@ namespace TrackableEntities.EF5.Tests
             Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
             Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
             Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(address3).State);
-            Assert.AreEqual(EntityState.Deleted, context.Entry(address4).State);
+            Assert.AreEqual(EntityState.Deleted, context.Entry(address3).State);
         }
 
         #endregion
