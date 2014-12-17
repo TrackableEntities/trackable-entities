@@ -52,6 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\TrackableEntities.EF.5\Constants.cs">
+      <Link>Constants.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\Contexts\FamilyDbContext.cs">
       <Link>Contexts\FamilyDbContext.cs</Link>
     </Compile>

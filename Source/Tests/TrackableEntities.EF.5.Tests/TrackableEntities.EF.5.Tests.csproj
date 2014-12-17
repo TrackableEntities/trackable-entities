@@ -51,6 +51,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\TrackableEntities.EF.5\Constants.cs">
+      <Link>Constants.cs</Link>
+    </Compile>
     <Compile Include="Contexts\NorthwindDbContext.cs" />
     <Compile Include="LoadRelatedEntitiesTests.cs" />
     <Compile Include="NorthwindDbContextTests.cs" />

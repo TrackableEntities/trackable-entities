@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -789,7 +790,8 @@ namespace TrackableEntities.EF5.Tests
             Assert.AreEqual(EntityState.Unchanged, context.Entry(address3).State);
         }
 
-        [Test]
+        [Test, ExpectedException(typeof(InvalidOperationException), 
+            ExpectedMessage = Constants.ExceptionMessages.DeletedWithAddedChildren)]
         public void Apply_Changes_Should_Mark_Unchanged_Order_Deleted_Customer_With_Addresses_Multiple_Added()
         {
             // Arrange
