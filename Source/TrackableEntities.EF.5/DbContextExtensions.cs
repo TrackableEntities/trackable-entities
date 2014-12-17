@@ -142,8 +142,8 @@ namespace TrackableEntities.EF5
                 || state == TrackingState.Unchanged
                 || state == TrackingState.Modified
                 || (state == TrackingState.Added
-                    && item.TrackingState != TrackingState.Deleted
-                    && item.TrackingState != TrackingState.Modified))
+                    && item.TrackingState != TrackingState.Modified
+                    && item.TrackingState != TrackingState.Deleted))
             {
                 // Set added state for reference or child properties
                 context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Added); // Clone to avoid interference
@@ -453,14 +453,33 @@ namespace TrackableEntities.EF5
                 // Apply changes to 1-M and M-M properties
                 foreach (var colProp in navProp.AsCollectionProperty<IList>())
                 {
-                    var count = colProp.EntityCollection.Count;
-                    for (int i = count - 1; i > -1; i--)
-                    {
-                        var trackableChild = colProp.EntityCollection[i] as ITrackable;
-                        if (trackableChild != null)
-                            context.ApplyChanges(trackableChild, item, visitationHelper, navProp.Property.Name, state);
-                    }
+                    // Apply changes on collection property for each state.
+                    // Process added items first, then process others.
+                    ApplyChangesOnCollectionProperties(TrackingState.Added, true,
+                        navProp, colProp, context, item, visitationHelper, state);
+                    ApplyChangesOnCollectionProperties(TrackingState.Added, false,
+                        navProp, colProp, context, item, visitationHelper, state);
                 }
+            }
+        }
+
+        private static void ApplyChangesOnCollectionProperties(TrackingState stateFilter, bool includeState,
+            EntityNavigationProperty navProp, EntityCollectionProperty<IList> colProp,
+            DbContext context, ITrackable item, ObjectVisitationHelper visitationHelper, TrackingState? state = null)
+        {
+            // Apply changes to 1-M and M-M properties filtering by tracking state
+            var count = colProp.EntityCollection.Count;
+            for (int i = count - 1; i > -1; i--)
+            {
+                var trackableChild = colProp.EntityCollection[i] as ITrackable;
+                if (trackableChild != null)
+                {
+                    bool condition = includeState
+                        ? trackableChild.TrackingState == stateFilter
+                        : trackableChild.TrackingState != stateFilter;
+                    if (condition)
+                        context.ApplyChanges(trackableChild, item, visitationHelper, navProp.Property.Name, state);                    
+                } 
             }
         }
 
