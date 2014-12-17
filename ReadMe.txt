@@ -22,6 +22,11 @@ Studio, including both Code First from Database and EF Designer
 from Database (aka Model First, or Database First). All NuGet
 packages were updated in the samples and templates.
 
+Version 2.2 addressed numerous issues with client and server-side
+class libraries and included team member contributions. The
+complete release notes can be found here:
+https://trackable.codeplex.com/releases/view/126165
+
 The repository contains source code, NuGet packages, samples,
 and Visual Studio Extension projects.
 
