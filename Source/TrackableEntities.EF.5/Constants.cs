@@ -10,7 +10,6 @@ namespace TrackableEntities.EF5
     {
         public static class ExceptionMessages
         {
-            public const string DuplicatePrimaryKey = "another entity of the same type already has the same primary key value";
             public const string DeletedWithAddedChildren =
                 "An entity may not be marked as Deleted if it has related entities which are marked as Added. " +
                 "Remove added related entities before deleting a parent entity.";

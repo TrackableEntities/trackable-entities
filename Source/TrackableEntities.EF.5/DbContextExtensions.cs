@@ -121,9 +121,7 @@ namespace TrackableEntities.EF5
                 }
                 catch (InvalidOperationException invalidOpEx)
                 {
-                    if (invalidOpEx.Message.Contains(Constants.ExceptionMessages.DuplicatePrimaryKey))
-                        throw new InvalidOperationException(Constants.ExceptionMessages.DeletedWithAddedChildren, invalidOpEx);
-                    throw;
+                    throw new InvalidOperationException(Constants.ExceptionMessages.DeletedWithAddedChildren, invalidOpEx);
                 }
                 return;
             }
