@@ -19,20 +19,20 @@ namespace TrackableEntities.Tests.Acceptance.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "1.9.0.77")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("Retreive Entities Feature")]
-    public partial class RetreiveEntitiesFeatureFeature
+    [NUnit.Framework.DescriptionAttribute("Retreive Entities")]
+    public partial class RetreiveEntities
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "RetreiveEntitiesFeature.feature"
+#line 1 "RetreiveEntities.feature"
 #line hidden
         
         [NUnit.Framework.TestFixtureSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Retreive Entities Feature", "In order to retrieve entities\r\nAs a Web API client\r\nI want to retrieve entities f" +
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Retreive Entities", "In order to retrieve entities\r\nAs a Web API client\r\nI want to retrieve entities f" +
                     "rom the database", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }

@@ -90,37 +90,37 @@ namespace TrackableEntities.EF.Tests.Mocks
                     new Order { OrderId = 10248, OrderDate = DateTime.Parse("1996-07-04"), CustomerId = "VINET", Customer = Customers[14],
                         OrderDetails = new List<OrderDetail>
                             {
-                                new OrderDetail{ ProductId = 11, OrderId = 10248, Quantity = 12, UnitPrice = 14.0000M, Product = Products[10] },
-                                new OrderDetail{ ProductId = 42, OrderId = 10248, Quantity = 10, UnitPrice = 9.8000M, Product = Products[23] },
-                                new OrderDetail{ ProductId = 72, OrderId = 10248, Quantity = 5, UnitPrice = 34.8000M, Product = Products[28] },
-                                new OrderDetail{ ProductId = 4, OrderId = 10248, Quantity = 4, UnitPrice = 40.0000M, Product = Products[3] }
+                                new OrderDetail{ OrderDetailId = 1, ProductId = 11, OrderId = 10248, Quantity = 12, UnitPrice = 14.0000M, Product = Products[10] },
+                                new OrderDetail{ OrderDetailId = 2, ProductId = 42, OrderId = 10248, Quantity = 10, UnitPrice = 9.8000M, Product = Products[23] },
+                                new OrderDetail{ OrderDetailId = 3, ProductId = 72, OrderId = 10248, Quantity = 5, UnitPrice = 34.8000M, Product = Products[28] },
+                                new OrderDetail{ OrderDetailId = 4, ProductId = 4, OrderId = 10248, Quantity = 4, UnitPrice = 40.0000M, Product = Products[3] }
                             }},
                     new Order { OrderId = 10249, OrderDate = DateTime.Parse("1996-07-05"), CustomerId = "TOMSP", Customer = Customers[12],
                         OrderDetails = new List<OrderDetail>
                             {
-                                new OrderDetail{ ProductId = 14, OrderId = 10249, Quantity = 9, UnitPrice = 18.6000M, Product = Products[13] },
-                                new OrderDetail{ ProductId = 51, OrderId = 10249, Quantity = 40, UnitPrice = 42.4000M, Product = Products[24] }
+                                new OrderDetail{ OrderDetailId = 5, ProductId = 14, OrderId = 10249, Quantity = 9, UnitPrice = 18.6000M, Product = Products[13] },
+                                new OrderDetail{ OrderDetailId = 6, ProductId = 51, OrderId = 10249, Quantity = 40, UnitPrice = 42.4000M, Product = Products[24] }
                             }},
                     new Order { OrderId = 10250, OrderDate = DateTime.Parse("1996-07-08"), CustomerId = "HANAR", Customer = Customers[10],
                         OrderDetails = new List<OrderDetail>
                             {
-                                new OrderDetail{ ProductId = 41, OrderId = 10250, Quantity = 10, UnitPrice = 7.7000M, Product = Products[22] },
-                                new OrderDetail{ ProductId = 51, OrderId = 10250, Quantity = 12, UnitPrice = 42.4000M, Product = Products[24] },
-                                new OrderDetail{ ProductId = 65, OrderId = 10250, Quantity = 12, UnitPrice = 16.8000M, Product = Products[27] }
+                                new OrderDetail{ OrderDetailId = 7, ProductId = 41, OrderId = 10250, Quantity = 10, UnitPrice = 7.7000M, Product = Products[22] },
+                                new OrderDetail{ OrderDetailId = 8, ProductId = 51, OrderId = 10250, Quantity = 12, UnitPrice = 42.4000M, Product = Products[24] },
+                                new OrderDetail{ OrderDetailId = 9, ProductId = 65, OrderId = 10250, Quantity = 12, UnitPrice = 16.8000M, Product = Products[27] }
                             }},
-                    new Order { OrderId = 10251, OrderDate = DateTime.Parse("1996-07-08"), CustomerId = "VICTE", Customer = Customers[14],
+                    new Order { OrderId = 10251, OrderDate = DateTime.Parse("1996-07-08"), CustomerId = "VICTE", Customer = Customers[13],
                         OrderDetails = new List<OrderDetail>
                             {
-                                new OrderDetail{ ProductId = 22, OrderId = 10251, Quantity = 6, UnitPrice = 16.8000M, Product = Products[20] },
-                                new OrderDetail{ ProductId = 57, OrderId = 10251, Quantity = 15, UnitPrice = 15.6000M, Product = Products[25] },
-                                new OrderDetail{ ProductId = 65, OrderId = 10251, Quantity = 20, UnitPrice = 16.8000M, Product = Products[27] }
+                                new OrderDetail{ OrderDetailId = 10, ProductId = 22, OrderId = 10251, Quantity = 6, UnitPrice = 16.8000M, Product = Products[20] },
+                                new OrderDetail{ OrderDetailId = 11, ProductId = 57, OrderId = 10251, Quantity = 15, UnitPrice = 15.6000M, Product = Products[25] },
+                                new OrderDetail{ OrderDetailId = 12, ProductId = 65, OrderId = 10251, Quantity = 20, UnitPrice = 16.8000M, Product = Products[27] }
                             }},
                     new Order { OrderId = 10252, OrderDate = DateTime.Parse("1996-07-09"), CustomerId = "SUPRD", Customer = Customers[11],
                         OrderDetails = new List<OrderDetail>
                             {
-                                new OrderDetail{ ProductId = 20, OrderId = 10252, Quantity = 40, UnitPrice = 64.8000M, Product = Products[19] },
-                                new OrderDetail{ ProductId = 33, OrderId = 10252, Quantity = 25, UnitPrice = 2.0000M, Product = Products[21] },
-                                new OrderDetail{ ProductId = 60, OrderId = 10252, Quantity = 40, UnitPrice = 27.2000M, Product = Products[26] },
+                                new OrderDetail{ OrderDetailId = 13, ProductId = 20, OrderId = 10252, Quantity = 40, UnitPrice = 64.8000M, Product = Products[19] },
+                                new OrderDetail{ OrderDetailId = 14, ProductId = 33, OrderId = 10252, Quantity = 25, UnitPrice = 2.0000M, Product = Products[21] },
+                                new OrderDetail{ OrderDetailId = 15, ProductId = 60, OrderId = 10252, Quantity = 40, UnitPrice = 27.2000M, Product = Products[26] },
                             }},
                 };
             Territories = new List<Territory>

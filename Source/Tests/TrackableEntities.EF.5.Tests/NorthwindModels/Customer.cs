@@ -16,6 +16,7 @@ namespace TrackableEntities.EF.Tests.NorthwindModels
 
         public List<Order> Orders { get; set; }
         public CustomerSetting CustomerSetting { get; set; }
+        public List<CustomerAddress> CustomerAddresses { get; set; }
 
         [NotMapped]
         public TrackingState TrackingState { get; set; }

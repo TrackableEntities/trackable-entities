@@ -641,10 +641,10 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                             { 
-                                Children = new ChangeTrackingCollection<GrandChild>
+                                Children = new ChangeTrackingCollection<Child>
                                 { 
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 } 
                             }, 
                         new Child("Child2")
@@ -669,10 +669,10 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                             { 
-                                Children = new ChangeTrackingCollection<GrandChild>
+                                Children = new ChangeTrackingCollection<Child>
                                 { 
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 } 
                             }, 
                         new Child("Child2")
@@ -698,17 +698,17 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                             { 
-                                Children = new ChangeTrackingCollection<GrandChild>
+                                Children = new ChangeTrackingCollection<Child>
                                 { 
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 } 
                             }, 
                         new Child("Child2")
                     }
             };
             var changeTracker = new ChangeTrackingCollection<Parent>(parent);
-            parent.Children[0].Children.Add(new GrandChild("Grandchild3"));
+            parent.Children[0].Children.Add(new Child("Grandchild3"));
 
             // Act
             bool hasChanges = parent.HasChanges();
@@ -727,10 +727,10 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                             { 
-                                Children = new ChangeTrackingCollection<GrandChild>
+                                Children = new ChangeTrackingCollection<Child>
                                 { 
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 } 
                             }, 
                         new Child("Child2")
@@ -1130,9 +1130,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             // Arrange
             var database = new MockNorthwind();
             var order = database.Orders[0];
+            var order3 = database.Orders[3];
             var customer = order.Customer;
             var details = order.OrderDetails;
-            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var changeTracker = new ChangeTrackingCollection<Order>(order, order3);
 
             // Act
             var clonedChangeTracker = changeTracker.Clone();
@@ -1143,6 +1144,9 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.AreNotSame(details, clonedChangeTracker[0].OrderDetails);
             Assert.IsTrue(order.IsEquatable(clonedChangeTracker[0]));
             Assert.IsTrue(customer.IsEquatable(clonedChangeTracker[0].Customer));
+            Assert.IsTrue(object.ReferenceEquals(order.Customer, order3.Customer));
+            Assert.IsFalse(object.ReferenceEquals(order.Customer, clonedChangeTracker[0].Customer));
+            Assert.IsTrue(object.ReferenceEquals(clonedChangeTracker[0].Customer, clonedChangeTracker[1].Customer));
         }
 
         #endregion

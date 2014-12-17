@@ -23,6 +23,14 @@
             <param name="context">Used to query and save changes to a database</param>
             <param name="items">Objects that implement ITrackable</param>
         </member>
+        <member name="M:TrackableEntities.EF6.DbContextExtensions.GetEntitySetName(System.Data.Entity.DbContext,System.Type)">
+            <summary>
+            For the given entity type return the EntitySet name qualified by container name.
+            </summary>
+            <param name="dbContext">Used to query and save changes to a database</param>
+            <param name="entityType">Type of an entity</param>
+            <returns></returns>
+        </member>
         <member name="M:TrackableEntities.EF6.DbContextExtensions.LoadRelatedEntities(System.Data.Entity.DbContext,TrackableEntities.ITrackable,System.Boolean)">
             <summary>
             Load related entities for an object graph.

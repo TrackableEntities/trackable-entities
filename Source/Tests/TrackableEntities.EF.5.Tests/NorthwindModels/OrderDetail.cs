@@ -8,10 +8,10 @@ namespace TrackableEntities.EF.Tests.NorthwindModels
     public partial class OrderDetail : ITrackable
     {
         [Key, Column(Order = 1)]
+        public int OrderDetailId { get; set; }
         public int OrderId { get; set; }
         [ForeignKey("OrderId")]
         public Order Order { get; set; }
-        [Key, Column(Order = 2)]
         public int ProductId { get; set; }
         [ForeignKey("ProductId")]
         public Product Product { get; set; }

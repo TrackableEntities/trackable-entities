@@ -100,7 +100,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             var parent = _family.Parent;
 
             // Act
-            parent.SetState(TrackingState.Added, null, null);
+            parent.SetState(TrackingState.Added, null);
 
             // Assert
             IEnumerable<TrackingState> trackings = GetStates(parent);
@@ -114,7 +114,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             var parent = _family.Parent;
 
             // Act
-            parent.SetState(TrackingState.Deleted, null, null);
+            parent.SetState(TrackingState.Deleted, null);
 
             // Assert
             IEnumerable<TrackingState> trackings = GetStates(parent);
@@ -144,7 +144,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             });
 
             // Act
-            parent.SetState(TrackingState.Deleted, null, null);
+            parent.SetState(TrackingState.Deleted, null);
 
             // Assert
             IEnumerable<TrackingState> trackings = GetStates(parent);
@@ -394,10 +394,10 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                         { 
-                            Children = new ChangeTrackingCollection<GrandChild>
+                            Children = new ChangeTrackingCollection<Child>
                                 {
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 }
                         }
                     }
@@ -423,10 +423,10 @@ namespace TrackableEntities.Client.Tests.Extensions
                     {
                         new Child("Child1")
                         { 
-                            Children = new ChangeTrackingCollection<GrandChild>
+                            Children = new ChangeTrackingCollection<Child>
                                 {
-                                    new GrandChild("Grandchild1"),
-                                    new GrandChild("Grandchild2")
+                                    new Child("Grandchild1"),
+                                    new Child("Grandchild2")
                                 }
                         }
                     }
@@ -534,15 +534,16 @@ namespace TrackableEntities.Client.Tests.Extensions
             customer1.SetEntityIdentifier();
             Guid entityIdentifier = GetEntityIdentifier(customer1);
             customer2.SetEntityIdentifier(entityIdentifier);
-
-            customer1.SetEntityIdentifier(default(Guid)); // Cleared
-            customer1.SetEntityIdentifier(); // Reset
+            bool wereEquatable = customer1.IsEquatable(customer2);
 
             // Act
+            customer1.SetEntityIdentifier(default(Guid)); // Cleared
+            customer1.SetEntityIdentifier(); // Reset
             bool areEquatable = customer1.IsEquatable(customer2);
 
             // Assert
-            Assert.IsTrue(areEquatable);
+            Assert.IsTrue(wereEquatable);
+            Assert.IsFalse(areEquatable);
         }
 
         #endregion

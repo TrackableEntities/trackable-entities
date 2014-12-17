@@ -58,11 +58,16 @@ namespace TrackableEntities.Client
         }
 
         private static void MergeChanges(this ITrackingCollection originalChangeTracker,
-            IEnumerable<ITrackable> updatedItems, ITrackable updatedItemParent, bool isTrackableRef = false)
+            IEnumerable<ITrackable> updatedItems, ObjectVisitationHelper visitationHelper, bool isTrackableRef = false)
         {
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+
             // Process each updated item
             foreach (var updatedItem in updatedItems)
             {
+                // Prevent endless recursion
+                if (!visitationHelper.TryVisit(updatedItem)) continue;
+
                 // Get matching orig item
                 var origItem = originalChangeTracker.Cast<ITrackable>()
                     .GetEquatableItem(updatedItem, isTrackableRef);
@@ -74,39 +79,29 @@ namespace TrackableEntities.Client
                     if (updatedItem.GetEntityIdentifier() == default(Guid))
                     {
                         Guid origEntityIdentifier = origItem.GetEntityIdentifier();
-                        updatedItem.SetEntityIdentity(origEntityIdentifier);
-                        updatedItem.SetEntityIdentifier(); 
+                        updatedItem.SetEntityIdentifier(origEntityIdentifier); 
                     }
                 }
                 
                 // Iterate entity properties
-                foreach (var prop in updatedItem.GetType().GetProperties())
+                foreach (var navProp in updatedItem.GetNavigationProperties())
                 {
                     // Set to 1-1 and M-1 properties
-                    var updatedTrackableRef = prop.GetValue(updatedItem, null) as ITrackable;
-
-                    // Continue recursion if trackable is not same type as parent
-                    if (updatedTrackableRef != null && (updatedItemParent == null
-                        || updatedTrackableRef.GetType() != updatedItemParent.GetType()))
+                    foreach (var refProp in navProp.AsReferenceProperty())
                     {
-                        ITrackingCollection refPropChangeTracker = GetRefPropChangeTracker(origItem, prop.Name);
+                        ITrackingCollection refPropChangeTracker = origItem.GetRefPropertyChangeTracker(navProp.Property.Name);
                         if (refPropChangeTracker != null)
-                            refPropChangeTracker.MergeChanges(new[] { updatedTrackableRef }, updatedItem, true);
+                            refPropChangeTracker.MergeChanges(new[] { refProp.EntityReference }, visitationHelper, true);
                     }
 
                     // Set 1-M and M-M properties
-                    var updatedChildItems = prop.GetValue(updatedItem, null) as IList;
-                    var origItemsChangeTracker = prop.GetValue(origItem, null) as ITrackingCollection;
-                    if (updatedChildItems != null && origItemsChangeTracker != null
-                        && updatedChildItems.Count > 0)
+                    foreach (var colProp in navProp.AsCollectionProperty())
                     {
-                        // Continue recursion if trackable is not same type as parent
-                        var updatedTrackableChild = updatedChildItems[0] as ITrackable;
-                        if (updatedTrackableChild != null && (updatedItemParent == null
-                            || updatedTrackableChild.GetType() != updatedItemParent.GetType()))
+                        var origItemsChangeTracker = origItem.GetEntityCollectionProperty<ITrackingCollection>(navProp.Property).EntityCollection;
+                        if (origItemsChangeTracker != null)
                         {
                             // Merge changes into trackable children
-                            origItemsChangeTracker.MergeChanges(updatedChildItems.Cast<ITrackable>(), updatedItem);
+                            origItemsChangeTracker.MergeChanges(colProp.EntityCollection, visitationHelper);
                         }
                     }
                 }
@@ -129,47 +124,61 @@ namespace TrackableEntities.Client
         /// <returns>True if there are changes in the object graph</returns>
         public static bool HasChanges(this ITrackable item)
         {
-            bool hasChanges = item.HasChanges(null);
+            var visitationHelper = new ObjectVisitationHelper();
+            bool hasChanges = item.HasChanges(visitationHelper,
+                new Dictionary<ITrackable, bool>(visitationHelper));
             return hasChanges;
         }
 
-        private static bool HasChanges(this ITrackable item, ITrackable parent)
+        private static bool HasChanges(this ITrackable item,
+            ObjectVisitationHelper visitationHelper,
+            Dictionary<ITrackable, bool> cachedResults)
         {
+            // Prevent endless recursion
+            if (!visitationHelper.TryVisit(item))
+            {
+                bool result;
+                if (cachedResults.TryGetValue(item, out result)) return result;
+
+                // if the circle closes and we reach again the item for which
+                // we are currently determining "HasChanges" and so far we encounter
+                // no changed items along the way, then just assume "no change".
+                // However after inspection of other branches this result may still be corrected.
+                return false;
+            }
+
             // See if item has changes
             bool itemHasChanges = item.TrackingState != TrackingState.Unchanged;
             if (itemHasChanges) return true;
 
             // Recursively see if trackable properties have changes
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
                 // Process 1-1 and M-1 properties
-                var trackableRef = prop.GetValue(item, null) as ITrackable;
-
-                // Continue recursion if trackable is not same type as parent
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
                     // See if ref prop has changes
-                    bool refPropHasChanges = trackableRef.HasChanges(item);
+                    bool refPropHasChanges = refProp.EntityReference.HasChanges(visitationHelper, cachedResults);
+                    cachedResults[refProp.EntityReference] = refPropHasChanges;
                     if (refPropHasChanges) return true;
                 }
 
                 // Process 1-M and M-M properties
-                var trackingColl = prop.GetValue(item, null) as ITrackingCollection;
-                if (trackingColl != null)
+                foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
                 {
                     // See if there are any cached deletes
-                    var cachedDeletes = trackingColl.GetChanges(true);
+                    var cachedDeletes = colProp.EntityCollection.GetChanges(true);
                     if (cachedDeletes.Count > 0) return true;
 
                     // See if child entities have changes
-                    foreach (ITrackable trackableChild in trackingColl)
+                    foreach (ITrackable trackableChild in colProp.EntityCollection)
                     {
-                        // Continue recursion if trackable is not same type as parent
-                        if (trackableChild != null &&
-                            (parent == null || (trackableChild.GetType() != parent.GetType())))
+                        // Continue recursion
+                        // REVISIT: shall we make a "shallow" scan in case of M-M?
+                        if (trackableChild != null)
                         {
-                            bool childHasChanges = trackableChild.HasChanges(item);
+                            bool childHasChanges = trackableChild.HasChanges(visitationHelper, cachedResults);
+                            cachedResults[trackableChild] = childHasChanges;
                             if (childHasChanges) return true;
                         }
                     }
@@ -197,7 +206,7 @@ namespace TrackableEntities.Client
         private static IEnumerable<T> CloneEntities<T>(this IEnumerable<T> items)
             where T : class, ITrackable
         {
-            return items.Select(item => item.Clone());
+            return items.Clone();
         }
 
         private static ITrackable GetEquatableItem
@@ -208,55 +217,68 @@ namespace TrackableEntities.Client
             return sourceItems.FirstOrDefault(t => t.IsEquatable(sourceItem));
         }
 
-        private static ITrackingCollection GetRefPropChangeTracker(ITrackable originalItem, string propertyName)
-        {
-            PropertyInfo refChangeTrackerProp = GetRefChangeTrackerProperty(originalItem.GetType(), propertyName);
-            if (refChangeTrackerProp == null) return null;
-            var refPropChangeTracker = refChangeTrackerProp.GetValue(originalItem, null) as ITrackingCollection;
-            return refPropChangeTracker;
-        }
-
-        private static PropertyInfo GetRefChangeTrackerProperty(Type type, string propertyName)
-        {
-            var prop = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-                .SingleOrDefault(p => p.Name == propertyName + "ChangeTracker");
-            return prop;
-        }
-
         private static void SetEntityProperties(this ITrackable targetItem, ITrackable sourceItem,
             ITrackingCollection changeTracker)
         {
-            // Iterate properties
-            foreach (var prop in targetItem.GetType().GetProperties())
+            // List of 'prop.SetValue' actions
+            var actions = new List<Action>();
+
+            // Iterate simple properties
+            foreach (var prop in targetItem.GetType().GetProperties().Where(p => p.CanWrite)
+                .Except(targetItem.GetNavigationProperties(false).Select(np => np.Property)))
             {
-                // Get source item prop value
-                object sourceValue = prop.GetValue(sourceItem, null);
-                object targetValue = prop.GetValue(targetItem, null);
-
-                // Skip non-null trackable and list properties
-                if (typeof(ITrackingCollection).IsAssignableFrom(prop.PropertyType)
-                    || (targetValue != null && typeof(ITrackable).IsAssignableFrom(prop.PropertyType)))
-                    continue;
-
                 // Skip tracking properties
                 if (prop.Name == Constants.TrackingProperties.TrackingState
                     || prop.Name == Constants.TrackingProperties.ModifiedProperties)
                     continue;
 
+                // Get source item prop value
+                object sourceValue = prop.GetValue(sourceItem, null);
+                object targetValue = prop.GetValue(targetItem, null);
+
                 // Continue if source is null or source and target equal
                 if (sourceValue == null || sourceValue.Equals(targetValue))
                     continue;
 
-                // Turn off change-tracking
-                bool isTracking = changeTracker.Tracking;
-                changeTracker.Tracking = false;
-
-                // Set target item prop value
-                prop.SetValue(targetItem, sourceValue, null);
-
-                // Reset change-tracking
-                changeTracker.Tracking = isTracking;
+                // Deferred 'SetValue'
+                actions.Add(() => prop.SetValue(targetItem, sourceValue, null));
             }
+
+            // Iterate entity reference properties (skip collections)
+            foreach (var refProp in targetItem
+                .GetNavigationProperties(false)
+                .OfReferenceType()
+                .Where(np => np.Property.CanWrite))
+            {
+                ITrackable targetValue = refProp.EntityReference;
+
+                // Skip non-null trackable
+                if (targetValue != null) continue;
+
+                ITrackable sourceValue = sourceItem.GetEntityReferenceProperty(refProp.Property).EntityReference;
+
+                // Continue if source is null
+                if (sourceValue == null) continue;
+
+                // Deferred 'SetValue'
+                actions.Add(() => refProp.Property.SetValue(targetItem, sourceValue, null));
+            }
+
+            // Nothing to do?
+            if (!actions.Any()) return;
+
+            // Turn off change-tracking
+            bool isTracking = changeTracker.Tracking;
+            changeTracker.Tracking = false;
+
+            // Set target item prop value
+            foreach (var action in actions)
+            {
+                action();
+            }
+
+            // Reset change-tracking
+            changeTracker.Tracking = isTracking;
         }
     }
 }

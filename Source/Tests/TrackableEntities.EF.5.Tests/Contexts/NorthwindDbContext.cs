@@ -11,6 +11,11 @@ namespace TrackableEntities.EF.Tests.Contexts
         private const string TestDbName = "NorthwindTestDbv5";        
 #endif
 
+        public NorthwindDbContext(string connectionString)
+            : base(connectionString)
+        {
+        }
+
         public NorthwindDbContext(CreateDbOptions createDbOptions = CreateDbOptions.CreateDatabaseIfNotExists)
             : base(TestDbName)
         {
@@ -34,6 +39,7 @@ namespace TrackableEntities.EF.Tests.Contexts
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public DbSet<CustomerSetting> CustomerSettings { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }

@@ -8,6 +8,18 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
     [JsonObject(IsReference = true)]
     public class OrderDetail : ModelBase<OrderDetail>, ITrackable, IEquatable<OrderDetail>
     {
+        private int _orderDetailId;
+        public int OrderDetailId
+        {
+            get { return _orderDetailId; }
+            set
+            {
+                if (value == _orderDetailId) return;
+                _orderDetailId = value;
+                NotifyPropertyChanged(m => m.OrderDetailId);
+            }
+        }
+
         private int _productId;
         public int ProductId
         {

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata>
+        <id>TrackableEntities.Client</id>
+    	<version>$PackageVersion$</version>
+        <title>Trackable Entities Client</title>
+        <authors>Tony Sneed</authors>
+        <owners>Tony Sneed</owners>
+        <licenseUrl>http://trackable.codeplex.com/license</licenseUrl>
+        <projectUrl>http://trackable.codeplex.com</projectUrl>
+        <iconUrl>http://tonysneed.com/images/trackable/tracking-small.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Change-tracking utility for client applications that wish to transmit entities to a web service for batch updates.</description>
+        <language>en-US</language>
+        <tags>change-tracking entity-framework n-tier wcf web-api</tags>
+        <dependencies>
+            <group targetFramework=".NETPortable0.0-net45+sl5+win8+windowsphone8">
+                <dependency id="Newtonsoft.Json" version="6.0.3" />
+                <dependency id="TrackableEntities.Common" version="$PackageVersion$" />
+            </group>
+        </dependencies>
+    </metadata>
+</package>

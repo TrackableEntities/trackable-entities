@@ -34,8 +34,8 @@ namespace TrackableEntities.Tests.Acceptance.Helpers
                         CustomerName = customerName
                     };
                     context.Customers.Add(customer);
+                    context.SaveChanges();
                 }
-                context.SaveChanges();
             }
         }
 
@@ -90,11 +90,19 @@ namespace TrackableEntities.Tests.Acceptance.Helpers
                     UnitPrice = 20M,
                     Category = category2
                 };
+                var product5 = new Product
+                {
+                    ProductName = "Test Product 5",
+                    UnitPrice = 20M,
+                    Category = category2
+                };
+
 
                 context.Products.Add(product1);
                 context.Products.Add(product2);
                 context.Products.Add(product3);
                 context.Products.Add(product4);
+                context.Products.Add(product5);
                 context.SaveChanges();
                 int[] ids =
                 {
@@ -102,6 +110,7 @@ namespace TrackableEntities.Tests.Acceptance.Helpers
                     product2.ProductId,
                     product3.ProductId,
                     product4.ProductId,
+                    product5.ProductId,
                 };
                 return ids;
             }

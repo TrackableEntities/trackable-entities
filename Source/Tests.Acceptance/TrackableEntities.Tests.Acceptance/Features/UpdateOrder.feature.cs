@@ -19,20 +19,20 @@ namespace TrackableEntities.Tests.Acceptance.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "1.9.0.77")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("Update Order Feature")]
-    public partial class UpdateOrderFeatureFeature
+    [NUnit.Framework.DescriptionAttribute("Update Order")]
+    public partial class UpdateOrderFeature
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "UpdateOrderFeature.feature"
+#line 1 "UpdateOrder.feature"
 #line hidden
         
         [NUnit.Framework.TestFixtureSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Update Order Feature", "In order to update orders\r\nAs a Web API client\r\nI want to save orders to the data" +
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Update Order", "In order to update orders\r\nAs a Web API client\r\nI want to save orders to the data" +
                     "base", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -116,11 +116,11 @@ this.ScenarioSetup(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Delete Order")]
+        [NUnit.Framework.DescriptionAttribute("Add Order Details")]
         [NUnit.Framework.CategoryAttribute("update_orders")]
-        public virtual void DeleteOrder()
+        public virtual void AddOrderDetails()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Delete Order", new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add Order Details", new string[] {
                         "update_orders"});
 #line 24
 this.ScenarioSetup(scenarioInfo);
@@ -132,8 +132,34 @@ this.ScenarioSetup(scenarioInfo);
 #line 25
  testRunner.Given("the following existing customer orders", ((string)(null)), table3, "Given ");
 #line 28
- testRunner.When("I submit a DELETE to delete an order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.And("order details are added", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 29
+ testRunner.When("I submit a PUT to modify an order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 30
+ testRunner.Then("the request should return the added order details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Delete Order")]
+        [NUnit.Framework.CategoryAttribute("update_orders")]
+        public virtual void DeleteOrder()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Delete Order", new string[] {
+                        "update_orders"});
+#line 33
+this.ScenarioSetup(scenarioInfo);
+#line hidden
+            TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                        "CustomerId"});
+            table4.AddRow(new string[] {
+                        "ABCD"});
+#line 34
+ testRunner.Given("the following existing customer orders", ((string)(null)), table4, "Given ");
+#line 37
+ testRunner.When("I submit a DELETE to delete an order", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 38
  testRunner.Then("the order should be deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

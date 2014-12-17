@@ -9,8 +9,10 @@ using NUnit.Framework;
 using TrackableEntities.EF.Tests.Contexts;
 #if EF_6
 using TrackableEntities.EF6;
+using System.Data.Entity.Core.EntityClient;
 #else
 using TrackableEntities.EF5;
+using System.Data.EntityClient;
 #endif
 using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.Mocks;
@@ -288,6 +290,42 @@ namespace TrackableEntities.EF5.Tests
         }
 
         [Test]
+        public void Edmx_LoadRelatedEntities_Should_Populate_Multiple_Orders_With_Customer()
+        {
+            // Create DB usng CodeFirst context
+            string providerConnectionString;
+            using (var cf = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions))
+            {
+                providerConnectionString = cf.Database.Connection.ConnectionString;
+            }
+
+            // Connect using ModelFirst context
+            var asm = System.Reflection.Assembly.GetExecutingAssembly();
+            var paths = from res in asm.GetManifestResourceNames()
+                        //where res.Contains("Northwind")
+                        where new string[] { ".csdl", ".ssdl", ".msl" }.Contains(System.IO.Path.GetExtension(res))
+                        select string.Format("res://{0}/{1}", asm.GetName().Name, res);
+
+            var conn = new EntityConnectionStringBuilder();
+            conn.Metadata = string.Join("|", paths);
+            conn.Provider = "System.Data.SqlClient";
+            conn.ProviderConnectionString = providerConnectionString;
+            var context = new TrackableEntities.EF.Tests.Contexts.NorthwindDbContext(conn.ToString());
+            Database.SetInitializer<TrackableEntities.EF.Tests.Contexts.NorthwindDbContext>(null);
+
+            // Arrange
+            var orders = CreateTestOrders(context);
+            orders.ForEach(o => o.TrackingState = TrackingState.Added);
+
+            // Act
+            context.LoadRelatedEntities(orders);
+
+            // Assert
+            Assert.IsFalse(orders.Any(o => o.Customer == null));
+            Assert.IsFalse(orders.Any(o => o.Customer.CustomerId != o.CustomerId));
+        }
+
+        [Test]
         public void LoadRelatedEntities_Should_Populate_Order_With_Customer_With_Territory()
         {
             // Arrange
@@ -317,6 +355,8 @@ namespace TrackableEntities.EF5.Tests
             // Assert
             Assert.IsNotNull(order.Customer.CustomerSetting);
             Assert.AreEqual(order.Customer.CustomerId, order.Customer.CustomerSetting.CustomerId);
+            Assert.IsNotNull(order.Customer.CustomerSetting.Customer);
+            Assert.IsTrue(ReferenceEquals(order.Customer, order.Customer.CustomerSetting.Customer));
         }
 
 #if EF_6

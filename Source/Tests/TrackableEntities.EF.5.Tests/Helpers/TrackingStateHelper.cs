@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TrackableEntities.Common;
 
 namespace TrackableEntities.EF.Tests
 {
@@ -8,28 +9,26 @@ namespace TrackableEntities.EF.Tests
     {
         // Recursively set tracking state
         public static void SetTrackingState(this ITrackable item,
-            TrackingState state, ITrackable parent = null)
+            TrackingState state, ObjectVisitationHelper visitationHelper = null)
         {
-            foreach (var prop in item.GetType().GetProperties())
+            // Prevent endless recursion
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+            if (!visitationHelper.TryVisit(item)) return;
+
+            foreach (var navProp in item.GetNavigationProperties())
             {
-                var trackableRef = prop.GetValue(item, null) as ITrackable;
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    trackableRef.SetTrackingState(state, parent);
-                    trackableRef.TrackingState = state;
+                    refProp.EntityReference.SetTrackingState(state, visitationHelper);
+                    refProp.EntityReference.TrackingState = state;
                 }
 
-                var trackingColl = prop.GetValue(item, null) as ICollection;
-                if (trackingColl != null)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    foreach (ITrackable child in trackingColl)
+                    foreach (ITrackable child in colProp.EntityCollection)
                     {
-                        if (parent == null || child.GetType() != parent.GetType())
-                        {
-                            child.SetTrackingState(state, parent);
-                            child.TrackingState = state;
-                        }
+                        child.SetTrackingState(state, visitationHelper);
+                        child.TrackingState = state;
                     }
                 }
             }
@@ -38,33 +37,31 @@ namespace TrackableEntities.EF.Tests
         // Recursively get tracking states
         public static IEnumerable<TrackingState> GetTrackingStates
             (this ITrackable item, TrackingState? trackingState = null,
-            ITrackable parent = null)
+            ObjectVisitationHelper visitationHelper = null)
         {
-            foreach (var prop in item.GetType().GetProperties())
+            // Prevent endless recursion
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+            if (!visitationHelper.TryVisit(item)) yield break;
+
+            foreach (var navProp in item.GetNavigationProperties())
             {
-                var trackableRef = prop.GetValue(item, null) as ITrackable;
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    foreach (var state in trackableRef.GetTrackingStates(parent: item))
+                    foreach (var state in refProp.EntityReference.GetTrackingStates(visitationHelper: visitationHelper))
                     {
                         if (trackingState == null || state == trackingState)
                             yield return state;
                     }
                 }
 
-                var trackingColl = prop.GetValue(item, null) as ICollection;
-                if (trackingColl != null)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    foreach (ITrackable child in trackingColl)
+                    foreach (ITrackable child in colProp.EntityCollection)
                     {
-                        if (parent == null || child.GetType() != parent.GetType())
+                        foreach (var state in child.GetTrackingStates(visitationHelper: visitationHelper))
                         {
-                            foreach (var state in child.GetTrackingStates(parent: item))
-                            {
-                                if (trackingState == null || state == trackingState)
-                                    yield return state;
-                            }
+                            if (trackingState == null || state == trackingState)
+                                yield return state;
                         }
                     }
                 }
@@ -74,31 +71,29 @@ namespace TrackableEntities.EF.Tests
 
         // Recursively get modified properties
         public static IEnumerable<IEnumerable<string>> GetModifiedProperties
-            (this ITrackable item, ITrackable parent = null)
+            (this ITrackable item, ObjectVisitationHelper visitationHelper = null)
         {
-            foreach (var prop in item.GetType().GetProperties())
+            // Prevent endless recursion
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+            if (!visitationHelper.TryVisit(item)) yield break;
+
+            foreach (var navProp in item.GetNavigationProperties())
             {
-                var trackableRef = prop.GetValue(item, null) as ITrackable;
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    foreach (var modifiedProps in trackableRef.GetModifiedProperties(item))
+                    foreach (var modifiedProps in refProp.EntityReference.GetModifiedProperties(visitationHelper))
                     {
                         yield return modifiedProps;
                     }
                 }
 
-                var trackingColl = prop.GetValue(item, null) as ICollection;
-                if (trackingColl != null)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    foreach (ITrackable child in trackingColl)
+                    foreach (ITrackable child in colProp.EntityCollection)
                     {
-                        if (parent == null || child.GetType() != parent.GetType())
+                        foreach (var modifiedProps in child.GetModifiedProperties(visitationHelper))
                         {
-                            foreach (var modifiedProps in child.GetModifiedProperties(item))
-                            {
-                                yield return modifiedProps;
-                            }
+                            yield return modifiedProps;
                         }
                     }
                 }

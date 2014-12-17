@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using NUnit.Framework;
+using TrackableEntities.Client.Tests.Entities.FamilyModels;
 using TrackableEntities.Client.Tests.Entities.Mocks;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
 
@@ -29,16 +31,51 @@ namespace TrackableEntities.Client.Tests
                 };
             var modifiedDetail = orderDetails[0];
             var deletedDetail = orderDetails[1];
+            addedDetail.Order = order;
+            modifiedDetail.Order = order;
+            deletedDetail.Order = order;
 
             // Act
-            orderDetails.Add(addedDetail);
             modifiedDetail.UnitPrice++;
             orderDetails.Remove(deletedDetail);
+            orderDetails.Add(addedDetail);
 
             // Assert
             Assert.AreEqual(TrackingState.Added, addedDetail.TrackingState);
             Assert.AreEqual(TrackingState.Modified, modifiedDetail.TrackingState);
             Assert.AreEqual(TrackingState.Deleted, deletedDetail.TrackingState);
+        }
+
+        [Test]
+        public void Existing_Parent_With_Added_Children_Should_Have_Children_Marked_As_Added()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
+            var addedDetail1 = new OrderDetail
+            {
+                ProductId = 1,
+                Product = database.Products[0],
+                Quantity = 10,
+                UnitPrice = 20M
+            };
+            var addedDetail2 = new OrderDetail
+            {
+                ProductId = 2,
+                Product = database.Products[1],
+                Quantity = 20,
+                UnitPrice = 30M
+            };
+
+            // Act
+            orderDetails.Add(addedDetail1);
+            orderDetails.Add(addedDetail2);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Added, addedDetail1.TrackingState);
+            Assert.AreEqual(TrackingState.Added, addedDetail2.TrackingState);
         }
 
         [Test]
@@ -260,7 +297,10 @@ namespace TrackableEntities.Client.Tests
             // Arrange
             var database = new MockNorthwind();
             var order = database.Orders[0];
-            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            var order3 = database.Orders[3];
+            var changeTracker = new ChangeTrackingCollection<Order>(order, order3);
+            order3.OrderDate += new System.TimeSpan(1, 0, 0, 0); // + one day
+            order3.Customer.CustomerName += " (test)";
             var orderDetails = (IList<OrderDetail>)changeTracker[0].OrderDetails;
             var unchangedDetail = orderDetails[0];
             var modifiedDetail = orderDetails[1];
@@ -281,6 +321,7 @@ namespace TrackableEntities.Client.Tests
 
             // Assert
             var changedOrder = changes.First();
+            var changedOrder3 = changes[1];
             var changedModifiedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == modifiedDetail.ProductId);
             var changedAddedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == addedDetail.ProductId);
             var changedDeletedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == deletedDetail.ProductId);
@@ -290,6 +331,13 @@ namespace TrackableEntities.Client.Tests
             Assert.AreEqual(TrackingState.Added, changedAddedDetail.TrackingState);
             Assert.AreEqual(TrackingState.Deleted, changedDeletedDetail.TrackingState);
             Assert.That(changedOrder.OrderDetails, Has.No.Member(unchangedDetail));
+            Assert.IsNotNull(order.Customer);
+            Assert.IsNotNull(order3.Customer);
+            Assert.IsNotNull(changedOrder.Customer);
+            Assert.IsNotNull(changedOrder3.Customer);
+            Assert.IsTrue(object.ReferenceEquals(order.Customer, order3.Customer));
+            Assert.IsFalse(object.ReferenceEquals(order.Customer, changedOrder.Customer));
+            Assert.IsTrue(object.ReferenceEquals(changedOrder.Customer, changedOrder3.Customer));
         }
 
         [Test]
@@ -433,6 +481,41 @@ namespace TrackableEntities.Client.Tests
             Assert.IsTrue(changes[0].OrderDetails[0].Product.IsEquatable(order.OrderDetails[0].Product));
         }
 
+        [Test]
+        public void GetChanges_With_More_Than_One_ITrackable_Members_Should_Return_NonEmpty_Changeset_if_Modified()
+        {
+            // Arrange
+            var family = new Family
+            {
+                Father = new Parent
+                {
+                    Name = "Alan"
+                },
+                Mother = new Parent
+                {
+                    Name = "Judith"
+                },
+                Child = new Child
+                {
+                    Name = "Jake"
+                }
+            };
+
+            var changeTracker = new ChangeTrackingCollection<Family>(family);
+
+            // Act
+            family.Father.Name = "Herb";
+            var changedFamily = changeTracker.GetChanges().SingleOrDefault();
+
+            //Assert
+            Assert.NotNull(changedFamily);
+            Assert.AreEqual(TrackingState.Unchanged, changedFamily.TrackingState);
+            Assert.NotNull(changedFamily.Father);
+            Assert.AreEqual(TrackingState.Modified, changedFamily.Father.TrackingState);
+            Assert.IsNull(changedFamily.Mother);
+            Assert.IsNull(changedFamily.Child);
+        }
+
         #endregion
 
         #region MergeChangesTests
@@ -473,8 +556,8 @@ namespace TrackableEntities.Client.Tests
 
             // Set state on orig order details
             origOrder.OrderDetails[0].UnitPrice++;
-            origOrder.OrderDetails.RemoveAt(1);
             origOrder.OrderDetails.Add(addedDetail);
+            origOrder.OrderDetails.RemoveAt(1);
 
             // Act
 
@@ -749,6 +832,39 @@ namespace TrackableEntities.Client.Tests
             Assert.AreEqual(TrackingState.Added, changedAddedTerritory.TrackingState);
             Assert.AreEqual(TrackingState.Deleted, changedDeletedTerritory.TrackingState);
             Assert.That(changedEmployee.Territories, Has.No.Member(unchangedTerritory));
+        }
+
+        [Test]
+        public void GetChanges_On_Existing_Employee_With_Territory_And_Modified_Area_Should_Return_Marked_Territory()
+        {
+            // Ensure that changes are retrieved across M-M relationships.
+
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var territory = employee.Territories[0];
+            var area = new Area
+            {
+                AreaId = 1,
+                AreaName = "Northern",
+                TrackingState = TrackingState.Modified
+            };
+            territory.AreaId = 1;
+            territory.Area = area;
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            area.AreaName = "xxx"; // Modify area
+
+            // Act
+            var changes = changeTracker.GetChanges();
+            var changedEmployee = changes.First();
+            var changedTerritory = changedEmployee.Territories.Single(t => t.TerritoryId == territory.TerritoryId);
+            var changedArea = changedTerritory.Area;
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, changedEmployee.TrackingState);
+            Assert.AreEqual(TrackingState.Unchanged, changedTerritory.TrackingState);
+            Assert.AreEqual(TrackingState.Modified, changedArea.TrackingState);
+            Assert.Contains("AreaName", (ICollection)area.ModifiedProperties);
         }
 
         [Test]

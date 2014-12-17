@@ -11,6 +11,7 @@ using System.Data.Objects;
 #endif
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using TrackableEntities.Common;
 
 namespace TrackableEntities.EF.Tests
 {
@@ -19,23 +20,20 @@ namespace TrackableEntities.EF.Tests
         // Recursively get entity states
         public static IEnumerable<EntityState> GetEntityStates(this DbContext context,
             ITrackable item, EntityState? entityState = null,
-            ITrackable parent = null)
+            ObjectVisitationHelper visitationHelper = null)
         {
-            foreach (var prop in item.GetType().GetProperties())
+            // Prevent endless recursion
+            ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
+            if (!visitationHelper.TryVisit(item)) yield break;
+
+            foreach (var colProp in item.GetNavigationProperties().OfCollectionType())
             {
-                var trackingColl = prop.GetValue(item, null) as ICollection;
-                if (trackingColl != null)
+                foreach (ITrackable child in colProp.EntityCollection)
                 {
-                    foreach (ITrackable child in trackingColl)
+                    foreach (var state in context.GetEntityStates(child, visitationHelper: visitationHelper))
                     {
-                        if (parent == null || child.GetType() != parent.GetType())
-                        {
-                            foreach (var state in context.GetEntityStates(child, parent: item))
-                            {
-                                if (entityState == null || state == entityState)
-                                    yield return state;
-                            }
-                        }
+                        if (entityState == null || state == entityState)
+                            yield return state;
                     }
                 }
             }

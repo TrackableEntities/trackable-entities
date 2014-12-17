@@ -20,6 +20,11 @@ namespace TrackableEntities.Client
         bool Tracking { get; set; }
 
         /// <summary>
+        /// For internal use.
+        /// </summary>
+        void SetTracking(bool value, TrackableEntities.Common.ObjectVisitationHelper visitationHelper);
+
+        /// <summary>
         /// Get entities that have been marked as Added, Modified or Deleted.
         /// </summary>
         /// <param name="cachedDeletesOnly">True to return only cached deletes</param>

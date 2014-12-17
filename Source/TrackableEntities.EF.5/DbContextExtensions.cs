@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Reflection;
 using System.Threading;
+using TrackableEntities.Common;
 #if EF_6
 using System.Threading.Tasks;
 using System.Data.Entity.Core.Objects;
@@ -35,7 +36,7 @@ namespace TrackableEntities.EF5
         public static void ApplyChanges(this DbContext context, ITrackable item)
         {
             // Recursively set entity state for DbContext entry
-            ApplyChanges(context, item, null, null);
+            ApplyChanges(context, item, null, new ObjectVisitationHelper(), null);
         }
 
         /// <summary>
@@ -47,12 +48,16 @@ namespace TrackableEntities.EF5
         {
             // Apply changes to collection of items
             foreach (var item in items)
-                ApplyChanges(context, item, null, null);
+                ApplyChanges(context, item, null, new ObjectVisitationHelper(), null);
         }
 
         private static void ApplyChanges(this DbContext context,
-            ITrackable item, ITrackable parent, string propertyName)
+            ITrackable item, ITrackable parent, ObjectVisitationHelper visitationHelper,
+            string propertyName, TrackingState? state = null)
         {
+            // Prevent endless recursion
+            if (!visitationHelper.TryVisit(item)) return;
+
             // Check for null args
             if (context == null)
                 throw new ArgumentNullException("context");
@@ -61,7 +66,7 @@ namespace TrackableEntities.EF5
 
             // If M-M child, set relationship for added or deleted items
             if (parent != null && propertyName != null
-                && (context.IsRelatedProperty(parent.GetType().Name, 
+                && (context.IsRelatedProperty(parent.GetType(), 
                 propertyName, RelationshipType.ManyToMany)))
             {
                 // If parent is added set tracking state to match
@@ -82,13 +87,15 @@ namespace TrackableEntities.EF5
                 }
                 else
                 {
-                    // Set entity state for modified
+                    // Set entity state for modified or unchanged
                     if (item.TrackingState == TrackingState.Modified)
                         context.Entry(item).State = EntityState.Modified;
+                    else if (item.TrackingState == TrackingState.Unchanged)
+                        context.Entry(item).State = EntityState.Unchanged;
                 }
 
                 // Set state for child collections
-                context.ApplyChangesOnProperties(item, parent);
+                context.ApplyChangesOnProperties(item, visitationHelper);
                 return;
             }   
 
@@ -97,55 +104,97 @@ namespace TrackableEntities.EF5
             if (parent != null
                 && (parent.TrackingState == TrackingState.Added
                     || parent.TrackingState == TrackingState.Deleted)
-                && !context.IsRelatedProperty(parent.GetType().Name,
+                && !context.IsRelatedProperty(parent.GetType(),
                     propertyName, RelationshipType.ManyToOne))
                 return;
 
             // If it is a M-1 relation and item state is deleted,
             // set to unchanged and exit
             if (parent != null
-                && (context.IsRelatedProperty(parent.GetType().Name,
+                && (context.IsRelatedProperty(parent.GetType(),
                     propertyName, RelationshipType.ManyToOne)
                     && item.TrackingState == TrackingState.Deleted))
             {
-                context.Entry(item).State = EntityState.Unchanged;
+                try
+                {
+                    context.Entry(item).State = EntityState.Unchanged;
+                }
+                catch (InvalidOperationException invalidOpEx)
+                {
+                    throw new InvalidOperationException(Constants.ExceptionMessages.DeletedWithAddedChildren, invalidOpEx);
+                }
                 return;
             }
 
             // Set state to Added on parent only
-            if (item.TrackingState == TrackingState.Added)
+            if (item.TrackingState == TrackingState.Added
+                && (state == null || state == TrackingState.Added))
             {
                 context.Entry(item).State = EntityState.Added;
-                context.ApplyChangesOnProperties(item, parent);
+                context.ApplyChangesOnProperties(item, visitationHelper);
                 return;
             }
 
             // Set state to Deleted on children and parent
-            if (item.TrackingState == TrackingState.Deleted)
+            if (item.TrackingState == TrackingState.Deleted
+                && (state == null || state == TrackingState.Deleted))
             {
-                context.SetChanges(item, EntityState.Unchanged, parent);
-                context.SetChanges(item, EntityState.Deleted, parent);
+                context.SetChanges(item, EntityState.Unchanged, visitationHelper.Clone()); // Clone to avoid interference
+                context.SetChanges(item, EntityState.Deleted, visitationHelper);
                 return;
             }
 
-            // Set modified properties
-            if (item.TrackingState == TrackingState.Modified
-                && item.ModifiedProperties != null
-                && item.ModifiedProperties.Count > 0)
-            {
-                // Mark modified properties
-                context.Entry(item).State = EntityState.Unchanged;
-                foreach (var property in item.ModifiedProperties)
-                    context.Entry(item).Property(property).IsModified = true;
-            }
             // Set entity state
-            else
+            if (state == null
+                || state == TrackingState.Unchanged
+                || state == TrackingState.Modified
+                || (state == TrackingState.Added
+                    && item.TrackingState != TrackingState.Deleted))
             {
-                context.Entry(item).State = item.TrackingState.ToEntityState();
-            }
+                // Set added state for reference or child properties
+                context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Added); // Clone to avoid interference
+                    
+                // Set modified properties
+                if (item.TrackingState == TrackingState.Modified
+                    && (state == null || state == TrackingState.Modified)
+                    && item.ModifiedProperties != null
+                    && item.ModifiedProperties.Count > 0)
+                {
+                    // Mark modified properties
+                    context.Entry(item).State = EntityState.Unchanged;
+                    foreach (var property in item.ModifiedProperties)
+                        context.Entry(item).Property(property).IsModified = true;
+                }
+                else
+                {
+                    // Set entity state
+                    context.Entry(item).State = item.TrackingState.ToEntityState();
+                }
 
-            // Set state for child collections
-            context.ApplyChangesOnProperties(item, parent);
+                // Set other state for reference or child properties
+                context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Unchanged); // Clone to avoid interference
+                context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Modified); // Clone to avoid interference
+                context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Deleted);
+            }
+        }
+
+        /// <summary>
+        /// For the given entity type return the EntitySet name qualified by container name.
+        /// </summary>
+        /// <param name="dbContext">Used to query and save changes to a database</param>
+        /// <param name="entityType">Type of an entity</param>
+        /// <returns></returns>
+        public static string GetEntitySetName(this DbContext dbContext, Type entityType)
+        {
+            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
+                .ObjectContext.MetadataWorkspace;
+            var containers = workspace.GetItems<EntityContainer>(DataSpace.CSpace);
+            var entitySetName =
+                (from c in containers
+                 from es in c.BaseEntitySets
+                 where es.ElementType == dbContext.GetEdmSpaceType(entityType)
+                 select es.EntityContainer.Name + "." + es.Name).SingleOrDefault();
+            return entitySetName;
         }
 
         /// <summary>
@@ -157,7 +206,7 @@ namespace TrackableEntities.EF5
         public static void LoadRelatedEntities(this DbContext context,
             ITrackable item, bool loadAll = false)
         {
-            LoadRelatedEntities(context, new[] {item}, null, loadAll);
+            LoadRelatedEntities(context, new[] {item}, null, CreateVisitationHelperWithIdMatching(context), loadAll);
         }
 
         /// <summary>
@@ -169,7 +218,7 @@ namespace TrackableEntities.EF5
         public static void LoadRelatedEntities(this DbContext context, IEnumerable<ITrackable> items,
             bool loadAll = false)
         {
-            LoadRelatedEntities(context, items.ToArray(), null, loadAll);
+            LoadRelatedEntities(context, items, null, CreateVisitationHelperWithIdMatching(context), loadAll);
         }
 
 #if EF_6
@@ -183,7 +232,7 @@ namespace TrackableEntities.EF5
         public static Task LoadRelatedEntitiesAsync(this DbContext context,
             ITrackable item, bool loadAll = false)
         {
-            return LoadRelatedEntitiesAsync(context, new[] {item}, null, 
+            return LoadRelatedEntitiesAsync(context, new[] {item}, null, CreateVisitationHelperWithIdMatching(context),
                 CancellationToken.None, loadAll);
         }
 
@@ -198,7 +247,7 @@ namespace TrackableEntities.EF5
         public static Task LoadRelatedEntitiesAsync(this DbContext context,
             ITrackable item, CancellationToken cancellationToken, bool loadAll = false)
         {
-            return LoadRelatedEntitiesAsync(context, new[] { item }, null, 
+            return LoadRelatedEntitiesAsync(context, new[] { item }, null, CreateVisitationHelperWithIdMatching(context),
                 cancellationToken, loadAll);
         }
 
@@ -212,7 +261,7 @@ namespace TrackableEntities.EF5
         public static Task LoadRelatedEntitiesAsync(this DbContext context,
             IEnumerable<ITrackable> items, bool loadAll = false)
         {
-            return LoadRelatedEntitiesAsync(context, items.ToArray(), null,
+            return LoadRelatedEntitiesAsync(context, items, null, CreateVisitationHelperWithIdMatching(context),
                 CancellationToken.None, loadAll);
         }
 
@@ -227,251 +276,259 @@ namespace TrackableEntities.EF5
         public static Task LoadRelatedEntitiesAsync(this DbContext context, IEnumerable<ITrackable> items,
             CancellationToken cancellationToken, bool loadAll = false)
         {
-            return LoadRelatedEntitiesAsync(context, items.ToArray(), null, 
+            return LoadRelatedEntitiesAsync(context, items, null, CreateVisitationHelperWithIdMatching(context),
                 cancellationToken, loadAll);
         }
 #endif
 
-        private static void LoadRelatedEntities(this DbContext context, 
-            ITrackable[] items, ITrackable parent, bool loadAll)
+        private static void LoadRelatedEntities(this DbContext context,
+            IEnumerable<ITrackable> items, ITrackable parent, ObjectVisitationHelper visitationHelper, bool loadAll)
         {
             // Return if no items
-            if (items == null || items.Length == 0) return;
+            if (items == null) return;
+
+            // Get selected items
+            var selectedItems = loadAll ? items
+                : items.Where(t => t.TrackingState == TrackingState.Added
+                    || (parent != null && parent.TrackingState == TrackingState.Added));
+            var entities = selectedItems.Cast<object>().Where(i => !visitationHelper.IsVisited(i));
+
+            // Collection 'items' can contain entities of different types (due to inheritance)
+            // We collect a superset of all properties of all items of type ITrackable
+            var allProps = (from entity in entities
+                            from prop in entity.GetType().GetProperties()
+                            where typeof(ITrackable).IsAssignableFrom(prop.PropertyType)
+                            select prop).Distinct();
 
             // Populate related entities on all items
-            var entity = items[0];
-            foreach (var prop in entity.GetType().GetProperties())
+            foreach (var prop in allProps)
             {
-                // Continue if prop is not ITrackable
-                if (!typeof(ITrackable).IsAssignableFrom(prop.PropertyType))
-                    continue;
-
-                // Continue if trackable prop is same type as parent
-                if (parent != null && prop.PropertyType == parent.GetType())
-                    continue;
-
-                // Get selected items
-                var selectedItems = loadAll ? items
-                    : items.Where(t => t.TrackingState == TrackingState.Added
-                        || (parent != null && parent.TrackingState == TrackingState.Added)).ToArray();
-                if (selectedItems.Length == 0) continue;
-                var entities = selectedItems.Cast<object>().ToArray();
-
                 // Get related entities
-                string entityTypeName = entity.GetType().Name;
                 string propertyName = prop.Name;
-                string propertyTypeName = prop.PropertyType.Name;
-                List<object> relatedEntities = context.GetRelatedEntities(entities,
-                    entityTypeName, propertyName, propertyTypeName);
+                Type propertyType = prop.PropertyType;
+                IEnumerable<object> relatedEntities = context.GetRelatedEntities(entities,
+                    prop.DeclaringType, propertyName, propertyType);
 
                 // Continue if there are no related entities
                 if (!relatedEntities.Any()) continue;
 
+                // ObjectVisitationHelper serves here as an identity cache
+                relatedEntities = relatedEntities.Select(e => visitationHelper.FindVisited(e) ?? e);
+
                 // Set related entities
                 context.SetRelatedEntities(entities, relatedEntities, prop,
-                    entityTypeName, propertyName, propertyTypeName);
+                    prop.DeclaringType, propertyName, propertyType);
             }
 
             // Recursively populate related entities on ref and child properties
             foreach (var item in items)
             {
+                // Avoid endless recursion
+                if (!visitationHelper.TryVisit(item)) continue;
+
                 bool loadAllRelated = loadAll 
                     || item.TrackingState == TrackingState.Added
                     || (parent  != null && parent.TrackingState == TrackingState.Added);
-                context.LoadRelatedEntitiesOnProperties(item, parent, loadAllRelated);
+                context.LoadRelatedEntitiesOnProperties(item, visitationHelper, loadAllRelated);
             }
         }
 
 #if EF_6
         private static async Task LoadRelatedEntitiesAsync(this DbContext context,
-            ITrackable[] items, ITrackable parent, CancellationToken cancellationToken, bool loadAll)
+            IEnumerable<ITrackable> items, ITrackable parent, ObjectVisitationHelper visitationHelper,
+            CancellationToken cancellationToken, bool loadAll)
         {
             // Return if no items
-            if (items == null || items.Length == 0) return;
+            if (items == null) return;
+
+            // Get selected items
+            var selectedItems = loadAll ? items
+                : items.Where(t => t.TrackingState == TrackingState.Added
+                    || (parent != null && parent.TrackingState == TrackingState.Added));
+            var entities = selectedItems.Cast<object>().Where(i => !visitationHelper.IsVisited(i));
+
+            // Collection 'items' can contain entities of different types (due to inheritance)
+            // We collect a superset of all properties of all items of type ITrackable
+            var allProps = (from entity in entities
+                            from prop in entity.GetType().GetProperties()
+                            where typeof(ITrackable).IsAssignableFrom(prop.PropertyType)
+                            select prop).Distinct();
 
             // Populate related entities on all items
-            var entity = items[0];
-            foreach (var prop in entity.GetType().GetProperties())
+            foreach (var prop in allProps)
             {
-                // Continue if prop is not ITrackable
-                if (!typeof(ITrackable).IsAssignableFrom(prop.PropertyType))
-                    continue;
-
-                // Continue if trackable prop is same type as parent
-                if (parent != null && prop.PropertyType == parent.GetType())
-                    continue;
-
-                // Get selected items
-                var selectedItems = loadAll ? items
-                    : items.Where(t => t.TrackingState == TrackingState.Added
-                        || (parent != null && parent.TrackingState == TrackingState.Added)).ToArray();
-                if (selectedItems.Length == 0) continue;
-                var entities = selectedItems.Cast<object>().ToArray();
-
                 // Get related entities
-                string entityTypeName = entity.GetType().Name;
                 string propertyName = prop.Name;
-                string propertyTypeName = prop.PropertyType.Name;
-                List<object> relatedEntities = await context.GetRelatedEntitiesAsync(entities,
-                    entityTypeName, propertyName, propertyTypeName, cancellationToken);
+                Type propertyType = prop.PropertyType;
+                IEnumerable<object> relatedEntities = await context.GetRelatedEntitiesAsync(entities,
+                    prop.DeclaringType, propertyName, propertyType, cancellationToken);
 
                 // Continue if there are no related entities
                 if (!relatedEntities.Any()) continue;
 
+                // ObjectVisitationHelper serves here as an identity cache
+                relatedEntities = relatedEntities.Select(e => visitationHelper.FindVisited(e) ?? e);
+
                 // Set related entities
                 context.SetRelatedEntities(entities, relatedEntities, prop,
-                    entityTypeName, propertyName, propertyTypeName);
+                    prop.DeclaringType, propertyName, propertyType);
             }
 
             // Recursively populate related entities on ref and child properties
             foreach (var item in items)
             {
+                // Avoid endless recursion
+                if (!visitationHelper.TryVisit(item)) continue;
+
                 bool loadAllRelated = loadAll
                     || item.TrackingState == TrackingState.Added
                     || (parent != null && parent.TrackingState == TrackingState.Added);
-                await context.LoadRelatedEntitiesOnPropertiesAsync(item, parent,
+                await context.LoadRelatedEntitiesOnPropertiesAsync(item, visitationHelper,
                     cancellationToken, loadAllRelated);
             }
         }
 
         private async static Task LoadRelatedEntitiesOnPropertiesAsync(this DbContext context,
-            ITrackable item, ITrackable parent, CancellationToken cancellationToken, bool loadAll)
+            ITrackable item, ObjectVisitationHelper visitationHelper, CancellationToken cancellationToken, bool loadAll)
         {
             // Recursively load related entities
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
                 // Apply changes to 1-1 and M-1 properties
-                var trackableRef = prop.GetValue(item) as ITrackable;
-
-                // Stop recursion if trackable is same type as parent
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    await context.LoadRelatedEntitiesAsync(new[] { trackableRef }, item,
+                    await context.LoadRelatedEntitiesAsync(new[] { refProp.EntityReference }, item, visitationHelper,
                         cancellationToken, loadAll);
                 }
 
                 // Apply changes to 1-M and M-M properties
-                var childItems = prop.GetValue(item, null) as IList;
-                if (childItems != null && childItems.Count > 0)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    // Stop recursion if trackable is same type as parent
-                    var trackableChild = childItems[0] as ITrackable;
-                    if (trackableChild != null
-                        && (parent == null || trackableChild.GetType() != parent.GetType()))
-                    {
-                        var trackableChildren = childItems.OfType<ITrackable>().ToArray();
-                        await context.LoadRelatedEntitiesAsync(trackableChildren, item,
-                            cancellationToken, loadAll);
-                    }
+                    await context.LoadRelatedEntitiesAsync(colProp.EntityCollection, item, visitationHelper,
+                        cancellationToken, loadAll);
                 }
             }
         }
 #endif
 
         private static void LoadRelatedEntitiesOnProperties(this DbContext context,
-            ITrackable item, ITrackable parent, bool loadAll)
+            ITrackable item, ObjectVisitationHelper visitationHelper, bool loadAll)
         {
             // Recursively load related entities
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
                 // Apply changes to 1-1 and M-1 properties
-                var trackableRef = prop.GetValue(item) as ITrackable;
-
-                // Stop recursion if trackable is same type as parent
-                if (trackableRef != null
-                    && (parent == null || trackableRef.GetType() != parent.GetType()))
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    context.LoadRelatedEntities(new[] { trackableRef }, item, loadAll);
+                    context.LoadRelatedEntities(new[] { refProp.EntityReference }, item, visitationHelper, loadAll);
                 }
 
                 // Apply changes to 1-M and M-M properties
-                var childItems = prop.GetValue(item, null) as IList;
-                if (childItems != null && childItems.Count > 0)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    // Stop recursion if trackable is same type as parent
-                    var trackableChild = childItems[0] as ITrackable;
-                    if (trackableChild != null
-                        && (parent == null || trackableChild.GetType() != parent.GetType()))
-                    {
-                        var trackableChildren = childItems.OfType<ITrackable>().ToArray();
-                        context.LoadRelatedEntities(trackableChildren, item, loadAll);
-                    }
+                    context.LoadRelatedEntities(colProp.EntityCollection, item, visitationHelper, loadAll);
                 }
             }
+        }
+
+        private static EntityType GetEdmSpaceType(this DbContext dbContext, Type entityType)
+        {
+            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
+                .ObjectContext.MetadataWorkspace;
+
+            StructuralType oType = workspace.GetItems<StructuralType>(DataSpace.OSpace)
+                .Where(e => e.FullName == entityType.FullName).SingleOrDefault();
+
+            if (oType == null) return null;
+
+            return workspace.GetEdmSpaceType(oType) as EntityType;
         }
 
         #region ApplyChanges Helpers
 
         private static void ApplyChangesOnProperties(this DbContext context,
-            ITrackable item, ITrackable parent)
+            ITrackable item, ObjectVisitationHelper visitationHelper, TrackingState? state = null)
         {
             // Recursively apply changes
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
                 // Apply changes to 1-1 and M-1 properties
-                var trackableReference = prop.GetValue(item, null) as ITrackable;
-
-                // Stop recursion if trackable is same type as parent
-                if (trackableReference != null
-                    && (parent == null || trackableReference.GetType() != parent.GetType()))
-                    context.ApplyChanges(trackableReference, item, prop.Name);
+                foreach (var refProp in navProp.AsReferenceProperty())
+                    context.ApplyChanges(refProp.EntityReference, item, visitationHelper, navProp.Property.Name, state);
 
                 // Apply changes to 1-M and M-M properties
-                var items = prop.GetValue(item, null) as IList;
-                if (items != null)
+                foreach (var colProp in navProp.AsCollectionProperty<IList>())
                 {
-                    var count = items.Count;
-                    for (int i = count - 1; i > -1; i--)
-                    {
-                        // Stop recursion if trackable is same type as parent
-                        var trackableChild = items[i] as ITrackable;
-                        if (trackableChild != null
-                            && (parent == null || trackableChild.GetType() != parent.GetType()))
-                            context.ApplyChanges(trackableChild, item, prop.Name);
-                    }
+                    // Apply changes on collection property for each state.
+                    // Process added items first, then process others.
+                    ApplyChangesOnCollectionProperties(TrackingState.Added, true,
+                        navProp, colProp, context, item, visitationHelper, state);
+                    ApplyChangesOnCollectionProperties(TrackingState.Added, false,
+                        navProp, colProp, context, item, visitationHelper, state);
                 }
+            }
+        }
+
+        private static void ApplyChangesOnCollectionProperties(TrackingState stateFilter, bool includeState,
+            EntityNavigationProperty navProp, EntityCollectionProperty<IList> colProp,
+            DbContext context, ITrackable item, ObjectVisitationHelper visitationHelper, TrackingState? state = null)
+        {
+            // Apply changes to 1-M and M-M properties filtering by tracking state
+            var count = colProp.EntityCollection.Count;
+            for (int i = count - 1; i > -1; i--)
+            {
+                var trackableChild = colProp.EntityCollection[i] as ITrackable;
+                if (trackableChild != null)
+                {
+                    bool condition = includeState
+                        ? trackableChild.TrackingState == stateFilter
+                        : trackableChild.TrackingState != stateFilter;
+                    if (condition)
+                        context.ApplyChanges(trackableChild, item, visitationHelper, navProp.Property.Name, state);                    
+                } 
             }
         }
 
         private static void SetChanges(this DbContext context,
             ITrackable item, EntityState state,
+            ObjectVisitationHelper visitationHelper,
             ITrackable parent = null, string propertyName = null)
         {
             // Set state for child collections
-            foreach (var prop in item.GetType().GetProperties())
+            foreach (var navProp in item.GetNavigationProperties())
             {
-                // Apply changes to 1-1 and M-1 properties
-                var trackableReference = prop.GetValue(item, null) as ITrackable;
+                string propName = navProp.Property.Name;
 
-                // Stop recursion if trackable is same type as parent
-                if (trackableReference != null
-                    && (parent == null || trackableReference.GetType() != parent.GetType()))
+                // Apply changes to 1-1 and M-1 properties
+                foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    context.ApplyChanges(trackableReference, item, prop.Name);
-                    if (context.IsRelatedProperty(item.GetType().Name, prop.Name, RelationshipType.OneToOne))
-                        context.SetChanges(trackableReference, state, item, prop.Name);
+                    ITrackable trackableReference = refProp.EntityReference;
+                    if (visitationHelper.IsVisited(trackableReference)) continue;
+
+                    context.ApplyChanges(trackableReference, item, visitationHelper, propName);
+                    if (context.IsRelatedProperty(item.GetType(), propName, RelationshipType.OneToOne))
+                        context.SetChanges(trackableReference, state, visitationHelper, item, propName);
                 }
 
-
                 // Apply changes to 1-M and M-M properties
-                var items = prop.GetValue(item, null) as IList;
-                if (items != null)
+                foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    for (int i = items.Count - 1; i > -1; i--)
+                    foreach (ITrackable trackableChild in colProp.EntityCollection.Reverse())
                     {
-                        // Stop recursion if trackable is same type as parent
-                        var trackableChild = items[i] as ITrackable;
-                        if (trackableChild != null
-                            && (parent == null || trackableChild.GetType() != parent.GetType()))
-                            context.SetChanges(trackableChild, state, item, prop.Name);
+                        // Prevent endless recursion
+                        if (visitationHelper.TryVisit(trackableChild))
+                        {
+                            // TRICKY: we have just visited the item
+                            // As a side effect, ApplyChanges will never be called for it.
+                            context.SetChanges(trackableChild, state, visitationHelper, item, propName);
+                        }
                     }
                 }
             }
 
             // If M-M child, set relationship for deleted items
             if (state == EntityState.Deleted && parent != null && propertyName != null
-                && (context.IsRelatedProperty(parent.GetType().Name,
+                && (context.IsRelatedProperty(parent.GetType(),
                 propertyName, RelationshipType.ManyToMany)))
             {
                 context.Entry(item).State = item.TrackingState == TrackingState.Modified
@@ -486,16 +543,12 @@ namespace TrackableEntities.EF5
         }
 
         private static bool IsRelatedProperty(this DbContext dbContext,
-            string entityTypeName, string propertyName, RelationshipType relationshipType)
+            Type entityType, string propertyName, RelationshipType relationshipType)
         {
             // Get navigation property
-            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
-                .ObjectContext.MetadataWorkspace;
-            var entityTypes = workspace.GetItems<EntityType>(DataSpace.CSpace);
-            if (entityTypes == null) return false;
-            var entityType = entityTypes.SingleOrDefault(e => e.Name == entityTypeName);
-            if (entityType == null) return false;
-            var navProp = entityType.NavigationProperties
+            var edmEntityType = dbContext.GetEdmSpaceType(entityType);
+            if (edmEntityType == null) return false;
+            var navProp = edmEntityType.NavigationProperties
                 .SingleOrDefault(p => p.Name == propertyName);
             if (navProp == null) return false;
 
@@ -552,10 +605,10 @@ namespace TrackableEntities.EF5
         #region LoadRelatedEntities Helpers
 
         private static List<object> GetRelatedEntities(this DbContext context,
-            object[] items, string entityTypeName, string propertyName, string propertyTypeName)
+            IEnumerable<object> items, Type entityType, string propertyName, Type propertyType)
         {
             // Get entity sql
-            string entitySql = context.GetRelatedEntitiesSql(items, entityTypeName, propertyName, propertyTypeName);
+            string entitySql = context.GetRelatedEntitiesSql(items, entityType, propertyName, propertyType);
             if (string.IsNullOrWhiteSpace(entitySql)) return new List<object>();
 
             // Get related entities
@@ -565,11 +618,11 @@ namespace TrackableEntities.EF5
 
 #if EF_6
         private static async Task<List<object>> GetRelatedEntitiesAsync(this DbContext context,
-            object[] items, string entityTypeName, string propertyName, string propertyTypeName,
+            IEnumerable<object> items, Type entityType, string propertyName, Type propertyType,
             CancellationToken cancellationToken)
         {
             // Get entity sql
-            string entitySql = context.GetRelatedEntitiesSql(items, entityTypeName, propertyName, propertyTypeName);
+            string entitySql = context.GetRelatedEntitiesSql(items, entityType, propertyName, propertyType);
             if (string.IsNullOrWhiteSpace(entitySql)) return new List<object>();
 
             // Get related entities
@@ -579,13 +632,13 @@ namespace TrackableEntities.EF5
 #endif
 
         private static string GetRelatedEntitiesSql(this DbContext context,
-            object[] items, string entityTypeName, string propertyName, string propertyTypeName)
+            IEnumerable<object> items, Type entityType, string propertyName, Type propertyType)
         {
             // Get entity set name
-            string entitySetName = context.GetEntitySetName(propertyTypeName);
+            string entitySetName = context.GetEntitySetName(propertyType);
 
             // Get foreign key name
-            string foreignKeyName = context.GetForeignKeyName(entityTypeName, propertyName);
+            string foreignKeyName = context.GetForeignKeyName(entityType, propertyName);
 
             // Get key values
             var keyValues = GetKeyValues(foreignKeyName, items);
@@ -595,12 +648,12 @@ namespace TrackableEntities.EF5
         }
 
         private static void SetRelatedEntities(this DbContext context, 
-            IEnumerable<object> entities, List<object> relatedEntities, PropertyInfo referenceProperty,
-            string entityTypeName, string propertyName, string propertyTypeName)
+            IEnumerable<object> entities, IEnumerable<object> relatedEntities, PropertyInfo referenceProperty,
+            Type entityType, string propertyName, Type propertyType)
         {
             // Get names of entity foreign key and related entity primary key
-            string foreignKeyName = context.GetForeignKeyName(entityTypeName, propertyName);
-            string primaryKeyName = context.GetPrimaryKeyName(propertyTypeName);
+            string foreignKeyName = context.GetForeignKeyName(entityType, propertyName);
+            string primaryKeyName = context.GetPrimaryKeyName(propertyType);
 
             // Continue if we can't get foreign or primary key names
             if (foreignKeyName == null || primaryKeyName == null) return;
@@ -639,7 +692,7 @@ namespace TrackableEntities.EF5
             return primaryKeyValue.Equals(foreignKeyValue);
         }
 
-        private static object[] GetKeyValues(string foreignKeyName, params object[] items)
+        private static object[] GetKeyValues(string foreignKeyName, IEnumerable<object> items)
         {
             var values = from item in items
                          let prop = item.GetType().GetProperty(foreignKeyName)
@@ -647,47 +700,26 @@ namespace TrackableEntities.EF5
             return values.Where(v => v != null).Distinct().ToArray();
         }
 
-        private static string GetEntitySetName(this DbContext dbContext, string propertyTypeName)
+        private static string GetPrimaryKeyName(this DbContext dbContext, Type entityType)
         {
-            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
-                .ObjectContext.MetadataWorkspace;
-            var containers = workspace.GetItems<EntityContainer>(DataSpace.CSpace);
-            if (containers == null) return null;
-            var entitySet = containers.First().BaseEntitySets
-                .SingleOrDefault(es => es.ElementType.Name == propertyTypeName);
-            if (entitySet == null) return null;
-            return entitySet.Name;
-        }
-
-        private static string GetPrimaryKeyName(this DbContext dbContext, string entityTypeName)
-        {
-            // Get navigation property association
-            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
-                .ObjectContext.MetadataWorkspace;
-            var entityTypes = workspace.GetItems<EntityType>(DataSpace.CSpace);
-            if (entityTypes == null) return null;
-            var entityType = entityTypes.SingleOrDefault(e => e.Name == entityTypeName);
-            if (entityType == null) return null;
+            var edmEntityType = dbContext.GetEdmSpaceType(entityType);
+            if (edmEntityType == null) return null;
 
             // We're not supporting multiple primary keys for reference types
-            if (entityType.KeyMembers.Count > 1) return null;
+            if (edmEntityType.KeyMembers.Count > 1) return null;
 
             // Get name 
-            var primaryKeyName = entityType.KeyMembers.Select(k => k.Name).FirstOrDefault();
+            var primaryKeyName = edmEntityType.KeyMembers.Select(k => k.Name).FirstOrDefault();
             return primaryKeyName;
         }
 
         private static string GetForeignKeyName(this DbContext dbContext,
-            string entityTypeName, string propertyName)
+            Type entityType, string propertyName)
         {
             // Get navigation property association
-            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
-                .ObjectContext.MetadataWorkspace;
-            var entityTypes = workspace.GetItems<EntityType>(DataSpace.CSpace);
-            if (entityTypes == null) return null;
-            var entityType = entityTypes.SingleOrDefault(e => e.Name == entityTypeName);
-            if (entityType == null) return null;
-            var navProp = entityType.NavigationProperties
+            var edmEntityType = dbContext.GetEdmSpaceType(entityType);
+            if (edmEntityType == null) return null;
+            var navProp = edmEntityType.NavigationProperties
                 .SingleOrDefault(p => p.Name == propertyName);
             if (navProp == null) return null;
             var assoc = navProp.RelationshipType as AssociationType;
@@ -704,7 +736,7 @@ namespace TrackableEntities.EF5
             if (keyValues.Length == 0) return null;
             var ids = from k in keyValues
                       select k is string ? string.Format("'{0}'", k) : k.ToString();
-            string csvIds = string.Join(",", ids.ToArray());
+            string csvIds = string.Join(",", ids);
             string entitySql = string.Format
                 ("SELECT VALUE x FROM {0} AS x WHERE x.{1} IN {{{2}}}",
                 entitySetName, foreignKeyName, csvIds);
@@ -729,6 +761,44 @@ namespace TrackableEntities.EF5
             return result.ToList();
         }
 #endif
+
+        private class IdMatcher : IEqualityComparer<object>
+        {
+            public DbContext DbContext;
+
+            bool IEqualityComparer<object>.Equals(object x, object y)
+            {
+                if (!x.GetType().Equals(y.GetType())) return false;
+                return KeyValuesAreEqual(GetKeyValue(x), GetKeyValue(y));
+            }
+
+            int IEqualityComparer<object>.GetHashCode(object obj)
+            {
+                object primaryKeyValue = GetKeyValue(obj);
+
+                // Normalized string PKs
+                if (primaryKeyValue is string)
+                {
+                    primaryKeyValue = ((string)primaryKeyValue).Normalize();
+                }
+
+                return Tuple.Create(obj.GetType(), primaryKeyValue).GetHashCode();
+            }
+
+            private object GetKeyValue(object entity)
+            {
+                Type entityType = entity.GetType();
+                string primaryKeyName = DbContext.GetPrimaryKeyName(entityType);
+                return entityType.GetProperty(primaryKeyName).GetValue(entity);
+            }
+        }
+
+        private static ObjectVisitationHelper CreateVisitationHelperWithIdMatching(DbContext dbContext)
+        {
+            var visitationHelper = new ObjectVisitationHelper(new IdMatcher() { DbContext = dbContext });
+            return visitationHelper;
+        }
+
         #endregion
     }
 }

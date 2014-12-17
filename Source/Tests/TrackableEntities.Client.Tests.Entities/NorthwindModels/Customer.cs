@@ -5,7 +5,8 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Customer : ModelBase<Customer>, ITrackable, IEquatable<Customer>
+    public class Customer : ModelBase<Customer>, ITrackable, IEquatable<Customer>,
+        IRefPropertyChangeTrackerResolver
     {
         private string _customerId;
         public string CustomerId
@@ -62,12 +63,16 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _customerSetting) return;
                 _customerSetting = value;
-                CustomerSettingChangeTracker = _customerSetting == null ? null
+                Xxx.CustomerSettingChangeTracker = _customerSetting == null ? null
                     : new ChangeTrackingCollection<CustomerSetting> { _customerSetting };
                 NotifyPropertyChanged(m => m.CustomerSetting);
             }
         }
-        private ChangeTrackingCollection<CustomerSetting> CustomerSettingChangeTracker { get; set; }
+        private struct NON_STANDARD_LOCATION
+        {
+            internal ChangeTrackingCollection<CustomerSetting> CustomerSettingChangeTracker { get; set; }
+        }
+        private NON_STANDARD_LOCATION Xxx;
 
         private Territory _territory;
         public Territory Territory
@@ -99,5 +104,14 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
         [JsonProperty]
         private Guid _entityIdentity = default(Guid);
 #pragma warning restore 414
+
+        ITrackingCollection IRefPropertyChangeTrackerResolver.GetRefPropertyChangeTracker(string propertyName)
+        {
+            if (propertyName == "CustomerSetting")
+                return Xxx.CustomerSettingChangeTracker;
+            if (propertyName == "Territory")
+                return TerritoryChangeTracker;
+            return null;
+        }
     }
 }

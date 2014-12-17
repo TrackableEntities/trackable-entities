@@ -1,4 +1,4 @@
-﻿Feature: Retreive Entities Feature
+﻿Feature: Retreive Entities
 	In order to retrieve entities
 	As a Web API client
 	I want to retrieve entities from the database
