@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Reflection;
 using TrackableEntities.Common;
 
 namespace TrackableEntities.Client
@@ -253,17 +256,277 @@ namespace TrackableEntities.Client
             // Temporarily restore deletes
             this.RestoreDeletes();
 
-            // Clone items in change tracker
-            var items = this.Clone().ToList();
+            try
+            {
+                return CloneChangesHelper.GetChanges(this);
+            }
+            finally
+            {
+                // Remove deletes
+                this.RemoveRestoredDeletes();
+            }
+        }
 
-            // Remove deletes
-            this.RemoveRestoredDeletes();
+        private class CloneChangesHelper : DefaultContractResolver
+        {
+            private readonly ObjectVisitationHelper visitationHelper = new ObjectVisitationHelper();
 
-            // Get changed items
-            List<TEntity> entities = items.GetChanges(new ObjectVisitationHelper()).Cast<TEntity>().ToList();
+            private readonly Dictionary<ITrackable, EntityChangedInfo> entityChangedInfos =
+                new Dictionary<ITrackable, EntityChangedInfo>();
 
-            // Return new change tracking collection with tracking disabled
-            return new ChangeTrackingCollection<TEntity>(entities, true);
+            public static ChangeTrackingCollection<TEntity> GetChanges(ChangeTrackingCollection<TEntity> source)
+            {
+                var helper = new CloneChangesHelper();
+                var wrapper = new Wrapper() { Result = source };
+
+                // Inspect the graph and collect entityChangedInfos
+                helper.GetChanges(Enumerable.Repeat(wrapper, 1)).ToList();
+
+                // Clone only changed items
+                var clone = TrackableExtensions.CloneObject(wrapper, helper);
+
+                return clone.Result;
+            }
+
+            private CloneChangesHelper()
+            {
+            }
+
+            private class EntityChangedInfo
+            {
+                public readonly HashSet<PropertyInfo> RefNavPropUnchanged = new HashSet<PropertyInfo>();
+
+                public readonly Dictionary<PropertyInfo, HashSet<ITrackable>> ColNavPropChangedEntities =
+                    new Dictionary<PropertyInfo, HashSet<ITrackable>>();
+            }
+
+            private class Wrapper : ITrackable
+            {
+                [JsonProperty]
+                public ChangeTrackingCollection<TEntity> Result { get; set; }
+
+                public TrackingState TrackingState { get; set; }
+
+                public ICollection<string> ModifiedProperties { get; set; }
+            }
+
+            private EntityChangedInfo EntityInfo(ITrackable entity)
+            {
+                EntityChangedInfo info;
+                if (!entityChangedInfos.TryGetValue(entity, out info))
+                { 
+                    info = new EntityChangedInfo();
+                    entityChangedInfos.Add(entity, info);
+                }
+                return info;
+            }
+
+            private bool IncludeReferenceProp(ITrackable entity, PropertyInfo propertyInfo)
+            {
+                EntityChangedInfo info;
+                if (!entityChangedInfos.TryGetValue(entity, out info))
+                    return true; // no excludes found for this entity
+
+                return !info.RefNavPropUnchanged.Contains(propertyInfo);
+            }
+
+            private bool IncludeCollectionItem(ITrackable entity, PropertyInfo propertyInfo, ITrackable item)
+            {
+                EntityChangedInfo info;
+                if (!entityChangedInfos.TryGetValue(entity, out info))
+                    return true; // no excludes found for this entity
+
+                HashSet<ITrackable> changedItems;
+                if (!info.ColNavPropChangedEntities.TryGetValue(propertyInfo, out changedItems))
+                    return false; // no items found for this collection
+
+                return changedItems.Contains(item);
+            }
+
+            /// <summary>
+            /// Get entities that have been added, modified or deleted, including trackable 
+            /// reference and child entities.
+            /// </summary>
+            /// <param name="items">Collection of ITrackable objects</param>
+            /// <returns>Collection containing only added, modified or deleted entities</returns>
+            private IEnumerable<ITrackable> GetChanges(IEnumerable<ITrackable> items)
+            {
+                // Prevent endless recursion by collection
+                if (!visitationHelper.TryVisit(items)) yield break;
+
+                // Prevent endless recursion by item
+                items = items.Where(i => visitationHelper.TryVisit(i)).ToList();
+
+                // Iterate items in change-tracking collection
+                foreach (ITrackable item in items)
+                {
+                    // Downstream changes flag
+                    bool hasDownstreamChanges = false;
+
+                    // Iterate entity properties
+                    foreach (var navProp in item.GetNavigationProperties())
+                    {
+                        // Process 1-1 and M-1 properties
+                        foreach (var refProp in navProp.AsReferenceProperty())
+                        {
+                            ITrackable trackableRef = refProp.EntityReference;
+
+                            // if already visited and unchanged, set to null
+                            if (visitationHelper.IsVisited(trackableRef))
+                            {
+                                if ((trackableRef.TrackingState == TrackingState.Unchanged
+                                     || trackableRef.TrackingState == TrackingState.Deleted))
+                                {
+                                    EntityInfo(item).RefNavPropUnchanged.Add(refProp.Property);
+                                }
+                                continue;
+                            }
+
+                            // Get changed ref prop
+                            ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
+                            if (refChangeTracker != null)
+                            {
+                                // Get downstream changes
+                                IEnumerable<ITrackable> refPropItems = refChangeTracker.Cast<ITrackable>();
+                                IEnumerable<ITrackable> refPropChanges = GetChanges(refPropItems);
+
+                                // Set flag for downstream changes
+                                bool hasLocalDownstreamChanges =
+                                    refPropChanges.Any(t => t.TrackingState != TrackingState.Deleted) ||
+                                    trackableRef.TrackingState == TrackingState.Added ||
+                                    trackableRef.TrackingState == TrackingState.Modified;
+
+                                // Set ref prop to null if unchanged or deleted
+                                if (!hasLocalDownstreamChanges &&
+                                    (trackableRef.TrackingState == TrackingState.Unchanged
+                                        || trackableRef.TrackingState == TrackingState.Deleted))
+                                {
+                                    EntityInfo(item).RefNavPropUnchanged.Add(refProp.Property);
+                                    continue;
+                                }
+
+                                // prevent overwrite of hasDownstreamChanges when return from recursion
+                                hasDownstreamChanges |= hasLocalDownstreamChanges;
+                            }
+                        }
+
+                        // Process 1-M and M-M properties
+                        foreach (var colProp in navProp.AsCollectionProperty<IList>())
+                        {
+                            // Get changes on child collection
+                            var trackingItems = colProp.EntityCollection;
+                            if (trackingItems.Count > 0)
+                            {
+                                // Continue recursion if trackable hasn't been visited
+                                if (!visitationHelper.IsVisited(trackingItems))
+                                {
+                                    // Get changes on child collection
+                                    var trackingCollChanges = new HashSet<ITrackable>(GetChanges(trackingItems.Cast<ITrackable>()));
+
+                                    // Set flag for downstream changes
+                                    hasDownstreamChanges |= trackingCollChanges.Any();
+
+                                    // Memorize only changed items of collection
+                                    EntityInfo(item).ColNavPropChangedEntities[colProp.Property] = trackingCollChanges;
+                                }
+                            }
+                        }
+                    }
+
+                    // Return item if it has changes
+                    if (hasDownstreamChanges || item.TrackingState != TrackingState.Unchanged)
+                        yield return item;
+                }
+            }
+
+            protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+            {
+                JsonProperty property = base.CreateProperty(member, memberSerialization);
+
+                property.ShouldSerialize =
+                    instance =>
+                    {
+                        var entity = instance as ITrackable;
+                        if (entity == null) return true;
+
+                        EntityNavigationProperty np = entity
+                            .GetNavigationProperties(false)
+                            .FirstOrDefault(x => x.Property == member);
+                        if (np == null) return true; // not a nav prop
+                        if (np.ValueIsNull) return false; // nav prop is not initialized
+
+                        foreach (var rp in np.AsReferenceProperty())
+                        {
+                            // don't serialize unchanged reference navigation props
+                            return IncludeReferenceProp(entity, rp.Property);
+                        }
+
+                        // serialize collection navigation props
+                        return true;
+                    };
+
+                // Inject the custom IValueProvider for entity collections which
+                // returns only changed items
+                property.ValueProvider = new CollectionValueProvider(this, member, property.ValueProvider);
+
+                return property;
+            }
+
+            private class CollectionValueProvider : IValueProvider
+            {
+                private readonly IValueProvider _valueProvider;
+                private readonly MemberInfo _member;
+                private readonly CloneChangesHelper _resolver;
+                private static readonly MethodInfo _genericCast;
+
+                static CollectionValueProvider()
+                {
+                    Func<IEnumerable<ITrackable>, object> func = CollectionValueProvider.CastResult<int>;
+                    _genericCast = func.Method.GetGenericMethodDefinition();
+                }
+
+                public CollectionValueProvider(CloneChangesHelper resolver,
+                    MemberInfo member,
+                    IValueProvider valueProvider)
+                {
+                    _resolver = resolver;
+                    _member = member;
+                    _valueProvider = valueProvider;
+                }
+
+                public void SetValue(object target, object value)
+                {
+                    _valueProvider.SetValue(target, value);
+                }
+
+                public object GetValue(object target)
+                {
+                    var entity = target as ITrackable;
+
+                    if (entity == null)
+                        return _valueProvider.GetValue(target);
+
+                    var cnp = entity
+                        .GetNavigationProperties(false)
+                        .OfCollectionType()
+                        .FirstOrDefault(x => x.Property == _member);
+
+                    if (cnp == null)
+                        return _valueProvider.GetValue(target); // not a collection nav prop
+
+                    if (cnp.ValueIsNull)
+                        return null; // nav prop is not initialized
+
+                    var items = cnp.EntityCollection.Where(i => _resolver.IncludeCollectionItem(entity, cnp.Property, i));
+
+                    return _genericCast.MakeGenericMethod(cnp.Property.PropertyType.GetGenericArguments()).Invoke(null, new[] { items });
+                }
+
+                private static object CastResult<T>(IEnumerable<ITrackable> items)
+                {
+                    return items.Cast<T>().ToList();
+                }
+            }
         }
 
         /// <summary>
