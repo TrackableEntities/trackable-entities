@@ -27,6 +27,9 @@ class libraries and included team member contributions. The
 complete release notes can be found here:
 https://trackable.codeplex.com/releases/view/126165
 
+Source symbol packages can be found here:
+http://nuget.gw.symbolsource.org/Public/NuGet
+
 The repository contains source code, NuGet packages, samples,
 and Visual Studio Extension projects.
 
