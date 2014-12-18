@@ -4,3 +4,4 @@ obj
 *.suo
 *.user
 
+/Build/Source/Output

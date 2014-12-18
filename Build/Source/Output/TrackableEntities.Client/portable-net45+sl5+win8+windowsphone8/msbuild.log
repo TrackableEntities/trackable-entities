@@ -1,0 +1,35 @@
+Build started 12/17/2014 6:41:55 PM.
+     1>Project "C:\Git\Trackable-Entities\Source\TrackableEntities.Client\TrackableEntities.Client.csproj" on node 1 (default targets).
+     1>RestorePackages:
+         "..\.nuget\NuGet.exe" install "C:\Git\Trackable-Entities\Source\TrackableEntities.Client\packages.config" -source ""  -NonInteractive -RequireConsent -solutionDir "..\ "
+         Restoring NuGet packages...
+         To prevent NuGet from downloading packages during build, open the Visual Studio Options dialog, click on the Package Manager node and uncheck 'Allow NuGet to download missing packages'.
+         All packages listed in packages.config are already installed.
+     1>Project "C:\Git\Trackable-Entities\Source\TrackableEntities.Client\TrackableEntities.Client.csproj" (1) is building "C:\Git\Trackable-Entities\Source\TrackableEntities.Common\TrackableEntities.Common.csproj" (3) on node 1 (default targets).
+     3>ResolveAssemblyReferences:
+         A TargetFramework profile exclusion list will be generated.
+       GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+       CoreCompile:
+       Skipping target "CoreCompile" because all output files are up-to-date with respect to the input files.
+       _CopyAppConfigFile:
+       Skipping target "_CopyAppConfigFile" because all output files are up-to-date with respect to the input files.
+       CopyFilesToOutputDirectory:
+         TrackableEntities.Common -> C:\Git\Trackable-Entities\Source\TrackableEntities.Common\bin\Release\TrackableEntities.Common.dll
+     3>Done Building Project "C:\Git\Trackable-Entities\Source\TrackableEntities.Common\TrackableEntities.Common.csproj" (default targets).
+     1>ResolveAssemblyReferences:
+         A TargetFramework profile exclusion list will be generated.
+         Could not read state file "obj\Release\TrackableEntities.Client.csprojResolveAssemblyReference.cache". The format of this state file is not valid.
+       GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+       CoreCompile:
+       Skipping target "CoreCompile" because all output files are up-to-date with respect to the input files.
+       CopyFilesToOutputDirectory:
+         TrackableEntities.Client -> C:\Git\Trackable-Entities\Source\TrackableEntities.Client\bin\Release\TrackableEntities.Client.dll
+     1>Done Building Project "C:\Git\Trackable-Entities\Source\TrackableEntities.Client\TrackableEntities.Client.csproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.48

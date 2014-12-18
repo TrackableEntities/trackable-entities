@@ -1,6 +1,10 @@
 @using System.Web.Http
 @using SampleWebApi.Inheritance.WebApi.Areas.HelpPage.Models
 @model HelpPageApiModel
+@section Scripts {
+    @Html.DisplayForModel("TestClientDialogs")
+    @Html.DisplayForModel("TestClientReferences")
+}
 
 @{
     var description = Model.ApiDescription;
@@ -20,9 +24,3 @@
         @Html.DisplayForModel()
     </section>
 </div>
-
-@Html.DisplayForModel("TestClientDialogs")
-@section Scripts {
-    @Html.DisplayForModel("TestClientReferences")
-    <link type="text/css" href="~/Areas/HelpPage/HelpPage.css" rel="stylesheet" />
-}
