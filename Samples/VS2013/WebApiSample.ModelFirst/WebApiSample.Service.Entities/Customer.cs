@@ -22,6 +22,7 @@ namespace WebApiSample.Service.Entities
         public Customer()
         {
             this.Orders = new List<Order>();
+            this.Location = new Location();
         }
     
         [DataMember]
@@ -30,10 +31,9 @@ namespace WebApiSample.Service.Entities
         public string CompanyName { get; set; }
         [DataMember]
         public string ContactName { get; set; }
+    
         [DataMember]
-        public string City { get; set; }
-        [DataMember]
-        public string Country { get; set; }
+        public Location Location { get; set; }
     
         [DataMember]
         public CustomerSetting CustomerSetting { get; set; }

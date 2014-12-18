@@ -47,6 +47,9 @@
     <Compile Include="..\WebApiSample.Client.Entities.Temp\Employee.cs">
       <Link>Employee.cs</Link>
     </Compile>
+    <Compile Include="..\WebApiSample.Client.Entities.Temp\Location.cs">
+      <Link>Location.cs</Link>
+    </Compile>
     <Compile Include="..\WebApiSample.Client.Entities.Temp\Order.cs">
       <Link>Order.cs</Link>
     </Compile>
@@ -79,10 +82,10 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\portable-net40+sl4+wp7+win8\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.Client">
-      <HintPath>..\packages\TrackableEntities.Client.2.1.0.0\lib\portable-net45+sl5+win8+windowsphone8\TrackableEntities.Client.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.Client.2.2.0\lib\portable-net45+sl50+win+wp80\TrackableEntities.Client.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.Common">
-      <HintPath>..\packages\TrackableEntities.Common.2.1.0.0\lib\portable-net40+sl5+win8+windowsphone8\TrackableEntities.Common.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.Common.2.2.0\lib\portable-net40+sl50+win+wp80\TrackableEntities.Common.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

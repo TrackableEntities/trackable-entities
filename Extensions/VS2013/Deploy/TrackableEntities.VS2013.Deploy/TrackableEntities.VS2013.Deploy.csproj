@@ -248,6 +248,11 @@
     <Content Include="Packages\Microsoft.AspNet.WebApi.HelpPage.5.2.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="..\..\..\Common\Misc\ReleaseNotes-v2.2.5.rtf">
+      <Link>ReleaseNotes-v2.2.5.rtf</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

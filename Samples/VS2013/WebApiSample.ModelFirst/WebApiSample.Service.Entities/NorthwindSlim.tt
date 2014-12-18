@@ -120,7 +120,7 @@ foreach (var complex in typeMapper.GetItemsToGenerate<ComplexType>(itemCollectio
     fileManager.StartNewFile(complex.Name + ".cs");
     BeginNamespace(code);
 #>
-<#=codeStringGenerator.UsingDirectives(inHeader: false, includeCollections: false)#>
+<#=codeStringGenerator.UsingDirectives(inHeader: false, includeCollections: true)#>
 <#=Accessibility.ForType(complex)#> partial class <#=code.Escape(complex)#>
 {
 <#

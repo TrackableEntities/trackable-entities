@@ -23,6 +23,7 @@ namespace WebApiSample.Client.Entities.Temp
         public Customer()
         {
             this.Orders = new ChangeTrackingCollection<Order>();
+            this.Location = new Location();
         }
         
     	[DataMember]
@@ -63,32 +64,20 @@ namespace WebApiSample.Client.Entities.Temp
     		}
     	}
     	private string _ContactName;
-        
+    
+    
     	[DataMember]
-    	public string City
+    	public Location Location
     	{ 
-    		get { return _City; }
+    		get { return _Location; }
     		set
     		{
-    			if (Equals(value, _City)) return;
-    			_City = value;
-    			NotifyPropertyChanged(m => m.City);
+    			if (Equals(value, _Location)) return;
+    			_Location = value;
+    			NotifyPropertyChanged(m => m.Location);
     		}
     	}
-    	private string _City;
-        
-    	[DataMember]
-    	public string Country
-    	{ 
-    		get { return _Country; }
-    		set
-    		{
-    			if (Equals(value, _Country)) return;
-    			_Country = value;
-    			NotifyPropertyChanged(m => m.Country);
-    		}
-    	}
-    	private string _Country;
+    	private Location _Location;
     
     	[DataMember]
     	public CustomerSetting CustomerSetting
