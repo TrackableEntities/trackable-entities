@@ -53,10 +53,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="TrackableEntities.Common">
-      <HintPath>..\packages\TrackableEntities.Common.2.2.0\lib\portable-net40+sl50+win+wp80\TrackableEntities.Common.dll</HintPath>
+      <HintPath>..\..\packages\TrackableEntities.Common.2.2.0\lib\portable-net40+sl50+win+wp80\TrackableEntities.Common.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.EF.6">
-      <HintPath>..\packages\TrackableEntities.EF.6.2.2.0\lib\net45\TrackableEntities.EF.6.dll</HintPath>
+      <HintPath>..\..\packages\TrackableEntities.EF.6.2.2.0\lib\net45\TrackableEntities.EF.6.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

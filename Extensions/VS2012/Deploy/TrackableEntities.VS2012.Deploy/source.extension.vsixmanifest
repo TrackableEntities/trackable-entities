@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="TrackableEntities.VS2012..151fea10-328f-45bf-92ee-d83a8a2182b0" Version="2.2.5.0" Language="en-US" Publisher="Tony Sneed" />
+    <Identity Id="TrackableEntities.VS2012..151fea10-328f-45bf-92ee-d83a8a2182b0" Version="2.5.0" Language="en-US" Publisher="Tony Sneed" />
     <DisplayName>Trackable Entities for Visual Studio 2012</DisplayName>
     <Description xml:space="preserve">N-Tier support for Entity Framework with Visual Studio project and item templates for quickly building n-tier applications using entities that are change-tracked on the client and persisted on the server via WCF or ASP.NET Web API.</Description>
     <MoreInfo>http://trackable.codeplex.com</MoreInfo>
     <License>License.txt</License>
-    <ReleaseNotes>ReleaseNotes-v2.2.5.rtf</ReleaseNotes>
+    <ReleaseNotes>ReleaseNotes-v2.5.rtf</ReleaseNotes>
     <Icon>tracking-small.png</Icon>
     <PreviewImage>tracking.png</PreviewImage>
     <Tags>change-tracking entity-framework n-tier wcf web-api</Tags>
