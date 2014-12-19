@@ -197,8 +197,8 @@ foreach (var complex in typeMapper.GetItemsToGenerate<ComplexType>(itemCollectio
     fileManager.StartNewFile(complex.Name + ".cs");
     BeginNamespace(code);
 #>
-<#=codeStringGenerator.UsingDirectives(inHeader: false, includeCollections: false)#>
-<#=Accessibility.ForType(complex)#> partial class <#=code.Escape(complex)#>
+<#=codeStringGenerator.UsingDirectives(inHeader: false, includeCollections: true)#>
+<#=Accessibility.ForType(complex)#> partial class <#=code.Escape(complex)#> : ModelBase<<#=code.Escape(complex)#>>
 {
 <#
     var complexProperties = typeMapper.GetComplexProperties(complex);
