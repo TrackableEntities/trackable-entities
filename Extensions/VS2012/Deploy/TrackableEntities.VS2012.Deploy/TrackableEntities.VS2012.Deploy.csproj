@@ -219,9 +219,6 @@
     <Content Include="Packages\TrackableEntities.Client.2.2.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Packages\TrackableEntities.Client.Net4.2.2.0.symbols.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Packages\TrackableEntities.Common.2.2.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -240,6 +237,10 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Packages\WebApiTestClient.1.1.1.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\TrackableEntities.Client.Net4.2.2.0.nupkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="source.extension.vsixmanifest">

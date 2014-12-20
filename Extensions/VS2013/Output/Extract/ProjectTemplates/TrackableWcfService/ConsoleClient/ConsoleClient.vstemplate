@@ -33,7 +33,7 @@
   <WizardData>
     <packages repository="extension"
               repositoryId="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7">
-      <package id="Microsoft.AspNet.WebApi.Client" version="5.2.0" />
+      <package id="Microsoft.AspNet.WebApi.Client" version="5.2.2" />
       <package id="Newtonsoft.Json" version="6.0.6" />
       <package id="TrackableEntities.Client" version="2.2.0" />
       <package id="TrackableEntities.Common" version="2.2.0" />

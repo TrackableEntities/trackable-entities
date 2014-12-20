@@ -211,9 +211,11 @@
         <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.min.map">jquery-2.1.1.min.map</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="jquery-ui-1.10.4.js">jquery-ui-1.10.4.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="jquery-ui-1.10.4.min.js">jquery-ui-1.10.4.min.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="knockout-3.1.0.debug.js">knockout-3.1.0.debug.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="knockout-3.1.0.js">knockout-3.1.0.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="modernizr-2.7.2.js">modernizr-2.7.2.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="knockout-3.2.0.debug.js">knockout-3.2.0.debug.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="knockout-3.2.0.js">knockout-3.2.0.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="modernizr-2.6.2.js">modernizr-2.6.2.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="modernizr-2.8.3.js">modernizr-2.8.3.js</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="npm.js">npm.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="respond.js">respond.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="respond.matchmedia.addListener.js">respond.matchmedia.addListener.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="respond.matchmedia.addListener.min.js">respond.matchmedia.addListener.min.js</ProjectItem>
