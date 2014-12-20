@@ -1,0 +1,314 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TrackableEntities.Common</name>
+    </assembly>
+    <members>
+        <member name="T:TrackableEntities.Common.EntityNavigationProperty">
+             <summary>
+             Common base class for differnt types of entity navigation properties, such as
+             EntityReferenceProperty and EntityCollectionProperty.
+             Provides safe cast operations:
+             <code>
+             foreach (var navProp in entity.GetNavigationProperties())
+             {
+                 // 1-1 and M-1 properties
+                 foreach (var refProp in navProp.AsReferenceProperty())
+                     DoSomething(refProp.EntityReference);
+            
+                 // 1-M and M-M properties
+                 foreach (var colProp in navProp.AsCollectionProperty())
+                     DoSomething(colProp.EntityCollection);
+             }
+             </code>
+             The two inner loops may look unusual but they actually do at most one iteration if the
+             current 'navProp' is of a requested type. This replaces a less elegant "first-cast-then-check"
+             contruction.
+             </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.EntityNavigationProperty.AsReferenceProperty``1">
+            <summary>
+            Casts 'this' to EntityReferenceProperty&lt;TEntity&gt;. Returns an empty enumerable
+            if 'this' is not a reference property or the entity type is incompatible.
+            </summary>
+            <typeparam name="TEntity">Type of entity reference</typeparam>
+        </member>
+        <member name="M:TrackableEntities.Common.EntityNavigationProperty.AsReferenceProperty">
+            <summary>
+            Shortcut: casts 'this' to EntityReferenceProperty.
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.EntityNavigationProperty.AsCollectionProperty``1">
+            <summary>
+            Casts 'this' to EntityCollectionProperty&lt;TEntityCollection&gt;. Returns an empty enumerable
+            if 'this' is not a collection property or the collection type is incompatible.
+            </summary>
+            <typeparam name="TEntityCollection">Type of entity collection</typeparam>
+        </member>
+        <member name="M:TrackableEntities.Common.EntityNavigationProperty.AsCollectionProperty">
+            <summary>
+            Shortcut: casts 'this' to EntityCollectionProperty.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:TrackableEntities.Common.EntityNavigationProperty.Property">
+            <summary>
+            Property information
+            </summary>
+        </member>
+        <member name="P:TrackableEntities.Common.EntityNavigationProperty.ValueIsNull">
+            <summary>
+            True if the property value is null
+            </summary>
+        </member>
+        <member name="T:TrackableEntities.Common.EntityReferenceProperty">
+            <summary>
+            Represents an entity reference property (1-1 or M-1) of a default type 'ITrackable'.
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.EntityReferenceProperty.#ctor(System.Reflection.PropertyInfo,TrackableEntities.ITrackable)">
+            <summary>
+            Creates a new EntityReferenceProperty.
+            </summary>
+            <param name="propertyInfo">Property information</param>
+            <param name="entityReference">Entity reference value</param>
+        </member>
+        <member name="P:TrackableEntities.Common.EntityReferenceProperty.EntityReference">
+            <summary>
+            Entity reference value
+            </summary>
+        </member>
+        <member name="P:TrackableEntities.Common.EntityReferenceProperty.ValueIsNull">
+            <summary>
+            True if the property value is null
+            </summary>
+        </member>
+        <member name="T:TrackableEntities.Common.EntityReferenceProperty`1">
+            <summary>
+            Represents an entity reference property (1-1 or M-1) of type 'TEntity'.
+            </summary>
+            <typeparam name="TEntity">Type of entity reference</typeparam>
+        </member>
+        <member name="P:TrackableEntities.Common.EntityReferenceProperty`1.EntityReference">
+            <summary>
+            Entity reference value
+            </summary>
+        </member>
+        <member name="T:TrackableEntities.Common.EntityCollectionProperty">
+            <summary>
+            Represents an entity collection property (1-M or M-M) of a default type 'IEnumerable&lt;ITrackable&gt;'.
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.EntityCollectionProperty.#ctor(System.Reflection.PropertyInfo,System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable})">
+            <summary>
+            Creates a new EntityCollectionProperty.
+            </summary>
+            <param name="propertyInfo">Property</param>
+            <param name="entityCollection">Entity collection value</param>
+        </member>
+        <member name="P:TrackableEntities.Common.EntityCollectionProperty.EntityCollection">
+            <summary>
+            Entity collection value
+            </summary>
+        </member>
+        <member name="P:TrackableEntities.Common.EntityCollectionProperty.ValueIsNull">
+            <summary>
+            True if the property value is null
+            </summary>
+        </member>
+        <member name="T:TrackableEntities.Common.EntityCollectionProperty`1">
+            <summary>
+            Represents an entity collection property (1-M or M-M) of type 'TEntityCollection'.
+            </summary>
+            <typeparam name="TEntityCollection">Type of entity collection</typeparam>
+        </member>
+        <member name="P:TrackableEntities.Common.EntityCollectionProperty`1.EntityCollection">
+            <summary>
+            Entity collection value
+            </summary>
+        </member>
+        <member name="T:TrackableEntities.Common.INavigationPropertyInspector">
+             <summary>
+             If an entity wishes to provide information about its properties in
+             a non-standard way, then it must implement this interface.
+            
+             Possible application: return null for uninitialized lazy-loaded
+             properties instead of getting the property value thus triggerring
+             the unwanted LoadProperty call.
+             </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.INavigationPropertyInspector.GetNavigationProperties">
+            <summary>
+            Return navigation properties of an entity.
+            </summary>
+        </member>
+        <member name="T:TrackableEntities.ITrackable">
+            <summary>
+            Interface implemented by entities that are change-tracked.
+            </summary>
+        </member>
+        <member name="P:TrackableEntities.ITrackable.TrackingState">
+            <summary>
+            Change-tracking state of an entity.
+            </summary>
+        </member>
+        <member name="P:TrackableEntities.ITrackable.ModifiedProperties">
+            <summary>
+            Properties on an entity that have been modified.
+            </summary>
+        </member>
+        <member name="T:TrackableEntities.Common.ObjectVisitationHelper">
+            <summary>
+            This class facilitates proper checking for circular references when iterating the graph nodes.
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.ObjectVisitationHelper.EnsureCreated(TrackableEntities.Common.ObjectVisitationHelper@)">
+            <summary>
+            Helper method which initializes the given reference to ObjectVisitationHelper
+            if it is null.
+            </summary>
+            <param name="visitationHelper">Reference to ObjectVisitationHelper</param>
+        </member>
+        <member name="M:TrackableEntities.Common.ObjectVisitationHelper.#ctor(System.Object)">
+            <summary>
+            The collection will contain a single object or will be initialized empty
+            if no/null object is provided.
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.ObjectVisitationHelper.#ctor(System.Collections.Generic.IEqualityComparer{System.Object})">
+            <summary>
+            Initializes an empty collection with custom equality comparer.
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.ObjectVisitationHelper.Clone">
+            <summary>
+            Creates a shallow copy of self
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.ObjectVisitationHelper.TryVisit(System.Object)">
+            <summary>
+            Checks if the given graph node has already been visited (is contained in the collection)
+            If not, then the object will be visited straight away, otherwise NOP and return false.
+            <param name="obj">An object to be visited</param>
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.ObjectVisitationHelper.IsVisited(System.Object)">
+            <summary>
+            Checks if the given graph node has already been visited (is contained in the collection)
+            <param name="obj">An object to be checked</param>
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.ObjectVisitationHelper.FindVisited(System.Object)">
+            <summary>
+            Finds a visited object which matches the given object by the current EqualityComparer
+            <param name="obj">An object to be found</param>
+            </summary>
+        </member>
+        <member name="T:TrackableEntities.Common.TrackableExtensions">
+            <summary>
+            Extension methods for entities that implement ITrackable.
+            </summary>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.AcceptChanges(TrackableEntities.ITrackable)">
+            <summary>
+            Set tracking state to Unchanged on an entity and its child collections.
+            </summary>
+            <param name="item">Trackable object</param>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.AcceptChanges(System.Collections.Generic.IEnumerable{TrackableEntities.ITrackable})">
+            <summary>
+            Set tracking state to Unchanged on entities and their child collections.
+            </summary>
+            <param name="items">Trackable objects</param>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.GetNavigationProperties(TrackableEntities.ITrackable,System.Boolean)">
+            <summary>
+            Get a list of all navigation properties (entity references and entity collections)
+            of a given entity.
+            </summary>
+            <param name="entity">Entity object</param>
+            <param name="skipNulls">Null properties are skipped</param>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.GetEntityCollectionProperty``1(TrackableEntities.ITrackable,System.Reflection.PropertyInfo)">
+            <summary>
+            Get an entity collection property (1-M or M-M) for the given entity.
+            </summary>
+            <typeparam name="TEntityCollection">Type of entity collection</typeparam>
+            <param name="entity">Entity object</param>
+            <param name="property">Property information</param>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.GetEntityCollectionProperty(TrackableEntities.ITrackable,System.Reflection.PropertyInfo)">
+            <summary>
+            Get an entity collection property (1-M or M-M) for the given entity.
+            </summary>
+            <param name="entity">Entity object</param>
+            <param name="property">Property information</param>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.GetEntityReferenceProperty``1(TrackableEntities.ITrackable,System.Reflection.PropertyInfo)">
+            <summary>
+            Get an entity reference property (1-1 or M-1) for the given entity.
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <param name="entity">Entity object</param>
+            <param name="property">Property information</param>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.GetEntityReferenceProperty(TrackableEntities.ITrackable,System.Reflection.PropertyInfo)">
+            <summary>
+            Get an entity reference property (1-1 or M-1) for the given entity.
+            </summary>
+            <param name="entity">Entity object</param>
+            <param name="property">Property information</param>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.OfReferenceType``1(System.Collections.Generic.IEnumerable{TrackableEntities.Common.EntityNavigationProperty})">
+            <summary>
+            Pick only properties of type entity reference.
+            </summary>
+            <typeparam name="TEntity">Type of entity</typeparam>
+            <param name="navigationProperties">All nagivation properties</param>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.OfReferenceType(System.Collections.Generic.IEnumerable{TrackableEntities.Common.EntityNavigationProperty})">
+            <summary>
+            Pick only properties of type entity reference.
+            </summary>
+            <param name="navigationProperties">All nagivation properties</param>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.OfCollectionType``1(System.Collections.Generic.IEnumerable{TrackableEntities.Common.EntityNavigationProperty})">
+            <summary>
+            Pick only properties of type entity collection.
+            </summary>
+            <typeparam name="TEntityCollection">Type of entity collection</typeparam>
+            <param name="navigationProperties">All nagivation properties</param>
+        </member>
+        <member name="M:TrackableEntities.Common.TrackableExtensions.OfCollectionType(System.Collections.Generic.IEnumerable{TrackableEntities.Common.EntityNavigationProperty})">
+            <summary>
+            Pick only properties of type entity collection.
+            </summary>
+            <param name="navigationProperties">All nagivation properties</param>
+        </member>
+        <member name="T:TrackableEntities.Common.TrackableExtensions.DefaultNavigationPropertyInspector">
+            <summary>
+            Default implementation of INavigationPropertyInspector used if an entity doesn't provide
+            its own implementation.
+            DefaultNavigationPropertyInspector simply loops over all entity properties
+            and yields those, whose values are either ITrackable or IEnumerable&lt;ITrackable&gt;.
+            </summary>
+        </member>
+        <member name="T:TrackableEntities.TrackingState">
+            <summary>
+            Change-tracking state of an entity.
+            </summary>
+        </member>
+        <member name="F:TrackableEntities.TrackingState.Unchanged">
+            <summary>Existing entity that has not been modified.</summary>
+        </member>
+        <member name="F:TrackableEntities.TrackingState.Added">
+            <summary>Newly created entity.</summary>
+        </member>
+        <member name="F:TrackableEntities.TrackingState.Modified">
+            <summary>Existing entity that has been modified.</summary>
+        </member>
+        <member name="F:TrackableEntities.TrackingState.Deleted">
+            <summary>Existing entity that has been marked as deleted.</summary>
+        </member>
+    </members>
+</doc>
