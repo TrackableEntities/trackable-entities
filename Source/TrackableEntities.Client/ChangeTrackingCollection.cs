@@ -119,7 +119,8 @@ namespace TrackableEntities.Client
                 item.SetTracking(value, visitationHelper);
 
                 // Set entity identifier
-                item.SetEntityIdentifier();
+                if (item is IIdentifiable)
+                    ((IIdentifiable)item).SetEntityIdentifier();
             }
             _tracking = value;
         }
@@ -182,7 +183,8 @@ namespace TrackableEntities.Client
             if (Tracking)
             {
                 // Set entity identifier
-                item.SetEntityIdentifier();
+                if (item is IIdentifiable)
+                    ((IIdentifiable)item).SetEntityIdentifier();
 
                 // Listen for property changes
                 item.PropertyChanged += OnPropertyChanged;

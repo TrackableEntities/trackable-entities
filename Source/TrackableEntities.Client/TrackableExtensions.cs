@@ -331,64 +331,6 @@ namespace TrackableEntities.Client
         }
 
         /// <summary>
-        /// Determines if two entities have the same identifier.
-        /// </summary>
-        /// <param name="item">Trackable object</param>
-        /// <param name="other">Other trackable object</param>
-        /// <returns>True if item is equatable, otherwise false</returns>
-        public static bool IsEquatable(this ITrackable item, ITrackable other)
-        {
-            var method = GetEquatableMethod(item.GetType());
-            if (method != null)
-            {
-                return (bool)method.Invoke(item, new object[] { other });
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Get entity identifier for correlation with MergeChanges.
-        /// </summary>
-        /// <param name="item">ITrackable object</param>
-        /// <returns>Entity identifier used for correlation with MergeChanges</returns>
-        public static Guid GetEntityIdentifier(this ITrackable item)
-        {
-            var property = GetEntityIdentifierProperty(item.GetType());
-            if (property == null) return default(Guid);
-            return (Guid)property.GetValue(item, null);
-        }
-
-        /// <summary>
-        /// Set entity identifier used for correlation with MergeChanges.
-        /// </summary>
-        /// <param name="item">ITrackable object</param>
-        /// <param name="value">Unique identifier (optional)</param>
-        public static void SetEntityIdentifier(this ITrackable item, Guid? value = null)
-        {
-            // Get entity identifier property
-            var property = GetEntityIdentifierProperty(item.GetType());
-            if (property == null) return;
-
-            // Set entity identifier prop value explicitly
-            if (value != null)
-            {
-                property.SetValue(item, value, null);
-                return;
-            }
-
-            // Get entity identifier prop value
-            var entityIdentifier = (Guid)property.GetValue(item, null);
-
-            // If entity identifier prop has not been set yet,
-            // set it based on entity identity field.
-            if (entityIdentifier == default(Guid))
-            {
-                var entityIdentity = item.GetOrSetEntityIdentity();
-                property.SetValue(item, entityIdentity, null);
-            }
-        }
-
-        /// <summary>
         /// Get reference property change tracker.
         /// </summary>
         /// <param name="item">ITrackable object</param>
@@ -429,39 +371,6 @@ namespace TrackableEntities.Client
                 .SelectMany(t => t.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic))
                 .SingleOrDefault(m => m.Name == propertyName + Constants.ChangeTrackingMembers.ChangeTrackingPropEnd);
             return property;
-        }
-
-        private static MethodInfo GetEquatableMethod(Type type)
-        {
-            string equatableMethod =
-                Constants.EquatableMembers.EquatableMethodStart +
-                type.FullName +
-                Constants.EquatableMembers.EquatableMethodEnd;
-            var method = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-                .SingleOrDefault(m => m.Name == equatableMethod);
-            return method;
-        }
-
-        private static PropertyInfo GetEntityIdentifierProperty(Type type)
-        {
-            var property = type.BaseTypes()
-                .SelectMany(t => t.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic))
-                .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifierProperty);
-            return property;
-        }
-
-        private static Guid GetOrSetEntityIdentity(this ITrackable item)
-        {
-            var newIdentity = Guid.NewGuid();
-            var property = GetEntityIdentifierProperty(item.GetType());
-            if (property != null)
-            {
-                var entityIdentity = (Guid)property.GetValue(item, null);
-                if (entityIdentity != default(Guid))
-                    return entityIdentity;
-                property.SetValue(item, newIdentity, null);
-            }
-            return newIdentity;
         }
     }
 }

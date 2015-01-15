@@ -44,14 +44,10 @@ namespace TrackableEntities.Client
         /// </exception>
         public static void MergeChanges<TEntity>(this ChangeTrackingCollection<TEntity> changeTracker,
             params TEntity[] updatedItems)
-                where TEntity : class, ITrackable, INotifyPropertyChanged
+                where TEntity : class, ITrackable, IIdentifiable, INotifyPropertyChanged
         {
             // Check for no items
             if (updatedItems == null) throw new ArgumentNullException("updatedItems");
-
-            // Check for IEquatable<TEntity>
-            if (!typeof(IEquatable<TEntity>).IsAssignableFrom(typeof(TEntity)))
-                throw new ArgumentException(Constants.ErrorMessages.EntityMustImplementIEquatable);
 
             // Recursively set tracking state for child collections
             changeTracker.MergeChanges(updatedItems, null);
@@ -76,11 +72,9 @@ namespace TrackableEntities.Client
                 // Back fill entity identity on trackable ref
                 if (isTrackableRef)
                 {
-                    if (updatedItem.GetEntityIdentifier() == default(Guid))
-                    {
-                        Guid origEntityIdentifier = origItem.GetEntityIdentifier();
-                        updatedItem.SetEntityIdentifier(origEntityIdentifier); 
-                    }
+                    var origItemIdentifiable = (IIdentifiable)origItem;
+                    origItemIdentifiable.SetEntityIdentifier();
+                    ((IIdentifiable)updatedItem).SetEntityIdentifier(origItemIdentifiable);
                 }
                 
                 // Iterate entity properties
@@ -214,7 +208,8 @@ namespace TrackableEntities.Client
         {
             // Get first matching item
             if (isTrackableRef) return sourceItems.FirstOrDefault();
-            return sourceItems.FirstOrDefault(t => t.IsEquatable(sourceItem));
+            return sourceItems.Cast<IIdentifiable>()
+                .FirstOrDefault(t => t.Equals((IIdentifiable)sourceItem)) as ITrackable;
         }
 
         private static void SetEntityProperties(this ITrackable targetItem, ITrackable sourceItem,
