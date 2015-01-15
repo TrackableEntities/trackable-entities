@@ -517,7 +517,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             customer1.SetEntityIdentifier();
             customer2.SetEntityIdentifier(customer1);
 
-            customer1.SetEntityIdentifier(default(Guid)); // Cleared
+            customer1.SetEntityIdentifier(new Customer()); // Cleared
 
             // Act
             bool areEquatable = customer1.IsEquatable(customer2);
@@ -538,7 +538,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool wereEquatable = customer1.IsEquatable(customer2);
 
             // Act
-            customer1.SetEntityIdentifier(default(Guid)); // Cleared
+            customer1.SetEntityIdentifier(new Customer()); // Cleared
             customer1.SetEntityIdentifier(); // Reset
             bool areEquatable = customer1.IsEquatable(customer2);
 

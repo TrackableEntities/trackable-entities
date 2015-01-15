@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Order : ModelBase<Order>, ITrackable, IEquatable<Order>
+    public class Order : EntityBase
     {
         private int _orderId;
         public int OrderId
@@ -15,7 +15,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _orderId) return;
                 _orderId = value;
-                NotifyPropertyChanged(m => m.OrderId);
+                NotifyPropertyChanged(() => OrderId);
             }
         }
 
@@ -27,7 +27,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _orderDate) return;
                 _orderDate = value;
-                NotifyPropertyChanged(m => m.OrderDate);
+                NotifyPropertyChanged(() => OrderDate);
             }
         }
         private string _customerId;
@@ -38,7 +38,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _customerId) return;
                 _customerId = value;
-                NotifyPropertyChanged(m => m.CustomerId);
+                NotifyPropertyChanged(() => CustomerId);
             }
         }
 
@@ -57,7 +57,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
                 _customer = value;
                 CustomerChangeTracker = _customer == null ? null 
                     : new ChangeTrackingCollection<Customer> { _customer };
-                NotifyPropertyChanged(m => m.Customer);
+                NotifyPropertyChanged(() => Customer);
             }
         }
         private ChangeTrackingCollection<Customer> CustomerChangeTracker { get; set; }
@@ -70,25 +70,8 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (Equals(value, _orderDetails)) return;
                 _orderDetails = value;
-                NotifyPropertyChanged(m => m.OrderDetails);
+                NotifyPropertyChanged(() => OrderDetails);
             }
         }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<Order>.Equals(Order other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
     }
 }

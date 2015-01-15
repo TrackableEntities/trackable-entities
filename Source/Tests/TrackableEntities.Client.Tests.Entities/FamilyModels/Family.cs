@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.FamilyModels
 {
     [JsonObject]
-    public class Family : ModelBase<Family>, ITrackable, IEquatable<Family>
+    public class Family : EntityBase
     {
         private Parent _mother;
         private Parent _father;
@@ -19,7 +19,7 @@ namespace TrackableEntities.Client.Tests.Entities.FamilyModels
                 if (value == _mother) return;
                 _mother = value;
                 MotherChangeTracker = _mother == null ? null : new ChangeTrackingCollection<Parent>(_mother);
-                NotifyPropertyChanged(m => m.Mother);
+                NotifyPropertyChanged(() => Mother);
             }
         }
         private ChangeTrackingCollection<Parent> MotherChangeTracker { get; set; }
@@ -33,7 +33,7 @@ namespace TrackableEntities.Client.Tests.Entities.FamilyModels
                 if (value == _father) return;
                 _father = value;
                 FatherChangeTracker = _father == null ? null : new ChangeTrackingCollection<Parent> {_father};
-                NotifyPropertyChanged(f => f.Father);
+                NotifyPropertyChanged(() => Father);
 
             }
         }
@@ -48,27 +48,9 @@ namespace TrackableEntities.Client.Tests.Entities.FamilyModels
                 if (value == _child) return;
                 _child = value;
                 ChildChangeTracker = _child == null ? null : new ChangeTrackingCollection<Child> {_child};
-                NotifyPropertyChanged(c => c.Child);
+                NotifyPropertyChanged(() => Child);
             }
         }
         private ChangeTrackingCollection<Child> ChildChangeTracker { get; set; }
-
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<Family>.Equals(Family other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
     }
 }
