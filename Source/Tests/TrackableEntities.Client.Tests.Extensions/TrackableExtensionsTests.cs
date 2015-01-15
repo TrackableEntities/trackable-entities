@@ -498,8 +498,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             var customer1 = northwind.Customers[0];
             var customer2 = northwind.Customers[1];
             customer1.SetEntityIdentifier();
-            Guid entityIdentifier = GetEntityIdentifier(customer1);
-            customer2.SetEntityIdentifier(entityIdentifier);
+            customer2.SetEntityIdentifier(customer1);
 
             // Act
             bool areEquatable = customer1.IsEquatable(customer2);
@@ -516,8 +515,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             var customer1 = northwind.Customers[0];
             var customer2 = northwind.Customers[1];
             customer1.SetEntityIdentifier();
-            Guid entityIdentifier = GetEntityIdentifier(customer1);
-            customer2.SetEntityIdentifier(entityIdentifier);
+            customer2.SetEntityIdentifier(customer1);
 
             customer1.SetEntityIdentifier(default(Guid)); // Cleared
 
@@ -536,8 +534,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             var customer1 = northwind.Customers[0];
             var customer2 = northwind.Customers[1];
             customer1.SetEntityIdentifier();
-            Guid entityIdentifier = GetEntityIdentifier(customer1);
-            customer2.SetEntityIdentifier(entityIdentifier);
+            customer2.SetEntityIdentifier(customer1);
             bool wereEquatable = customer1.IsEquatable(customer2);
 
             // Act
@@ -638,14 +635,6 @@ namespace TrackableEntities.Client.Tests.Extensions
                                from ggc in gc.Children
                                select ggc.ModifiedProperties);
             return modifieds;
-        }
-
-        private Guid GetEntityIdentifier(object item)
-        {
-            var property = typeof(Customer).GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-                .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifierProperty);
-            var entityIdentifier = (Guid)property.GetValue(item);
-            return entityIdentifier;
         }
 
         #endregion

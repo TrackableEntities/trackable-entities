@@ -359,7 +359,7 @@ namespace TrackableEntities.Client
             return isManyToManyChild;
         }
 
-        private static IEnumerable<Type> BaseTypes(this Type type)
+        internal static IEnumerable<Type> BaseTypes(this Type type)
         {
             for (Type t = type; t != null; t = t.BaseType)
                 yield return t;
