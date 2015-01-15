@@ -75,6 +75,7 @@
     </Compile>
     <Compile Include="ChangeTrackingCollection.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="EntityBase.cs" />
     <Compile Include="IIdentifiable.cs" />
     <Compile Include="IRefPropertyChangeTrackerResolver.cs" />
     <Compile Include="ITrackingCollection.cs" />

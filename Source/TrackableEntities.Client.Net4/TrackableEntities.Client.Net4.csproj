@@ -66,6 +66,9 @@
     <Compile Include="..\TrackableEntities.Client\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.Client\EntityBase.cs">
+      <Link>EntityBase.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.Client\IIdentifiable.cs">
       <Link>IIdentifiable.cs</Link>
     </Compile>
