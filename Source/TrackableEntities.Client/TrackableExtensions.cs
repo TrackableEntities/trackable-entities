@@ -433,9 +433,12 @@ namespace TrackableEntities.Client
 
         private static MethodInfo GetEquatableMethod(Type type)
         {
+            string equatableMethod =
+                Constants.EquatableMembers.EquatableMethodStart +
+                type.FullName +
+                Constants.EquatableMembers.EquatableMethodEnd;
             var method = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-                .SingleOrDefault(m => m.Name.StartsWith(Constants.EquatableMembers.EquatableMethodStart)
-                    && m.Name.EndsWith(Constants.EquatableMembers.EquatableMethodEnd));
+                .SingleOrDefault(m => m.Name == equatableMethod);
             return method;
         }
 
