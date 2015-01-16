@@ -18,7 +18,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _giftCode) return;
                 _giftCode = value;
-                NotifyPropertyChanged(m => m.PromoCode);
+                NotifyPropertyChanged(this, m => m.PromoCode);
             }
         }
     }

@@ -1,12 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.ComponentModel;
+using System.Linq.Expressions;
 
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Product : ModelBase<Product>, ITrackable, IEquatable<Product>
+    public class Product : INotifyPropertyChanged, ITrackable, IEquatable<Product>
     {
+        #region Implementation of INotifyPropertyChanged
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void NotifyPropertyChanged<TModel, TResult>
+            (TModel dummyThis, Expression<Func<TModel, TResult>> property)
+        {
+            string propertyName = ((MemberExpression)property.Body).Member.Name;
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void NotifyPropertyChanged<TResult>
+            (Expression<Func<Product, TResult>> property)
+        {
+            NotifyPropertyChanged(this, property);
+        }
+
+        #endregion
+
         private int _productId;
         public int ProductId
         {
