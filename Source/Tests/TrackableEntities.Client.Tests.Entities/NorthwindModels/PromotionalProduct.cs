@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class PromotionalProduct : Product
+    public class PromotionalProduct : Product, IEquatable<PromotionalProduct>
     {
         private string _giftCode;
         public string PromoCode
@@ -20,6 +20,12 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
                 _giftCode = value;
                 NotifyPropertyChanged(this, m => m.PromoCode);
             }
+        }
+
+        bool IEquatable<PromotionalProduct>.Equals(PromotionalProduct other)
+        {
+            // Delegate to base IEquatable<Product>
+            return ((IEquatable<Product>)this).Equals(other);
         }
     }
 }
