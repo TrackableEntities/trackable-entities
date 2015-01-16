@@ -417,9 +417,16 @@ namespace TrackableEntities.Client
             return isManyToManyChild;
         }
 
+        private static IEnumerable<Type> BaseTypes(this Type type)
+        {
+            for (Type t = type; t != null; t = t.BaseType)
+                yield return t;
+        }
+
         private static PropertyInfo GetChangeTrackingProperty(Type entityType, string propertyName)
         {
-            var property = entityType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+            var property = entityType.BaseTypes()
+                .SelectMany(t => t.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic))
                 .SingleOrDefault(m => m.Name == propertyName + Constants.ChangeTrackingMembers.ChangeTrackingPropEnd);
             return property;
         }
@@ -434,7 +441,8 @@ namespace TrackableEntities.Client
 
         private static PropertyInfo GetEntityIdentifierProperty(Type type)
         {
-            var property = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+            var property = type.BaseTypes()
+                .SelectMany(t => t.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic))
                 .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifierProperty);
             return property;
         }
