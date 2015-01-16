@@ -472,9 +472,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             // Arrange
             var product = new MockNorthwind().Products.OfType<PromotionalProduct>().First();
             var changeTracker = new ChangeTrackingCollection<PromotionalProduct>(product);
+            var clonedProduct = product.Clone();
 
             // Act
-            changeTracker.MergeChanges();
+            changeTracker.MergeChanges(clonedProduct);
 
             // Assert
             Assert.Pass();
