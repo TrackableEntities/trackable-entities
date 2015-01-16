@@ -28,7 +28,7 @@ namespace TrackableEntities.Client.Tests.Entities.Mocks
                 };
             Products = new ChangeTrackingCollection<Product>
                 {
-                    new Product { ProductId = 1, ProductName = "Chai", UnitPrice = 21.0000M, Discontinued = false, CategoryId = 1, Category = Categories[0] },
+                    new PromotionalProduct { ProductId = 1, ProductName = "Chai", UnitPrice = 21.0000M, Discontinued = false, CategoryId = 1, Category = Categories[0], PromoCode = "SOME-TEE" },
                     new PromotionalProduct { ProductId = 2, ProductName = "Chang", UnitPrice = 20.0000M, Discontinued = false, CategoryId = 1, Category = Categories[0], PromoCode = "THAI-EXPO" },
                     new Product { ProductId = 3, ProductName = "Aniseed Syrup", UnitPrice = 10.0000M, Discontinued = false, CategoryId = 2, Category = Categories[1] },
                     new Product { ProductId = 4, ProductName = "Chef Anton's Cajun Seasoning", UnitPrice = 22.0000M, Discontinued = false, CategoryId = 2, Category = Categories[1] },
