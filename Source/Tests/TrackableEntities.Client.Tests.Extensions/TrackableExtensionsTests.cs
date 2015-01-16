@@ -313,6 +313,9 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.AreNotSame(categoryOrig, categoryCopy);
             Assert.AreNotSame(categoryOrig.Products[0], categoryCopy.Products[0]);
             Assert.AreNotSame(categoryOrig.Products[1], categoryCopy.Products[1]);
+            Assert.AreEqual(categoryOrig.Products.Count, categoryCopy.Products.Count);
+            for (int i = 0; i < categoryOrig.Products.Count; ++i)
+                Assert.AreSame(categoryOrig.Products[i].GetType(), categoryCopy.Products[i].GetType());
         }
 
         [Test]
