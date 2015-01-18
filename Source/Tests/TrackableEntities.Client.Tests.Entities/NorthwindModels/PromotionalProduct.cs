@@ -1,9 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
@@ -18,7 +14,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _giftCode) return;
                 _giftCode = value;
-                NotifyPropertyChanged(this, m => m.PromoCode);
+                //NotifyPropertyChanged(this, m => m.PromoCode);
             }
         }
 

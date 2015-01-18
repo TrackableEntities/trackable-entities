@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
@@ -551,6 +552,48 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #endregion
 
+        #region NotifyPropertyChanged Tests
+
+        [Test]
+        public void Product_Property_Setter_Should_Fire_PropertyChanged_Event()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var product = northwind.Products[0];
+            var subscriber = new Subscriber<Product>
+            {
+                Model = product
+            };
+
+            // Act
+            product.ProductName += "_X";
+
+            // Assert
+            Assert.True(subscriber.ModelChanged);
+            Assert.AreEqual("ProductName", subscriber.ChangedPropertyName);
+        }
+
+        [Test]
+        public void PromotionalProduct_Property_Setter_Should_Fire_PropertyChanged_Event()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var product = northwind.Products.OfType<PromotionalProduct>().First();
+            var subscriber = new Subscriber<Product>
+            {
+                Model = product
+            };
+
+            // Act
+            product.PromoCode += "_X";
+
+            // Assert
+            Assert.True(subscriber.ModelChanged);
+            Assert.AreEqual("PromoCode", subscriber.ChangedPropertyName);
+        }
+
+        #endregion
+
         #region Helper Methods
 
         private IEnumerable<bool> GetTrackings(Parent parent)
@@ -603,6 +646,33 @@ namespace TrackableEntities.Client.Tests.Extensions
                 .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifierProperty);
             var entityIdentifier = (Guid)property.GetValue(item);
             return entityIdentifier;
+        }
+
+        #endregion
+
+        #region Helper Classes
+
+        class Subscriber<TModel>
+            where TModel : INotifyPropertyChanged
+        {
+            public TModel Model
+            {
+                set
+                {
+                    _model = value;
+                    _model.PropertyChanged += OnPropertyChanged;
+                }
+            }
+            private TModel _model;
+            
+            public bool ModelChanged { get; private set; }
+            public string ChangedPropertyName { get; private set; }
+
+            void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                ModelChanged = true;
+                ChangedPropertyName = e.PropertyName;
+            }
         }
 
         #endregion
