@@ -84,5 +84,29 @@ namespace TrackableEntities.Client
         {
             return IsEquatable(other);
         }
+
+        /// <summary>
+        /// Determines whether the specified System.Object is equal to the current System.Object.
+        /// </summary>
+        /// <param name="obj">An object to compare with this object</param>
+        public override bool Equals(object obj)
+        {
+            var other = obj as EntityBase;
+            if (other == null)
+                return base.Equals(obj);
+
+            return IsEquatable(other);
+        }
+
+        /// <summary>
+        /// Serves as a hash function for a particular type.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            if (EntityIdentifier == default(Guid))
+                return base.GetHashCode();
+
+            return EntityIdentifier.GetHashCode();
+        }
     }
 }
