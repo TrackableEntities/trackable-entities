@@ -32,5 +32,21 @@ namespace TrackableEntities.Client
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        /// <summary>
+        /// Fire PropertyChanged event.
+        /// </summary>
+        /// <typeparam name="TResult">Property return type</typeparam>
+        /// <typeparam name="TSpecificModel">Specific entity type</typeparam>
+        /// <param name="property">Lambda expression for property</param>
+        protected virtual void NotifyPropertyChanged<TSpecificModel, TResult>
+            (Expression<Func<TSpecificModel, TResult>> property)
+        {
+            string propertyName = ((MemberExpression)property.Body).Member.Name;
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 }
