@@ -74,6 +74,7 @@
     <Compile Include="EntityNavigationProperty.cs" />
     <Compile Include="INavigationPropertyInspector.cs" />
     <Compile Include="ITrackable.cs" />
+    <Compile Include="ObjectReferenceEqualityComparer.cs" />
     <Compile Include="ObjectVisitationHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TrackableExtensions.cs" />

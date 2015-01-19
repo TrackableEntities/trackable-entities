@@ -120,7 +120,7 @@ namespace TrackableEntities.Client
         {
             var visitationHelper = new ObjectVisitationHelper();
             bool hasChanges = item.HasChanges(visitationHelper,
-                new Dictionary<ITrackable, bool>(visitationHelper));
+                new Dictionary<ITrackable, bool>(ObjectReferenceEqualityComparer<ITrackable>.Default));
             return hasChanges;
         }
 
