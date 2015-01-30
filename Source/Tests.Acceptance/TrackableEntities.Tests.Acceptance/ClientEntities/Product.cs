@@ -6,7 +6,7 @@ using TrackableEntities.Client;
 namespace TrackableEntities.Tests.Acceptance.ClientEntities
 {
     [JsonObject(IsReference = true)]
-    public class Product : ModelBase<Product>, ITrackable, IEquatable<Product>
+    public class Product : EntityBase
     {
         private int _productId;
         public int ProductId
@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _productId) return;
                 _productId = value;
-                NotifyPropertyChanged(m => m.ProductId);
+                NotifyPropertyChanged(() => ProductId);
             }
         }
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _productName) return;
                 _productName = value;
-                NotifyPropertyChanged(m => m.ProductName);
+                NotifyPropertyChanged(() => ProductName);
             }
         }
 
@@ -40,7 +40,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _unitPrice) return;
                 _unitPrice = value;
-                NotifyPropertyChanged(m => m.UnitPrice);
+                NotifyPropertyChanged(() => UnitPrice);
             }
         }
 
@@ -52,7 +52,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _discontinued) return;
                 _discontinued = value;
-                NotifyPropertyChanged(m => m.Discontinued);
+                NotifyPropertyChanged(() => Discontinued);
             }
         }
 
@@ -64,7 +64,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _categoryId) return;
                 _categoryId = value;
-                NotifyPropertyChanged(m => m.CategoryId);
+                NotifyPropertyChanged(() => CategoryId);
             }
         }
 
@@ -78,26 +78,9 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
                 _category = value;
                 CategoryChangeTracker = _category == null ? null
                     : new ChangeTrackingCollection<Category> { _category };
-                NotifyPropertyChanged(m => m.Category);
+                NotifyPropertyChanged(() => Category);
             }
         }
         private ChangeTrackingCollection<Category> CategoryChangeTracker { get; set; }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<Product>.Equals(Product other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
     }
 }

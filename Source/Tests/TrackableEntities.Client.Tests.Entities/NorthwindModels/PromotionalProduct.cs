@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class PromotionalProduct : Product, IEquatable<PromotionalProduct>
+    public class PromotionalProduct : Product
     {
         private string _giftCode;
         public string PromoCode
@@ -14,14 +14,8 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _giftCode) return;
                 _giftCode = value;
-                NotifyPropertyChanged<PromotionalProduct, string>(m => m.PromoCode);
+                NotifyPropertyChanged(() => PromoCode);
             }
-        }
-
-        bool IEquatable<PromotionalProduct>.Equals(PromotionalProduct other)
-        {
-            // Delegate to base IEquatable<Product>
-            return ((IEquatable<Product>)this).Equals(other);
         }
     }
 }

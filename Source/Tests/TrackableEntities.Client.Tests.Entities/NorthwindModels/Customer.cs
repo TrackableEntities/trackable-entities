@@ -5,8 +5,7 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Customer : ModelBase<Customer>, ITrackable, IEquatable<Customer>,
-        IRefPropertyChangeTrackerResolver
+    public class Customer : EntityBase, IRefPropertyChangeTrackerResolver
     {
         private string _customerId;
         public string CustomerId
@@ -16,7 +15,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _customerId) return;
                 _customerId = value;
-                NotifyPropertyChanged(m => m.CustomerId);
+                NotifyPropertyChanged(() => CustomerId);
             }
         }
 
@@ -28,7 +27,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _customerName) return;
                 _customerName = value;
-                NotifyPropertyChanged(m => m.CustomerName);
+                NotifyPropertyChanged(() => CustomerName);
             }
         }
 
@@ -40,7 +39,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _data) return;
                 _data = value;
-                NotifyPropertyChanged(m => m.Data);
+                NotifyPropertyChanged(() => Data);
             }
         }
 
@@ -51,7 +50,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             set
             {
                 _territoryId = value;
-                NotifyPropertyChanged(m => m.TerritoryId);
+                NotifyPropertyChanged(() => TerritoryId);
             }
         }
 
@@ -65,7 +64,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
                 _customerSetting = value;
                 Xxx.CustomerSettingChangeTracker = _customerSetting == null ? null
                     : new ChangeTrackingCollection<CustomerSetting> { _customerSetting };
-                NotifyPropertyChanged(m => m.CustomerSetting);
+                NotifyPropertyChanged(() => CustomerSetting);
             }
         }
         private struct NON_STANDARD_LOCATION
@@ -87,23 +86,6 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             }
         }
         private ChangeTrackingCollection<Territory> TerritoryChangeTracker { get; set; }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<Customer>.Equals(Customer other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
 
         ITrackingCollection IRefPropertyChangeTrackerResolver.GetRefPropertyChangeTracker(string propertyName)
         {

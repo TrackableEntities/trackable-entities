@@ -119,7 +119,8 @@ namespace TrackableEntities.Client
                 item.SetTracking(value, visitationHelper);
 
                 // Set entity identifier
-                item.SetEntityIdentifier();
+                if (item is IIdentifiable)
+                    ((IIdentifiable)item).SetEntityIdentifier();
             }
             _tracking = value;
         }
@@ -182,7 +183,8 @@ namespace TrackableEntities.Client
             if (Tracking)
             {
                 // Set entity identifier
-                item.SetEntityIdentifier();
+                if (item is IIdentifiable)
+                    ((IIdentifiable)item).SetEntityIdentifier();
 
                 // Listen for property changes
                 item.PropertyChanged += OnPropertyChanged;
@@ -272,7 +274,7 @@ namespace TrackableEntities.Client
             private readonly ObjectVisitationHelper visitationHelper = new ObjectVisitationHelper();
 
             private readonly Dictionary<ITrackable, EntityChangedInfo> entityChangedInfos =
-                new Dictionary<ITrackable, EntityChangedInfo>();
+                new Dictionary<ITrackable, EntityChangedInfo>(ObjectReferenceEqualityComparer<ITrackable>.Default);
 
             public static ChangeTrackingCollection<TEntity> GetChanges(ChangeTrackingCollection<TEntity> source)
             {
@@ -421,7 +423,9 @@ namespace TrackableEntities.Client
                                 if (!visitationHelper.IsVisited(trackingItems))
                                 {
                                     // Get changes on child collection
-                                    var trackingCollChanges = new HashSet<ITrackable>(GetChanges(trackingItems.Cast<ITrackable>()));
+                                    var trackingCollChanges = new HashSet<ITrackable>(
+                                        GetChanges(trackingItems.Cast<ITrackable>()),
+                                        ObjectReferenceEqualityComparer<ITrackable>.Default);
 
                                     // Set flag for downstream changes
                                     hasDownstreamChanges |= trackingCollChanges.Any();

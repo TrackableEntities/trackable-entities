@@ -6,7 +6,7 @@ using TrackableEntities.Client;
 namespace TrackableEntities.Tests.Acceptance.ClientEntities
 {
     [JsonObject(IsReference = true)]
-    public class Category : ModelBase<Category>, ITrackable, IEquatable<Category>
+    public class Category : EntityBase
     {
         private int _categoryId;
         public int CategoryId
@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _categoryId) return;
                 _categoryId = value;
-                NotifyPropertyChanged(m => m.CategoryId);
+                NotifyPropertyChanged(() => CategoryId);
             }
         }
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _categoryName) return;
                 _categoryName = value;
-                NotifyPropertyChanged(m => m.CategoryName);
+                NotifyPropertyChanged(() => CategoryName);
             }
         }
 
@@ -40,25 +40,8 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (Equals(value, _products)) return;
                 _products = value;
-                NotifyPropertyChanged(m => m.Products);
+                NotifyPropertyChanged(() => Products);
             }
         }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<Category>.Equals(Category other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
     }
 }

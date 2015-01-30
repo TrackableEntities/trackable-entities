@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.FamilyModels
 {
     [JsonObject]
-    public class Parent : ModelBase<Parent>, ITrackable
+    public class Parent : EntityBase
     {
         public Parent() { }
         public Parent(string name)
@@ -20,7 +20,7 @@ namespace TrackableEntities.Client.Tests.Entities.FamilyModels
             {
                 if (value == _name) return;
                 _name = value;
-                NotifyPropertyChanged(m => m.Name);
+                NotifyPropertyChanged(() => Name);
             }
         }
 
@@ -32,11 +32,8 @@ namespace TrackableEntities.Client.Tests.Entities.FamilyModels
             {
                 if (Equals(value, _children)) return;
                 _children = value;
-                NotifyPropertyChanged(m => m.Children);
+                NotifyPropertyChanged(() => Children);
             }
         }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
     }
 }
