@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
+using TrackableEntities.Common;
 
 namespace TrackableEntities.Client
 {
