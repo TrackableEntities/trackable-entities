@@ -1,0 +1,26 @@
+@echo On
+set debug=%1
+
+REM Set Variables:
+set config=%Configuration%
+if "%Configuration%" == "" (
+   set config=Release
+)
+set version=%PackageVersion%
+set name=TrackableEntities.Patterns
+set source=Source\%name%
+set logs=Build\Logs\%name%
+set output=Build\Output\%name%
+
+REM Build:
+if "%debug%"=="1" pause
+mkdir "%logs%"
+%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild "%source%\%name%.csproj" /p:Configuration="%config%" /m /v:M /fl /flp:LogFile="%logs%\msbuild.log";Verbosity=Normal /nr:false
+if "%debug%"=="1" pause
+if not "%errorlevel%"=="0" exit
+
+REM Package:
+mkdir "%output%"
+Source\.nuget\nuget.exe pack "%source%\%name%.csproj" -symbols -o "%output%" -p Configuration="%config%";PackageVersion="%version%"
+if "%debug%"=="1" pause
+if not "%errorlevel%"=="0" exit

@@ -15,7 +15,7 @@
         <tags>change-tracking entity-framework repository unitofwork patterns</tags>
         <dependencies>
             <group targetFramework="net45">
-                <dependency id="EntityFramework" version="6.1.1" />
+                <dependency id="EntityFramework" version="6.1.2" />
                 <dependency id="TrackableEntities.Common" version="$PackageVersion$" />
                 <dependency id="TrackableEntities.EF.6" version="$PackageVersion$" />
                 <dependency id="TrackableEntities.Patterns" version="$PackageVersion$" />

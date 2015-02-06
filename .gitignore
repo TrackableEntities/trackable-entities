@@ -3,5 +3,8 @@ bin
 obj
 *.suo
 *.user
+*.ds_store
+*._.ds_store
 
-/Build/Source/Output
+/Build/Output
+/Build/Logs
