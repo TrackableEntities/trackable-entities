@@ -1,12 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
-using TrackableEntities.Common;
+using Newtonsoft.Json;
 
-namespace TrackableEntities.Client
+namespace TrackableEntities
 {
     /// <summary>
     /// Base class for model entities
