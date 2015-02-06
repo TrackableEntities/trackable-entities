@@ -11,7 +11,7 @@ namespace TrackableEntities
     /// Base class for model entities
     /// </summary>
     [DataContract(IsReference = true)]
-    public abstract class EntityBase : INotifyPropertyChanged, ITrackable, IIdentifiable
+    public abstract partial class EntityBase : INotifyPropertyChanged, ITrackable, IIdentifiable
     {
         /// <summary>
         /// Event for notification of property changes

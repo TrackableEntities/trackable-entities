@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _orderDetailId) return;
                 _orderDetailId = value;
-                NotifyPropertyChanged(() => OrderDetailId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _productId) return;
                 _productId = value;
-                NotifyPropertyChanged(() => ProductId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _orderId) return;
                 _orderId = value;
-                NotifyPropertyChanged(() => OrderId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -54,7 +54,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
                 _product = value;
                 ProductChangeTracker = _product == null ? null
                     : new ChangeTrackingCollection<Product> { _product };
-                NotifyPropertyChanged(() => Product);
+                NotifyPropertyChanged();
             }
         }
         private ChangeTrackingCollection<Product> ProductChangeTracker { get; set; }
@@ -67,7 +67,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _order) return;
                 _order = value;
-                NotifyPropertyChanged(() => Order);
+                NotifyPropertyChanged();
             }
         }
 
@@ -79,7 +79,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _unitPrice) return;
                 _unitPrice = value;
-                NotifyPropertyChanged(() => UnitPrice);
+                NotifyPropertyChanged();
             }
         }
 
@@ -91,7 +91,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (Math.Abs(value - _quanity) < double.Epsilon) return;
                 _quanity = value;
-                NotifyPropertyChanged(() => Quantity);
+                NotifyPropertyChanged();
             }
         }
     }

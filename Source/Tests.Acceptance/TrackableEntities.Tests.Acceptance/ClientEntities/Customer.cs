@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _customerId) return;
                 _customerId = value;
-                NotifyPropertyChanged(() => CustomerId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _customerName) return;
                 _customerName = value;
-                NotifyPropertyChanged(() => CustomerName);
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _data) return;
                 _data = value;
-                NotifyPropertyChanged(() => Data);
+                NotifyPropertyChanged();
             }
         }
 
@@ -51,7 +51,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             set
             {
                 _territoryId = value;
-                NotifyPropertyChanged(() => TerritoryId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -65,7 +65,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
                 _customerSetting = value;
                 CustomerSettingChangeTracker = _customerSetting == null ? null
                     : new ChangeTrackingCollection<CustomerSetting> { _customerSetting };
-                NotifyPropertyChanged(() => CustomerSetting);
+                NotifyPropertyChanged();
             }
         }
         private ChangeTrackingCollection<CustomerSetting> CustomerSettingChangeTracker { get; set; }
