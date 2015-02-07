@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _areaId) return;
                 _areaId = value;
-                NotifyPropertyChanged(() => AreaId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _areaName) return;
                 _areaName = value;
-                NotifyPropertyChanged(() => AreaName);
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (Equals(value, _territories)) return;
                 _territories = value;
-                NotifyPropertyChanged(() => Territories);
+                NotifyPropertyChanged();
             }
         }
     }

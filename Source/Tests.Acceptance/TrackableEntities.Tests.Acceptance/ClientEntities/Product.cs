@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _productId) return;
                 _productId = value;
-                NotifyPropertyChanged(() => ProductId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _productName) return;
                 _productName = value;
-                NotifyPropertyChanged(() => ProductName);
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _unitPrice) return;
                 _unitPrice = value;
-                NotifyPropertyChanged(() => UnitPrice);
+                NotifyPropertyChanged();
             }
         }
 
@@ -52,7 +52,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _discontinued) return;
                 _discontinued = value;
-                NotifyPropertyChanged(() => Discontinued);
+                NotifyPropertyChanged();
             }
         }
 
@@ -64,7 +64,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _categoryId) return;
                 _categoryId = value;
-                NotifyPropertyChanged(() => CategoryId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -78,7 +78,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
                 _category = value;
                 CategoryChangeTracker = _category == null ? null
                     : new ChangeTrackingCollection<Category> { _category };
-                NotifyPropertyChanged(() => Category);
+                NotifyPropertyChanged();
             }
         }
         private ChangeTrackingCollection<Category> CategoryChangeTracker { get; set; }

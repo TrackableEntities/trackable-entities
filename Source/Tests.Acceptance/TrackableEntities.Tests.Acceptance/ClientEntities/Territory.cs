@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _territoryId) return;
                 _territoryId = value;
-                NotifyPropertyChanged(() => TerritoryId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _territoryDescription) return;
                 _territoryDescription = value;
-                NotifyPropertyChanged(() => TerritoryDescription);
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _data) return;
                 _data = value;
-                NotifyPropertyChanged(() => Data);
+                NotifyPropertyChanged();
             }
         }
 
@@ -52,7 +52,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _areaId) return;
                 _areaId = value;
-                NotifyPropertyChanged(() => AreaId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -66,7 +66,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
                 _area = value;
                 AreaChangeTracker = _area == null ? null
                     : new ChangeTrackingCollection<Area> { _area };
-                NotifyPropertyChanged(() => Area);
+                NotifyPropertyChanged();
             }
         }
         private ChangeTrackingCollection<Area> AreaChangeTracker { get; set; }
@@ -80,7 +80,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
                 if (value != null) value.Parent = this;
                 if (Equals(value, _employees)) return;
                 _employees = value;
-                NotifyPropertyChanged(() => Employees);
+                NotifyPropertyChanged();
             }
         }
 
@@ -92,7 +92,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (Equals(value, _customers)) return;
                 _customers = value;
-                NotifyPropertyChanged(() => Customers);
+                NotifyPropertyChanged();
             }
         }
     }

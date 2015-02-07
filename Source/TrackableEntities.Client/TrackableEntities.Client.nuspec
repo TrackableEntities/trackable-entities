@@ -15,7 +15,6 @@
         <tags>change-tracking entity-framework n-tier wcf web-api</tags>
         <dependencies>
             <group targetFramework=".NETPortable0.0-net45+sl5+win8+windowsphone8">
-                <dependency id="Newtonsoft.Json" version="6.0.3" />
                 <dependency id="TrackableEntities.Common" version="$PackageVersion$" />
             </group>
         </dependencies>

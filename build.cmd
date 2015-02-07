@@ -9,31 +9,31 @@ if "%debug%" == "-debug" (
 )
 
 REM TrackableEntities.Common:
-call Build\Source\Scripts\TrackableEntities.Common.cmd %debug%
+call Build\Scripts\TrackableEntities.Common.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
 REM TrackableEntities.Client:
-call Build\Source\Scripts\TrackableEntities.Client.cmd %debug%
+call Build\Scripts\TrackableEntities.Client.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
 REM TrackableEntities.Client.Net4:
-call Build\Source\Scripts\TrackableEntities.Client.Net4.cmd %debug%
+call Build\Scripts\TrackableEntities.Client.Net4.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
 REM TrackableEntities.EF.5:
-call Build\Source\Scripts\TrackableEntities.EF.5.cmd %debug%
+call Build\Scripts\TrackableEntities.EF.5.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
 REM TrackableEntities.EF.6:
-call Build\Source\Scripts\TrackableEntities.EF.6.cmd %debug%
+call Build\Scripts\TrackableEntities.EF.6.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
 REM TrackableEntities.Patterns:
-call Build\Source\Scripts\TrackableEntities.Patterns.cmd %debug%
+call Build\Scripts\TrackableEntities.Patterns.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
 REM TrackableEntities.Patterns.EF.6:
-call Build\Source\Scripts\TrackableEntities.Patterns.EF.6.cmd %debug%
+call Build\Scripts\TrackableEntities.Patterns.EF.6.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
 :success

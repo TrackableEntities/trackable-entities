@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _employeeId) return;
                 _employeeId = value;
-                NotifyPropertyChanged(() => EmployeeId);
+                NotifyPropertyChanged();
             }
         }
         
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _lastName) return;
                 _lastName = value;
-                NotifyPropertyChanged(() => LastName);
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _firstName) return;
                 _firstName = value;
-                NotifyPropertyChanged(() => FirstName);
+                NotifyPropertyChanged();
             }
         }
 
@@ -52,7 +52,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _birthDate) return;
                 _birthDate = value;
-                NotifyPropertyChanged(() => BirthDate);
+                NotifyPropertyChanged();
             }
         }
 
@@ -64,7 +64,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _hireDate) return;
                 _hireDate = value;
-                NotifyPropertyChanged(() => HireDate);
+                NotifyPropertyChanged();
             }
         }
 
@@ -76,7 +76,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _city) return;
                 _city = value;
-                NotifyPropertyChanged(() => City);
+                NotifyPropertyChanged();
             }
         }
 
@@ -88,7 +88,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _country) return;
                 _country = value;
-                NotifyPropertyChanged(() => Country);
+                NotifyPropertyChanged();
             }
         }
 
@@ -101,7 +101,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
                 if (value != null) value.Parent = this;
                 if (Equals(value, _territories)) return;
                 _territories = value;
-                NotifyPropertyChanged(() => Territories);
+                NotifyPropertyChanged();
             }
         }
     }

@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _categoryId) return;
                 _categoryId = value;
-                NotifyPropertyChanged(() => CategoryId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _categoryName) return;
                 _categoryName = value;
-                NotifyPropertyChanged(() => CategoryName);
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (Equals(value, _products)) return;
                 _products = value;
-                NotifyPropertyChanged(() => Products);
+                NotifyPropertyChanged();
             }
         }
     }
