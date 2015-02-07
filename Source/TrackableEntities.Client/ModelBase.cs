@@ -25,24 +25,13 @@ namespace TrackableEntities.Client
         /// <typeparam name="TResult">Property return type</typeparam>
         /// <param name="property">Lambda expression for property</param>
         protected virtual void NotifyPropertyChanged<TResult>
-            (Expression<Func<TResult>> property)
+            (Expression<Func<TModel, TResult>> property)
         {
             string propertyName = ((MemberExpression)property.Body).Member.Name;
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
-
-        /// <summary>
-        /// Fire PropertyChanged event.
-        /// </summary>
-        /// <typeparam name="TResult">Property return type</typeparam>
-        /// <param name="property">Lambda expression for property</param>
-        protected virtual void NotifyPropertyChanged<TResult>
-            (Expression<Func<TModel, TResult>> property)
-        {
-            NotifyPropertyChanged<TResult>(property);
         }
 
         /// <summary>
