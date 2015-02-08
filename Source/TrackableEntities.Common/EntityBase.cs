@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
 namespace TrackableEntities
@@ -10,7 +9,6 @@ namespace TrackableEntities
     /// <summary>
     /// Base class for model entities
     /// </summary>
-    [DataContract(IsReference = true)]
     public abstract partial class EntityBase : INotifyPropertyChanged, ITrackable, IIdentifiable
     {
         /// <summary>
