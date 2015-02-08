@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
-using Newtonsoft.Json;
 
 namespace TrackableEntities
 {
@@ -41,8 +40,10 @@ namespace TrackableEntities
         /// </summary>
         public ICollection<string> ModifiedProperties { get; set; }
 
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
+        /// <summary>
+        /// Identifier used for correlation with MergeChanges.
+        /// </summary>
+        public Guid EntityIdentifier { get; set; }
 
         /// <summary>
         /// Generate entity identifier used for correlation with MergeChanges (if not yet done)
