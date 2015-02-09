@@ -40,9 +40,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -55,12 +55,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TrackableEntities.Client, Version=2.2.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\TrackableEntities.Client.2.5.0-alpha2\lib\net45\TrackableEntities.Client.dll</HintPath>
+    <Reference Include="TrackableEntities.Client">
+      <HintPath>..\packages\TrackableEntities.Client.2.5.0-alpha3\lib\net45\TrackableEntities.Client.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="TrackableEntities.Common">
-      <HintPath>..\packages\TrackableEntities.Common.2.5.0-alpha2\lib\net45\TrackableEntities.Common.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.Common.2.5.0-alpha3\lib\portable-net40+sl50+win+wp80\TrackableEntities.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

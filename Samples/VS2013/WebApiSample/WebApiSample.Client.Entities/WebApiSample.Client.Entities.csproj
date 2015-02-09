@@ -61,13 +61,12 @@
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="TrackableEntities.Client">
-      <HintPath>..\packages\TrackableEntities.Client.2.5.0-alpha2\lib\portable-net45+sl5+win8+windowsphone8\TrackableEntities.Client.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.Client.2.5.0-alpha3\lib\portable-net45+sl5+win8+windowsphone8\TrackableEntities.Client.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.Common">
-      <HintPath>..\packages\TrackableEntities.Common.2.5.0-alpha2\lib\portable-net40+sl5+win8+windowsphone8\TrackableEntities.Common.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.Common.2.5.0-alpha3\lib\portable-net40+sl50+win+wp80\TrackableEntities.Common.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
