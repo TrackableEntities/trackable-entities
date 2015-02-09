@@ -289,17 +289,20 @@ namespace TrackableEntities.Client
             {
                 using (var writer = new BsonWriter(stream))
                 {
-                    var set = new JsonSerializerSettings();
-                    set.TypeNameHandling = TypeNameHandling.Objects;
-                    set.ContractResolver = contractResolver ?? new EntityNavigationPropertyResolver();
-                    var serWr = JsonSerializer.Create(set);
+                    var settings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.Objects,
+                        ContractResolver = contractResolver ?? new EntityNavigationPropertyResolver(),
+                        PreserveReferencesHandling = PreserveReferencesHandling.All
+                    };
+                    var serWr = JsonSerializer.Create(settings);
                     serWr.Serialize(writer, item);
 
                     stream.Position = 0;
                     using (var reader = new BsonReader(stream))
                     {
-                        set.ContractResolver = new EntityNavigationPropertyResolver();
-                        var serRd = JsonSerializer.Create(set);
+                        settings.ContractResolver = new EntityNavigationPropertyResolver();
+                        var serRd = JsonSerializer.Create(settings);
                         var copy = serRd.Deserialize<T>(reader);
                         return copy;
                     }
