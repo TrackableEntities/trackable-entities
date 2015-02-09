@@ -1,22 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using TrackableEntities;
 using TrackableEntities.Client;
 
 namespace WebApiSample.Client.Entities.Models
 {
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Order : ModelBase<Order>, IEquatable<Order>, ITrackable
+    public partial class Order : EntityBase
     {
-        public Order()
-        {
-            OrderDetails = new ChangeTrackingCollection<OrderDetail>();
-        }
+		public Order()
+		{
+			this.OrderDetails = new ChangeTrackingCollection<OrderDetail>();
+		}
 
-		[DataMember]
 		public int OrderId
 		{ 
 			get { return _OrderId; }
@@ -24,12 +18,11 @@ namespace WebApiSample.Client.Entities.Models
 			{
 				if (Equals(value, _OrderId)) return;
 				_OrderId = value;
-				NotifyPropertyChanged(m => m.OrderId);
+				NotifyPropertyChanged(() => OrderId);
 			}
 		}
 		private int _OrderId;
 
-		[DataMember]
 		public string CustomerId
 		{ 
 			get { return _CustomerId; }
@@ -37,65 +30,59 @@ namespace WebApiSample.Client.Entities.Models
 			{
 				if (Equals(value, _CustomerId)) return;
 				_CustomerId = value;
-				NotifyPropertyChanged(m => m.CustomerId);
+				NotifyPropertyChanged(() => CustomerId);
 			}
 		}
 		private string _CustomerId;
 
-		[DataMember]
-		public DateTime? OrderDate
+		public Nullable<System.DateTime> OrderDate
 		{ 
 			get { return _OrderDate; }
 			set
 			{
 				if (Equals(value, _OrderDate)) return;
 				_OrderDate = value;
-				NotifyPropertyChanged(m => m.OrderDate);
+				NotifyPropertyChanged(() => OrderDate);
 			}
 		}
-		private DateTime? _OrderDate;
+		private Nullable<System.DateTime> _OrderDate;
 
-		[DataMember]
-		public DateTime? ShippedDate
+		public Nullable<System.DateTime> ShippedDate
 		{ 
 			get { return _ShippedDate; }
 			set
 			{
 				if (Equals(value, _ShippedDate)) return;
 				_ShippedDate = value;
-				NotifyPropertyChanged(m => m.ShippedDate);
+				NotifyPropertyChanged(() => ShippedDate);
 			}
 		}
-		private DateTime? _ShippedDate;
+		private Nullable<System.DateTime> _ShippedDate;
 
-		[DataMember]
-		public int? ShipVia
+		public Nullable<int> ShipVia
 		{ 
 			get { return _ShipVia; }
 			set
 			{
 				if (Equals(value, _ShipVia)) return;
 				_ShipVia = value;
-				NotifyPropertyChanged(m => m.ShipVia);
+				NotifyPropertyChanged(() => ShipVia);
 			}
 		}
-		private int? _ShipVia;
+		private Nullable<int> _ShipVia;
 
-		[DataMember]
-		public decimal? Freight
+		public Nullable<decimal> Freight
 		{ 
 			get { return _Freight; }
 			set
 			{
 				if (Equals(value, _Freight)) return;
 				_Freight = value;
-				NotifyPropertyChanged(m => m.Freight);
+				NotifyPropertyChanged(() => Freight);
 			}
 		}
-		private decimal? _Freight;
+		private Nullable<decimal> _Freight;
 
-
-		[DataMember]
 		public Customer Customer
 		{
 			get { return _Customer; }
@@ -105,13 +92,12 @@ namespace WebApiSample.Client.Entities.Models
 				_Customer = value;
 				CustomerChangeTracker = _Customer == null ? null
 					: new ChangeTrackingCollection<Customer> { _Customer };
-				NotifyPropertyChanged(m => m.Customer);
+				NotifyPropertyChanged(() => Customer);
 			}
 		}
 		private Customer _Customer;
 		private ChangeTrackingCollection<Customer> CustomerChangeTracker { get; set; }
 
-		[DataMember]
 		public ChangeTrackingCollection<OrderDetail> OrderDetails
 		{
 			get { return _OrderDetails; }
@@ -119,36 +105,10 @@ namespace WebApiSample.Client.Entities.Models
 			{
 				if (Equals(value, _OrderDetails)) return;
 				_OrderDetails = value;
-				NotifyPropertyChanged(m => m.OrderDetails);
+				NotifyPropertyChanged(() => OrderDetails);
 			}
 		}
 		private ChangeTrackingCollection<OrderDetail> _OrderDetails;
 
-        #region Change Tracking
-
-		[DataMember]
-		public TrackingState TrackingState { get; set; }
-
-		[DataMember]
-		public ICollection<string> ModifiedProperties { get; set; }
-
-		[JsonProperty, DataMember]
-		private Guid EntityIdentifier { get; set; }
-
-		#pragma warning disable 414
-
-		[JsonProperty, DataMember]
-		private Guid _entityIdentity = default(Guid);
-
-		#pragma warning restore 414
-
-		bool IEquatable<Order>.Equals(Order other)
-		{
-			if (EntityIdentifier != default(Guid))
-				return EntityIdentifier == other.EntityIdentifier;
-			return false;
-		}
-
-        #endregion
-    }
+	}
 }

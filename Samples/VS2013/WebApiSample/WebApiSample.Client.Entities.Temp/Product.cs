@@ -2,21 +2,15 @@ namespace WebApiSample.Client.Entities.Temp
 {
     using System;
     using System.Collections.Generic;
-	using System.Runtime.Serialization;
-	using Newtonsoft.Json;
-	using TrackableEntities;
 	using TrackableEntities.Client;
 
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Product : ModelBase<Product>, IEquatable<Product>, ITrackable
+    public partial class Product : EntityBase
     {
         public Product()
         {
             OrderDetails = new ChangeTrackingCollection<OrderDetail>();
         }
 
-		[DataMember]
 		public int ProductId
 		{ 
 			get { return _ProductId; }
@@ -24,12 +18,11 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _ProductId)) return;
 				_ProductId = value;
-				NotifyPropertyChanged(m => m.ProductId);
+				NotifyPropertyChanged();
 			}
 		}
 		private int _ProductId;
 
-		[DataMember]
 		public string ProductName
 		{ 
 			get { return _ProductName; }
@@ -37,12 +30,11 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _ProductName)) return;
 				_ProductName = value;
-				NotifyPropertyChanged(m => m.ProductName);
+				NotifyPropertyChanged();
 			}
 		}
 		private string _ProductName;
 
-		[DataMember]
 		public int? CategoryId
 		{ 
 			get { return _CategoryId; }
@@ -50,12 +42,11 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _CategoryId)) return;
 				_CategoryId = value;
-				NotifyPropertyChanged(m => m.CategoryId);
+				NotifyPropertyChanged();
 			}
 		}
 		private int? _CategoryId;
 
-		[DataMember]
 		public decimal? UnitPrice
 		{ 
 			get { return _UnitPrice; }
@@ -63,12 +54,11 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _UnitPrice)) return;
 				_UnitPrice = value;
-				NotifyPropertyChanged(m => m.UnitPrice);
+				NotifyPropertyChanged();
 			}
 		}
 		private decimal? _UnitPrice;
 
-		[DataMember]
 		public bool Discontinued
 		{ 
 			get { return _Discontinued; }
@@ -76,12 +66,11 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _Discontinued)) return;
 				_Discontinued = value;
-				NotifyPropertyChanged(m => m.Discontinued);
+				NotifyPropertyChanged();
 			}
 		}
 		private bool _Discontinued;
 
-		[DataMember]
 		public byte[] RowVersion
 		{ 
 			get { return _RowVersion; }
@@ -89,13 +78,12 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _RowVersion)) return;
 				_RowVersion = value;
-				NotifyPropertyChanged(m => m.RowVersion);
+				NotifyPropertyChanged();
 			}
 		}
 		private byte[] _RowVersion;
 
 
-		[DataMember]
 		public Category Category
 		{
 			get { return _Category; }
@@ -105,13 +93,12 @@ namespace WebApiSample.Client.Entities.Temp
 				_Category = value;
 				CategoryChangeTracker = _Category == null ? null
 					: new ChangeTrackingCollection<Category> { _Category };
-				NotifyPropertyChanged(m => m.Category);
+				NotifyPropertyChanged();
 			}
 		}
 		private Category _Category;
 		private ChangeTrackingCollection<Category> CategoryChangeTracker { get; set; }
 
-		[DataMember]
 		public ChangeTrackingCollection<OrderDetail> OrderDetails
 		{
 			get { return _OrderDetails; }
@@ -119,36 +106,9 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _OrderDetails)) return;
 				_OrderDetails = value;
-				NotifyPropertyChanged(m => m.OrderDetails);
+				NotifyPropertyChanged();
 			}
 		}
 		private ChangeTrackingCollection<OrderDetail> _OrderDetails;
-
-        #region Change Tracking
-
-		[DataMember]
-		public TrackingState TrackingState { get; set; }
-
-		[DataMember]
-		public ICollection<string> ModifiedProperties { get; set; }
-
-		[JsonProperty, DataMember]
-		private Guid EntityIdentifier { get; set; }
-
-		#pragma warning disable 414
-
-		[JsonProperty, DataMember]
-		private Guid _entityIdentity = default(Guid);
-
-		#pragma warning restore 414
-
-		bool IEquatable<Product>.Equals(Product other)
-		{
-			if (EntityIdentifier != default(Guid))
-				return EntityIdentifier == other.EntityIdentifier;
-			return false;
-		}
-
-        #endregion
     }
 }

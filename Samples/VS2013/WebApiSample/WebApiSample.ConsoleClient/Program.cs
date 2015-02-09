@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
+using AspnetWebApi2Helpers.Serialization;
 using TrackableEntities.Client;
 using WebApiSample.Client.Entities.Models;
 
@@ -11,16 +14,19 @@ namespace WebApiSample.Client.ConsoleApp
     {
         static void Main()
         {
-            Console.WriteLine("Press Enter to start");
-            Console.ReadLine();
+            // Get media type formatter
+            MediaTypeFormatter formatter;
+            string acceptHeader;
+            GetFormatter(out formatter, out acceptHeader);
 
             // TODO: Address for Web API service (replace port number)
             const string serviceBaseAddress = "http://localhost:" + "58527" + "/";
             var client = new HttpClient { BaseAddress = new Uri(serviceBaseAddress) };
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptHeader));
 
             // Get customers
             Console.WriteLine("Customers:");
-            IEnumerable<Customer> customers = GetCustomers(client);
+            IEnumerable<Customer> customers = GetCustomers(client, formatter);
             if (customers == null) return;
             foreach (var c in customers)
                 PrintCustomer(c);
@@ -33,7 +39,7 @@ namespace WebApiSample.Client.ConsoleApp
                 Console.WriteLine("Invalid customer id: {0}", customerId.ToUpper());
                 return;
             }
-            IEnumerable<Order> orders = GetCustomerOrders(client, customerId);
+            IEnumerable<Order> orders = GetCustomerOrders(client, customerId, formatter);
             foreach (var o in orders)
                 PrintOrder(o);
 
@@ -45,7 +51,7 @@ namespace WebApiSample.Client.ConsoleApp
                 Console.WriteLine("Invalid order id: {0}", orderId);
                 return;
             }
-            Order order = GetOrder(client, orderId);
+            Order order = GetOrder(client, orderId, formatter);
             PrintOrderWithDetails(order);
 
             // Create a new order
@@ -65,7 +71,7 @@ namespace WebApiSample.Client.ConsoleApp
                         new OrderDetail { ProductId = 4, Quantity = 40, UnitPrice = 40 }
                     }
             };
-            var createdOrder = CreateOrder(client, newOrder);
+            var createdOrder = CreateOrder(client, newOrder, formatter);
             PrintOrderWithDetails(createdOrder);
 
             // Update the order
@@ -88,7 +94,7 @@ namespace WebApiSample.Client.ConsoleApp
 
             // Submit changes
             var changedOrder = changeTracker.GetChanges().SingleOrDefault();
-            var updatedOrder = UpdateOrder(client, changedOrder);
+            var updatedOrder = UpdateOrder(client, changedOrder, formatter);
 
             // Merge changes
             changeTracker.MergeChanges(updatedOrder);
@@ -111,47 +117,81 @@ namespace WebApiSample.Client.ConsoleApp
             Console.ReadKey(true);
         }
 
-        private static IEnumerable<Customer> GetCustomers(HttpClient client)
+        private static bool GetFormatter(out MediaTypeFormatter formatter, out string acceptHeader)
+        {
+            Console.WriteLine("\nSelect a formatter: Json {J}, Xml {X}, or exit {Enter}");
+            //Console.WriteLine("\nSelect a formatter: Json {J}, Xml {X}, Protobuf {P}, or exit {Enter}");
+            string selection = Console.ReadLine().ToUpper();
+
+            if (selection == "J")
+            {
+                var jsonFormatter = new JsonMediaTypeFormatter();
+                jsonFormatter.JsonPreserveReferences();
+                formatter = jsonFormatter;
+                acceptHeader = "application/json";
+            }
+            else if (selection == "X")
+            {
+                formatter = new XmlDataContractSerializerFormatter();
+                acceptHeader = "application/xml";
+            }
+            //else if (selection == "P")
+            //{
+            //    var protoFormatter = new ProtoBufFormatter();
+            //    protoFormatter.ProtobufPreserveReferences(typeof(Category).Assembly);
+            //    formatter = protoFormatter;
+            //    acceptHeader = MediaTypes.Protobuf;
+            //}
+            else
+            {
+                formatter = null;
+                acceptHeader = null;
+                return false;
+            }
+            return true;
+        }
+
+        private static IEnumerable<Customer> GetCustomers(HttpClient client, MediaTypeFormatter formatter)
         {
             const string request = "api/Customer";
             var response = client.GetAsync(request).Result;
             response.EnsureSuccessStatusCode();
-            var result = response.Content.ReadAsAsync<IEnumerable<Customer>>().Result;
+            var result = response.Content.ReadAsAsync<IEnumerable<Customer>>(new[] { formatter }).Result;
             return result;
         }
 
         private static IEnumerable<Order> GetCustomerOrders
-            (HttpClient client, string customerId)
+            (HttpClient client, string customerId, MediaTypeFormatter formatter)
         {
             string request = "api/Order?customerId=" + customerId;
             var response = client.GetAsync(request).Result;
             response.EnsureSuccessStatusCode();
-            var result = response.Content.ReadAsAsync<IEnumerable<Order>>().Result;
+            var result = response.Content.ReadAsAsync<IEnumerable<Order>>(new[] { formatter }).Result;
             return result;
         }
 
-        private static Order GetOrder(HttpClient client, int orderId)
+        private static Order GetOrder(HttpClient client, int orderId, MediaTypeFormatter formatter)
         {
             string request = "api/Order/" + orderId;
             var response = client.GetAsync(request).Result;
             response.EnsureSuccessStatusCode();
-            var result = response.Content.ReadAsAsync<Order>().Result;
+            var result = response.Content.ReadAsAsync<Order>(new[] { formatter }).Result;
             return result;
         }
 
-        private static Order CreateOrder(HttpClient client, Order order)
+        private static Order CreateOrder(HttpClient client, Order order, MediaTypeFormatter formatter)
         {
             string request = "api/Order";
-            var response = client.PostAsJsonAsync(request, order).Result;
+            var response = client.PostAsync(new Uri(request, UriKind.Relative), order, formatter).Result;
             response.EnsureSuccessStatusCode();
-            var result = response.Content.ReadAsAsync<Order>().Result;
+            var result = response.Content.ReadAsAsync<Order>(new[] { formatter }).Result;
             return result;
         }
 
-        private static Order UpdateOrder(HttpClient client, Order order)
+        private static Order UpdateOrder(HttpClient client, Order order, MediaTypeFormatter formatter)
         {
             string request = "api/Order";
-            var response = client.PutAsJsonAsync(request, order).Result;
+            var response = client.PutAsync(new Uri(request, UriKind.Relative), order, formatter).Result;
             response.EnsureSuccessStatusCode();
             var result = response.Content.ReadAsAsync<Order>().Result;
             return result;

@@ -45,6 +45,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="AspnetWebApi2Helpers.Serialization">
+      <HintPath>..\packages\AspNetWebApi2Helpers.Serialization.1.0.0\lib\portable-net45+win+wpa81+wp80\AspnetWebApi2Helpers.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>

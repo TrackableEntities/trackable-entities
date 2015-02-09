@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AspnetWebApi2Helpers.Serialization">
+      <HintPath>..\packages\AspNetWebApi2Helpers.Serialization.1.0.0\lib\portable-net45+win+wpa81+wp80\AspnetWebApi2Helpers.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>

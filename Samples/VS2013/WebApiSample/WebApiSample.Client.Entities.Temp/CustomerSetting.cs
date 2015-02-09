@@ -2,16 +2,10 @@ namespace WebApiSample.Client.Entities.Temp
 {
     using System;
     using System.Collections.Generic;
-	using System.Runtime.Serialization;
-	using Newtonsoft.Json;
-	using TrackableEntities;
 	using TrackableEntities.Client;
 
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class CustomerSetting : ModelBase<CustomerSetting>, IEquatable<CustomerSetting>, ITrackable
+    public partial class CustomerSetting : EntityBase
     {
-		[DataMember]
 		public string CustomerId
 		{ 
 			get { return _CustomerId; }
@@ -19,12 +13,11 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _CustomerId)) return;
 				_CustomerId = value;
-				NotifyPropertyChanged(m => m.CustomerId);
+				NotifyPropertyChanged();
 			}
 		}
 		private string _CustomerId;
 
-		[DataMember]
 		public string Setting
 		{ 
 			get { return _Setting; }
@@ -32,13 +25,12 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _Setting)) return;
 				_Setting = value;
-				NotifyPropertyChanged(m => m.Setting);
+				NotifyPropertyChanged();
 			}
 		}
 		private string _Setting;
 
 
-		[DataMember]
 		public Customer Customer
 		{
 			get { return _Customer; }
@@ -48,37 +40,10 @@ namespace WebApiSample.Client.Entities.Temp
 				_Customer = value;
 				CustomerChangeTracker = _Customer == null ? null
 					: new ChangeTrackingCollection<Customer> { _Customer };
-				NotifyPropertyChanged(m => m.Customer);
+				NotifyPropertyChanged();
 			}
 		}
 		private Customer _Customer;
 		private ChangeTrackingCollection<Customer> CustomerChangeTracker { get; set; }
-
-        #region Change Tracking
-
-		[DataMember]
-		public TrackingState TrackingState { get; set; }
-
-		[DataMember]
-		public ICollection<string> ModifiedProperties { get; set; }
-
-		[JsonProperty, DataMember]
-		private Guid EntityIdentifier { get; set; }
-
-		#pragma warning disable 414
-
-		[JsonProperty, DataMember]
-		private Guid _entityIdentity = default(Guid);
-
-		#pragma warning restore 414
-
-		bool IEquatable<CustomerSetting>.Equals(CustomerSetting other)
-		{
-			if (EntityIdentifier != default(Guid))
-				return EntityIdentifier == other.EntityIdentifier;
-			return false;
-		}
-
-        #endregion
     }
 }

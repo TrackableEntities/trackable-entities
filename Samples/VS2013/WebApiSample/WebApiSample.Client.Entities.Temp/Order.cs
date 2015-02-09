@@ -2,21 +2,15 @@ namespace WebApiSample.Client.Entities.Temp
 {
     using System;
     using System.Collections.Generic;
-	using System.Runtime.Serialization;
-	using Newtonsoft.Json;
-	using TrackableEntities;
 	using TrackableEntities.Client;
 
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Order : ModelBase<Order>, IEquatable<Order>, ITrackable
+    public partial class Order : EntityBase
     {
         public Order()
         {
             OrderDetails = new ChangeTrackingCollection<OrderDetail>();
         }
 
-		[DataMember]
 		public int OrderId
 		{ 
 			get { return _OrderId; }
@@ -24,12 +18,11 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _OrderId)) return;
 				_OrderId = value;
-				NotifyPropertyChanged(m => m.OrderId);
+				NotifyPropertyChanged();
 			}
 		}
 		private int _OrderId;
 
-		[DataMember]
 		public string CustomerId
 		{ 
 			get { return _CustomerId; }
@@ -37,12 +30,11 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _CustomerId)) return;
 				_CustomerId = value;
-				NotifyPropertyChanged(m => m.CustomerId);
+				NotifyPropertyChanged();
 			}
 		}
 		private string _CustomerId;
 
-		[DataMember]
 		public DateTime? OrderDate
 		{ 
 			get { return _OrderDate; }
@@ -50,12 +42,11 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _OrderDate)) return;
 				_OrderDate = value;
-				NotifyPropertyChanged(m => m.OrderDate);
+				NotifyPropertyChanged();
 			}
 		}
 		private DateTime? _OrderDate;
 
-		[DataMember]
 		public DateTime? ShippedDate
 		{ 
 			get { return _ShippedDate; }
@@ -63,12 +54,11 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _ShippedDate)) return;
 				_ShippedDate = value;
-				NotifyPropertyChanged(m => m.ShippedDate);
+				NotifyPropertyChanged();
 			}
 		}
 		private DateTime? _ShippedDate;
 
-		[DataMember]
 		public int? ShipVia
 		{ 
 			get { return _ShipVia; }
@@ -76,12 +66,11 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _ShipVia)) return;
 				_ShipVia = value;
-				NotifyPropertyChanged(m => m.ShipVia);
+				NotifyPropertyChanged();
 			}
 		}
 		private int? _ShipVia;
 
-		[DataMember]
 		public decimal? Freight
 		{ 
 			get { return _Freight; }
@@ -89,13 +78,12 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _Freight)) return;
 				_Freight = value;
-				NotifyPropertyChanged(m => m.Freight);
+				NotifyPropertyChanged();
 			}
 		}
 		private decimal? _Freight;
 
 
-		[DataMember]
 		public Customer Customer
 		{
 			get { return _Customer; }
@@ -105,13 +93,12 @@ namespace WebApiSample.Client.Entities.Temp
 				_Customer = value;
 				CustomerChangeTracker = _Customer == null ? null
 					: new ChangeTrackingCollection<Customer> { _Customer };
-				NotifyPropertyChanged(m => m.Customer);
+				NotifyPropertyChanged();
 			}
 		}
 		private Customer _Customer;
 		private ChangeTrackingCollection<Customer> CustomerChangeTracker { get; set; }
 
-		[DataMember]
 		public ChangeTrackingCollection<OrderDetail> OrderDetails
 		{
 			get { return _OrderDetails; }
@@ -119,36 +106,9 @@ namespace WebApiSample.Client.Entities.Temp
 			{
 				if (Equals(value, _OrderDetails)) return;
 				_OrderDetails = value;
-				NotifyPropertyChanged(m => m.OrderDetails);
+				NotifyPropertyChanged();
 			}
 		}
 		private ChangeTrackingCollection<OrderDetail> _OrderDetails;
-
-        #region Change Tracking
-
-		[DataMember]
-		public TrackingState TrackingState { get; set; }
-
-		[DataMember]
-		public ICollection<string> ModifiedProperties { get; set; }
-
-		[JsonProperty, DataMember]
-		private Guid EntityIdentifier { get; set; }
-
-		#pragma warning disable 414
-
-		[JsonProperty, DataMember]
-		private Guid _entityIdentity = default(Guid);
-
-		#pragma warning restore 414
-
-		bool IEquatable<Order>.Equals(Order other)
-		{
-			if (EntityIdentifier != default(Guid))
-				return EntityIdentifier == other.EntityIdentifier;
-			return false;
-		}
-
-        #endregion
     }
 }
