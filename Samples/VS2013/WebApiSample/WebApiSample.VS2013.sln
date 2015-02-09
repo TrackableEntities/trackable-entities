@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.ConsoleClient"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.WebApi", "WebApiSample.WebApi\WebApiSample.WebApi.csproj", "{2A884A2D-C9D9-49C3-82D2-B68A36FCE383}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Client.Entities.Temp", "WebApiSample.Client.Entities.Temp\WebApiSample.Client.Entities.Temp.csproj", "{953B79E1-B6B4-4E15-B32D-AB6A28D2510E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Client.Entities.Net45", "WebApiSample.Client.Entities.Net45\WebApiSample.Client.Entities.Net45.csproj", "{953B79E1-B6B4-4E15-B32D-AB6A28D2510E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
