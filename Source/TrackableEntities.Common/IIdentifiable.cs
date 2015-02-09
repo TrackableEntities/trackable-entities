@@ -5,7 +5,7 @@ namespace TrackableEntities
     /// <summary>
     /// Interface implemented by entities which perform MergeChanges
     /// </summary>
-    public interface IIdentifiable : IEquatable<IIdentifiable>
+    public interface IIdentifiable : IMergeable, IEquatable<IIdentifiable>
     {
         /// <summary>
         /// Generate entity identifier used for correlation with MergeChanges (if not yet done)

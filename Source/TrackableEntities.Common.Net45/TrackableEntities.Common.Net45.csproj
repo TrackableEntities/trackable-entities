@@ -67,6 +67,9 @@
     <Compile Include="..\TrackableEntities.Common\IIdentifiable.cs">
       <Link>IIdentifiable.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.Common\IMergeable.cs">
+      <Link>IMergeable.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.Common\INavigationPropertyInspector.cs">
       <Link>INavigationPropertyInspector.cs</Link>
     </Compile>

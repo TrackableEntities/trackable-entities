@@ -35,6 +35,24 @@ namespace TrackableEntities.Client
         }
 
         /// <summary>
+        /// Identifier used for correlation with MergeChanges.
+        /// </summary>
+        public Guid EntityIdentifier
+        {
+            get
+            {
+                object identifier = GetEntityIdentifier(this);
+                if (identifier is Guid)
+                    return (Guid) identifier;
+                return default(Guid);
+            }
+            set
+            {
+                SetEntityIdentifier(value);
+            }
+        }
+
+        /// <summary>
         /// Generate entity identifier used for correlation with MergeChanges (if not yet done)
         /// </summary>
         public void SetEntityIdentifier()
@@ -80,6 +98,11 @@ namespace TrackableEntities.Client
             return false;
         }
 
+        /// <summary>
+        /// Indicates whether the current object can be idenfitied with another object of the same type.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         bool IEquatable<IIdentifiable>.Equals(IIdentifiable other)
         {
             return IsEquatable(other);
@@ -91,8 +114,7 @@ namespace TrackableEntities.Client
 
             if (property == null)
                 return default(Guid);
-            else
-                return (Guid)property.GetValue(entity, null);
+            return (Guid)property.GetValue(entity, null);
         }
 
         private void SetEntityIdentifier(IIdentifiable entity, object identifier)
@@ -125,17 +147,6 @@ namespace TrackableEntities.Client
 
         private static class Constants
         {
-            /// <summary>
-            /// Change-tracking property names.
-            /// </summary>
-            public static class TrackingProperties
-            {
-                /// <summary>TrackingState property name</summary>
-                public const string TrackingState = "TrackingState";
-                /// <summary>ModifiedProperties property name</summary>
-                public const string ModifiedProperties = "ModifiedProperties";
-            }
-
             /// <summary>
             /// Equatable member names.
             /// </summary>

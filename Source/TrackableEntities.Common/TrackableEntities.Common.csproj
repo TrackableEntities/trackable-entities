@@ -75,6 +75,7 @@
     <Compile Include="EntityBase.cs" />
     <Compile Include="EntityNavigationProperty.cs" />
     <Compile Include="IIdentifiable.cs" />
+    <Compile Include="IMergeable.cs" />
     <Compile Include="INavigationPropertyInspector.cs" />
     <Compile Include="ITrackable.cs" />
     <Compile Include="ObjectReferenceEqualityComparer.cs" />
