@@ -179,9 +179,9 @@
       <Project>{70b583cb-fc44-46d8-90f8-9f2b465e3246}</Project>
       <Name>TrackableEntities.Client.Net45</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\TrackableEntities.Common.Net45\TrackableEntities.Common.Net45.csproj">
-      <Project>{b7327dfc-d47c-4d4f-befb-b1188ccb9631}</Project>
-      <Name>TrackableEntities.Common.Net45</Name>
+    <ProjectReference Include="..\..\TrackableEntities.Common\TrackableEntities.Common.csproj">
+      <Project>{a59939c3-b823-43d1-84f1-74d6a9ddc598}</Project>
+      <Name>TrackableEntities.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\TrackableEntities.EF.6\TrackableEntities.EF.6.csproj">
       <Project>{eadec46b-436a-416d-b44e-586c0e84aa5d}</Project>

@@ -50,8 +50,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests.Acceptance", "Tests.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Tests.Acceptance", "Tests.Acceptance\TrackableEntities.Tests.Acceptance\TrackableEntities.Tests.Acceptance.csproj", "{AEE17C26-E66E-4783-BB54-32168986B8DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Common.Net45", "TrackableEntities.Common.Net45\TrackableEntities.Common.Net45.csproj", "{B7327DFC-D47C-4D4F-BEFB-B1188CCB9631}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Client.Net45", "TrackableEntities.Client.Net45\TrackableEntities.Client.Net45.csproj", "{70B583CB-FC44-46D8-90F8-9F2B465E3246}"
 EndProject
 Global
@@ -116,10 +114,6 @@ Global
 		{AEE17C26-E66E-4783-BB54-32168986B8DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEE17C26-E66E-4783-BB54-32168986B8DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEE17C26-E66E-4783-BB54-32168986B8DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7327DFC-D47C-4D4F-BEFB-B1188CCB9631}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7327DFC-D47C-4D4F-BEFB-B1188CCB9631}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7327DFC-D47C-4D4F-BEFB-B1188CCB9631}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7327DFC-D47C-4D4F-BEFB-B1188CCB9631}.Release|Any CPU.Build.0 = Release|Any CPU
 		{70B583CB-FC44-46D8-90F8-9F2B465E3246}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{70B583CB-FC44-46D8-90F8-9F2B465E3246}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70B583CB-FC44-46D8-90F8-9F2B465E3246}.Release|Any CPU.ActiveCfg = Release|Any CPU

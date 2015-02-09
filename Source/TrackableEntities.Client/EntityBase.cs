@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
 
-namespace TrackableEntities
+namespace TrackableEntities.Client
 {
     /// <summary>
     /// Base class for model entities

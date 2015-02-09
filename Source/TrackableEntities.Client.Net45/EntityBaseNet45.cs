@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace TrackableEntities
+namespace TrackableEntities.Client
 {
     public abstract partial class EntityBase
     {
