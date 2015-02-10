@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
 
@@ -29,21 +28,6 @@ namespace TrackableEntities.Client
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        /// <summary>
-        /// Change-tracking state of an entity.
-        /// </summary>
-        public TrackingState TrackingState { get; set; }
-
-        /// <summary>
-        /// Properties on an entity that have been modified.
-        /// </summary>
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        /// <summary>
-        /// Identifier used for correlation with MergeChanges.
-        /// </summary>
-        public Guid EntityIdentifier { get; set; }
 
         /// <summary>
         /// Generate entity identifier used for correlation with MergeChanges (if not yet done)
