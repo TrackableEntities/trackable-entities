@@ -1,9 +1,8 @@
-namespace WebApiSample.Client.Entities.Temp
-{
-    using System;
-    using System.Collections.Generic;
-	using TrackableEntities.Client;
+using System;
+using TrackableEntities.Client;
 
+namespace WebApiSample.Client.Entities.Net45.Models
+{
     public partial class Employee : EntityBase
     {
         public Employee()

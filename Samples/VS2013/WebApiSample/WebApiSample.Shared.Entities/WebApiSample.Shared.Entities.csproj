@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{953B79E1-B6B4-4E15-B32D-AB6A28D2510E}</ProjectGuid>
+    <ProjectGuid>{98F8C001-E6A2-4692-A2A1-8AE6E1D1EC62}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WebApiSample.Client.Entities.Net45</RootNamespace>
-    <AssemblyName>WebApiSample.Client.Entities.Net45</AssemblyName>
+    <RootNamespace>WebApiSample.Shared.Entities</RootNamespace>
+    <AssemblyName>WebApiSample.Shared.Entities</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -34,10 +34,8 @@
   <ItemGroup>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -49,7 +47,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
-    <Reference Include="System.Windows" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -59,13 +56,20 @@
       <HintPath>..\packages\TrackableEntities.Client.2.5.0-alpha4\lib\net45\TrackableEntities.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="TrackableEntities.Common, Version=2.2.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="TrackableEntities.Common">
       <HintPath>..\packages\TrackableEntities.Common.2.5.0-alpha4\lib\portable-net40+sl50+win+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10\TrackableEntities.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TrackableEntities.EF.6">
+      <HintPath>..\packages\TrackableEntities.EF.6.2.5.0-alpha4\lib\net45\TrackableEntities.EF.6.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Category.cs" />
+    <Compile Include="Contexts\NorthwindSlim.cs" />
+    <Compile Include="Contexts\NorthwindSlim.Mappings.cs" />
+    <Compile Include="Contexts\NorthwindSlimDatabaseInitializer.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\CustomerSetting.cs" />
     <Compile Include="Models\Employee.cs" />
@@ -80,6 +84,10 @@
     <None Include="CodeTemplates\EFModelFromDatabase\Context.cs.t4" />
     <None Include="CodeTemplates\EFModelFromDatabase\EntityType.cs.t4" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\Context.tt">
+      <LastGenOutput>Context.cs</LastGenOutput>
+    </None>
+    <None Include="CodeTemplates\ReverseEngineerCodeFirst\Mapping.tt" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

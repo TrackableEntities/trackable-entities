@@ -1,9 +1,10 @@
-namespace WebApiSample.Client.Entities.Temp
-{
-    using System;
-    using System.Collections.Generic;
-	using TrackableEntities.Client;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using TrackableEntities.Client;
 
+namespace WebApiSample.Shared.Entities.Models
+{
+    [Table("Territory")]
     public partial class Territory : EntityBase
     {
         public Territory()
@@ -11,6 +12,7 @@ namespace WebApiSample.Client.Entities.Temp
             Employees = new ChangeTrackingCollection<Employee>();
         }
 
+        [StringLength(20)]
 		public string TerritoryId
 		{ 
 			get { return _TerritoryId; }
@@ -23,6 +25,8 @@ namespace WebApiSample.Client.Entities.Temp
 		}
 		private string _TerritoryId;
 
+        [Required]
+        [StringLength(50)]
 		public string TerritoryDescription
 		{ 
 			get { return _TerritoryDescription; }

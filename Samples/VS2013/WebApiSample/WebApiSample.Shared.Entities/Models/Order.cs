@@ -1,9 +1,11 @@
-namespace WebApiSample.Client.Entities.Temp
-{
-    using System;
-    using System.Collections.Generic;
-	using TrackableEntities.Client;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using TrackableEntities.Client;
 
+namespace WebApiSample.Shared.Entities.Models
+{
+    [Table("Order")]
     public partial class Order : EntityBase
     {
         public Order()
@@ -23,6 +25,7 @@ namespace WebApiSample.Client.Entities.Temp
 		}
 		private int _OrderId;
 
+        [StringLength(5)]
 		public string CustomerId
 		{ 
 			get { return _CustomerId; }
@@ -71,6 +74,7 @@ namespace WebApiSample.Client.Entities.Temp
 		}
 		private int? _ShipVia;
 
+        [Column(TypeName = "money")]
 		public decimal? Freight
 		{ 
 			get { return _Freight; }

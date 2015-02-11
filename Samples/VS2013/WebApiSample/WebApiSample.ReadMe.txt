@@ -7,12 +7,10 @@ using Visual Studio 2012 or 2013.
 NOTE: You should first install the Entity Framework Power Tools.
 Support for EF 6.1 Tools for Visual Studio has also be added,
 so that you can add an "ADO.NET Entity Data Model" to the
-Service.Entities project. However, because the EF Power Tools
-are not compatible with Portable Class Libraries, you can either
-use the EF Power Tools to generate client entities, or copy
-the Code Tempaltes folder to a .NET 4.5 Class Library project
-and generate model classes there, then copy or link them to the
-Client.Entities project.
+entities project.  This sample uses a shared entities .NET 4.5
+class library project, which has both TrackableEntities.EF.6 and
+TrackableEntities.Client packages installed and uses the client 
+entities T4 templates.
 
 These steps use a scaled down version of the Northwind database, 
 which you can get here: http://bit.ly/northwindslim.

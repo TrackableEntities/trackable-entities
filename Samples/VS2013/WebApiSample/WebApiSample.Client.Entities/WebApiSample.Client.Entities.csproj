@@ -65,10 +65,12 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.Client">
-      <HintPath>..\packages\TrackableEntities.Client.2.5.0-alpha3\lib\portable-net45+sl5+win8+windowsphone8\TrackableEntities.Client.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.Client.2.5.0-alpha4\lib\portable-net45+sl5+win8+windowsphone8\TrackableEntities.Client.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="TrackableEntities.Common">
-      <HintPath>..\packages\TrackableEntities.Common.2.5.0-alpha3\lib\portable-net40+sl50+win+wp80\TrackableEntities.Common.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.Common.2.5.0-alpha4\lib\portable-net40+sl50+win+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10\TrackableEntities.Common.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup />
