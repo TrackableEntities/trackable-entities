@@ -51,10 +51,11 @@ xcopy "%source%.Net45\bin\%config%\%name%.xml" "%output%\lib\%target-net45%\" /y
 xcopy "%source%.Net45\bin\%config%\%name%.pdb" "%output%\lib\%target-net45%\" /y
 
 mkdir "%output%\src\%target-net45%\Properties"
-
 xcopy "Source\AssemblyVersion.cs" "%output%\src\%target-net45%\Properties\" /y
 xcopy "%source%\Properties\AssemblyInfo.cs" "%output%\src\%target-net45%\Properties\" /y
 xcopy "%source%\*.cs" "%output%\src\%target-net45%\" /y
+del "%output%\src\%target-net45%\EntityBasePortable.cs"
+xcopy "%source%.Net45\*.cs" "%output%\src\%target-net45%\" /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
