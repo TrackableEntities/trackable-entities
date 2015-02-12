@@ -403,22 +403,6 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Test]
-        public void Removed_Existing_Unchanged_Items_By_EntityIdentifier()
-        {
-            // Arrange
-            var database = new MockNorthwind();
-            var changeTracker = new ChangeTrackingCollection<Product>(database.Products[0]);
-            var product = changeTracker[0];
-
-            // Act
-            changeTracker.Remove(product.Clone());
-
-            // Assert
-            Assert.AreEqual(0, changeTracker.Count);
-            Assert.AreEqual(TrackingState.Deleted, product.TrackingState);
-        }
-
-        [Test]
         public void Removed_Existing_Modified_Items_Should_Be_Marked_As_Deleted()
         {
             // Arrange
