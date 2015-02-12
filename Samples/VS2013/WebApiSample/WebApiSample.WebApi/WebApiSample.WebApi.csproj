@@ -125,14 +125,14 @@
     </Reference>
     <Reference Include="TrackableEntities.Client, Version=2.2.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\TrackableEntities.Client.2.5.0-alpha4\lib\net45\TrackableEntities.Client.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.Client.2.5.0-alpha5\lib\net45\TrackableEntities.Client.dll</HintPath>
     </Reference>
-    <Reference Include="TrackableEntities.Common">
-      <HintPath>..\packages\TrackableEntities.Common.2.5.0-alpha4\lib\portable-net40+sl50+win+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10\TrackableEntities.Common.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="TrackableEntities.Common, Version=2.2.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\TrackableEntities.Common.2.5.0-alpha5\lib\portable-net40+sl50+win+wp80\TrackableEntities.Common.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.EF.6">
-      <HintPath>..\packages\TrackableEntities.EF.6.2.5.0-alpha4\lib\net45\TrackableEntities.EF.6.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.EF.6.2.5.0-alpha5\lib\net45\TrackableEntities.EF.6.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -329,9 +329,9 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WebApiSample.Service.Entities\WebApiSample.Service.Entities.csproj">
-      <Project>{8556c7c8-72a6-4857-bafd-489e42a2a453}</Project>
-      <Name>WebApiSample.Service.Entities</Name>
+    <ProjectReference Include="..\WebApiSample.Shared.Entities\WebApiSample.Shared.Entities.csproj">
+      <Project>{98f8c001-e6a2-4692-a2a1-8ae6e1d1ec62}</Project>
+      <Name>WebApiSample.Shared.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

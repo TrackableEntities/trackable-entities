@@ -6,7 +6,7 @@ using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using AspnetWebApi2Helpers.Serialization;
 using TrackableEntities.Client;
-using WebApiSample.Client.Entities.Models;
+using WebApiSample.Shared.Entities.Models;
 
 namespace WebApiSample.Client.ConsoleApp
 {
