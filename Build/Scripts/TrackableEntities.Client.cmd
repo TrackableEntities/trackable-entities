@@ -11,7 +11,7 @@ set name=TrackableEntities.Client
 set source=Source\%name%
 set logs=Build\Logs\%name%
 set output=Build\Output\%name%
-set target-portable=portable-net45+sl5+win8+windowsphone8
+set target-portable=portable-net45+sl5+win8+wp80
 set target-net45=net45
 
 REM Restore:
