@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>TrackableEntities.CodeTemplates.Client</id>
+    <id>TrackableEntities.CodeTemplates.Client.Net45</id>
     <version>$PackageVersion$</version>
-    <title>Trackable Entities Client Code Templates</title>
+    <title>Trackable Entities .NET 4.5 Client Code Templates</title>
     <authors>Tony Sneed</authors>
     <owners>Tony Sneed</owners>
     <licenseUrl>http://trackable.codeplex.com/license</licenseUrl>
