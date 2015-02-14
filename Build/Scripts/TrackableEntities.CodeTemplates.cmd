@@ -14,6 +14,7 @@ REM Copy:
 if "%debug%"=="1" pause
 mkdir "%output%\%name%.%ext%"
 xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\Content\" /e /y
+xcopy "%source%.%ext%\tools" "%output%\%name%.%ext%\tools\" /e /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
@@ -31,6 +32,7 @@ REM Copy:
 if "%debug%"=="1" pause
 mkdir "%output%\%name%.%ext%"
 xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\Content\" /e /y
+xcopy "%source%.%ext%\tools" "%output%\%name%.%ext%\tools\" /e /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
@@ -48,6 +50,7 @@ REM Copy:
 if "%debug%"=="1" pause
 mkdir "%output%\%name%.%ext%"
 xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\Content\" /e /y
+xcopy "%source%.%ext%\tools" "%output%\%name%.%ext%\tools\" /e /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
@@ -65,6 +68,7 @@ REM Copy:
 if "%debug%"=="1" pause
 mkdir "%output%\%name%.%ext%"
 xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\Content\" /e /y
+xcopy "%source%.%ext%\tools" "%output%\%name%.%ext%\tools\" /e /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
