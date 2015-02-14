@@ -13,7 +13,7 @@ set ext=Client.Portable
 REM Copy:
 if "%debug%"=="1" pause
 mkdir "%output%\%name%.%ext%"
-xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\" /e /y
+xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\Content\" /e /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
@@ -30,7 +30,7 @@ set ext=Client.Net45
 REM Copy:
 if "%debug%"=="1" pause
 mkdir "%output%\%name%.%ext%"
-xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\" /e /y
+xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\Content\" /e /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
@@ -47,7 +47,7 @@ set ext=Service.Net45
 REM Copy:
 if "%debug%"=="1" pause
 mkdir "%output%\%name%.%ext%"
-xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\" /e /y
+xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\Content\" /e /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
@@ -64,7 +64,7 @@ set ext=Shared.Net45
 REM Copy:
 if "%debug%"=="1" pause
 mkdir "%output%\%name%.%ext%"
-xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\" /e /y
+xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\Content\" /e /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
