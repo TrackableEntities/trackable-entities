@@ -1,7 +1,7 @@
 rem VS Setup: http://inedo.com/support/tutorials/debug-into-internal-nuget-packages-with-proget
 
 set source=http://localhost:81/nuget/Default
-set version=2.5.0-alpha5
+set version=2.5.0
 set key=Admin:Admin
 
 NuGet.exe push Output\TrackableEntities.Common\TrackableEntities.Common.%version%.symbols.nupkg %key% -Source %source%
