@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Client.Entitie
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entities", "Entities", "{BA958210-AB65-4A8F-AEB8-DAF8DD0CB5F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Shared.Entities", "WebApiSample.Shared.Entities\WebApiSample.Shared.Entities.csproj", "{98F8C001-E6A2-4692-A2A1-8AE6E1D1EC62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Shared.Entities.Net45", "WebApiSample.Shared.Entities.Net45\WebApiSample.Shared.Entities.Net45.csproj", "{98F8C001-E6A2-4692-A2A1-8AE6E1D1EC62}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

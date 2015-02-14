@@ -76,9 +76,9 @@
     <Content Include="TrackableConsoleClient.ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WebApiSample.Shared.Entities\WebApiSample.Shared.Entities.csproj">
+    <ProjectReference Include="..\WebApiSample.Shared.Entities.Net45\WebApiSample.Shared.Entities.Net45.csproj">
       <Project>{98f8c001-e6a2-4692-a2a1-8ae6e1d1ec62}</Project>
-      <Name>WebApiSample.Shared.Entities</Name>
+      <Name>WebApiSample.Shared.Entities.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

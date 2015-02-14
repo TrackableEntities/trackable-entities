@@ -1,7 +1,7 @@
 using System;
 using TrackableEntities.Client;
 
-namespace WebApiSample.Client.Entities.Net45.Models
+namespace WebApiSample.Client.Entities.Models
 {
     public partial class Order : EntityBase
     {

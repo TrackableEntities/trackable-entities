@@ -7,8 +7,8 @@
     <ProjectGuid>{953B79E1-B6B4-4E15-B32D-AB6A28D2510E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WebApiSample.Client.Entities.Net45</RootNamespace>
-    <AssemblyName>WebApiSample.Client.Entities.Net45</AssemblyName>
+    <RootNamespace>WebApiSample.Client.Entities</RootNamespace>
+    <AssemblyName>WebApiSample.Client.Entities</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
