@@ -66,16 +66,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WcfSample.Client.Entities\WcfSample.Client.Entities.csproj">
-      <Project>{d8e5c866-6c5a-4acf-aee4-289e7412471f}</Project>
-      <Name>WcfSample.Client.Entities</Name>
-    </ProjectReference>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="TrackableConsoleClient.ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WcfSample.Shared.Entities.Net45\WcfSample.Shared.Entities.Net45.csproj">
+      <Project>{254add45-1218-4b68-ae34-f1822d9a4767}</Project>
+      <Name>WcfSample.Shared.Entities.Net45</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

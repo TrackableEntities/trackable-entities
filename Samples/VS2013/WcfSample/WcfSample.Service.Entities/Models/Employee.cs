@@ -1,42 +1,112 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using TrackableEntities;
+using TrackableEntities.Client;
 
-namespace WcfSample.Service.Entities.Models
+namespace WcfSample.Client.Entities.Models
 {
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Employee : ITrackable
+    public partial class Employee : EntityBase
     {
-        public Employee()
-        {
-            this.Territories = new List<Territory>();
-        }
+		public Employee()
+		{
+			this.Territories = new ChangeTrackingCollection<Territory>();
+		}
 
-        [DataMember]
-        public int EmployeeId { get; set; }
-        [DataMember]
-        public string LastName { get; set; }
-        [DataMember]
-        public string FirstName { get; set; }
-        [DataMember]
-        public Nullable<System.DateTime> BirthDate { get; set; }
-        [DataMember]
-        public Nullable<System.DateTime> HireDate { get; set; }
-        [DataMember]
-        public string City { get; set; }
-        [DataMember]
-        public string Country { get; set; }
-        [DataMember]
-        public List<Territory> Territories { get; set; }
+		public int EmployeeId
+		{ 
+			get { return _EmployeeId; }
+			set
+			{
+				if (Equals(value, _EmployeeId)) return;
+				_EmployeeId = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private int _EmployeeId;
 
-        [DataMember]
-        public TrackingState TrackingState { get; set; }
-        [DataMember]
-        public ICollection<string> ModifiedProperties { get; set; }
-        [JsonProperty, DataMember]
-        private Guid EntityIdentifier { get; set; }
-    }
+		public string LastName
+		{ 
+			get { return _LastName; }
+			set
+			{
+				if (Equals(value, _LastName)) return;
+				_LastName = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private string _LastName;
+
+		public string FirstName
+		{ 
+			get { return _FirstName; }
+			set
+			{
+				if (Equals(value, _FirstName)) return;
+				_FirstName = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private string _FirstName;
+
+		public Nullable<System.DateTime> BirthDate
+		{ 
+			get { return _BirthDate; }
+			set
+			{
+				if (Equals(value, _BirthDate)) return;
+				_BirthDate = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private Nullable<System.DateTime> _BirthDate;
+
+		public Nullable<System.DateTime> HireDate
+		{ 
+			get { return _HireDate; }
+			set
+			{
+				if (Equals(value, _HireDate)) return;
+				_HireDate = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private Nullable<System.DateTime> _HireDate;
+
+		public string City
+		{ 
+			get { return _City; }
+			set
+			{
+				if (Equals(value, _City)) return;
+				_City = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private string _City;
+
+		public string Country
+		{ 
+			get { return _Country; }
+			set
+			{
+				if (Equals(value, _Country)) return;
+				_Country = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private string _Country;
+
+		public ChangeTrackingCollection<Territory> Territories
+		{
+			get { return _Territories; }
+			set
+			{
+				if (value != null) value.Parent = this;
+				if (Equals(value, _Territories)) return;
+				_Territories = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private ChangeTrackingCollection<Territory> _Territories;
+
+	}
 }

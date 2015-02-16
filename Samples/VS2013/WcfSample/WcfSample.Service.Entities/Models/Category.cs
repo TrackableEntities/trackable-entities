@@ -1,32 +1,51 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using TrackableEntities;
+using TrackableEntities.Client;
 
-namespace WcfSample.Service.Entities.Models
+namespace WcfSample.Client.Entities.Models
 {
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Category : ITrackable
+    public partial class Category : EntityBase
     {
-        public Category()
-        {
-            this.Products = new List<Product>();
-        }
+		public Category()
+		{
+			this.Products = new ChangeTrackingCollection<Product>();
+		}
 
-        [DataMember]
-        public int CategoryId { get; set; }
-        [DataMember]
-        public string CategoryName { get; set; }
-        [DataMember]
-        public List<Product> Products { get; set; }
+		public int CategoryId
+		{ 
+			get { return _CategoryId; }
+			set
+			{
+				if (Equals(value, _CategoryId)) return;
+				_CategoryId = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private int _CategoryId;
 
-        [DataMember]
-        public TrackingState TrackingState { get; set; }
-        [DataMember]
-        public ICollection<string> ModifiedProperties { get; set; }
-        [JsonProperty, DataMember]
-        private Guid EntityIdentifier { get; set; }
-    }
+		public string CategoryName
+		{ 
+			get { return _CategoryName; }
+			set
+			{
+				if (Equals(value, _CategoryName)) return;
+				_CategoryName = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private string _CategoryName;
+
+		public ChangeTrackingCollection<Product> Products
+		{
+			get { return _Products; }
+			set
+			{
+				if (Equals(value, _Products)) return;
+				_Products = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private ChangeTrackingCollection<Product> _Products;
+
+	}
 }

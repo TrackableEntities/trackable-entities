@@ -1,27 +1,49 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using TrackableEntities;
+using TrackableEntities.Client;
 
-namespace WcfSample.Service.Entities.Models
+namespace WcfSample.Client.Entities.Models
 {
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class CustomerSetting : ITrackable
+    public partial class CustomerSetting : EntityBase
     {
-        [DataMember]
-        public string CustomerId { get; set; }
-        [DataMember]
-        public string Setting { get; set; }
-        [DataMember]
-        public Customer Customer { get; set; }
+		public string CustomerId
+		{ 
+			get { return _CustomerId; }
+			set
+			{
+				if (Equals(value, _CustomerId)) return;
+				_CustomerId = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private string _CustomerId;
 
-        [DataMember]
-        public TrackingState TrackingState { get; set; }
-        [DataMember]
-        public ICollection<string> ModifiedProperties { get; set; }
-        [JsonProperty, DataMember]
-        private Guid EntityIdentifier { get; set; }
-    }
+		public string Setting
+		{ 
+			get { return _Setting; }
+			set
+			{
+				if (Equals(value, _Setting)) return;
+				_Setting = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private string _Setting;
+
+		public Customer Customer
+		{
+			get { return _Customer; }
+			set
+			{
+				if (Equals(value, _Customer)) return;
+				_Customer = value;
+				CustomerChangeTracker = _Customer == null ? null
+					: new ChangeTrackingCollection<Customer> { _Customer };
+				NotifyPropertyChanged();
+			}
+		}
+		private Customer _Customer;
+		private ChangeTrackingCollection<Customer> CustomerChangeTracker { get; set; }
+
+	}
 }

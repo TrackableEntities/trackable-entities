@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using TrackableEntities.Client;
-using WcfSample.Client.Entities.Models;
+using WcfSample.Shared.Entities.Net45.Models;
 
 namespace WcfSample.Client.ConsoleApp
 {

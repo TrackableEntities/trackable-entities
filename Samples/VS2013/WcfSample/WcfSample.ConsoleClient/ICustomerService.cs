@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using WcfSample.Client.Entities.Models;
+using WcfSample.Shared.Entities.Net45.Models;
 
 namespace WcfSample.Client.ConsoleApp
 {

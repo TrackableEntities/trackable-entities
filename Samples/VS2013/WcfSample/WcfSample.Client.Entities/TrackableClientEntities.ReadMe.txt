@@ -6,6 +6,15 @@ only be used to generate client entities using a .NET 4.5 class
 library project, from which you can copy or link model classes
 to the Client.Entities project.
 
+IMPORTANT: As of v 2.5 of Trackable Entities, the code templates
+are using POCO entities, without any DataContract attributes.
+Therefore, the default namespace must be the same for both the
+client and service entities.  As an alternative, you can choose
+"Shared Entities" with a new project.  Also note that the
+WcfSerializationHelpers has been added to the Service.Core project
+and the [DataContractSerializerPreserveReferences] attribute has
+been added to each service contract interface.
+
 This project template references the TrackableEntities.Client NuGet
 package, which contains a ChangeTrackingCollection<T> that sets the
 TrackingState and ModifiedProperties properties on each entity.
