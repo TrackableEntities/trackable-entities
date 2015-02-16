@@ -119,12 +119,6 @@ namespace TrackableEntities.Client
             {
                 ITrackingCollection trackingCollection = null;
 
-                // 1-1 and M-1 properties
-                foreach (var refProp in navProp.AsReferenceProperty())
-                {
-                    trackingCollection = item.GetRefPropertyChangeTracker(refProp.Property.Name);
-                }
-
                 // 1-M and M-M properties
                 foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
                 {

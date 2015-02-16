@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Linq;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using NUnit.Framework;
 using TrackableEntities.Client.Tests.Entities.Mocks;
 using TrackableEntities.Client.Tests.Entities.FamilyModels;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
+using TrackableEntities.Common;
 
 namespace TrackableEntities.Client.Tests.Extensions
 {
@@ -197,6 +199,38 @@ namespace TrackableEntities.Client.Tests.Extensions
             // Assert
             IEnumerable<ICollection<string>> modifieds = GetModifieds(parent);
             Assert.IsTrue(modifieds.All(t => t.Contains("Children")));
+        }
+
+        [Test]
+        public void Child_Set_Modified_Props_Should_Not_Set_Parent_Siblings()
+        {
+            // NOTE: SetModifiedProperties should only set ModifiedProperties on
+            // downstream 1-M entities.
+
+            // Arrange
+            const string propName = "UnitPrice";
+            var nw = new MockNorthwind();
+            var order = nw.Orders[0];
+            var customer = order.Customer;
+            var detail1 = order.OrderDetails[0];
+            var detail2 = order.OrderDetails[1];
+            var detail3 = order.OrderDetails[2];
+            detail1.Order = order;
+            detail2.Order = order;
+            detail3.Order = order;
+
+            var visitationHelper = new ObjectVisitationHelper(null);
+            visitationHelper.TryVisit(order.OrderDetails);
+
+            // Act
+            detail1.SetModifiedProperties(new List<string> { propName }, visitationHelper.Clone());
+
+            // Assert
+            Assert.Null(order.ModifiedProperties);
+            Assert.Null(customer.ModifiedProperties);
+            Assert.Null(detail1.ModifiedProperties);
+            Assert.Null(detail2.ModifiedProperties);
+            Assert.Null(detail3.ModifiedProperties);
         }
 
         #endregion
