@@ -115,24 +115,13 @@ namespace TrackableEntities.Client
             if (!visitationHelper.TryVisit(item)) return;
 
             // Iterate entity properties
-            foreach (var navProp in item.GetNavigationProperties())
+            foreach (var colProp in item.GetNavigationProperties().OfCollectionType<ITrackingCollection>())
             {
-                ITrackingCollection trackingCollection = null;
-
-                // 1-M and M-M properties
-                foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
-                {
-                    trackingCollection = colProp.EntityCollection;
-                }
-
                 // Recursively set modified
-                if (trackingCollection != null)
+                foreach (ITrackable child in colProp.EntityCollection)
                 {
-                    foreach (ITrackable child in trackingCollection)
-                    {
-                        child.SetModifiedProperties(modified, visitationHelper);
-                        child.ModifiedProperties = modified;
-                    }
+                    child.SetModifiedProperties(modified, visitationHelper);
+                    child.ModifiedProperties = modified;
                 }
             }
         }
