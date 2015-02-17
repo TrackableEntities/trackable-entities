@@ -11,21 +11,15 @@ namespace WebApiSample.Client.Entities.Temp
 {
     using System;
     using System.Collections.Generic;
-    using System.Runtime.Serialization;
-    using Newtonsoft.Json;
-    using TrackableEntities;
     using TrackableEntities.Client;
     
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Employee : ModelBase<Employee>, IEquatable<Employee>, ITrackable
+    public partial class Employee : EntityBase
     {
         public Employee()
         {
             this.Territories = new ChangeTrackingCollection<Territory>();
         }
         
-    	[DataMember]
     	public int EmployeeId
     	{ 
     		get { return _EmployeeId; }
@@ -33,12 +27,11 @@ namespace WebApiSample.Client.Entities.Temp
     		{
     			if (Equals(value, _EmployeeId)) return;
     			_EmployeeId = value;
-    			NotifyPropertyChanged(m => m.EmployeeId);
+    			NotifyPropertyChanged(() => EmployeeId);
     		}
     	}
     	private int _EmployeeId;
         
-    	[DataMember]
     	public string LastName
     	{ 
     		get { return _LastName; }
@@ -46,12 +39,11 @@ namespace WebApiSample.Client.Entities.Temp
     		{
     			if (Equals(value, _LastName)) return;
     			_LastName = value;
-    			NotifyPropertyChanged(m => m.LastName);
+    			NotifyPropertyChanged(() => LastName);
     		}
     	}
     	private string _LastName;
         
-    	[DataMember]
     	public string FirstName
     	{ 
     		get { return _FirstName; }
@@ -59,12 +51,11 @@ namespace WebApiSample.Client.Entities.Temp
     		{
     			if (Equals(value, _FirstName)) return;
     			_FirstName = value;
-    			NotifyPropertyChanged(m => m.FirstName);
+    			NotifyPropertyChanged(() => FirstName);
     		}
     	}
     	private string _FirstName;
         
-    	[DataMember]
     	public Nullable<System.DateTime> BirthDate
     	{ 
     		get { return _BirthDate; }
@@ -72,12 +63,11 @@ namespace WebApiSample.Client.Entities.Temp
     		{
     			if (Equals(value, _BirthDate)) return;
     			_BirthDate = value;
-    			NotifyPropertyChanged(m => m.BirthDate);
+    			NotifyPropertyChanged(() => BirthDate);
     		}
     	}
     	private Nullable<System.DateTime> _BirthDate;
         
-    	[DataMember]
     	public Nullable<System.DateTime> HireDate
     	{ 
     		get { return _HireDate; }
@@ -85,12 +75,11 @@ namespace WebApiSample.Client.Entities.Temp
     		{
     			if (Equals(value, _HireDate)) return;
     			_HireDate = value;
-    			NotifyPropertyChanged(m => m.HireDate);
+    			NotifyPropertyChanged(() => HireDate);
     		}
     	}
     	private Nullable<System.DateTime> _HireDate;
         
-    	[DataMember]
     	public string City
     	{ 
     		get { return _City; }
@@ -98,12 +87,11 @@ namespace WebApiSample.Client.Entities.Temp
     		{
     			if (Equals(value, _City)) return;
     			_City = value;
-    			NotifyPropertyChanged(m => m.City);
+    			NotifyPropertyChanged(() => City);
     		}
     	}
     	private string _City;
         
-    	[DataMember]
     	public string Country
     	{ 
     		get { return _Country; }
@@ -111,12 +99,11 @@ namespace WebApiSample.Client.Entities.Temp
     		{
     			if (Equals(value, _Country)) return;
     			_Country = value;
-    			NotifyPropertyChanged(m => m.Country);
+    			NotifyPropertyChanged(() => Country);
     		}
     	}
     	private string _Country;
     
-    	[DataMember]
     	public ChangeTrackingCollection<Territory> Territories
     	{
     		get { return _Territories; }
@@ -124,36 +111,9 @@ namespace WebApiSample.Client.Entities.Temp
     		{
     			if (Equals(value, _Territories)) return;
     			_Territories = value;
-    			NotifyPropertyChanged(m => m.Territories);
+    			NotifyPropertyChanged(() => Territories);
     		}
     	}
     	private ChangeTrackingCollection<Territory> _Territories;
-    
-        #region Change Tracking
-    
-    	[DataMember]
-    	public TrackingState TrackingState { get; set; }
-    
-    	[DataMember]
-    	public ICollection<string> ModifiedProperties { get; set; }
-    
-    	[JsonProperty, DataMember]
-    	private Guid EntityIdentifier { get; set; }
-    
-    	#pragma warning disable 414
-    
-    	[JsonProperty, DataMember]
-    	private Guid _entityIdentity = default(Guid);
-    
-    	#pragma warning restore 414
-    
-    	bool IEquatable<Employee>.Equals(Employee other)
-    	{
-    		if (EntityIdentifier != default(Guid))
-    			return EntityIdentifier == other.EntityIdentifier;
-    		return false;
-    	}
-    
-        #endregion
     }
 }

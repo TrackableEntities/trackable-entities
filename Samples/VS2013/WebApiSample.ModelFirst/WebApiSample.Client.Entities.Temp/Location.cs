@@ -11,15 +11,11 @@ namespace WebApiSample.Client.Entities.Temp
 {
     using System;
     using System.Collections.Generic;
-    using System.Runtime.Serialization;
-    using Newtonsoft.Json;
-    using TrackableEntities;
     using TrackableEntities.Client;
     
-    public partial class Location : ModelBase<Location>
+    public partial class Location : EntityBase
     {
     
-    	[DataMember]
     	public string City
     	{ 
     		get { return _City; }
@@ -27,12 +23,11 @@ namespace WebApiSample.Client.Entities.Temp
     		{
     			if (Equals(value, _City)) return;
     			_City = value;
-    			NotifyPropertyChanged(m => m.City);
+    			NotifyPropertyChanged(() => City);
     		}
     	}
     	private string _City;
     
-    	[DataMember]
     	public string Country
     	{ 
     		get { return _Country; }
@@ -40,7 +35,7 @@ namespace WebApiSample.Client.Entities.Temp
     		{
     			if (Equals(value, _Country)) return;
     			_Country = value;
-    			NotifyPropertyChanged(m => m.Country);
+    			NotifyPropertyChanged(() => Country);
     		}
     	}
     	private string _Country;
