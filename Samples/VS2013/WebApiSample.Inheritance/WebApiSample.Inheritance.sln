@@ -1,12 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApi.Inheritance.WebApi", "SampleWebApi.Inheritance\SampleWebApi.Inheritance.WebApi\SampleWebApi.Inheritance.WebApi.csproj", "{C325B758-4F22-439A-BD24-872CB4F5B100}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApi.Inheritance.ConsoleClient", "SampleWebApi.Inheritance\SampleWebApi.Inheritance.ConsoleClient\SampleWebApi.Inheritance.ConsoleClient.csproj", "{6558B314-B755-4A88-A518-3E97275A696C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{270E0FB5-3843-460B-86D1-FD45A5B22CC6}"
 	ProjectSection(SolutionItems) = preProject
 		SampleWebApi.Inheitance.ReadMe.txt = SampleWebApi.Inheitance.ReadMe.txt
@@ -14,12 +10,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApi.Inheritance.Entities", "SampleWebApi.Inheritance.Entities\SampleWebApi.Inheritance.Entities.csproj", "{67E9EDF1-0F23-43B7-9E6C-506405D10B69}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApi.Inheritance.WebApi", "SampleWebApi.Inheritance.WebApi\SampleWebApi.Inheritance.WebApi.csproj", "{C325B758-4F22-439A-BD24-872CB4F5B100}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApi.Inheritance.ConsoleClient", "SampleWebApi.Inheritance.ConsoleClient\SampleWebApi.Inheritance.ConsoleClient.csproj", "{6558B314-B755-4A88-A518-3E97275A696C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67E9EDF1-0F23-43B7-9E6C-506405D10B69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67E9EDF1-0F23-43B7-9E6C-506405D10B69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67E9EDF1-0F23-43B7-9E6C-506405D10B69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67E9EDF1-0F23-43B7-9E6C-506405D10B69}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C325B758-4F22-439A-BD24-872CB4F5B100}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C325B758-4F22-439A-BD24-872CB4F5B100}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C325B758-4F22-439A-BD24-872CB4F5B100}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -28,10 +32,6 @@ Global
 		{6558B314-B755-4A88-A518-3E97275A696C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6558B314-B755-4A88-A518-3E97275A696C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6558B314-B755-4A88-A518-3E97275A696C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{67E9EDF1-0F23-43B7-9E6C-506405D10B69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{67E9EDF1-0F23-43B7-9E6C-506405D10B69}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{67E9EDF1-0F23-43B7-9E6C-506405D10B69}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{67E9EDF1-0F23-43B7-9E6C-506405D10B69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
