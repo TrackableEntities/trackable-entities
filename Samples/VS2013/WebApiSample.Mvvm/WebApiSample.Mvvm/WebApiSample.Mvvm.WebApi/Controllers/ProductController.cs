@@ -9,6 +9,7 @@ using System.Data.Entity.Infrastructure;
 using TrackableEntities;
 using TrackableEntities.EF6;
 using TrackableEntities.Common;
+using WebApiSample.Mvvm.Service.Entities.Contexts;
 using WebApiSample.Mvvm.Service.Entities.Models;
 
 namespace WebApiSample.Mvvm.WebApi.Controllers

@@ -13,7 +13,7 @@ namespace WebApiSample.Mvvm.WpfClient
             string request = "api/Order?customerId=" + customerId;
             var response = await ServiceProxy.Instance.GetAsync(request);
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadAsAsync<IEnumerable<Order>>();
+            var result = await response.Content.ReadAsAsync<IEnumerable<Order>>(new[] { ServiceProxy.Formatter });
             return result;
         }
 
@@ -22,25 +22,25 @@ namespace WebApiSample.Mvvm.WpfClient
             string request = "api/Order/" + orderId;
             var response = await ServiceProxy.Instance.GetAsync(request);
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadAsAsync<Order>();
+            var result = await response.Content.ReadAsAsync<Order>(new[] { ServiceProxy.Formatter });
             return result;
         }
 
         public async Task<Order> CreateOrder(Order order)
         {
             string request = "api/Order";
-            var response = await ServiceProxy.Instance.PostAsJsonAsync(request, order);
+            var response = await ServiceProxy.Instance.PostAsync(request, order, ServiceProxy.Formatter);
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadAsAsync<Order>();
+            var result = await response.Content.ReadAsAsync<Order>(new[] { ServiceProxy.Formatter });
             return result;
         }
 
         public async Task<Order> UpdateOrder(Order order)
         {
             string request = "api/Order";
-            var response = await ServiceProxy.Instance.PutAsJsonAsync(request, order);
+            var response = await ServiceProxy.Instance.PutAsync(request, order, ServiceProxy.Formatter);
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadAsAsync<Order>();
+            var result = await response.Content.ReadAsAsync<Order>(new[] { ServiceProxy.Formatter });
             return result;
         }
 

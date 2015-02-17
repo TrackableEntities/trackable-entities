@@ -1,7 +1,8 @@
 using System.Data.Entity;
+using WebApiSample.Mvvm.Service.Entities.Models;
 using WebApiSample.Mvvm.Service.Entities.Models.Mapping;
 
-namespace WebApiSample.Mvvm.Service.Entities.Models
+namespace WebApiSample.Mvvm.Service.Entities.Contexts
 {
     public partial class NorthwindSlimContext : DbContext
     {

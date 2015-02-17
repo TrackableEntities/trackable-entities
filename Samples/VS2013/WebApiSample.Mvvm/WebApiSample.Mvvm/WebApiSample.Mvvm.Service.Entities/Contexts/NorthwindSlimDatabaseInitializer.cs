@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using WebApiSample.Mvvm.Service.Entities.Models;
 
-namespace WebApiSample.Mvvm.Service.Entities.Models
+namespace WebApiSample.Mvvm.Service.Entities.Contexts
 {
     public class NorthwindSlimDatabaseInitializer : DropCreateDatabaseIfModelChanges<NorthwindSlimContext>
     {

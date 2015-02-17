@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http;
+using AspnetWebApi2Helpers.Serialization;
 
 namespace WebApiSample.Mvvm.WebApi
 {
@@ -9,7 +8,9 @@ namespace WebApiSample.Mvvm.WebApi
     {
         public static void Register(HttpConfiguration config)
         {
-            // Web API configuration and services
+            // Configure Json and Xml formatters to handle cycles
+            config.Formatters.JsonPreserveReferences();
+            config.Formatters.XmlPreserveReferences();
 
             // Web API routes
             config.MapHttpAttributeRoutes();
