@@ -6,9 +6,9 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using SampleWebApi.Inheritance.Entities;
 using TrackableEntities;
 using TrackableEntities.Client;
+using SampleWebApi.Inheritance.Shared.Entities.Models;
 
 namespace SampleWebApi.Inheritance.ConsoleClient
 {
@@ -34,16 +34,14 @@ namespace SampleWebApi.Inheritance.ConsoleClient
             int productId = int.Parse(Console.ReadLine());
             var product = products.Single(p => p.ProductId == productId);
 
-            // Track changes (does not currently support inheritance
-            //var changeTracker = new ChangeTrackingCollection<Product>(product);
+            // Track changes
+            var changeTracker = new ChangeTrackingCollection<Product>(product);
 
             // Update product
             product.UnitPrice++;
 
-            // Get changes (does not currently support inheritance)
-            //var changedProduct = changeTracker.GetChanges().SingleOrDefault();
-            product.TrackingState = TrackingState.Modified;
-            product.ModifiedProperties = new List<string> {"UnitPrice"};
+            // Get changes
+            var changedProduct = changeTracker.GetChanges().SingleOrDefault();
 
             // Submit changes
             Product updatedProduct;
@@ -52,10 +50,8 @@ namespace SampleWebApi.Inheritance.ConsoleClient
             else
                 updatedProduct = UpdateEntity(client, product);
 
-            // Merge changes (does not currently support inheritance)
-            //changeTracker.MergeChanges(updatedProduct);
-            product.UnitPrice = updatedProduct.UnitPrice;
-            product.RowVersion = updatedProduct.RowVersion;
+            // Merge changes
+            changeTracker.MergeChanges(updatedProduct);
 
             Console.WriteLine("Updated product:");
             PrintProduct(product);

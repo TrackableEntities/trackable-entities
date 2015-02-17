@@ -5,10 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using SampleWebApi.Inheritance.Entities;
 using TrackableEntities;
 using TrackableEntities.Common;
 using TrackableEntities.EF6;
+using SampleWebApi.Inheritance.Shared.Entities.Contexts;
+using SampleWebApi.Inheritance.Shared.Entities.Models;
 
 namespace SampleWebApi.Inheritance.WebApi.Controllers
 {

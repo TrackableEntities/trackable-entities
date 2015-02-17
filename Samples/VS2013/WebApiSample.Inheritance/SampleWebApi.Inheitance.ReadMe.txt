@@ -3,14 +3,7 @@ Web API Inheritance Sample ReadMe
 This sample demonstrates how to create an ASP.NET Web API service
 that uses trackable entities with inheritance.
 
-NOTE: As of v 2.1, Trackable Entities does not formally support inheritance
-with entities. The client-side change tracker needs to be updated, as well
-as T4 templates for shared entities between client and server. In addition,
-the item template wizard for adding Web API controllers throws an exception
-when displaying client entities for a Web API service.  However, this example
-demonstrates some limited capabilities for handling inheritance with shared
-entities.
-
+NOTE: As of v 2.5, Trackable Entities supports inheritance with entities.
 Before starting the client Console app, build the solution, then
 right-click on the Web Api project and select View in Browser.
 This will start the service using the development web server.

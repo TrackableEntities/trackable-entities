@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Data.Entity;
+using SampleWebApi.Inheritance.Shared.Entities.Models;
 
-namespace SampleWebApi.Inheritance.Entities
+namespace SampleWebApi.Inheritance.Shared.Entities.Contexts
 {
     public class NorthwindSlimDatabaseInitializer : DropCreateDatabaseIfModelChanges<NorthwindSlimInheritance>
     {

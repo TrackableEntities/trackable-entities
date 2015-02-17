@@ -28,14 +28,22 @@ namespace <#= Namespace #>
 {
     using System;
     using System.Collections.Generic;
-	using System.Runtime.Serialization;
-	using Newtonsoft.Json;
-	using TrackableEntities;
-	using TrackableEntities.Client;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+    using TrackableEntities.Client;
 
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class <#= code.Type(entityType) #> : ModelBase<<#= code.Type(entityType) #>>, IEquatable<<#= code.Type(entityType) #>>, ITrackable
+<#
+    var typeConfigurations = edm.GetConfigurations(EntitySet, Model).OfType<IAttributeConfiguration>();
+
+    foreach (var typeConfiguration in typeConfigurations)
+    {
+#>
+    <#= code.Attribute(typeConfiguration) #>
+<#
+    }
+#>
+    public partial class <#= code.Type(entityType) #> : EntityBase
     {
 <#
     var collectionProperties = from p in entityType.NavigationProperties
@@ -73,8 +81,15 @@ namespace <#= Namespace #>
             first = false;
         }
 
+        var propertyConfigurations = edm.GetConfigurations(property, Model).OfType<IAttributeConfiguration>();
+
+        foreach (var propertyConfiguration in propertyConfigurations)
+        {
 #>
-		[DataMember]
+        <#= code.Attribute(propertyConfiguration) #>
+<#
+        }
+#>
 		public <#= code.Type(property) #> <#= code.Property(property) #>
 		{ 
 			get { return _<#= code.Property(property) #>; }
@@ -82,7 +97,7 @@ namespace <#= Namespace #>
 			{
 				if (Equals(value, _<#= code.Property(property) #>)) return;
 				_<#= code.Property(property) #> = value;
-				NotifyPropertyChanged(m => m.<#= code.Property(property) #>);
+				NotifyPropertyChanged();
 			}
 		}
 		private <#= code.Type(property) #> _<#= code.Property(property) #>;
@@ -103,7 +118,6 @@ namespace <#= Namespace #>
         if (navProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
         {
 #>
-		[DataMember]
 		public ChangeTrackingCollection<<#= code.Type(navProperty.ToEndMember.GetEntityType()) #>> <#= code.Property(navProperty) #>
 		{
 			get { return _<#= code.Property(navProperty) #>; }
@@ -111,7 +125,7 @@ namespace <#= Namespace #>
 			{
 				if (Equals(value, _<#= code.Property(navProperty) #>)) return;
 				_<#= code.Property(navProperty) #> = value;
-				NotifyPropertyChanged(m => m.<#= code.Property(navProperty) #>);
+				NotifyPropertyChanged();
 			}
 		}
 		private ChangeTrackingCollection<<#= code.Type(navProperty.ToEndMember.GetEntityType()) #>> _<#= code.Property(navProperty) #>;
@@ -121,7 +135,6 @@ namespace <#= Namespace #>
 		{
 #>
 
-		[DataMember]
 		public <#= code.Type(navProperty.ToEndMember.GetEntityType()) #> <#= code.Property(navProperty) #>
 		{
 			get { return _<#= code.Property(navProperty) #>; }
@@ -131,7 +144,7 @@ namespace <#= Namespace #>
 				_<#= code.Property(navProperty) #> = value;
 				<#= code.Property(navProperty) #>ChangeTracker = _<#= code.Property(navProperty) #> == null ? null
 					: new ChangeTrackingCollection<<#= code.Type(navProperty.ToEndMember.GetEntityType()) #>> { _<#= code.Property(navProperty) #> };
-				NotifyPropertyChanged(m => m.<#= code.Property(navProperty) #>);
+				NotifyPropertyChanged();
 			}
 		}
 		private <#= code.Type(navProperty.ToEndMember.GetEntityType()) #> _<#= code.Property(navProperty) #>;
@@ -140,32 +153,5 @@ namespace <#= Namespace #>
         }
     }
 #>
-
-        #region Change Tracking
-
-		[DataMember]
-		public TrackingState TrackingState { get; set; }
-
-		[DataMember]
-		public ICollection<string> ModifiedProperties { get; set; }
-
-		[JsonProperty, DataMember]
-		private Guid EntityIdentifier { get; set; }
-
-		#pragma warning disable 414
-
-		[JsonProperty, DataMember]
-		private Guid _entityIdentity = default(Guid);
-
-		#pragma warning restore 414
-
-		bool IEquatable<<#= code.Type(entityType) #>>.Equals(<#= code.Type(entityType) #> other)
-		{
-			if (EntityIdentifier != default(Guid))
-				return EntityIdentifier == other.EntityIdentifier;
-			return false;
-		}
-
-        #endregion
     }
 }

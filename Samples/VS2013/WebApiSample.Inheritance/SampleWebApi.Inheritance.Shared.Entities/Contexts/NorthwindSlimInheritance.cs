@@ -1,17 +1,16 @@
-namespace SampleWebApi.Inheritance.Entities
-{
-    using System;
-    using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
+using System.Data.Entity;
+using SampleWebApi.Inheritance.Shared.Entities.Models;
 
+namespace SampleWebApi.Inheritance.Shared.Entities.Contexts
+{
     public partial class NorthwindSlimInheritance : DbContext
     {
         static NorthwindSlimInheritance()
         {
-            // To re-create database, delete the database then uncomment:
-            //Database.SetInitializer(new NullDatabaseInitializer<NorthwindSlimInheritance>());
-            Database.SetInitializer(new NorthwindSlimDatabaseInitializer());
+            // To seed database, delete the database then uncomment:
+            //Database.SetInitializer(new NorthwindSlimDatabaseInitializer());
+
+            Database.SetInitializer(new NullDatabaseInitializer<NorthwindSlimInheritance>());
         }
 
         public NorthwindSlimInheritance()

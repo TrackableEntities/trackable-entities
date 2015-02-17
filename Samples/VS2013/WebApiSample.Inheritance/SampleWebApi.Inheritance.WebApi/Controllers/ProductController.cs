@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using SampleWebApi.Inheritance.Shared.Entities.Contexts;
+using SampleWebApi.Inheritance.Shared.Entities.Models;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using SampleWebApi.Inheritance.Entities;
 using TrackableEntities;
 using TrackableEntities.Common;
 using TrackableEntities.EF6;

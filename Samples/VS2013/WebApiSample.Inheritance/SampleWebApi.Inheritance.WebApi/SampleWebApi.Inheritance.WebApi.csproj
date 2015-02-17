@@ -323,9 +323,9 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SampleWebApi.Inheritance.Entities\SampleWebApi.Inheritance.Entities.csproj">
-      <Project>{67e9edf1-0f23-43b7-9e6c-506405d10b69}</Project>
-      <Name>SampleWebApi.Inheritance.Entities</Name>
+    <ProjectReference Include="..\SampleWebApi.Inheritance.Shared.Entities\SampleWebApi.Inheritance.Shared.Entities.csproj">
+      <Project>{9a87ff1c-6c19-4f27-94bc-cb79d4efefcf}</Project>
+      <Name>SampleWebApi.Inheritance.Shared.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
