@@ -11,6 +11,7 @@ namespace TrackableEntities.Client
     /// Base class for model entities to support IIdentifiable and INotifyPropertyChanged
     /// </summary>
     /// <typeparam name="TModel">Entity type</typeparam>
+    [Obsolete("ModelBase has been deprecated. Trackable entities should instead derive from EntityBase.")]
     [DataContract(IsReference = true)]
     public abstract class ModelBase<TModel> : IIdentifiable, INotifyPropertyChanged
     {
@@ -37,6 +38,7 @@ namespace TrackableEntities.Client
         /// <summary>
         /// Identifier used for correlation with MergeChanges.
         /// </summary>
+        [DataMember]
         public Guid EntityIdentifier
         {
             get
