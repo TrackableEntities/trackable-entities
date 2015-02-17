@@ -109,9 +109,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="CodeTemplates\EFModelFromDatabase\Context.cs.t4" />
-    <None Include="CodeTemplates\EFModelFromDatabase\EntityType.cs.t4" />
-    <None Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
     <EntityDeploy Include="NorthwindSlim.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>NorthwindSlim.Designer.cs</LastGenOutput>

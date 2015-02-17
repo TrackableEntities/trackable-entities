@@ -24,8 +24,6 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
     BeginNamespace(code);
 #>
 <#=codeStringGenerator.UsingDirectives(inHeader: false)#>
-[JsonObject(IsReference = true)]
-[DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
 <#=codeStringGenerator.EntityClassOpening(entity)#>
 {
 <#
@@ -104,12 +102,9 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
     }
 #>
 
-    [DataMember]
     public TrackingState TrackingState { get; set; }
-    [DataMember]
     public ICollection<string> ModifiedProperties { get; set; }
-    [JsonProperty, DataMember]
-    private Guid EntityIdentifier { get; set; }
+    public Guid EntityIdentifier { get; set; }
 }
 <#
     EndNamespace(code);
@@ -287,8 +282,7 @@ public class CodeStringGenerator
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "{0}    {1} {2} {3} {{ {4}get; {5}set; }}",
-			"[DataMember]" + Environment.NewLine,
+            "{0} {1} {2} {{ {3}get; {4}set; }}",
             Accessibility.ForProperty(edmProperty),
             _typeMapper.GetTypeName(edmProperty.TypeUsage),
             _code.Escape(edmProperty),
@@ -301,8 +295,7 @@ public class CodeStringGenerator
         var endType = _typeMapper.GetTypeName(navProp.ToEndMember.GetEntityType());
         return string.Format(
             CultureInfo.InvariantCulture,
-            "{0}    {1} {2} {3} {{ {4}get; {5}set; }}",
-			"[DataMember]" + Environment.NewLine,
+            "{0} {1} {2} {{ {3}get; {4}set; }}",
             AccessibilityAndVirtual(Accessibility.ForNavigationProperty(navProp)),
             navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many ? ("ICollection<" + endType + ">") : endType,
             _code.Escape(navProp),
@@ -319,7 +312,7 @@ public class CodeStringGenerator
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "{0} {1}partial class {2}{3} : ITrackable",
+            "{0} {1}partial class {2}{3} : ITrackable, IMergeable",
             Accessibility.ForType(entity),
             _code.SpaceAfter(_code.AbstractOption(entity)),
             _code.Escape(entity),
@@ -430,14 +423,10 @@ public class CodeStringGenerator
             ? string.Format(
                 CultureInfo.InvariantCulture,
                 "{0}using System;{1}" +
-                "{2}" +
-				"{3}" +
-				"{4}" +
-				"{5}",
+				"{2}" +
+				"{3}",
                 inHeader ? Environment.NewLine : "",
                 includeCollections ? (Environment.NewLine + "using System.Collections.Generic;") : "",
-				Environment.NewLine + "using System.Runtime.Serialization;",
-				Environment.NewLine + "using Newtonsoft.Json;",
 				Environment.NewLine + "using TrackableEntities;",
                 inHeader ? "" : Environment.NewLine)
             : "";

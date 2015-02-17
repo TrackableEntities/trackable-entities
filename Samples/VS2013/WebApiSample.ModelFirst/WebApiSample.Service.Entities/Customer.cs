@@ -11,13 +11,9 @@ namespace WebApiSample.Service.Entities
 {
     using System;
     using System.Collections.Generic;
-    using System.Runtime.Serialization;
-    using Newtonsoft.Json;
     using TrackableEntities;
     
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Customer : ITrackable
+    public partial class Customer : ITrackable, IMergeable
     {
         public Customer()
         {
@@ -25,26 +21,17 @@ namespace WebApiSample.Service.Entities
             this.Location = new Location();
         }
     
-        [DataMember]
         public string CustomerId { get; set; }
-        [DataMember]
         public string CompanyName { get; set; }
-        [DataMember]
         public string ContactName { get; set; }
     
-        [DataMember]
         public Location Location { get; set; }
     
-        [DataMember]
         public CustomerSetting CustomerSetting { get; set; }
-        [DataMember]
         public ICollection<Order> Orders { get; set; }
     
-        [DataMember]
         public TrackingState TrackingState { get; set; }
-        [DataMember]
         public ICollection<string> ModifiedProperties { get; set; }
-        [JsonProperty, DataMember]
-        private Guid EntityIdentifier { get; set; }
+        public Guid EntityIdentifier { get; set; }
     }
 }

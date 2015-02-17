@@ -11,15 +11,11 @@ namespace WebApiSample.Service.Entities
 {
     using System;
     using System.Collections.Generic;
-    using System.Runtime.Serialization;
-    using Newtonsoft.Json;
     using TrackableEntities;
     
     public partial class Location
     {
-        [DataMember]
         public string City { get; set; }
-        [DataMember]
         public string Country { get; set; }
     }
 }
