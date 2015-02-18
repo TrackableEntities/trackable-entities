@@ -51,7 +51,7 @@
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.Client">
-      <HintPath>..\..\packages\TrackableEntities.Client.2.5.0\lib\portable-net45+sl50+win8+wp80\TrackableEntities.Client.dll</HintPath>
+      <HintPath>..\..\packages\TrackableEntities.Client.2.5.0\lib\portable-net45+sl5+win8+wp80\TrackableEntities.Client.dll</HintPath>
     </Reference>
     <Reference Include="TrackableEntities.Common">
       <HintPath>..\..\packages\TrackableEntities.Common.2.5.0\lib\portable-net40+sl50+win+wp80\TrackableEntities.Common.dll</HintPath>

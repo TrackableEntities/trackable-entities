@@ -55,15 +55,9 @@ using System.Linq;
 
 <#=Accessibility.ForType(container)#> partial class <#=code.Escape(container)#> : DbContext
 {
-    static <#=code.Escape(container)#>()
-    {
-        Database.SetInitializer(new NullDatabaseInitializer<<#=code.Escape(container)#>>());
-    }
-
     public <#=code.Escape(container)#>()
         : base("name=<#=container.Name#>")
     {
-		Configuration.ProxyCreationEnabled = false;
 <#
 if (!loader.IsLazyLoadingEnabled(container))
 {
