@@ -1,6 +1,7 @@
 using System.Data.Entity.ModelConfiguration;
+using WebApiSample.Service.Entities.Models;
 
-namespace WebApiSample.Service.Entities.Models.Mapping
+namespace WebApiSample.Service.EF.Mapping
 {
     public class OrderMap : EntityTypeConfiguration<Order>
     {
@@ -26,6 +27,7 @@ namespace WebApiSample.Service.Entities.Models.Mapping
             // Tracking Properties
 			this.Ignore(t => t.TrackingState);
 			this.Ignore(t => t.ModifiedProperties);
+			this.Ignore(t => t.EntityIdentifier);
 
             // Relationships
             this.HasOptional(t => t.Customer)

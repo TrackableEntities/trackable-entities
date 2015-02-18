@@ -1,6 +1,7 @@
 using System.Data.Entity.ModelConfiguration;
+using WebApiSample.Service.Entities.Models;
 
-namespace WebApiSample.Service.Entities.Models.Mapping
+namespace WebApiSample.Service.EF.Mapping
 {
     public class ProductMap : EntityTypeConfiguration<Product>
     {
@@ -15,7 +16,6 @@ namespace WebApiSample.Service.Entities.Models.Mapping
                 .HasMaxLength(40);
 
             this.Property(t => t.RowVersion)
-                .IsRequired()
                 .IsFixedLength()
                 .HasMaxLength(8)
                 .IsRowVersion();
@@ -32,6 +32,7 @@ namespace WebApiSample.Service.Entities.Models.Mapping
             // Tracking Properties
 			this.Ignore(t => t.TrackingState);
 			this.Ignore(t => t.ModifiedProperties);
+			this.Ignore(t => t.EntityIdentifier);
 
             // Relationships
             this.HasOptional(t => t.Category)
