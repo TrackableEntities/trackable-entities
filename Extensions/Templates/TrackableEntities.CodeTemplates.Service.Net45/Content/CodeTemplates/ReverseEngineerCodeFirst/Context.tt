@@ -27,7 +27,7 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
     foreach (var set in efHost.EntityContainer.BaseEntitySets.OfType<EntitySet>())
     {
 #>
-        public virtual DbSet<<#= set.ElementType.Name #>> <#= set.Name #> { get; set; }
+        public DbSet<<#= set.ElementType.Name #>> <#= set.Name #> { get; set; }
 <#
     }
 #>
@@ -42,6 +42,9 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 <#
     }
 #>
+            ModelCreating(modelBuilder);
         }
+
+        partial void ModelCreating(DbModelBuilder modelBuilder);
     }
 }
