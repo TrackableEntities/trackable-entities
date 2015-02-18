@@ -26,13 +26,15 @@ namespace WebApiSample.Service.Entities.Models.Mapping
             this.Property(t => t.CustomerId).HasColumnName("CustomerId");
             this.Property(t => t.Setting).HasColumnName("Setting");
 
+            // Tracking Properties
+			this.Ignore(t => t.TrackingState);
+			this.Ignore(t => t.ModifiedProperties);
+			this.Ignore(t => t.EntityIdentifier);
+
             // Relationships
             this.HasRequired(t => t.Customer)
                 .WithOptional(t => t.CustomerSetting);
 
-            // Tracking Properties
-			this.Ignore(t => t.TrackingState);
-			this.Ignore(t => t.ModifiedProperties);
         }
     }
 }

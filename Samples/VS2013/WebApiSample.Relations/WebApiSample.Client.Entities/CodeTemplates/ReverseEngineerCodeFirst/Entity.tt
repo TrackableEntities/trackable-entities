@@ -10,16 +10,11 @@
 #>
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using TrackableEntities;
 using TrackableEntities.Client;
 
 namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 {
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class <#= efHost.EntityType.Name #> : ModelBase<<#= efHost.EntityType.Name #>>, IEquatable<<#= efHost.EntityType.Name #>>, ITrackable
+    public partial class <#= efHost.EntityType.Name #> : EntityBase
     {
 <#
 
@@ -55,7 +50,6 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
                 "System.Data.Entity.Spatial.");
         }
 #>
-		[DataMember]
 		<#= Accessibility.ForProperty(property) #> <#= typeUsage #> <#= code.Escape(property) #>
 		{ 
 			get { return _<#= code.Escape(property) #>; }
@@ -63,7 +57,7 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 			{
 				if (Equals(value, _<#= code.Escape(property) #>)) return;
 				_<#= code.Escape(property) #> = value;
-				NotifyPropertyChanged(m => m.<#= code.Escape(property) #>);
+				NotifyPropertyChanged(() => <#= code.Escape(property) #>);
 			}
 		}
 		private <#= typeUsage #> _<#= code.Escape(property) #>;
@@ -76,7 +70,6 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
         if (navProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
         {
 #>
-		[DataMember]
 		public ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> <#= code.Escape(navProperty) #>
 		{
 			get { return _<#= code.Escape(navProperty) #>; }
@@ -88,7 +81,7 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 <#          } #>
 				if (Equals(value, _<#= code.Escape(navProperty) #>)) return;
 				_<#= code.Escape(navProperty) #> = value;
-				NotifyPropertyChanged(m => m.<#= code.Escape(navProperty) #>);
+				NotifyPropertyChanged(() => <#= code.Escape(navProperty) #>);
 			}
 		}
 		private ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> _<#= code.Escape(navProperty) #>;
@@ -98,7 +91,6 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
         else
         {
 #>
-		[DataMember]
 		public <#= code.Escape(navProperty.ToEndMember.GetEntityType()) #> <#= code.Escape(navProperty) #>
 		{
 			get { return _<#= code.Escape(navProperty) #>; }
@@ -108,7 +100,7 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 				_<#= code.Escape(navProperty) #> = value;
 				<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>ChangeTracker = _<#= code.Escape(navProperty) #> == null ? null
 					: new ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> { _<#= code.Escape(navProperty) #> };
-				NotifyPropertyChanged(m => m.<#= code.Escape(navProperty) #>);
+				NotifyPropertyChanged(() => <#= code.Escape(navProperty) #>);
 			}
 		}
 		private <#= code.Escape(navProperty.ToEndMember.GetEntityType()) #> _<#= code.Escape(navProperty) #>;
@@ -118,30 +110,5 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
         }
     }
 #>
-        #region Change Tracking
-
-		[DataMember]
-		public TrackingState TrackingState { get; set; }
-
-		[DataMember]
-		public ICollection<string> ModifiedProperties { get; set; }
-
-		[JsonProperty, DataMember]
-		private Guid EntityIdentifier { get; set; }
-
-		#pragma warning disable 414
-
-		[JsonProperty, DataMember]
-		private Guid _entityIdentity = default(Guid);
-
-		#pragma warning restore 414
-
-		bool IEquatable<<#= efHost.EntityType.Name #>>.Equals(<#= efHost.EntityType.Name #> other)
-		{
-			if (EntityIdentifier != default(Guid))
-				return EntityIdentifier == other.EntityIdentifier;
-			return false;
-		}
-        #endregion
 	}
 }

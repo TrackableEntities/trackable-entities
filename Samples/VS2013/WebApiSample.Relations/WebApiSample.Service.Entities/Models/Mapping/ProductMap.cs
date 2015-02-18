@@ -17,7 +17,6 @@ namespace WebApiSample.Service.Entities.Models.Mapping
                 .HasMaxLength(40);
 
             this.Property(t => t.RowVersion)
-                .IsRequired()
                 .IsFixedLength()
                 .HasMaxLength(8)
                 .IsRowVersion();
@@ -34,6 +33,7 @@ namespace WebApiSample.Service.Entities.Models.Mapping
             // Tracking Properties
 			this.Ignore(t => t.TrackingState);
 			this.Ignore(t => t.ModifiedProperties);
+			this.Ignore(t => t.EntityIdentifier);
 
             // Relationships
             this.HasOptional(t => t.Category)

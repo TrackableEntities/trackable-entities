@@ -71,6 +71,13 @@ namespace WebApiSample.Service.WebApi.Controllers
                 return BadRequest(ModelState);
             }
 
+            // WORKAROUND for BUG (PR #43):
+            // Fix up territory-employee references
+            foreach (var territory in employee.Territories)
+            {
+                territory.Employees.Add(employee);
+            }
+
             _dbContext.ApplyChanges(employee);
 
             try
