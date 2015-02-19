@@ -64,10 +64,10 @@
     </Reference>
     <Reference Include="TrackableEntities.Client">
       <HintPath>..\packages\TrackableEntities.Client.2.5.0\lib\portable-net45+sl5+win8+wp80\TrackableEntities.Client.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="TrackableEntities.Common">
-      <HintPath>..\packages\TrackableEntities.Common.2.5.0\lib\portable-net40+sl50+win+wp80\TrackableEntities.Common.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\TrackableEntities.Common.2.5.0\lib\portable-net40+sl50+win+wpa81+wp80\TrackableEntities.Common.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
