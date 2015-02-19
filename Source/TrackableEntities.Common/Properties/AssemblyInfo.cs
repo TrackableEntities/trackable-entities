@@ -9,7 +9,7 @@ using System.Reflection;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TrackableEntities.Common")]
-[assembly: AssemblyCopyright("Copyright © Tony Sneed 2013")]
+[assembly: AssemblyCopyright("Copyright © Tony Sneed 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]

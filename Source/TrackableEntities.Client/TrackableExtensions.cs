@@ -347,15 +347,26 @@ namespace TrackableEntities.Client
 
         internal static IEnumerable<Type> BaseTypes(this Type type)
         {
+#if PORTABLE_WPA81
+            for (Type t = type; t != null; t = t.GetTypeInfo().BaseType)
+#else
             for (Type t = type; t != null; t = t.BaseType)
+#endif
                 yield return t;
         }
 
         private static PropertyInfo GetChangeTrackingProperty(Type entityType, string propertyName)
         {
+#if PORTABLE_WPA81
+            var property = entityType.BaseTypes()
+                .SelectMany(t => t.GetTypeInfo().DeclaredProperties)
+                .SingleOrDefault(p => !p.GetMethod.IsStatic && p.GetMethod.IsPrivate &&
+                    p.Name == propertyName + Constants.ChangeTrackingMembers.ChangeTrackingPropEnd);
+#else
             var property = entityType.BaseTypes()
                 .SelectMany(t => t.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic))
                 .SingleOrDefault(m => m.Name == propertyName + Constants.ChangeTrackingMembers.ChangeTrackingPropEnd);
+#endif
             return property;
         }
     }

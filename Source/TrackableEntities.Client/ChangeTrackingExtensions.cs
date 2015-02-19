@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using TrackableEntities.Common;
 
 namespace TrackableEntities.Client
@@ -217,7 +218,11 @@ namespace TrackableEntities.Client
             var actions = new List<Action>();
 
             // Iterate simple properties
+#if PORTABLE_WPA81
+            foreach (var prop in targetItem.GetType().GetTypeInfo().DeclaredProperties.Where(p => p.CanWrite)
+#else
             foreach (var prop in targetItem.GetType().GetProperties().Where(p => p.CanWrite)
+#endif
                 .Except(targetItem.GetNavigationProperties(false).Select(np => np.Property)))
             {
                 // Skip tracking properties

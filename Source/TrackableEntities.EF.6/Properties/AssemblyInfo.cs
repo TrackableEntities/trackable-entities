@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TrackableEntities.EF.6")]
-[assembly: AssemblyCopyright("Copyright © Tony Sneed 2013")]
+[assembly: AssemblyCopyright("Copyright © Tony Sneed 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
