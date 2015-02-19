@@ -29,6 +29,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entities", "Entities", "{BA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Shared.Entities.Net45", "WebApiSample.Shared.Entities.Net45\WebApiSample.Shared.Entities.Net45.csproj", "{98F8C001-E6A2-4692-A2A1-8AE6E1D1EC62}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Shared.Entities.Portable", "WebApiSample.Shared.Entities.Portable\WebApiSample.Shared.Entities.Portable.csproj", "{67A4CFEC-9AA5-4DE3-B694-71C3B4F6C975}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Shared.Entities.Data", "WebApiSample.Shared.Entities.Data\WebApiSample.Shared.Entities.Data.csproj", "{0D8FD15B-8ED1-453E-B416-CB538A3B5E5E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +63,14 @@ Global
 		{98F8C001-E6A2-4692-A2A1-8AE6E1D1EC62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98F8C001-E6A2-4692-A2A1-8AE6E1D1EC62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98F8C001-E6A2-4692-A2A1-8AE6E1D1EC62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67A4CFEC-9AA5-4DE3-B694-71C3B4F6C975}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67A4CFEC-9AA5-4DE3-B694-71C3B4F6C975}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67A4CFEC-9AA5-4DE3-B694-71C3B4F6C975}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67A4CFEC-9AA5-4DE3-B694-71C3B4F6C975}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D8FD15B-8ED1-453E-B416-CB538A3B5E5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D8FD15B-8ED1-453E-B416-CB538A3B5E5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D8FD15B-8ED1-453E-B416-CB538A3B5E5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D8FD15B-8ED1-453E-B416-CB538A3B5E5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,5 +80,7 @@ Global
 		{20E41F28-1720-4814-8835-1CA903F7C2A7} = {BA958210-AB65-4A8F-AEB8-DAF8DD0CB5F1}
 		{953B79E1-B6B4-4E15-B32D-AB6A28D2510E} = {BA958210-AB65-4A8F-AEB8-DAF8DD0CB5F1}
 		{98F8C001-E6A2-4692-A2A1-8AE6E1D1EC62} = {BA958210-AB65-4A8F-AEB8-DAF8DD0CB5F1}
+		{67A4CFEC-9AA5-4DE3-B694-71C3B4F6C975} = {BA958210-AB65-4A8F-AEB8-DAF8DD0CB5F1}
+		{0D8FD15B-8ED1-453E-B416-CB538A3B5E5E} = {BA958210-AB65-4A8F-AEB8-DAF8DD0CB5F1}
 	EndGlobalSection
 EndGlobal

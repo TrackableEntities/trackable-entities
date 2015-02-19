@@ -9,8 +9,8 @@ using System.Web.Http.Description;
 using TrackableEntities;
 using TrackableEntities.EF6;
 using TrackableEntities.Common;
-using WebApiSample.Shared.Entities.Contexts;
-using WebApiSample.Shared.Entities.Models;
+using WebApiSample.Shared.Entities.Data.Contexts;
+using WebApiSample.Shared.Entities.Portable.Models;
 
 namespace WebApiSample.Service.WebApi.Controllers
 {

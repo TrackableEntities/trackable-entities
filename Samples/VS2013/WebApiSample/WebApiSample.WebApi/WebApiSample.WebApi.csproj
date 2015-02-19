@@ -329,9 +329,13 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WebApiSample.Shared.Entities.Net45\WebApiSample.Shared.Entities.Net45.csproj">
-      <Project>{98f8c001-e6a2-4692-a2a1-8ae6e1d1ec62}</Project>
-      <Name>WebApiSample.Shared.Entities.Net45</Name>
+    <ProjectReference Include="..\WebApiSample.Shared.Entities.Data\WebApiSample.Shared.Entities.Data.csproj">
+      <Project>{0d8fd15b-8ed1-453e-b416-cb538a3b5e5e}</Project>
+      <Name>WebApiSample.Shared.Entities.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebApiSample.Shared.Entities.Portable\WebApiSample.Shared.Entities.Portable.csproj">
+      <Project>{67a4cfec-9aa5-4de3-b694-71c3b4f6c975}</Project>
+      <Name>WebApiSample.Shared.Entities.Portable</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
