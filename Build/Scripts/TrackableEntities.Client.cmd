@@ -12,6 +12,7 @@ set source=Source\%name%
 set logs=Build\Logs\%name%
 set output=Build\Output\%name%
 set target-portable=portable-net45+sl5+win8+wp80
+set target-portable-wpa=portable-net45+win8+wpa81
 set target-net45=net45
 
 REM Restore:
@@ -29,7 +30,7 @@ mkdir "%logs%"
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
-REM Copy:
+REM Portable Copy:
 if "%debug%"=="1" pause
 mkdir "%output%\lib\%target-portable%"
 xcopy "%source%\bin\%config%\%name%.dll" "%output%\lib\%target-portable%\" /y
@@ -40,6 +41,20 @@ mkdir "%output%\src\%target-portable%\Properties"
 xcopy "Source\AssemblyVersion.cs" "%output%\src\%target-portable%\Properties\" /y
 xcopy "%source%\Properties\AssemblyInfo.cs" "%output%\src\%target-portable%\Properties\" /y
 xcopy "%source%\*.cs" "%output%\src\%target-portable%\" /y
+if "%debug%"=="1" pause
+if not "%errorlevel%"=="0" exit
+
+REM Portable-WPA81 Copy:
+if "%debug%"=="1" pause
+mkdir "%output%\lib\%target-portable-wpa%"
+xcopy "%source%\bin\%config%\%name%.dll" "%output%\lib\%target-portable-wpa%\" /y
+xcopy "%source%\bin\%config%\%name%.xml" "%output%\lib\%target-portable-wpa%\" /y
+xcopy "%source%\bin\%config%\%name%.pdb" "%output%\lib\%target-portable-wpa%\" /y
+
+mkdir "%output%\src\%target-portable-wpa%\Properties"
+xcopy "Source\AssemblyVersion.cs" "%output%\src\%target-portable-wpa%\Properties\" /y
+xcopy "%source%\Properties\AssemblyInfo.cs" "%output%\src\%target-portable-wpa%\Properties\" /y
+xcopy "%source%\*.cs" "%output%\src\%target-portable-wpa%\" /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 

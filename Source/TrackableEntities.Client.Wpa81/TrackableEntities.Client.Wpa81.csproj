@@ -79,6 +79,9 @@
     <Compile Include="..\TrackableEntities.Client\ITrackingCollectionOfT.cs">
       <Link>ITrackingCollectionOfT.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.Client\ModelBase.cs">
+      <Link>ModelBase.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.Client\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>

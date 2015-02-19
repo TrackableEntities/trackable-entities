@@ -134,16 +134,27 @@ namespace TrackableEntities.Client
                 Constants.EquatableMembers.EquatableMethodStart +
                 type.FullName +
                 Constants.EquatableMembers.EquatableMethodEnd;
+#if PORTABLE_WPA81
+            var method = type.GetTypeInfo().DeclaredMethods
+                .SingleOrDefault(m => !m.IsStatic && m.IsPrivate && m.Name == equatableMethod);
+#else
             var method = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
                 .SingleOrDefault(m => m.Name == equatableMethod);
+#endif
             return method;
         }
 
         private static PropertyInfo GetEntityIdentifierProperty(object obj)
         {
             var property = obj.GetType().BaseTypes()
+#if PORTABLE_WPA81
+                .SelectMany(t => t.GetTypeInfo().DeclaredProperties)
+                .SingleOrDefault(p => !p.GetMethod.IsStatic && p.GetMethod.IsPrivate &&
+                    p.Name == Constants.EquatableMembers.EntityIdentifierProperty);
+#else
                 .SelectMany(t => t.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic))
                 .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifierProperty);
+#endif
             return property;
         }
 
