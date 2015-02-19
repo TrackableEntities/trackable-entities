@@ -79,3 +79,20 @@ Source\.nuget\nuget.exe pack "%output%\%name%.%ext%\%name%.%ext%.nuspec" -o "%ou
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
+rem Shared.Portable
+set ext=Shared.Portable
+
+REM Copy:
+if "%debug%"=="1" pause
+mkdir "%output%\%name%.%ext%"
+xcopy "%source%.%ext%\Content" "%output%\%name%.%ext%\Content\" /e /y
+xcopy "%source%.%ext%\tools" "%output%\%name%.%ext%\tools\" /e /y
+if "%debug%"=="1" pause
+if not "%errorlevel%"=="0" exit
+
+REM Package:
+if "%debug%"=="1" pause
+xcopy "%source%.%ext%\%name%.%ext%.nuspec" "%output%\%name%.%ext%\" /y
+Source\.nuget\nuget.exe pack "%output%\%name%.%ext%\%name%.%ext%.nuspec" -o "%output%\%name%.%ext%" -p PackageVersion="%version%"
+if "%debug%"=="1" pause
+if not "%errorlevel%"=="0" exit
