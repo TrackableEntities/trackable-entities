@@ -11,8 +11,8 @@ set name=TrackableEntities.Client
 set source=Source\%name%
 set logs=Build\Logs\%name%
 set output=Build\Output\%name%
-set target-portable=portable-net45+sl5+win8+wp80
-set target-portable-wpa=portable-net45+win8+wpa81
+set target-portable=portable-net45+wp80+win8+wpa81
+set target-sl5=sl5
 set target-net45=net45
 
 REM Restore:
@@ -44,17 +44,17 @@ xcopy "%source%\*.cs" "%output%\src\%target-portable%\" /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
-REM Portable-WPA81 Copy:
+REM Portable-SL5 Copy:
 if "%debug%"=="1" pause
-mkdir "%output%\lib\%target-portable-wpa%"
-xcopy "%source%\bin\%config%\%name%.dll" "%output%\lib\%target-portable-wpa%\" /y
-xcopy "%source%\bin\%config%\%name%.xml" "%output%\lib\%target-portable-wpa%\" /y
-xcopy "%source%\bin\%config%\%name%.pdb" "%output%\lib\%target-portable-wpa%\" /y
+mkdir "%output%\lib\%target-sl5%"
+xcopy "%source%\bin\%config%\%name%.dll" "%output%\lib\%target-sl5%\" /y
+xcopy "%source%\bin\%config%\%name%.xml" "%output%\lib\%target-sl5%\" /y
+xcopy "%source%\bin\%config%\%name%.pdb" "%output%\lib\%target-sl5%\" /y
 
-mkdir "%output%\src\%target-portable-wpa%\Properties"
-xcopy "Source\AssemblyVersion.cs" "%output%\src\%target-portable-wpa%\Properties\" /y
-xcopy "%source%\Properties\AssemblyInfo.cs" "%output%\src\%target-portable-wpa%\Properties\" /y
-xcopy "%source%\*.cs" "%output%\src\%target-portable-wpa%\" /y
+mkdir "%output%\src\%target-sl5%\Properties"
+xcopy "Source\AssemblyVersion.cs" "%output%\src\%target-sl5%\Properties\" /y
+xcopy "%source%\Properties\AssemblyInfo.cs" "%output%\src\%target-sl5%\Properties\" /y
+xcopy "%source%\*.cs" "%output%\src\%target-sl5%\" /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
