@@ -140,12 +140,12 @@ namespace TrackableEntities.Client
                 if (entity == null) return;
 
                 // Enable tracking on reference properties
-#if !SILVERLIGHT
+#if SILVERLIGHT || NET40
+                var prop = entity.GetType().GetProperty(e.PropertyName);
+                if (prop != null && typeof(ITrackable).IsAssignableFrom(prop.PropertyType))
+#else
                 var prop = entity.GetType().GetTypeInfo().GetDeclaredProperty(e.PropertyName);
                 if (prop != null && typeof(ITrackable).GetTypeInfo().IsAssignableFrom(prop.PropertyType.GetTypeInfo()))
-#else
-                var prop = entity.GetType().GetProperty(e.PropertyName);
-                if (prop != null && typeof (ITrackable).IsAssignableFrom(prop.PropertyType))
 #endif
                 {
                     ITrackingCollection refPropChangeTracker = entity.GetRefPropertyChangeTracker(e.PropertyName);
@@ -491,10 +491,10 @@ namespace TrackableEntities.Client
                 static CollectionValueProvider()
                 {
                     Func<IEnumerable<ITrackable>, object> func = CastResult<int>;
-#if !SILVERLIGHT
-                    _genericCast = func.GetMethodInfo().GetGenericMethodDefinition();
-#else
+#if SILVERLIGHT || NET40
                     _genericCast = func.Method.GetGenericMethodDefinition();
+#else
+                    _genericCast = func.GetMethodInfo().GetGenericMethodDefinition();
 #endif
                 }
 
@@ -532,12 +532,12 @@ namespace TrackableEntities.Client
 
                     var items = cnp.EntityCollection.Where(i => _resolver.IncludeCollectionItem(entity, cnp.Property, i));
 
-#if !SILVERLIGHT
-                    return _genericCast.MakeGenericMethod(cnp.Property.PropertyType.GetTypeInfo().GenericTypeArguments).Invoke(null, new[] { items });
-#else
+#if SILVERLIGHT || NET40
                     return _genericCast.MakeGenericMethod(cnp.Property.PropertyType.GetGenericArguments()).Invoke(null, new[] { items });
+#else
+                    return _genericCast.MakeGenericMethod(cnp.Property.PropertyType.GetTypeInfo().GenericTypeArguments).Invoke(null, new[] { items });
 #endif
-                    }
+                }
 
                 private static object CastResult<T>(IEnumerable<ITrackable> items)
                 {
@@ -618,17 +618,17 @@ namespace TrackableEntities.Client
         {
             foreach (var refProp in child.GetNavigationProperties()
                 .OfReferenceType()
-#if !SILVERLIGHT
-                .Where(rp => rp.Property.PropertyType.GetTypeInfo().IsAssignableFrom(parent.GetType().GetTypeInfo()))
-#else
+#if SILVERLIGHT || NET40
                 .Where(rp => rp.Property.PropertyType.IsAssignableFrom(parent.GetType()))
+#else
+                .Where(rp => rp.Property.PropertyType.GetTypeInfo().IsAssignableFrom(parent.GetType().GetTypeInfo()))
 #endif
                 .Where(rp => !ReferenceEquals(rp.EntityReference, parent)))
-            {
-                Tracking = false;
-                refProp.Property.SetValue(child, parent, null);
-                Tracking = isTracking;
-            }
+                {
+                    Tracking = false;
+                    refProp.Property.SetValue(child, parent, null);
+                    Tracking = isTracking;
+                }
         }
     }
 }

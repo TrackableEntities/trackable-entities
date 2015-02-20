@@ -218,10 +218,11 @@ namespace TrackableEntities.Client
             var actions = new List<Action>();
 
             // Iterate simple properties
-#if !SILVERLIGHT
-            foreach (var prop in targetItem.GetType().GetTypeInfo().DeclaredProperties.Where(p => p.CanWrite)
-#else
+#if SILVERLIGHT || NET40
             foreach (var prop in targetItem.GetType().GetProperties().Where(p => p.CanWrite)
+#else
+            foreach (var prop in targetItem.GetType().GetTypeInfo().DeclaredProperties
+                .Where(p => p.CanWrite && !p.GetMethod.IsPrivate)
 #endif
                 .Except(targetItem.GetNavigationProperties(false).Select(np => np.Property)))
             {
