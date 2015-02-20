@@ -1,4 +1,4 @@
-<#
+﻿<#
 // Simplifying assumptions based on reverse engineer rules
 //  - No complex types
 //  - One entity container
@@ -6,10 +6,10 @@
 //  - Always have two navigation properties
 //  - All associations expose FKs (except many:many)
 #>
-<#@ template hostspecific="true" language="C#" #>
-<#@ include file="EF.Utility.CS.ttinclude" #><#@
- output extension=".cs" #><#
-
+<#@ template  debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ include file="EF.Utility.CS.ttinclude" #>
+<#
     var efHost = (EfTextTemplateHost)Host;
     var code = new CodeGenerationTools(this);
 #>
@@ -142,6 +142,7 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
             // Tracking Properties
 			this.Ignore(t => t.TrackingState);
 			this.Ignore(t => t.ModifiedProperties);
+			this.Ignore(t => t.EntityIdentifier);
 <#        
     // Find m:m relationshipsto configure 
     var manyManyRelationships = efHost.EntityType.NavigationProperties

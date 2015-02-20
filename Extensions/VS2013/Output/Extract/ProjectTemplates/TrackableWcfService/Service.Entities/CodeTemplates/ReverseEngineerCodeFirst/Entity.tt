@@ -7,15 +7,11 @@
 #>
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
 using TrackableEntities;
 
 namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 {
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class <#= efHost.EntityType.Name #> : ITrackable
+    public partial class <#= efHost.EntityType.Name #> : ITrackable, IMergeable
     {
 <#
     var collectionNavigations = efHost.EntityType.NavigationProperties.Where(
@@ -54,7 +50,6 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
                 "System.Data.Entity.Spatial.");
         }
 #>
-        [DataMember]
         <#= Accessibility.ForProperty(property) #> <#= typeUsage #> <#= code.Escape(property) #> { get; set; }
 <#
     }
@@ -64,25 +59,20 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
         if (navProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
         {
 #>
-        [DataMember]
         public List<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> <#= code.Escape(navProperty) #> { get; set; }
 <#
         }
         else
         {
 #>
-        [DataMember]
         public <#= code.Escape(navProperty.ToEndMember.GetEntityType()) #> <#= code.Escape(navProperty) #> { get; set; }
 <#
         }
     }
 #>
 
-        [DataMember]
         public TrackingState TrackingState { get; set; }
-        [DataMember]
         public ICollection<string> ModifiedProperties { get; set; }
-        [JsonProperty, DataMember]
-        private Guid EntityIdentifier { get; set; }
+        public Guid EntityIdentifier { get; set; }
     }
 }

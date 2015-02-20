@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TrackableEntities;
 using TrackableEntities.EF6;
 using TrackableEntities.Common;
+//using WcfSerializationHelper;
 using $entitiesNamespace$;
 
 // NOTE: Primary key name and/or type may need to be set manually.
@@ -15,6 +16,7 @@ using $entitiesNamespace$;
 namespace $rootnamespace$
 {
     [ServiceContract(Namespace = "urn:trackable-entities:service")]
+    //[DataContractSerializerPreserveReferences] // Configure serializer to handle cyclical references
     public interface I$safeitemname$
     {
         [OperationContract]
