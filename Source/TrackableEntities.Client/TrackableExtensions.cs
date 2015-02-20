@@ -347,7 +347,7 @@ namespace TrackableEntities.Client
 
         internal static IEnumerable<Type> BaseTypes(this Type type)
         {
-#if PORTABLE_WPA81
+#if !SILVERLIGHT
             for (Type t = type; t != null; t = t.GetTypeInfo().BaseType)
 #else
             for (Type t = type; t != null; t = t.BaseType)
@@ -357,7 +357,7 @@ namespace TrackableEntities.Client
 
         private static PropertyInfo GetChangeTrackingProperty(Type entityType, string propertyName)
         {
-#if PORTABLE_WPA81
+#if !SILVERLIGHT
             var property = entityType.BaseTypes()
                 .SelectMany(t => t.GetTypeInfo().DeclaredProperties)
                 .SingleOrDefault(p => !p.GetMethod.IsStatic && p.GetMethod.IsPrivate &&

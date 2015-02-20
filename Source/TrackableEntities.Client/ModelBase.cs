@@ -134,7 +134,7 @@ namespace TrackableEntities.Client
                 Constants.EquatableMembers.EquatableMethodStart +
                 type.FullName +
                 Constants.EquatableMembers.EquatableMethodEnd;
-#if PORTABLE_WPA81
+#if !SILVERLIGHT
             var method = type.GetTypeInfo().DeclaredMethods
                 .SingleOrDefault(m => !m.IsStatic && m.IsPrivate && m.Name == equatableMethod);
 #else
@@ -147,7 +147,7 @@ namespace TrackableEntities.Client
         private static PropertyInfo GetEntityIdentifierProperty(object obj)
         {
             var property = obj.GetType().BaseTypes()
-#if PORTABLE_WPA81
+#if !SILVERLIGHT
                 .SelectMany(t => t.GetTypeInfo().DeclaredProperties)
                 .SingleOrDefault(p => !p.GetMethod.IsStatic && p.GetMethod.IsPrivate &&
                     p.Name == Constants.EquatableMembers.EntityIdentifierProperty);

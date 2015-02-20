@@ -140,7 +140,7 @@ namespace TrackableEntities.Client
                 if (entity == null) return;
 
                 // Enable tracking on reference properties
-#if PORTABLE_WPA81
+#if !SILVERLIGHT
                 var prop = entity.GetType().GetTypeInfo().GetDeclaredProperty(e.PropertyName);
                 if (prop != null && typeof(ITrackable).GetTypeInfo().IsAssignableFrom(prop.PropertyType.GetTypeInfo()))
 #else
@@ -491,7 +491,7 @@ namespace TrackableEntities.Client
                 static CollectionValueProvider()
                 {
                     Func<IEnumerable<ITrackable>, object> func = CastResult<int>;
-#if PORTABLE_WPA81
+#if !SILVERLIGHT
                     _genericCast = func.GetMethodInfo().GetGenericMethodDefinition();
 #else
                     _genericCast = func.Method.GetGenericMethodDefinition();
@@ -532,7 +532,7 @@ namespace TrackableEntities.Client
 
                     var items = cnp.EntityCollection.Where(i => _resolver.IncludeCollectionItem(entity, cnp.Property, i));
 
-#if PORTABLE_WPA81
+#if !SILVERLIGHT
                     return _genericCast.MakeGenericMethod(cnp.Property.PropertyType.GetTypeInfo().GenericTypeArguments).Invoke(null, new[] { items });
 #else
                     return _genericCast.MakeGenericMethod(cnp.Property.PropertyType.GetGenericArguments()).Invoke(null, new[] { items });
@@ -618,7 +618,7 @@ namespace TrackableEntities.Client
         {
             foreach (var refProp in child.GetNavigationProperties()
                 .OfReferenceType()
-#if PORTABLE_WPA81
+#if !SILVERLIGHT
                 .Where(rp => rp.Property.PropertyType.GetTypeInfo().IsAssignableFrom(parent.GetType().GetTypeInfo()))
 #else
                 .Where(rp => rp.Property.PropertyType.IsAssignableFrom(parent.GetType()))

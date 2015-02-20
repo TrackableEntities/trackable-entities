@@ -218,7 +218,7 @@ namespace TrackableEntities.Client
             var actions = new List<Action>();
 
             // Iterate simple properties
-#if PORTABLE_WPA81
+#if !SILVERLIGHT
             foreach (var prop in targetItem.GetType().GetTypeInfo().DeclaredProperties.Where(p => p.CanWrite)
 #else
             foreach (var prop in targetItem.GetType().GetProperties().Where(p => p.CanWrite)
