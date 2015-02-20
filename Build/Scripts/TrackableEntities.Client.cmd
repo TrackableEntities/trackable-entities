@@ -19,6 +19,7 @@ REM Restore:
 if "%debug%"=="1" pause
 Source\.nuget\nuget.exe install "%source%\packages.config" -OutputDirectory Source\packages -NonInteractive
 Source\.nuget\nuget.exe install "%source%.Net45\packages.config" -OutputDirectory Source\packages -NonInteractive
+Source\.nuget\nuget.exe install "%source%.sl5\packages.config" -OutputDirectory Source\packages -NonInteractive
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
@@ -27,6 +28,7 @@ if "%debug%"=="1" pause
 mkdir "%logs%"
 %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild "%source%\%name%.csproj" /p:Configuration="%config%" /m /v:M /fl /flp:LogFile="%logs%\msbuild.log";Verbosity=Normal /nr:false
 %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild "%source%.Net45\%name%.Net45.csproj" /p:Configuration="%config%" /m /v:M /fl /flp:LogFile="%logs%\msbuild.Net45.log";Verbosity=Normal /nr:false
+%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild "%source%.Sl5\%name%.Sl5.csproj" /p:Configuration="%config%" /m /v:M /fl /flp:LogFile="%logs%\msbuild.Sl5.log";Verbosity=Normal /nr:false
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
