@@ -42,6 +42,9 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
 <#
     }
 #>
+            ModelCreating(modelBuilder);
         }
+
+        partial void ModelCreating(DbModelBuilder modelBuilder);
     }
 }
