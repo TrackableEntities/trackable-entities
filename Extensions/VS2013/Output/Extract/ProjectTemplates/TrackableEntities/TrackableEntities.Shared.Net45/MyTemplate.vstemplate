@@ -1,13 +1,13 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
-    <Name>Trackable Service Entities Library</Name>
-    <Description>Class library with templates for reverse engineering trackable service entitites using Entity Framework Code First. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
+    <Name>Trackable Shared .NET 4.5 Entities Library</Name>
+    <Description>Class library with templates for reverse engineering trackable shared entitites using Entity Framework Code First. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
     <ProjectType>CSharp</ProjectType>
     <ProjectSubType>
     </ProjectSubType>
     <SortOrder>1000</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>Trackable.Service.Entities</DefaultName>
+    <DefaultName>Trackable.Shared.Entities.Net45</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <LocationField>Enabled</LocationField>
     <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
@@ -16,7 +16,7 @@
     <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
   </TemplateData>
   <TemplateContent>
-    <Project TargetFileName="TrackableService.Entities.csproj" File="TrackableService.Entities.csproj" ReplaceParameters="true">
+    <Project TargetFileName="TrackableShared.Entities.Net45.csproj" File="TrackableShared.Entities.Net45.csproj" ReplaceParameters="true">
       <ProjectItem ReplaceParameters="true" TargetFileName="App.config">App.config</ProjectItem>
       <Folder Name="CodeTemplates" TargetFolderName="CodeTemplates">
         <Folder Name="EFModelFromDatabase" TargetFolderName="EFModelFromDatabase">
@@ -35,7 +35,7 @@
       <Folder Name="Properties" TargetFolderName="Properties">
         <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
       </Folder>
-      <ProjectItem ReplaceParameters="true" TargetFileName="TrackableServiceEntities.ReadMe.txt">TrackableServiceEntities.ReadMe.txt</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="TrackableSharedEntities.Net45.ReadMe.txt">TrackableSharedEntities.Net45.ReadMe.txt</ProjectItem>
     </Project>
   </TemplateContent>
   <WizardExtension>
@@ -47,7 +47,7 @@
               repositoryId="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7">
 		<package id="Newtonsoft.Json" version="6.0.8" />
 		<package id="EntityFramework" version="6.1.2" />
-		<package id="TrackableEntities.CodeTemplates.Service.Net45" version="2.5.0" />
+		<package id="TrackableEntities.CodeTemplates.Shared.Net45" version="2.5.0" />
 		<package id="TrackableEntities.Common" version="2.5.0" />
 		<package id="TrackableEntities.EF.6" version="2.5.0" />
     </packages>

@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client
 {
     [JsonObject(IsReference = true)]
-    [DataContract]
+    [DataContract(IsReference = true)]
     public abstract partial class EntityBase
     {
         /// <summary>
