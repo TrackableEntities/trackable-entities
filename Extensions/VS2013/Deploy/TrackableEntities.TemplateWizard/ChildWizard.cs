@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
+using System.IO;
 using System.Windows.Forms;
 using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
@@ -16,20 +18,28 @@ namespace TrackableEntities.TemplateWizard
         [Import]
         internal IVsTemplateWizard Wizard { get; set; }
 
+        protected DTE2 Dte2;
+
         // Retrieve global replacement parameters
         public void RunStarted(object automationObject,
             Dictionary<string, string> replacementsDictionary,
             WizardRunKind runKind, object[] customParams)
         {
-            // Add custom parameters.
-            replacementsDictionary.Add("$saferootprojectname$",
-                RootWizard.GlobalDictionary["$saferootprojectname$"]);
+            // Get DTE
+            Dte2 = (DTE2)automationObject;
+
+            // Process entities template
+            var templateName = Path.GetFileNameWithoutExtension((string)customParams[0]);
+            ProcessEntitiesTemplate(replacementsDictionary, templateName);
+
+            // Add custom parameters
+            ProcessRootTemplate(replacementsDictionary);
 
             // Init NuGet Wizard
             Initialize(automationObject);
             Wizard.RunStarted(automationObject, replacementsDictionary, runKind, customParams);
-        
         }
+
         public void BeforeOpeningFile(ProjectItem projectItem)
         {
             Wizard.BeforeOpeningFile(projectItem);
@@ -38,6 +48,7 @@ namespace TrackableEntities.TemplateWizard
         public void ProjectFinishedGenerating(Project project)
         {
             Wizard.ProjectFinishedGenerating(project);
+            PostProjectFinishedGenerating(project);
         }
 
         public void ProjectItemFinishedGenerating(ProjectItem projectItem)
@@ -53,6 +64,21 @@ namespace TrackableEntities.TemplateWizard
         public bool ShouldAddProjectItem(string filePath)
         {
             return Wizard.ShouldAddProjectItem(filePath);
+        }
+
+        protected virtual void ProcessEntitiesTemplate(
+            Dictionary<string, string> replacementsDictionary, string templateName)
+        {            
+        }
+
+        protected virtual void PostProjectFinishedGenerating(Project project)
+        {
+        }
+
+        protected virtual void ProcessRootTemplate(Dictionary<string, string> replacementsDictionary)
+        {
+            replacementsDictionary.Add(Constants.DictionaryEntries.SafeRootProjectName,
+                RootWizard.RootDictionary[Constants.DictionaryEntries.SafeRootProjectName]);
         }
 
         private void Initialize(object automationObject)

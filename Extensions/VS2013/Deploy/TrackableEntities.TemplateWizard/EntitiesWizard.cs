@@ -1,42 +1,36 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
+using System.Windows.Forms;
+using EntitiesSelectionWizard;
 using EnvDTE;
-using EnvDTE80;
 using Microsoft.VisualStudio.TemplateWizard;
-
-// This assembly must be signed and either installed in the GAC
-// or included as Content in a VSIX project.
-// Then it is referenced from vstemplates.
-// Custom replacement can be used in projects and files.
 
 namespace TrackableEntities.TemplateWizard
 {
-    // Root wizard is used by root project vstemplate
+    // Entities wizard is used by root project vstemplate
     public class EntitiesWizard : IWizard
     {
-        // Use to communicate $saferootprojectname$ to ChildWizard
-        public static Dictionary<string, string> GlobalDictionary =
+        // Use to communicate $entitiestempaltename$ to ChildWizard
+        public static Dictionary<string, string> RootDictionary =
             new Dictionary<string, string>();
-
-        // Fields
-        private DTE2 _dte2;
-        private string _templateName;
 
         // Add global replacement parameters
         public void RunStarted(object automationObject, 
             Dictionary<string, string> replacementsDictionary, 
             WizardRunKind runKind, object[] customParams)
         {
-            // Place "$saferootprojectname$ in the global dictionary.
-            // Copy from $safeprojectname$ passed in my root vstemplate
-            GlobalDictionary["$saferootprojectname$"] = replacementsDictionary["$safeprojectname$"];
-            
-            // Get template name
-            _templateName = Path.GetFileNameWithoutExtension((string)customParams[0]);
+            // Prompt user for entities template
+            var dialog = new EntitiesSelectionDialog();
+            if (dialog.ShowDialog() == DialogResult.Cancel)
+                throw new WizardBackoutException();
+            var entitiesTemplateName = GetEntitiesTemplateName(dialog.EntitiesSelection);
 
-            // Get DTE
-            _dte2 = (DTE2)automationObject;
+            // Place "$saferootprojectname$ in the global dictionary.
+            RootDictionary[Constants.DictionaryEntries.SafeRootProjectName] = 
+                replacementsDictionary[Constants.DictionaryEntries.SafeProjectName];
+
+            // Place "$entitiestempaltename$ in the global dictionary.
+            RootDictionary[Constants.DictionaryEntries.EntitiesTempalteName] = entitiesTemplateName;            
         }
 
         public void BeforeOpeningFile(ProjectItem projectItem)
@@ -53,32 +47,11 @@ namespace TrackableEntities.TemplateWizard
 
         public void RunFinished()
         {
-            // Add ReadMe file to solution folder
-            var solution = (Solution2)_dte2.Solution;
-            solution.AddSolutionFolder("Solution Items");
-
-            // Copy readme file to solution directory and add to solution folder
-            string sourceReadMePath = GetTemplateReadMePath(_templateName);
-            string destReadMePath = GetDestReadMePath(solution, _templateName);
-            File.Copy(sourceReadMePath, destReadMePath);
-            if (File.Exists(destReadMePath))
-                _dte2.ItemOperations.AddExistingItem(destReadMePath);
-
-            // Set startup project
-            string extension = null;
-            if (_templateName == Constants.ProjectTemplates.TrackableWcfService)
-                extension = ".Service.Web";
-            else if (_templateName == Constants.ProjectTemplates.TrackableWebApi ||
-                _templateName == Constants.ProjectTemplates.TrackableWebApiPatterns)
-                extension = ".WebApi";
-            if (extension != null)
-            {
-                Project startupProject = GetProject(extension);
-                if (startupProject != null)
-                {
-                    _dte2.Solution.SolutionBuild.StartupProjects = startupProject.UniqueName;
-                } 
-            }
+            // TODO: Delete parent of original destination directory
+            // The installer expects the directory to be present.
+            //var origDestDirectory = RootDictionary[Constants.DictionaryEntries.OriginalDestinationDirectory];
+            //var origParentDirectory = new DirectoryInfo(origDestDirectory).Parent;
+            //if (origParentDirectory != null) Directory.Delete(origDestDirectory);
         }
 
         public bool ShouldAddProjectItem(string filePath)
@@ -86,56 +59,30 @@ namespace TrackableEntities.TemplateWizard
             return true;
         }
 
-        private Project GetProject(string extension)
+        private string GetEntitiesTemplateName(EntitiesSelection entitiesSelection)
         {
-            string projectName = GlobalDictionary["$saferootprojectname$"] + extension;
-            foreach (Project project in _dte2.Solution.Projects)
+            if (entitiesSelection == EntitiesSelection.None)
+                return null;
+
+            if (entitiesSelection.HasFlag(EntitiesSelection.Service))
+                return Constants.EntitiesTemplates.ServiceNet45;
+
+            if (entitiesSelection.HasFlag(EntitiesSelection.Client))
             {
-                if (Path.GetFileNameWithoutExtension(project.FullName).Equals(projectName))
-                {
-                    return project;
-                }
+                if (entitiesSelection.HasFlag(EntitiesSelection.Portable))
+                    return Constants.EntitiesTemplates.ClientPortable;
+                if (entitiesSelection.HasFlag(EntitiesSelection.DotNet45))
+                    return Constants.EntitiesTemplates.ClientNet45;
+            }
+
+            if (entitiesSelection.HasFlag(EntitiesSelection.Shared))
+            {
+                if (entitiesSelection.HasFlag(EntitiesSelection.Portable))
+                    return Constants.EntitiesTemplates.SharedPortable;
+                if (entitiesSelection.HasFlag(EntitiesSelection.DotNet45))
+                    return Constants.EntitiesTemplates.SharedNet45;
             }
             return null;
-        }
-
-        private string GetDestReadMePath(Solution2 solution, string templateName)
-        {
-            var solutionPath = solution.Properties.Item("Path").Value as string;
-            if (string.IsNullOrWhiteSpace(solutionPath)) return null;
-            string solutionDir = new FileInfo(solutionPath).DirectoryName;
-            if (string.IsNullOrWhiteSpace(solutionDir)) return null;
-            string readMeFileName = GetReadMeFileName(templateName);
-            return Path.Combine(solutionDir, readMeFileName);
-        }
-
-        private string GetReadMeFileName(string templateName)
-        {
-            switch (templateName)
-            {
-                case Constants.ProjectTemplates.TrackableWcfService:
-                    return Constants.ReadMeFiles.TrackableWcf;
-                case Constants.ProjectTemplates.TrackableWebApi:
-                    return Constants.ReadMeFiles.TrackableWebApi;
-                case Constants.ProjectTemplates.TrackableWebApiPatterns:
-                    return Constants.ReadMeFiles.WebApiPatternsSample;
-                default:
-                    return null;
-            }
-        }
-
-        private string GetTemplateReadMePath(string templateName)
-        {
-            string readMeFileName = GetReadMeFileName(templateName);
-            if (readMeFileName == null) return null;
-            string templateReadMePath = GetTemplateFilePath(readMeFileName);
-            return templateReadMePath;
-        }
-
-        private string GetTemplateFilePath(string fileName)
-        {
-            string dirPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            return Path.Combine(dirPath, fileName);
         }
     }
 }

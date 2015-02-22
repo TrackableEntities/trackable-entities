@@ -17,5 +17,24 @@ namespace TrackableEntities.TemplateWizard
             public const string TrackableWebApi = "TrackableWebApi.ReadMe.txt";
             public const string WebApiPatternsSample = "TrackableWebApi.Patterns.ReadMe.txt";
         }
+
+        public static class EntitiesTemplates
+        {
+            public const string ServiceNet45 = "Entities.Service.Net45";
+            public const string ClientPortable = "Entities.Client.Portable";
+            public const string ClientNet45 = "Entities.Client.Net45";
+            public const string SharedPortable = "Entities.Shared.Portable";
+            public const string SharedNet45 = "Entities.Shared.Net45";
+        }
+
+        public static class DictionaryEntries
+        {
+            public const string SafeProjectName = "$safeprojectname$";
+            public const string SafeRootProjectName = "$saferootprojectname$";
+            public const string EntitiesTempalteName = "$entitiestempaltename$";
+            public const string SolutionDirectory = "$solutiondirectory$";
+            public const string DestinationDirectory = "$destinationdirectory$";
+            public const string OriginalDestinationDirectory = "$origdestinationdirectory$";
+        }
     }
 }

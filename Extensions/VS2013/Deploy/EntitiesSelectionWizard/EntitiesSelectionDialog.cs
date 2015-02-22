@@ -169,6 +169,7 @@ namespace EntitiesSelectionWizard
             EntitiesSelection entitiesType = ToSelectionType(typeSelection);
             EntitiesSelection entitiesCategory = ToSelectionType(categorySelection);
             EntitiesSelection = entitiesType | entitiesCategory;
+            DialogResult = DialogResult.OK;
         }
 
         private enum PageSelection

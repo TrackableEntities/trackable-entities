@@ -5,18 +5,13 @@ using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.TemplateWizard;
 
-// This assembly must be signed and either installed in the GAC
-// or included as Content in a VSIX project.
-// Then it is referenced from vstemplates.
-// Custom replacement can be used in projects and files.
-
 namespace TrackableEntities.TemplateWizard
 {
     // Root wizard is used by root project vstemplate
     public class RootWizard : IWizard
     {
         // Use to communicate $saferootprojectname$ to ChildWizard
-        public static Dictionary<string, string> GlobalDictionary =
+        public static Dictionary<string, string> RootDictionary =
             new Dictionary<string, string>();
 
         // Fields
@@ -29,8 +24,8 @@ namespace TrackableEntities.TemplateWizard
             WizardRunKind runKind, object[] customParams)
         {
             // Place "$saferootprojectname$ in the global dictionary.
-            // Copy from $safeprojectname$ passed in my root vstemplate
-            GlobalDictionary["$saferootprojectname$"] = replacementsDictionary["$safeprojectname$"];
+            RootDictionary[Constants.DictionaryEntries.SafeRootProjectName] = 
+                replacementsDictionary[Constants.DictionaryEntries.SafeProjectName];
             
             // Get template name
             _templateName = Path.GetFileNameWithoutExtension((string)customParams[0]);
@@ -88,7 +83,7 @@ namespace TrackableEntities.TemplateWizard
 
         private Project GetProject(string extension)
         {
-            string projectName = GlobalDictionary["$saferootprojectname$"] + extension;
+            string projectName = RootDictionary["$saferootprojectname$"] + extension;
             foreach (Project project in _dte2.Solution.Projects)
             {
                 if (Path.GetFileNameWithoutExtension(project.FullName).Equals(projectName))

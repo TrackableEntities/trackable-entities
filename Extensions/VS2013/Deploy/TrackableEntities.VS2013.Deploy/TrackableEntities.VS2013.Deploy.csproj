@@ -266,25 +266,8 @@
     <Content Include="Packages\TrackableEntities.CodeTemplates.Shared.Portable.2.5.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="ProjectTemplates\Trackable\Entities\TrackableEntities.Client.Net45.zip">
+    <Content Include="ProjectTemplates\Trackable\TrackableEntities.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectTemplates\Trackable\Entities\TrackableEntities.Client.Portable.zip">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectTemplates\Trackable\Entities\TrackableEntities.Service.Net45.zip">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectTemplates\Trackable\Entities\TrackableEntities.Shared.Net45.zip">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectTemplates\Trackable\Entities\TrackableEntities.Shared.Portable.zip">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
@@ -336,6 +319,13 @@
     <ProjectReference Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\TrackableEntities.ItemWizard.csproj">
       <Project>{8e21f5fd-3941-45a6-b8f8-9628b8a58594}</Project>
       <Name>TrackableEntities.ItemWizard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EntitiesSelectionWizard\EntitiesSelectionWizard.csproj">
+      <Project>{A1DC5D35-B381-4A89-9922-E83923D4AD2F}</Project>
+      <Name>EntitiesSelectionWizard</Name>
+      <VSIXSubPath>Wizards</VSIXSubPath>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
     <ProjectReference Include="..\TrackableEntities.TemplateWizard\TrackableEntities.TemplateWizard.csproj">
       <Project>{c9646be1-e999-47bd-8a9d-083017e6269a}</Project>
