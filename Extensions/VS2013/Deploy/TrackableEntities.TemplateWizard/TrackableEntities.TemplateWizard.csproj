@@ -70,6 +70,7 @@
     <Compile Include="ChildWizard.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EntitiesWizard.cs" />
     <Compile Include="RootWizard.cs" />
   </ItemGroup>
   <ItemGroup>
