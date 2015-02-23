@@ -47,11 +47,11 @@ namespace TrackableEntities.TemplateWizard
 
         public void RunFinished()
         {
-            // TODO: Delete parent of original destination directory
-            // The installer expects the directory to be present.
-            //var origDestDirectory = RootDictionary[Constants.DictionaryEntries.OriginalDestinationDirectory];
-            //var origParentDirectory = new DirectoryInfo(origDestDirectory).Parent;
-            //if (origParentDirectory != null) Directory.Delete(origDestDirectory);
+            // Delete parent of original destination directory
+            // NOTE: The directory reappears after install has completed.
+            var origDestDirectory = RootDictionary[Constants.DictionaryEntries.OriginalDestinationDirectory];
+            var origParentDirectory = new DirectoryInfo(origDestDirectory).Parent;
+            if (origParentDirectory != null) Directory.Delete(origParentDirectory.FullName);
         }
 
         public bool ShouldAddProjectItem(string filePath)

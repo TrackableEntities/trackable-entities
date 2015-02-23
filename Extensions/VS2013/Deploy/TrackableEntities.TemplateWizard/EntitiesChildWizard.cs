@@ -30,20 +30,20 @@ namespace TrackableEntities.TemplateWizard
                 throw new WizardBackoutException();
             }
 
-            // Move destination directory up a level
-            if (directory != null)
-            {
-                string solutionPath = replacementsDictionary[Constants.DictionaryEntries.SolutionDirectory];
-                string projectName = replacementsDictionary[Constants.DictionaryEntries.SafeProjectName];
-                var destDirectory = new DirectoryInfo(Path.Combine(solutionPath, projectName));
-                EntitiesWizard.RootDictionary[Constants.DictionaryEntries.SafeProjectName] = projectName;
-                EntitiesWizard.RootDictionary[Constants.DictionaryEntries.OriginalDestinationDirectory] =
-                    replacementsDictionary[Constants.DictionaryEntries.DestinationDirectory];
-                EntitiesWizard.RootDictionary[Constants.DictionaryEntries.DestinationDirectory] = destDirectory.FullName;
-            }
-
             // Add $entitiestempaltename$ to replacements dictionary
             replacementsDictionary.Add(Constants.DictionaryEntries.EntitiesTempalteName, entitiesTemplate);
+
+            // Store destination directory info
+            string solutionPath = replacementsDictionary[Constants.DictionaryEntries.SolutionDirectory];
+            string projectName = replacementsDictionary[Constants.DictionaryEntries.SafeProjectName];
+            var destDirectory = new DirectoryInfo(Path.Combine(solutionPath, projectName));
+            EntitiesWizard.RootDictionary[Constants.DictionaryEntries.SafeProjectName] = projectName;
+            EntitiesWizard.RootDictionary[Constants.DictionaryEntries.OriginalDestinationDirectory] =
+                replacementsDictionary[Constants.DictionaryEntries.DestinationDirectory];
+            EntitiesWizard.RootDictionary[Constants.DictionaryEntries.DestinationDirectory] = destDirectory.FullName;
+
+            // Set $destinationdirectory$ in replacements dictionary
+            replacementsDictionary[Constants.DictionaryEntries.DestinationDirectory] = destDirectory.FullName;
         }
 
         protected override void ProcessRootTemplate(Dictionary<string, string> replacementsDictionary)
@@ -54,11 +54,15 @@ namespace TrackableEntities.TemplateWizard
 
         protected override void PostProjectFinishedGenerating(Project project)
         {
+            // Get directory and project info
             var origDestDirectory = EntitiesWizard.RootDictionary[Constants.DictionaryEntries.OriginalDestinationDirectory];
             var newDestDirectory = EntitiesWizard.RootDictionary[Constants.DictionaryEntries.DestinationDirectory];
             var projectName = EntitiesWizard.RootDictionary[Constants.DictionaryEntries.SafeProjectName];
-            if (!string.IsNullOrWhiteSpace(origDestDirectory) && !string.IsNullOrWhiteSpace(newDestDirectory)
-                && !string.IsNullOrWhiteSpace(projectName))
+            
+            // Move project up a level
+            if (!string.IsNullOrWhiteSpace(origDestDirectory) && 
+                !string.IsNullOrWhiteSpace(newDestDirectory) && 
+                !string.IsNullOrWhiteSpace(projectName))
             {
                 Dte2.Solution.Remove(project);
                 Directory.Move(origDestDirectory, newDestDirectory);
