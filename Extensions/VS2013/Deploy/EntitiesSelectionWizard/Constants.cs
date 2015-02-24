@@ -6,13 +6,16 @@ namespace EntitiesSelectionWizard
     {
         public static class Descriptions
         {
-            public const string ClientEntities = "Trackable Client Entities:\r\n" +
+            public const string ClientEntities = "Client Entities:\r\n" +
             "Adds a class library project with code generation templates for reverse engineering trackable client entities from a database.";
 
-            public const string ServiceEntities = "Trackable Service Entities:\r\n" +
+            public const string ServiceEntities = "Service Entities:\r\n" +
             "Adds a class library project with code generation templates for reverse engineering trackable service entities from a database.";
 
-            public const string SharedEntities = "Trackable Shared Entities:\r\n" +
+            public const string ClientServiceEntities = "Separate Client / Service Entities:\r\n" +
+            "Adds a class library project with code generation templates for reverse engineering trackable client entities from a database.";
+
+            public const string SharedEntities = "Shared Entities:\r\n" +
                 "Adds a class library project with code generation templates for reverse engineering trackable shared entities from a database.";
 
             public const string PortableEntities = "{0} Portable Entities:\r\n" +

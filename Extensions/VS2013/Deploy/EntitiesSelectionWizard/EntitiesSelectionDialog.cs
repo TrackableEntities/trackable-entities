@@ -5,14 +5,28 @@ namespace EntitiesSelectionWizard
 {
     public partial class EntitiesSelectionDialog : Form
     {
+        private readonly bool _multiproject;
         private PageSelection _pageIndex = PageSelection.FirstPage;
 
-        public EntitiesSelectionDialog()
+        public EntitiesSelectionDialog(bool multiproject = false)
         {
             Application.EnableVisualStyles();
             InitializeComponent();
-            entitiesListView1.Items[0].Selected = true;
-            entitiesListView2.Items[0].Selected = true;
+
+            _multiproject = multiproject;
+            if (_multiproject)
+            {
+                clientServiceListView.Visible = true;
+                serviceClientSharedListView.Visible = false;
+            }
+            else
+            {
+                clientServiceListView.Visible = false;
+                serviceClientSharedListView.Visible = true;
+            }
+            clientServiceListView.Items[0].Selected = true;
+            serviceClientSharedListView.Items[0].Selected = true;
+            portableDotNetListView.Items[0].Selected = true;
         }
 
         public EntitiesSelection EntitiesSelection { get; set; }
@@ -21,28 +35,44 @@ namespace EntitiesSelectionWizard
         {
             if (_pageIndex == PageSelection.FirstPage)
             {
-                entitiesListView1.Visible = true;
-                entitiesListView2.Visible = false;
+                if (_multiproject)
+                    clientServiceListView.Visible = true;
+                else
+                    serviceClientSharedListView.Visible = true;
+                portableDotNetListView.Visible = false;
 
                 previousButton.Enabled = false;
-                EntitiesTypeSelection selection = (EntitiesTypeSelection) GetListViewSelection(entitiesListView1);
-                if (selection == EntitiesTypeSelection.ServiceEntities)
-                {
-                    nextButton.Enabled = false;
-                    finishButton.Enabled = true;
-                    AcceptButton = finishButton;
-                }
-                else
+                if (_multiproject)
                 {
                     nextButton.Enabled = true;
                     finishButton.Enabled = false;
                     AcceptButton = nextButton;
                 }
+                else
+                {
+                    ListView entitiesTypeListView;
+                    if (_multiproject) entitiesTypeListView = clientServiceListView;
+                    else entitiesTypeListView = serviceClientSharedListView;
+                    EntitiesTypeSelection selection = GetEntitiesTypeSelection(entitiesTypeListView);
+                    if (selection == EntitiesTypeSelection.ServiceEntities)
+                    {
+                        nextButton.Enabled = false;
+                        finishButton.Enabled = true;
+                        AcceptButton = finishButton;
+                    }
+                    else
+                    {
+                        nextButton.Enabled = true;
+                        finishButton.Enabled = false;
+                        AcceptButton = nextButton;
+                    }
+                }
             }
             else
             {
-                entitiesListView1.Visible = false;
-                entitiesListView2.Visible = true;
+                clientServiceListView.Visible = false;
+                serviceClientSharedListView.Visible = false;
+                portableDotNetListView.Visible = true;
 
                 previousButton.Enabled = true;
                 nextButton.Enabled = false;
@@ -51,33 +81,102 @@ namespace EntitiesSelectionWizard
             }
         }
 
-        private int GetListViewSelection(ListView listView)
+        private EntitiesTypeSelection GetEntitiesTypeSelection(ListView entitiesTypeListView)
         {
             int selection = 0;
-            if (listView.SelectedIndices.Count > 0)
-                selection = listView.SelectedIndices[0];
-            return selection;
+            if (entitiesTypeListView.SelectedIndices.Count > 0)
+                selection = entitiesTypeListView.SelectedIndices[0];
+            if (ReferenceEquals(entitiesTypeListView, clientServiceListView))
+            {
+                switch (selection)
+                {
+                    case 0:
+                        return EntitiesTypeSelection.ClientServiceEntities;
+                    default:
+                        return EntitiesTypeSelection.SharedEntities;
+                }
+            }
+            if (ReferenceEquals(entitiesTypeListView, serviceClientSharedListView))
+            {
+                switch (selection)
+                {
+                    case 0:
+                        return EntitiesTypeSelection.ServiceEntities;
+                    case 1:
+                        return EntitiesTypeSelection.ClientEntities;
+                    default:
+                        return EntitiesTypeSelection.SharedEntities;
+                }
+            }
+            throw new InvalidOperationException("Unsupported entities type selection.");
+        }
+
+        private EntitiesCategorySelection GetEntitiesCategorySelection(ListView entitiesCategoryListView)
+        {
+            int selection = 0;
+            if (entitiesCategoryListView.SelectedIndices.Count > 0)
+                selection = entitiesCategoryListView.SelectedIndices[0];
+            if (ReferenceEquals(entitiesCategoryListView, portableDotNetListView))
+            {
+                switch (selection)
+                {
+                    case 0:
+                        return EntitiesCategorySelection.PortableEntities;
+                    default:
+                        return EntitiesCategorySelection.DotNetEntities;
+                }
+            }
+            throw new InvalidOperationException("Unsupported entities category selection.");
         }
 
         private string GetSelectedEntityType()
         {
-            EntitiesTypeSelection selection = (EntitiesTypeSelection)GetListViewSelection(entitiesListView1);
-            switch (selection)
+            EntitiesTypeSelection selection;
+            if (_multiproject)
             {
-                case EntitiesTypeSelection.ClientEntities:
-                    return "Client";
-                case EntitiesTypeSelection.ServiceEntities:
-                    return "Service";
-                case EntitiesTypeSelection.SharedEntities:
-                    return "Shared";
-                default:
-                    return string.Empty;
+                selection = GetEntitiesTypeSelection(clientServiceListView);
+                switch (selection)
+                {
+                    case EntitiesTypeSelection.ClientServiceEntities:
+                        return "Separate Client / Service";
+                    case EntitiesTypeSelection.SharedEntities:
+                        return "Shared";
+                }
             }
+            else
+            {
+                selection = GetEntitiesTypeSelection(serviceClientSharedListView);
+                switch (selection)
+                {
+                    case EntitiesTypeSelection.ClientEntities:
+                        return "Client";
+                    case EntitiesTypeSelection.ServiceEntities:
+                        return "Service";
+                    case EntitiesTypeSelection.SharedEntities:
+                        return "Shared";
+                }
+            }
+            return string.Empty;
         }
 
-        private void entitiesListView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void clientServiceListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            EntitiesTypeSelection selection = (EntitiesTypeSelection)GetListViewSelection(entitiesListView1);
+            EntitiesTypeSelection selection = GetEntitiesTypeSelection(clientServiceListView);
+            switch (selection)
+            {
+                case EntitiesTypeSelection.ClientServiceEntities:
+                    descriptionLabel.Text = Constants.Descriptions.ClientServiceEntities;
+                    break;
+                case EntitiesTypeSelection.SharedEntities:
+                    descriptionLabel.Text = Constants.Descriptions.SharedEntities;
+                    break;
+            }
+            SetPageState();
+        }
+
+        private void serviceClientSharedListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            EntitiesTypeSelection selection = GetEntitiesTypeSelection(serviceClientSharedListView);
             switch (selection)
             {
                 case EntitiesTypeSelection.ClientEntities:
@@ -93,10 +192,10 @@ namespace EntitiesSelectionWizard
             SetPageState();
         }
 
-        private void entitiesListView2_SelectedIndexChanged(object sender, EventArgs e)
+        private void portableDotNetListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             string entityType = GetSelectedEntityType();
-            EntitiesCategorySelection selection = (EntitiesCategorySelection)GetListViewSelection(entitiesListView2);
+            EntitiesCategorySelection selection = GetEntitiesCategorySelection(portableDotNetListView);
             switch (selection)
             {
                 case EntitiesCategorySelection.PortableEntities:
@@ -113,6 +212,8 @@ namespace EntitiesSelectionWizard
         {
             switch (typeSelection)
             {
+                case EntitiesTypeSelection.ClientServiceEntities:
+                    return EntitiesSelection.ClientService;
                 case EntitiesTypeSelection.ServiceEntities:
                     return EntitiesSelection.Service;
                 case EntitiesTypeSelection.ClientEntities:
@@ -141,16 +242,24 @@ namespace EntitiesSelectionWizard
         {
             _pageIndex = PageSelection.FirstPage;
             SetPageState();
-            entitiesListView1.Focus();
-            entitiesListView1_SelectedIndexChanged(this, EventArgs.Empty);
+            if (_multiproject)
+            {
+                clientServiceListView.Focus();
+                clientServiceListView_SelectedIndexChanged(this, EventArgs.Empty);
+            }
+            else
+            {
+                serviceClientSharedListView.Focus();
+                serviceClientSharedListView_SelectedIndexChanged(this, EventArgs.Empty);
+            }
         }
 
         private void nextButton_Click(object sender, EventArgs e)
         {
             _pageIndex = PageSelection.SecondPage;
             SetPageState();
-            entitiesListView2.Focus();
-            entitiesListView2_SelectedIndexChanged(this, EventArgs.Empty);
+            portableDotNetListView.Focus();
+            portableDotNetListView_SelectedIndexChanged(this, EventArgs.Empty);
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
@@ -161,10 +270,15 @@ namespace EntitiesSelectionWizard
 
         private void finishButton_Click(object sender, EventArgs e)
         {
-            EntitiesTypeSelection typeSelection = (EntitiesTypeSelection)GetListViewSelection(entitiesListView1);
+            EntitiesTypeSelection typeSelection;
+            if (_multiproject)
+                typeSelection = GetEntitiesTypeSelection(clientServiceListView);
+            else
+                typeSelection = GetEntitiesTypeSelection(serviceClientSharedListView);
             EntitiesCategorySelection categorySelection = EntitiesCategorySelection.DotNetEntities;
+
             if (typeSelection != EntitiesTypeSelection.ServiceEntities)
-                categorySelection = (EntitiesCategorySelection)GetListViewSelection(entitiesListView2);
+                categorySelection = GetEntitiesCategorySelection(portableDotNetListView);
 
             EntitiesSelection entitiesType = ToSelectionType(typeSelection);
             EntitiesSelection entitiesCategory = ToSelectionType(categorySelection);
@@ -182,7 +296,8 @@ namespace EntitiesSelectionWizard
         {
             ServiceEntities = 0,
             ClientEntities = 1,
-            SharedEntities = 2
+            ClientServiceEntities = 2,
+            SharedEntities = 3
         }
 
         private enum EntitiesCategorySelection

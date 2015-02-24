@@ -35,15 +35,18 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EntitiesSelectionDialog));
             System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Portable", "portable-icon.png");
             System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem(".Net 4.5", "dotnet-icon.png");
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Client / Service", "client-icon.png");
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Shared", "shared-icon.png");
             this.descriptionLabel = new System.Windows.Forms.Label();
             this.buttonsPanel = new System.Windows.Forms.Panel();
             this.finishButton = new System.Windows.Forms.Button();
             this.nextButton = new System.Windows.Forms.Button();
             this.previousButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.entitiesListView1 = new System.Windows.Forms.ListView();
+            this.serviceClientSharedListView = new System.Windows.Forms.ListView();
             this.wizardImageList = new System.Windows.Forms.ImageList(this.components);
-            this.entitiesListView2 = new System.Windows.Forms.ListView();
+            this.portableDotNetListView = new System.Windows.Forms.ListView();
+            this.clientServiceListView = new System.Windows.Forms.ListView();
             this.buttonsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -119,24 +122,24 @@
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
-            // entitiesListView1
+            // serviceClientSharedListView
             // 
-            this.entitiesListView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.serviceClientSharedListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             listViewItem2.Checked = true;
             listViewItem2.StateImageIndex = 1;
-            this.entitiesListView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            this.serviceClientSharedListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
             listViewItem3});
-            this.entitiesListView1.LargeImageList = this.wizardImageList;
-            this.entitiesListView1.Location = new System.Drawing.Point(18, 16);
-            this.entitiesListView1.MultiSelect = false;
-            this.entitiesListView1.Name = "entitiesListView1";
-            this.entitiesListView1.Size = new System.Drawing.Size(362, 80);
-            this.entitiesListView1.TabIndex = 20;
-            this.entitiesListView1.UseCompatibleStateImageBehavior = false;
-            this.entitiesListView1.SelectedIndexChanged += new System.EventHandler(this.entitiesListView1_SelectedIndexChanged);
+            this.serviceClientSharedListView.LargeImageList = this.wizardImageList;
+            this.serviceClientSharedListView.Location = new System.Drawing.Point(18, 12);
+            this.serviceClientSharedListView.MultiSelect = false;
+            this.serviceClientSharedListView.Name = "serviceClientSharedListView";
+            this.serviceClientSharedListView.Size = new System.Drawing.Size(362, 80);
+            this.serviceClientSharedListView.TabIndex = 20;
+            this.serviceClientSharedListView.UseCompatibleStateImageBehavior = false;
+            this.serviceClientSharedListView.SelectedIndexChanged += new System.EventHandler(this.serviceClientSharedListView_SelectedIndexChanged);
             // 
             // wizardImageList
             // 
@@ -148,22 +151,40 @@
             this.wizardImageList.Images.SetKeyName(3, "portable-icon.png");
             this.wizardImageList.Images.SetKeyName(4, "dotnet-icon.png");
             // 
-            // entitiesListView2
+            // portableDotNetListView
             // 
-            this.entitiesListView2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.portableDotNetListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.entitiesListView2.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            this.portableDotNetListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem4,
             listViewItem5});
-            this.entitiesListView2.LargeImageList = this.wizardImageList;
-            this.entitiesListView2.Location = new System.Drawing.Point(18, 16);
-            this.entitiesListView2.MultiSelect = false;
-            this.entitiesListView2.Name = "entitiesListView2";
-            this.entitiesListView2.Size = new System.Drawing.Size(362, 80);
-            this.entitiesListView2.TabIndex = 21;
-            this.entitiesListView2.UseCompatibleStateImageBehavior = false;
-            this.entitiesListView2.Visible = false;
-            this.entitiesListView2.SelectedIndexChanged += new System.EventHandler(this.entitiesListView2_SelectedIndexChanged);
+            this.portableDotNetListView.LargeImageList = this.wizardImageList;
+            this.portableDotNetListView.Location = new System.Drawing.Point(18, 12);
+            this.portableDotNetListView.MultiSelect = false;
+            this.portableDotNetListView.Name = "portableDotNetListView";
+            this.portableDotNetListView.Size = new System.Drawing.Size(362, 80);
+            this.portableDotNetListView.TabIndex = 21;
+            this.portableDotNetListView.UseCompatibleStateImageBehavior = false;
+            this.portableDotNetListView.Visible = false;
+            this.portableDotNetListView.SelectedIndexChanged += new System.EventHandler(this.portableDotNetListView_SelectedIndexChanged);
+            // 
+            // clientServiceListView
+            // 
+            this.clientServiceListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            listViewItem6.Checked = true;
+            listViewItem6.StateImageIndex = 1;
+            this.clientServiceListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
+            listViewItem6,
+            listViewItem7});
+            this.clientServiceListView.LargeImageList = this.wizardImageList;
+            this.clientServiceListView.Location = new System.Drawing.Point(18, 12);
+            this.clientServiceListView.MultiSelect = false;
+            this.clientServiceListView.Name = "clientServiceListView";
+            this.clientServiceListView.Size = new System.Drawing.Size(362, 80);
+            this.clientServiceListView.TabIndex = 22;
+            this.clientServiceListView.UseCompatibleStateImageBehavior = false;
+            this.clientServiceListView.SelectedIndexChanged += new System.EventHandler(this.clientServiceListView_SelectedIndexChanged);
             // 
             // EntitiesSelectionDialog
             // 
@@ -172,8 +193,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(399, 220);
-            this.Controls.Add(this.entitiesListView2);
-            this.Controls.Add(this.entitiesListView1);
+            this.Controls.Add(this.clientServiceListView);
+            this.Controls.Add(this.serviceClientSharedListView);
+            this.Controls.Add(this.portableDotNetListView);
             this.Controls.Add(this.buttonsPanel);
             this.Controls.Add(this.descriptionLabel);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
@@ -198,8 +220,9 @@
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button nextButton;
         private System.Windows.Forms.Button finishButton;
-        private System.Windows.Forms.ListView entitiesListView1;
+        private System.Windows.Forms.ListView serviceClientSharedListView;
         private System.Windows.Forms.ImageList wizardImageList;
-        private System.Windows.Forms.ListView entitiesListView2;
+        private System.Windows.Forms.ListView portableDotNetListView;
+        private System.Windows.Forms.ListView clientServiceListView;
     }
 }
