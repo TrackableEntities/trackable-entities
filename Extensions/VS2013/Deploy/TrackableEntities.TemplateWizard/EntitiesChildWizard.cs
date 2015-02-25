@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection.Emit;
+using System.Linq;
 using EnvDTE;
 using Microsoft.VisualStudio.TemplateWizard;
 
@@ -13,8 +13,9 @@ namespace TrackableEntities.TemplateWizard
             Dictionary<string, string> replacementsDictionary, string templateName)
         {
             // Get $entitiestempaltename$ dictionary entry and return if null or not present
-            var entitiesTemplate = EntitiesWizard.RootDictionary[Constants.DictionaryEntries.EntitiesTempalteName];
-            if (entitiesTemplate == null) return;
+            string entitiesTemplateName = EntitiesWizard.RootDictionary[Constants.DictionaryEntries.EntitiesTemplateName];
+            if (string.IsNullOrWhiteSpace(entitiesTemplateName)) return;
+            string[] entitiesTemplateNames = entitiesTemplateName.Split('|');
 
             // Get destination directory
             DirectoryInfo directory = null;
@@ -23,15 +24,20 @@ namespace TrackableEntities.TemplateWizard
                 directory = new DirectoryInfo(directoryPath);
 
             // If present and not null, back out if does not match current template name
-            if (!templateName.Equals(entitiesTemplate, StringComparison.InvariantCultureIgnoreCase))
+            if (!entitiesTemplateNames.Contains(templateName, StringComparer.InvariantCultureIgnoreCase))
             {
-                // Delete folder and cancel
-                if (directory != null) directory.Delete();
-                throw new WizardBackoutException();
+                // Include Shared Portable Data project when indicated
+                if (RootWizard.RootDictionary[Constants.DictionaryEntries.ParentWizardName] == Constants.ParentWizards.RootWizard &&
+                    templateName.Equals(Constants.EntitiesTemplates.SharedPortableData) &&
+                    entitiesTemplateName.Equals(Constants.EntitiesTemplates.SharedPortable, StringComparison.InvariantCultureIgnoreCase))
+                { /* Do nothing */ }
+                else
+                {
+                    // Delete folder and cancel
+                    if (directory != null) directory.Delete();
+                    throw new WizardBackoutException();
+                }
             }
-
-            // Add $entitiestempaltename$ to replacements dictionary
-            replacementsDictionary.Add(Constants.DictionaryEntries.EntitiesTempalteName, entitiesTemplate);
 
             // Store destination directory info
             string solutionPath = replacementsDictionary[Constants.DictionaryEntries.SolutionDirectory];
@@ -46,14 +52,12 @@ namespace TrackableEntities.TemplateWizard
             replacementsDictionary[Constants.DictionaryEntries.DestinationDirectory] = destDirectory.FullName;
         }
 
-        protected override void ProcessRootTemplate(Dictionary<string, string> replacementsDictionary)
-        {
-            replacementsDictionary.Add(Constants.DictionaryEntries.SafeRootProjectName,
-                EntitiesWizard.RootDictionary[Constants.DictionaryEntries.SafeRootProjectName]);
-        }
-
         protected override void PostProjectFinishedGenerating(Project project)
         {
+            // Return if parent is root wizard
+            if (RootWizard.RootDictionary[Constants.DictionaryEntries.ParentWizardName] ==
+                Constants.ParentWizards.RootWizard) return;
+
             // Get directory and project info
             var origDestDirectory = EntitiesWizard.RootDictionary[Constants.DictionaryEntries.OriginalDestinationDirectory];
             var newDestDirectory = EntitiesWizard.RootDictionary[Constants.DictionaryEntries.DestinationDirectory];

@@ -41,5 +41,6 @@
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\Entities\TrackableEntities.Shared.Net45.zip" />
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\Entities\TrackableEntities.Shared.Portable.zip" />
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="EntitiesSelectionWizard" d:VsixSubPath="Wizards" Path="|EntitiesSelectionWizard|" AssemblyName="|EntitiesSelectionWizard;AssemblyName|" />
+    <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\Data\CSharpDbContext.Shared.zip" />
   </Assets>
 </PackageManifest>

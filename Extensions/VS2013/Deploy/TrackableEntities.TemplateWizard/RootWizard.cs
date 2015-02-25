@@ -23,10 +23,17 @@ namespace TrackableEntities.TemplateWizard
             Dictionary<string, string> replacementsDictionary, 
             WizardRunKind runKind, object[] customParams)
         {
+            // Select entities template
+            EntitiesWizard.SelectEntitiesTemplate(true);
+
+            // Place $parentwizardname$ in root dictionary
+            RootDictionary[Constants.DictionaryEntries.ParentWizardName] = 
+                Constants.ParentWizards.RootWizard;
+
             // Place "$saferootprojectname$ in the global dictionary.
             RootDictionary[Constants.DictionaryEntries.SafeRootProjectName] = 
                 replacementsDictionary[Constants.DictionaryEntries.SafeProjectName];
-            
+
             // Get template name
             _templateName = Path.GetFileNameWithoutExtension((string)customParams[0]);
 

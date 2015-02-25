@@ -269,6 +269,10 @@
     <Content Include="ProjectTemplates\Trackable\TrackableEntities.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="ItemTemplates\Trackable\Data\CSharpDbContext.Shared.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

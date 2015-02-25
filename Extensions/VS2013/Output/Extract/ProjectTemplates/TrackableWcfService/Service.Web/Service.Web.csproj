@@ -19,7 +19,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -93,9 +93,9 @@
       <Project>{ebf8d59d-981d-4917-a175-be50f60b7dc6}</Project>
       <Name>$saferootprojectname$.Service.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\$saferootprojectname$.Service.Entities\$saferootprojectname$.Service.Entities.csproj">
+    <ProjectReference Include="..\$saferootprojectname$.$serviceentitiestemplate$\$saferootprojectname$.$serviceentitiestemplate$.csproj">
       <Project>{82ef229a-122c-4c25-bb67-82eefc4358fc}</Project>
-      <Name>$saferootprojectname$.Service.Entities</Name>
+      <Name>$saferootprojectname$.$serviceentitiestemplate$</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

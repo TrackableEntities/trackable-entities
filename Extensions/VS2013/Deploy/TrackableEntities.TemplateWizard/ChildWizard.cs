@@ -25,15 +25,20 @@ namespace TrackableEntities.TemplateWizard
             Dictionary<string, string> replacementsDictionary,
             WizardRunKind runKind, object[] customParams)
         {
-            // Get DTE
-            Dte2 = (DTE2)automationObject;
+            // Add custom parameters
+            replacementsDictionary.Add(Constants.DictionaryEntries.SafeRootProjectName,
+                RootWizard.RootDictionary[Constants.DictionaryEntries.SafeRootProjectName]);
+            replacementsDictionary.Add(Constants.DictionaryEntries.ClientEntitiesTemplate,
+                RootWizard.RootDictionary[Constants.DictionaryEntries.ClientEntitiesTemplate]);
+            replacementsDictionary.Add(Constants.DictionaryEntries.ServiceEntitiesTemplate,
+                RootWizard.RootDictionary[Constants.DictionaryEntries.ServiceEntitiesTemplate]);
 
             // Process entities template
             var templateName = Path.GetFileNameWithoutExtension((string)customParams[0]);
             ProcessEntitiesTemplate(replacementsDictionary, templateName);
 
-            // Add custom parameters
-            ProcessRootTemplate(replacementsDictionary);
+            // Get DTE
+            Dte2 = (DTE2)automationObject;
 
             // Init NuGet Wizard
             Initialize(automationObject);
@@ -75,20 +80,14 @@ namespace TrackableEntities.TemplateWizard
         {
         }
 
-        protected virtual void ProcessRootTemplate(Dictionary<string, string> replacementsDictionary)
-        {
-            replacementsDictionary.Add(Constants.DictionaryEntries.SafeRootProjectName,
-                RootWizard.RootDictionary[Constants.DictionaryEntries.SafeRootProjectName]);
-        }
-
         private void Initialize(object automationObject)
         {
             using (var provider = new ServiceProvider((IServiceProvider)automationObject))
             {
                 var service = (IComponentModel)provider.GetService(typeof(SComponentModel));
-                using (var container = new CompositionContainer(new[] { service.DefaultExportProvider }))
+                using (var container = new CompositionContainer(service.DefaultExportProvider))
                 {
-                    container.ComposeParts(new object[] { this });
+                    container.ComposeParts(this);
                 }
             }
             if (Wizard == null)

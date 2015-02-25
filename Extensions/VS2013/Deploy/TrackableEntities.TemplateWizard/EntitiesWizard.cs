@@ -7,30 +7,49 @@ using Microsoft.VisualStudio.TemplateWizard;
 
 namespace TrackableEntities.TemplateWizard
 {
-    // Entities wizard is used by root project vstemplate
+    // Entities wizard is used by entities project vstemplate
     public class EntitiesWizard : IWizard
     {
         // Use to communicate $entitiestempaltename$ to ChildWizard
         public static Dictionary<string, string> RootDictionary =
             new Dictionary<string, string>();
 
+        // Select entities template
+        public static void SelectEntitiesTemplate(bool multiproject)
+        {
+            // Prompt user for entities template
+            var dialog = new EntitiesSelectionDialog(multiproject);
+            if (dialog.ShowDialog() == DialogResult.Cancel)
+                throw new WizardBackoutException();
+
+            // Place "$entitiestempaltename$ in entities root dictionary
+            string entitiesTemplateName = GetEntitiesTemplateName(dialog.EntitiesSelection);
+            RootDictionary[Constants.DictionaryEntries.EntitiesTemplateName] = entitiesTemplateName;
+
+            // Place $cliententitiestemplate$ and $serviceentitiestemplate$ in root dictionary
+            string[] entitiesTemplateNames = entitiesTemplateName.Split('|');
+            RootWizard.RootDictionary[Constants.DictionaryEntries.ClientEntitiesTemplate] = entitiesTemplateNames[0];
+            if (entitiesTemplateNames.Length == 2)
+                RootWizard.RootDictionary[Constants.DictionaryEntries.ServiceEntitiesTemplate] = entitiesTemplateNames[1];
+            else
+                RootWizard.RootDictionary[Constants.DictionaryEntries.ServiceEntitiesTemplate] = entitiesTemplateNames[0];
+        }
+
         // Add global replacement parameters
         public void RunStarted(object automationObject, 
             Dictionary<string, string> replacementsDictionary, 
             WizardRunKind runKind, object[] customParams)
         {
-            // Prompt user for entities template
-            var dialog = new EntitiesSelectionDialog();
-            if (dialog.ShowDialog() == DialogResult.Cancel)
-                throw new WizardBackoutException();
-            var entitiesTemplateName = GetEntitiesTemplateName(dialog.EntitiesSelection);
+            // Select entities template
+            SelectEntitiesTemplate(false);
 
-            // Place "$saferootprojectname$ in the global dictionary.
-            RootDictionary[Constants.DictionaryEntries.SafeRootProjectName] = 
+            // Place $parentwizardname$ in root dictionary
+            RootWizard.RootDictionary[Constants.DictionaryEntries.ParentWizardName] = 
+                Constants.ParentWizards.EntitiesWizard;
+
+            // Place "$saferootprojectname$ in root dictionary.
+            RootWizard.RootDictionary[Constants.DictionaryEntries.SafeRootProjectName] = 
                 replacementsDictionary[Constants.DictionaryEntries.SafeProjectName];
-
-            // Place "$entitiestempaltename$ in the global dictionary.
-            RootDictionary[Constants.DictionaryEntries.EntitiesTempalteName] = entitiesTemplateName;            
         }
 
         public void BeforeOpeningFile(ProjectItem projectItem)
@@ -59,10 +78,20 @@ namespace TrackableEntities.TemplateWizard
             return true;
         }
 
-        private string GetEntitiesTemplateName(EntitiesSelection entitiesSelection)
+        private static string GetEntitiesTemplateName(EntitiesSelection entitiesSelection)
         {
             if (entitiesSelection == EntitiesSelection.None)
                 return null;
+
+            if (entitiesSelection.HasFlag(EntitiesSelection.ClientService))
+            {
+                var clientSelection = string.Empty;
+                if (entitiesSelection.HasFlag(EntitiesSelection.Portable))
+                    clientSelection = Constants.EntitiesTemplates.ClientPortable;
+                if (entitiesSelection.HasFlag(EntitiesSelection.DotNet45))
+                    clientSelection = Constants.EntitiesTemplates.ClientNet45;
+                return clientSelection + "|" + Constants.EntitiesTemplates.ServiceNet45;
+            }
 
             if (entitiesSelection.HasFlag(EntitiesSelection.Service))
                 return Constants.EntitiesTemplates.ServiceNet45;
