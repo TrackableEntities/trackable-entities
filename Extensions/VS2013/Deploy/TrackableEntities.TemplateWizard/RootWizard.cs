@@ -23,8 +23,11 @@ namespace TrackableEntities.TemplateWizard
             Dictionary<string, string> replacementsDictionary, 
             WizardRunKind runKind, object[] customParams)
         {
+            // Get template name
+            _templateName = Path.GetFileNameWithoutExtension((string)customParams[0]);
+
             // Select entities template
-            EntitiesWizard.SelectEntitiesTemplate(true);
+            EntitiesWizard.SelectEntitiesTemplate(true, _templateName);
 
             // Place $parentwizardname$ in root dictionary
             RootDictionary[Constants.DictionaryEntries.ParentWizardName] = 
@@ -33,9 +36,6 @@ namespace TrackableEntities.TemplateWizard
             // Place "$saferootprojectname$ in the global dictionary.
             RootDictionary[Constants.DictionaryEntries.SafeRootProjectName] = 
                 replacementsDictionary[Constants.DictionaryEntries.SafeProjectName];
-
-            // Get template name
-            _templateName = Path.GetFileNameWithoutExtension((string)customParams[0]);
 
             // Get DTE
             _dte2 = (DTE2)automationObject;

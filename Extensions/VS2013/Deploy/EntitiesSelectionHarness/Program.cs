@@ -17,10 +17,14 @@ namespace EntitiesSelectionHarness
 
             bool multiproject = MessageBox.Show(
                 "Multi-Project?", "Project Type", MessageBoxButtons.YesNo) == DialogResult.Yes;
+
+            bool webApiSharedPortable = MessageBox.Show(
+                "Web API Shared Portable?", "Shared Portable Exception", MessageBoxButtons.YesNo) == DialogResult.Yes;
+            
             var result = DialogResult.OK;
             while (result != DialogResult.Cancel)
             {
-                var dialog = new EntitiesSelectionDialog(multiproject);
+                var dialog = new EntitiesSelectionDialog(multiproject, webApiSharedPortable);
                 result = dialog.ShowDialog();
                 if (result == DialogResult.Cancel) continue;
                 string entitiesSelection = dialog.EntitiesSelection.ToString();

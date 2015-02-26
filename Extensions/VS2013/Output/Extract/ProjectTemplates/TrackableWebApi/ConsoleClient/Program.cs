@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using TrackableEntities.Client;
-//using $saferootprojectname$.Client.Entities.Models;
+//using $saferootprojectname$.$cliententitiestemplate$;
 
 // This is an example which retrieves customers and orders from the Northwind
 // sample database. You should alter the code based on your own database schema.

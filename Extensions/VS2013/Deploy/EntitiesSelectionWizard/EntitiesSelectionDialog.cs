@@ -8,7 +8,8 @@ namespace EntitiesSelectionWizard
         private readonly bool _multiproject;
         private PageSelection _pageIndex = PageSelection.FirstPage;
 
-        public EntitiesSelectionDialog(bool multiproject = false)
+        public EntitiesSelectionDialog(bool multiproject = false, 
+            bool webApiSharedPortable = false)
         {
             Application.EnableVisualStyles();
             InitializeComponent();
@@ -23,6 +24,11 @@ namespace EntitiesSelectionWizard
             {
                 clientServiceListView.Visible = false;
                 serviceClientSharedListView.Visible = true;
+            }
+
+            if (webApiSharedPortable)
+            {
+                portableDotNetListView.Items.RemoveAt(0);
             }
             clientServiceListView.Items[0].Selected = true;
             serviceClientSharedListView.Items[0].Selected = true;

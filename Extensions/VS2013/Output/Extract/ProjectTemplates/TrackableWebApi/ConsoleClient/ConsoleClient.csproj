@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -69,9 +69,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\$saferootprojectname$.Client.Entities\$saferootprojectname$.Client.Entities.csproj">
-      <Project>{20e41f28-1720-4814-8835-1ca903f7c2a7}</Project>
-      <Name>$saferootprojectname$.Client.Entities</Name>
+    <ProjectReference Include="..\$saferootprojectname$.$cliententitiestemplate$\$saferootprojectname$.$cliententitiestemplate$.csproj">
+      <Project>{d8e5c866-6c5a-4acf-aee4-289e7412471f}</Project>
+      <Name>$saferootprojectname$.$cliententitiestemplate$</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

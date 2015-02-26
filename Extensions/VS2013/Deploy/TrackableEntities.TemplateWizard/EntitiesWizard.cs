@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using EntitiesSelectionWizard;
@@ -15,10 +16,15 @@ namespace TrackableEntities.TemplateWizard
             new Dictionary<string, string>();
 
         // Select entities template
-        public static void SelectEntitiesTemplate(bool multiproject)
+        public static void SelectEntitiesTemplate(bool multiproject, string templateName)
         {
+            // Disallow shared portable entities for WebApi due to Json.net compat issues:
+            // Error: Method not found (Newtonsoft.Json.Serialization.DefaultContractResolver SET_IgnoreSerializableAttribute)
+            bool webApiSharedPortable = templateName.Equals(Constants.ProjectTemplates.TrackableWebApi, StringComparison.InvariantCultureIgnoreCase)
+                || templateName.Equals(Constants.ProjectTemplates.TrackableWebApiPatterns, StringComparison.InvariantCultureIgnoreCase);
+
             // Prompt user for entities template
-            var dialog = new EntitiesSelectionDialog(multiproject);
+            var dialog = new EntitiesSelectionDialog(multiproject, webApiSharedPortable);
             if (dialog.ShowDialog() == DialogResult.Cancel)
                 throw new WizardBackoutException();
 
@@ -41,7 +47,7 @@ namespace TrackableEntities.TemplateWizard
             WizardRunKind runKind, object[] customParams)
         {
             // Select entities template
-            SelectEntitiesTemplate(false);
+            SelectEntitiesTemplate(false, string.Empty);
 
             // Place $parentwizardname$ in root dictionary
             RootWizard.RootDictionary[Constants.DictionaryEntries.ParentWizardName] = 
