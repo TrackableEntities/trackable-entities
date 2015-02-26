@@ -1,5 +1,12 @@
 Trackable Service Portable Shared Entities ReadMe
 
+WARNING: Json.Net has a compatibility issue which causes an error
+in a Web API application when using entities in a portable class
+library: json.net Method not found Newtonsoft.Json.Serialization.
+DefaultContractResolver SET_IgnoreSerializableAttribute. For this
+reason, you should avoid sharing portable entities and instead
+share .NET 4.5 entities.
+
 NOTE: You should first install the Entity Framework Power Tools.
 Support for EF 6.x Tools for Visual Studio has be added, but it can
 only be used to generate client entities using a .NET 4.5 class
