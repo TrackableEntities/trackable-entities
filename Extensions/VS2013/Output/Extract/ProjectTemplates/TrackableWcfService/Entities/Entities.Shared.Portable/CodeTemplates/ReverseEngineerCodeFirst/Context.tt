@@ -14,7 +14,7 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
     {
         static <#= efHost.EntityContainer.Name #>()
         {
-            Database.SetInitializer<<#= efHost.EntityContainer.Name #>>(null);
+            Database.SetInitializer(new NullDatabaseInitializer<<#= efHost.EntityContainer.Name #>>());
         }
 
         public <#= efHost.EntityContainer.Name #>()
