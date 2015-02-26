@@ -17,8 +17,9 @@ namespace EntitiesSelectionHarness
 
             bool multiproject = MessageBox.Show(
                 "Multi-Project?", "Project Type", MessageBoxButtons.YesNo) == DialogResult.Yes;
-
-            bool webApiSharedPortable = MessageBox.Show(
+            bool webApiSharedPortable = false;
+            if (multiproject)
+            webApiSharedPortable = MessageBox.Show(
                 "Web API Shared Portable?", "Shared Portable Exception", MessageBoxButtons.YesNo) == DialogResult.Yes;
             
             var result = DialogResult.OK;

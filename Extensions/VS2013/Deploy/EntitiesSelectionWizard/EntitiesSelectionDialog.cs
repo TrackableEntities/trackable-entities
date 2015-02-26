@@ -6,6 +6,8 @@ namespace EntitiesSelectionWizard
     public partial class EntitiesSelectionDialog : Form
     {
         private readonly bool _multiproject;
+        private readonly bool _webApiSharedPortable;
+        private readonly ListViewItem _portableListViewItemItem;
         private PageSelection _pageIndex = PageSelection.FirstPage;
 
         public EntitiesSelectionDialog(bool multiproject = false, 
@@ -15,6 +17,9 @@ namespace EntitiesSelectionWizard
             InitializeComponent();
 
             _multiproject = multiproject;
+            _webApiSharedPortable = webApiSharedPortable;
+            _portableListViewItemItem = portableDotNetListView.Items[1];
+
             if (_multiproject)
             {
                 clientServiceListView.Visible = true;
@@ -26,10 +31,6 @@ namespace EntitiesSelectionWizard
                 serviceClientSharedListView.Visible = true;
             }
 
-            if (webApiSharedPortable)
-            {
-                portableDotNetListView.Items.RemoveAt(0);
-            }
             clientServiceListView.Items[0].Selected = true;
             serviceClientSharedListView.Items[0].Selected = true;
             portableDotNetListView.Items[0].Selected = true;
@@ -127,9 +128,9 @@ namespace EntitiesSelectionWizard
                 switch (selection)
                 {
                     case 0:
-                        return EntitiesCategorySelection.PortableEntities;
-                    default:
                         return EntitiesCategorySelection.DotNetEntities;
+                    default:
+                        return EntitiesCategorySelection.PortableEntities;
                 }
             }
             throw new InvalidOperationException("Unsupported entities category selection.");
@@ -263,6 +264,30 @@ namespace EntitiesSelectionWizard
         private void nextButton_Click(object sender, EventArgs e)
         {
             _pageIndex = PageSelection.SecondPage;
+            if (_webApiSharedPortable)
+            {
+                EntitiesTypeSelection selection = GetEntitiesTypeSelection(clientServiceListView);
+                switch (selection)
+                {
+                    case EntitiesTypeSelection.ClientServiceEntities:
+                        if (!portableDotNetListView.Items.Contains(_portableListViewItemItem))
+                        {
+                            portableDotNetListView.Items.Insert(1, _portableListViewItemItem);
+                            portableDotNetListView.Items[1].EnsureVisible();
+                            portableDotNetListView.Items[0].Focused = true;
+                            portableDotNetListView.Items[0].Selected = true;
+                        }
+                        break;
+                    case EntitiesTypeSelection.SharedEntities:
+                        if (portableDotNetListView.Items.Contains(_portableListViewItemItem))
+                        {
+                            portableDotNetListView.Items.Remove(_portableListViewItemItem);
+                            portableDotNetListView.Items[0].Focused = true;
+                            portableDotNetListView.Items[0].Selected = true;
+                        }
+                        break;
+                }
+            }
             SetPageState();
             portableDotNetListView.Focus();
             portableDotNetListView_SelectedIndexChanged(this, EventArgs.Empty);
