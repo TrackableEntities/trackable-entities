@@ -1,0 +1,114 @@
+<#@ template  debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ include file="EF.Utility.CS.ttinclude" #><#
+
+    var efHost = (EfTextTemplateHost)Host;
+    var code = new CodeGenerationTools(this);
+    var collectionNavigations = efHost.EntityType.NavigationProperties.Where(
+        np => np.DeclaringType == efHost.EntityType
+            && np.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many);
+#>
+using System;
+using System.Collections.Generic;
+using TrackableEntities.Client;
+
+namespace <#= code.EscapeNamespace(efHost.Namespace) #>
+{
+    public partial class <#= efHost.EntityType.Name #> : EntityBase
+    {
+<#
+
+    // Add a ctor to initialize any collections
+    if (collectionNavigations.Any())
+    {
+#>
+		public <#= code.Escape(efHost.EntityType) #>()
+		{
+<#
+        foreach (var navProperty in collectionNavigations)
+        {
+#>
+			this.<#= code.Escape(navProperty) #> = new ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>>();
+<#
+        }
+#>
+		}
+
+<#
+    }
+        
+    foreach (var property in efHost.EntityType.Properties)
+    {
+        var typeUsage = code.Escape(property.TypeUsage);
+
+        // Fix-up spatial types for EF6
+        if (efHost.EntityFrameworkVersion >= new Version(6, 0)
+            && typeUsage.StartsWith("System.Data.Spatial."))
+        {
+            typeUsage = typeUsage.Replace(
+                "System.Data.Spatial.",
+                "System.Data.Entity.Spatial.");
+        }
+#>
+		<#= Accessibility.ForProperty(property) #> <#= typeUsage #> <#= code.Escape(property) #>
+		{ 
+			get { return _<#= code.Escape(property) #>; }
+			set
+			{
+				if (Equals(value, _<#= code.Escape(property) #>)) return;
+				_<#= code.Escape(property) #> = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private <#= typeUsage #> _<#= code.Escape(property) #>;
+
+<#
+    }
+
+    foreach (var navProperty in efHost.EntityType.NavigationProperties.Where(np => np.DeclaringType == efHost.EntityType))
+    {
+        if (navProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
+        {
+#>
+		public ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> <#= code.Escape(navProperty) #>
+		{
+			get { return _<#= code.Escape(navProperty) #>; }
+			set
+			{
+<#          if (navProperty.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
+            { #>
+				if (value != null) value.Parent = this;
+<#          } #>
+				if (Equals(value, _<#= code.Escape(navProperty) #>)) return;
+				_<#= code.Escape(navProperty) #> = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> _<#= code.Escape(navProperty) #>;
+
+<#
+        }
+        else
+        {
+#>
+		public <#= code.Escape(navProperty.ToEndMember.GetEntityType()) #> <#= code.Escape(navProperty) #>
+		{
+			get { return _<#= code.Escape(navProperty) #>; }
+			set
+			{
+				if (Equals(value, _<#= code.Escape(navProperty) #>)) return;
+				_<#= code.Escape(navProperty) #> = value;
+				<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>ChangeTracker = _<#= code.Escape(navProperty) #> == null ? null
+					: new ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> { _<#= code.Escape(navProperty) #> };
+				NotifyPropertyChanged();
+			}
+		}
+		private <#= code.Escape(navProperty.ToEndMember.GetEntityType()) #> _<#= code.Escape(navProperty) #>;
+		private ChangeTrackingCollection<<#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>> <#= code.Escape(navProperty.ToEndMember.GetEntityType()) #>ChangeTracker { get; set; }
+
+<#
+        }
+    }
+#>
+	}
+}

@@ -5,8 +5,8 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using TrackableEntities.Common;
 using $entitiesNamespace$;
-using $baseNamespace$.Persistence.Exceptions;
-using $baseNamespace$.Persistence.UnitsOfWork;
+using $baseNamespace$.Service.Persistence.Exceptions;
+using $baseNamespace$.Service.Persistence.UnitsOfWork;
 
 namespace $rootnamespace$
 {
