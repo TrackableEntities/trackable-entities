@@ -573,6 +573,11 @@ namespace TrackableEntities.EF5
         private static void SetRelationshipState(this DbContext context,
             ITrackable item, ITrackable parent, string propertyName, EntityState entityState)
         {
+            // PR #43: Before calling ChangeRelationshipState make sure parent entry is attached
+            var parentEntry = context.Entry(parent);
+            if (parentEntry.State == EntityState.Detached)
+                parentEntry.State = EntityState.Unchanged;
+
             // Set relationship state for independent association
             var stateManager = ((IObjectContextAdapter)context).ObjectContext.ObjectStateManager;
             stateManager.ChangeRelationshipState(parent, item, propertyName, entityState);
