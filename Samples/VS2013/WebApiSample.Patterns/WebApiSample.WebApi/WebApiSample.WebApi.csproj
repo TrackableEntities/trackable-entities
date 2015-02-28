@@ -140,9 +140,9 @@
     </Reference>
     <Reference Include="System.Net.Http.WebRequest">
     </Reference>
-    <Reference Include="TrackableEntities.Common, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\TrackableEntities.Common.2.5.0\lib\portable-net40+sl50+win+wp80\TrackableEntities.Common.dll</HintPath>
+    <Reference Include="TrackableEntities.Common">
+      <HintPath>..\packages\TrackableEntities.Common.2.5.0\lib\portable-net40+sl50+win+wpa81+wp80\TrackableEntities.Common.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="TrackableEntities.EF.6">
       <HintPath>..\packages\TrackableEntities.EF.6.2.5.0\lib\net45\TrackableEntities.EF.6.dll</HintPath>

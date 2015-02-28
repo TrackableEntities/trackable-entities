@@ -68,7 +68,6 @@
     </Reference>
     <Reference Include="TrackableEntities.Common">
       <HintPath>..\packages\TrackableEntities.Common.2.5.0\lib\portable-net40+sl50+win+wpa81+wp80\TrackableEntities.Common.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup />
