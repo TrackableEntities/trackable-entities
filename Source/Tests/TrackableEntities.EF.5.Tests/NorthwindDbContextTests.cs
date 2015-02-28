@@ -1043,6 +1043,51 @@ namespace TrackableEntities.EF5.Tests
 		}
 
         [Test]
+        public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Added_Territories_Without_Employee_As_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            var territory1 = employee.Territories[0];
+            territory1.TrackingState = TrackingState.Added;
+
+            // Causes System.InvalidOperationException:
+            // The ObjectStateManager does not contain an ObjectStateEntry with a reference to an object of type 'TrackableEntities.EF.Tests.NorthwindModels.Employee'.
+            territory1.Employees = new List<Employee>();
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory1));
+        }
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Deleted_Territories_Without_Employee_As_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            var territory1 = employee.Territories[0];
+            territory1.TrackingState = TrackingState.Deleted;
+
+            // Remove employees from territories
+            territory1.Employees = new List<Employee>();
+
+            // Act
+            context.ApplyChanges(employee);
+
+            // Assert
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory1));
+        }
+
+        [Test]
         public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Unchanged_Territories_With_Modified_Area_As_Modified()
         {
             // Ensure that changes are applied across M-M relationships.
