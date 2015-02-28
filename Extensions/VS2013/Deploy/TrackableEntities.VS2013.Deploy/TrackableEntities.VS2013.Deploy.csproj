@@ -212,12 +212,6 @@
     <Content Include="Packages\Microsoft.AspNet.WebApi.Core.5.2.2.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Packages\TinyIoC.1.2.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Packages\TinyIoC.AspNetExtensions.1.2.nupkg">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Packages\AspNetWebApi2Helpers.Serialization.1.0.0.nupkg">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -272,6 +266,18 @@
     <Content Include="ItemTemplates\Trackable\Data\CSharpDbContext.Shared.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Packages\SimpleInjector.2.7.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\SimpleInjector.Extensions.ExecutionContextScoping.2.7.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\SimpleInjector.Integration.WebApi.2.7.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Packages\WebActivator.1.4.4.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>

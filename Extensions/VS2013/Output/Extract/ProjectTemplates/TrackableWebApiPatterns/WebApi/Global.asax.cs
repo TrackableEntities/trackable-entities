@@ -18,9 +18,6 @@ namespace $safeprojectname$
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            // Register IoC config
-            GlobalConfiguration.Configure(IoCConfig.Register);
         }
     }
 }
