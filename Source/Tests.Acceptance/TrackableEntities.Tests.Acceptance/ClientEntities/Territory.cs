@@ -6,7 +6,7 @@ using TrackableEntities.Client;
 namespace TrackableEntities.Tests.Acceptance.ClientEntities
 {
     [JsonObject(IsReference = true)]
-    public class Territory : ModelBase<Territory>, ITrackable, IEquatable<Territory>
+    public class Territory : EntityBase
     {
         private string _territoryId;
         public string TerritoryId
@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _territoryId) return;
                 _territoryId = value;
-                NotifyPropertyChanged(m => m.TerritoryId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _territoryDescription) return;
                 _territoryDescription = value;
-                NotifyPropertyChanged(m => m.TerritoryDescription);
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _data) return;
                 _data = value;
-                NotifyPropertyChanged(m => m.Data);
+                NotifyPropertyChanged();
             }
         }
 
@@ -52,7 +52,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _areaId) return;
                 _areaId = value;
-                NotifyPropertyChanged(m => m.AreaId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -66,7 +66,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
                 _area = value;
                 AreaChangeTracker = _area == null ? null
                     : new ChangeTrackingCollection<Area> { _area };
-                NotifyPropertyChanged(m => m.Area);
+                NotifyPropertyChanged();
             }
         }
         private ChangeTrackingCollection<Area> AreaChangeTracker { get; set; }
@@ -80,7 +80,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
                 if (value != null) value.Parent = this;
                 if (Equals(value, _employees)) return;
                 _employees = value;
-                NotifyPropertyChanged(m => m.Employees);
+                NotifyPropertyChanged();
             }
         }
 
@@ -92,25 +92,8 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (Equals(value, _customers)) return;
                 _customers = value;
-                NotifyPropertyChanged(m => m.Customers);
+                NotifyPropertyChanged();
             }
         }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<Territory>.Equals(Territory other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
     }
 }

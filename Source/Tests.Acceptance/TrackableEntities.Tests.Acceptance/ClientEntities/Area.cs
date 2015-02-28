@@ -6,7 +6,7 @@ using TrackableEntities.Client;
 namespace TrackableEntities.Tests.Acceptance.ClientEntities
 {
     [JsonObject(IsReference = true)]
-    public class Area : ModelBase<Area>, ITrackable, IEquatable<Area>
+    public class Area : EntityBase
     {
         private int _areaId;
         public int AreaId
@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _areaId) return;
                 _areaId = value;
-                NotifyPropertyChanged(m => m.AreaId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _areaName) return;
                 _areaName = value;
-                NotifyPropertyChanged(m => m.AreaName);
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,25 +40,8 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (Equals(value, _territories)) return;
                 _territories = value;
-                NotifyPropertyChanged(m => m.Territories);
+                NotifyPropertyChanged();
             }
         }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<Area>.Equals(Area other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
     }
 }

@@ -1,0 +1,310 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{72BDC4A6-17FB-4723-BD08-DB3C77B31AEF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TrackableEntities.VS2015.Deploy</RootNamespace>
+    <AssemblyName>TrackableEntities.VS2015.Deploy</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <GeneratePkgDefFile>false</GeneratePkgDefFile>
+    <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\..\Common\Misc\ReleaseNotes-v2.5.rtf">
+      <Link>ReleaseNotes-v2.5.rtf</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\TrackableWcf.ReadMe.txt">
+      <Link>Wizards\TrackableWcf.ReadMe.txt</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\TrackableWebApi.Patterns.ReadMe.txt">
+      <Link>Wizards\TrackableWebApi.Patterns.ReadMe.txt</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\TrackableWebApi.ReadMe.txt">
+      <Link>Wizards\TrackableWebApi.ReadMe.txt</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\ItemTemplates\Trackable\Patterns\EntityController.zip">
+      <Link>ItemTemplates\Trackable\Patterns\EntityController.zip</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\ItemTemplates\Trackable\Patterns\EntityRepository.zip">
+      <Link>ItemTemplates\Trackable\Patterns\EntityRepository.zip</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\ItemTemplates\Trackable\Patterns\ExampleUnitOfWork.zip">
+      <Link>ItemTemplates\Trackable\Patterns\ExampleUnitOfWork.zip</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\ItemTemplates\Trackable\Patterns\IDatabaseContext.zip">
+      <Link>ItemTemplates\Trackable\Patterns\IDatabaseContext.zip</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\ItemTemplates\Trackable\Patterns\IEntityRepository.zip">
+      <Link>ItemTemplates\Trackable\Patterns\IEntityRepository.zip</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\ItemTemplates\Trackable\Patterns\IExampleUnitOfWork.zip">
+      <Link>ItemTemplates\Trackable\Patterns\IExampleUnitOfWork.zip</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\ItemTemplates\Trackable\WCF\TrackableWcfServiceType.zip">
+      <Link>ItemTemplates\Trackable\WCF\TrackableWcfServiceType.zip</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\ItemTemplates\Trackable\Web\WebApiController.zip">
+      <Link>ItemTemplates\Trackable\Web\WebApiController.zip</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Antlr.3.5.0.2.nupkg">
+      <Link>Packages\Antlr.3.5.0.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\bootstrap.3.3.1.nupkg">
+      <Link>Packages\bootstrap.3.3.1.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\EntityFramework.5.0.0.nupkg">
+      <Link>Packages\EntityFramework.5.0.0.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\EntityFramework.6.1.1.nupkg">
+      <Link>Packages\EntityFramework.6.1.1.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\jQuery.2.1.1.nupkg">
+      <Link>Packages\jQuery.2.1.1.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\jQuery.UI.Combined.1.10.4.nupkg">
+      <Link>Packages\jQuery.UI.Combined.1.10.4.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\knockoutjs.3.2.0.nupkg">
+      <Link>Packages\knockoutjs.3.2.0.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.Mvc.5.2.2.nupkg">
+      <Link>Packages\Microsoft.AspNet.Mvc.5.2.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.Razor.3.2.2.nupkg">
+      <Link>Packages\Microsoft.AspNet.Razor.3.2.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.Web.Optimization.1.1.3.nupkg">
+      <Link>Packages\Microsoft.AspNet.Web.Optimization.1.1.3.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.5.2.2.nupkg">
+      <Link>Packages\Microsoft.AspNet.WebApi.5.2.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.Client.5.2.2.nupkg">
+      <Link>Packages\Microsoft.AspNet.WebApi.Client.5.2.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.Core.5.2.2.nupkg">
+      <Link>Packages\Microsoft.AspNet.WebApi.Core.5.2.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.HelpPage.5.2.2.nupkg">
+      <Link>Packages\Microsoft.AspNet.WebApi.HelpPage.5.2.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.WebHost.5.2.2.nupkg">
+      <Link>Packages\Microsoft.AspNet.WebApi.WebHost.5.2.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebPages.3.2.2.nupkg">
+      <Link>Packages\Microsoft.AspNet.WebPages.3.2.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.Web.Infrastructure.1.0.0.0.nupkg">
+      <Link>Packages\Microsoft.Web.Infrastructure.1.0.0.0.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Modernizr.2.8.3.nupkg">
+      <Link>Packages\Modernizr.2.8.3.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Newtonsoft.Json.6.0.6.nupkg">
+      <Link>Packages\Newtonsoft.Json.6.0.6.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Respond.1.4.2.nupkg">
+      <Link>Packages\Respond.1.4.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TinyIoC.1.2.nupkg">
+      <Link>Packages\TinyIoC.1.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TinyIoC.AspNetExtensions.1.2.nupkg">
+      <Link>Packages\TinyIoC.AspNetExtensions.1.2.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Client.2.2.0.nupkg">
+      <Link>Packages\TrackableEntities.Client.2.2.0.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Client.Net4.2.2.0.nupkg">
+      <Link>Packages\TrackableEntities.Client.Net4.2.2.0.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Common.2.2.0.nupkg">
+      <Link>Packages\TrackableEntities.Common.2.2.0.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.EF.5.2.2.0.nupkg">
+      <Link>Packages\TrackableEntities.EF.5.2.2.0.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.EF.6.2.2.0.nupkg">
+      <Link>Packages\TrackableEntities.EF.6.2.2.0.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Patterns.2.2.0.nupkg">
+      <Link>Packages\TrackableEntities.Patterns.2.2.0.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Patterns.EF.6.2.2.0.nupkg">
+      <Link>Packages\TrackableEntities.Patterns.EF.6.2.2.0.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\WebApiTestOnHelpPage.1.3.4.nupkg">
+      <Link>Packages\WebApiTestOnHelpPage.1.3.4.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\WebGrease.1.6.0.nupkg">
+      <Link>Packages\WebGrease.1.6.0.nupkg</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="ProjectTemplates\Trackable\TrackableClientEntities.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Trackable\TrackableServiceEntities.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Trackable\TrackableWcfService.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Trackable\TrackableWebApi.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ProjectTemplates\Trackable\TrackableWebApiPatterns.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ItemTemplates\Trackable\Data\CSharpDbContext.Client.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ItemTemplates\Trackable\Data\CSharpDbContext.Service.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="License.txt">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tracking-small.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="tracking.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ItemTemplateParametersWizard.csproj">
+      <Project>{046940fe-cc75-43e2-9c41-346aebbbb03b}</Project>
+      <Name>ItemTemplateParametersWizard</Name>
+      <VSIXSubPath>Wizards</VSIXSubPath>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\TrackableEntities.ItemWizard.csproj">
+      <Project>{8e21f5fd-3941-45a6-b8f8-9628b8a58594}</Project>
+      <Name>TrackableEntities.ItemWizard</Name>
+      <VSIXSubPath>Wizards</VSIXSubPath>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\VS2013\Deploy\TrackableEntities.TemplateWizard\TrackableEntities.TemplateWizard.csproj">
+      <Project>{c9646be1-e999-47bd-8a9d-083017e6269a}</Project>
+      <Name>TrackableEntities.TemplateWizard</Name>
+      <VSIXSubPath>Wizards</VSIXSubPath>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

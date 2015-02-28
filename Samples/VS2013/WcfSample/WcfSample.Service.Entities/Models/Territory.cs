@@ -1,32 +1,52 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using TrackableEntities;
+using TrackableEntities.Client;
 
-namespace WcfSample.Service.Entities.Models
+namespace WcfSample.Client.Entities.Models
 {
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class Territory : ITrackable
+    public partial class Territory : EntityBase
     {
-        public Territory()
-        {
-            this.Employees = new List<Employee>();
-        }
+		public Territory()
+		{
+			this.Employees = new ChangeTrackingCollection<Employee>();
+		}
 
-        [DataMember]
-        public string TerritoryId { get; set; }
-        [DataMember]
-        public string TerritoryDescription { get; set; }
-        [DataMember]
-        public List<Employee> Employees { get; set; }
+		public string TerritoryId
+		{ 
+			get { return _TerritoryId; }
+			set
+			{
+				if (Equals(value, _TerritoryId)) return;
+				_TerritoryId = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private string _TerritoryId;
 
-        [DataMember]
-        public TrackingState TrackingState { get; set; }
-        [DataMember]
-        public ICollection<string> ModifiedProperties { get; set; }
-        [JsonProperty, DataMember]
-        private Guid EntityIdentifier { get; set; }
-    }
+		public string TerritoryDescription
+		{ 
+			get { return _TerritoryDescription; }
+			set
+			{
+				if (Equals(value, _TerritoryDescription)) return;
+				_TerritoryDescription = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private string _TerritoryDescription;
+
+		public ChangeTrackingCollection<Employee> Employees
+		{
+			get { return _Employees; }
+			set
+			{
+				if (value != null) value.Parent = this;
+				if (Equals(value, _Employees)) return;
+				_Employees = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private ChangeTrackingCollection<Employee> _Employees;
+
+	}
 }

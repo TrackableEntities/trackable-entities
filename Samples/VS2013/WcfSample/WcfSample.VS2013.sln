@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F7709ED2-7D22-4485-B3A9-F4FF686A21A3}"
 	ProjectSection(SolutionItems) = preProject
@@ -24,6 +24,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfSample.Service.Core", "WcfSample.Service.Core\WcfSample.Service.Core.csproj", "{EBF8D59D-981D-4917-A175-BE50F60B7DC6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfSample.ConsoleClient", "WcfSample.ConsoleClient\WcfSample.ConsoleClient.csproj", "{4190E620-E7EA-4339-AA25-87CE6227CE6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entities", "Entities", "{8754216B-ABA3-4AD4-94EB-0C128EAC6733}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WcfSample.Shared.Entities.Net45", "WcfSample.Shared.Entities.Net45\WcfSample.Shared.Entities.Net45.csproj", "{254ADD45-1218-4B68-AE34-F1822D9A4767}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,8 +55,17 @@ Global
 		{4190E620-E7EA-4339-AA25-87CE6227CE6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4190E620-E7EA-4339-AA25-87CE6227CE6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4190E620-E7EA-4339-AA25-87CE6227CE6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{254ADD45-1218-4B68-AE34-F1822D9A4767}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{254ADD45-1218-4B68-AE34-F1822D9A4767}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{254ADD45-1218-4B68-AE34-F1822D9A4767}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{254ADD45-1218-4B68-AE34-F1822D9A4767}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{82EF229A-122C-4C25-BB67-82EEFC4358FC} = {8754216B-ABA3-4AD4-94EB-0C128EAC6733}
+		{D8E5C866-6C5A-4ACF-AEE4-289E7412471F} = {8754216B-ABA3-4AD4-94EB-0C128EAC6733}
+		{254ADD45-1218-4B68-AE34-F1822D9A4767} = {8754216B-ABA3-4AD4-94EB-0C128EAC6733}
 	EndGlobalSection
 EndGlobal

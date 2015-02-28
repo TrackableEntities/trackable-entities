@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -44,14 +43,10 @@ namespace TrackableEntities.Client
         /// </exception>
         public static void MergeChanges<TEntity>(this ChangeTrackingCollection<TEntity> changeTracker,
             params TEntity[] updatedItems)
-                where TEntity : class, ITrackable, INotifyPropertyChanged
+                where TEntity : class, ITrackable, IIdentifiable, INotifyPropertyChanged
         {
             // Check for no items
             if (updatedItems == null) throw new ArgumentNullException("updatedItems");
-
-            // Check for IEquatable<TEntity>
-            if (!typeof(IEquatable<TEntity>).IsAssignableFrom(typeof(TEntity)))
-                throw new ArgumentException(Constants.ErrorMessages.EntityMustImplementIEquatable);
 
             // Recursively set tracking state for child collections
             changeTracker.MergeChanges(updatedItems, null);
@@ -76,11 +71,9 @@ namespace TrackableEntities.Client
                 // Back fill entity identity on trackable ref
                 if (isTrackableRef)
                 {
-                    if (updatedItem.GetEntityIdentifier() == default(Guid))
-                    {
-                        Guid origEntityIdentifier = origItem.GetEntityIdentifier();
-                        updatedItem.SetEntityIdentifier(origEntityIdentifier); 
-                    }
+                    var origItemIdentifiable = (IIdentifiable)origItem;
+                    origItemIdentifiable.SetEntityIdentifier();
+                    ((IIdentifiable)updatedItem).SetEntityIdentifier(origItemIdentifiable);
                 }
                 
                 // Iterate entity properties
@@ -126,7 +119,7 @@ namespace TrackableEntities.Client
         {
             var visitationHelper = new ObjectVisitationHelper();
             bool hasChanges = item.HasChanges(visitationHelper,
-                new Dictionary<ITrackable, bool>(visitationHelper));
+                new Dictionary<ITrackable, bool>(ObjectReferenceEqualityComparer<ITrackable>.Default));
             return hasChanges;
         }
 
@@ -214,7 +207,8 @@ namespace TrackableEntities.Client
         {
             // Get first matching item
             if (isTrackableRef) return sourceItems.FirstOrDefault();
-            return sourceItems.FirstOrDefault(t => t.IsEquatable(sourceItem));
+            return sourceItems.Cast<IIdentifiable>()
+                .FirstOrDefault(t => t.Equals((IIdentifiable)sourceItem)) as ITrackable;
         }
 
         private static void SetEntityProperties(this ITrackable targetItem, ITrackable sourceItem,
@@ -224,7 +218,12 @@ namespace TrackableEntities.Client
             var actions = new List<Action>();
 
             // Iterate simple properties
+#if SILVERLIGHT || NET40
             foreach (var prop in targetItem.GetType().GetProperties().Where(p => p.CanWrite)
+#else
+            foreach (var prop in targetItem.GetType().GetTypeInfo().DeclaredProperties
+                .Where(p => p.CanWrite && !p.GetMethod.IsPrivate)
+#endif
                 .Except(targetItem.GetNavigationProperties(false).Select(np => np.Property)))
             {
                 // Skip tracking properties

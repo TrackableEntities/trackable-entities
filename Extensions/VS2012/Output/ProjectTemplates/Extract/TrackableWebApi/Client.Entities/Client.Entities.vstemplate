@@ -41,9 +41,9 @@
   <WizardData>
     <packages repository="extension"
               repositoryId="TrackableEntities.VS2012..151fea10-328f-45bf-92ee-d83a8a2182b0">
-      <package id="Newtonsoft.Json" version="6.0.3" />
-      <package id="TrackableEntities.Common" version="2.1.0.0" />
-      <package id="TrackableEntities.Client" version="2.1.0.0" />
+      <package id="Newtonsoft.Json" version="6.0.8" />
+      <package id="TrackableEntities.Common" version="2.5.0" />
+      <package id="TrackableEntities.Client" version="2.5.0" />
     </packages>
   </WizardData>	
 </VSTemplate>

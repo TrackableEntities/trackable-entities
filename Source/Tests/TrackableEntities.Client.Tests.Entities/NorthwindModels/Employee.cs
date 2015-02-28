@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Employee : ModelBase<Employee>, ITrackable, IEquatable<Employee>
+    public class Employee : EntityBase
     {
         private int _employeeId;
         public int EmployeeId
@@ -15,7 +15,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _employeeId) return;
                 _employeeId = value;
-                NotifyPropertyChanged(m => m.EmployeeId);
+                NotifyPropertyChanged(() => EmployeeId);
             }
         }
         
@@ -27,7 +27,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _lastName) return;
                 _lastName = value;
-                NotifyPropertyChanged(m => m.LastName);
+                NotifyPropertyChanged(() => LastName);
             }
         }
 
@@ -39,7 +39,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _firstName) return;
                 _firstName = value;
-                NotifyPropertyChanged(m => m.FirstName);
+                NotifyPropertyChanged(() => FirstName);
             }
         }
 
@@ -51,7 +51,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _birthDate) return;
                 _birthDate = value;
-                NotifyPropertyChanged(m => m.BirthDate);
+                NotifyPropertyChanged(() => BirthDate);
             }
         }
 
@@ -63,7 +63,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _hireDate) return;
                 _hireDate = value;
-                NotifyPropertyChanged(m => m.HireDate);
+                NotifyPropertyChanged(() => HireDate);
             }
         }
 
@@ -75,7 +75,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _city) return;
                 _city = value;
-                NotifyPropertyChanged(m => m.City);
+                NotifyPropertyChanged(() => City);
             }
         }
 
@@ -87,7 +87,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _country) return;
                 _country = value;
-                NotifyPropertyChanged(m => m.Country);
+                NotifyPropertyChanged(() => Country);
             }
         }
 
@@ -100,25 +100,8 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
                 if (value != null) value.Parent = this;
                 if (Equals(value, _territories)) return;
                 _territories = value;
-                NotifyPropertyChanged(m => m.Territories);
+                NotifyPropertyChanged(() => Territories);
             }
         }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<Employee>.Equals(Employee other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
     }
 }

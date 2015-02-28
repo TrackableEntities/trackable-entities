@@ -6,7 +6,7 @@ using TrackableEntities.Client;
 namespace TrackableEntities.Tests.Acceptance.ClientEntities
 {
     [JsonObject(IsReference = true)]
-    public class OrderDetail : ModelBase<OrderDetail>, ITrackable, IEquatable<OrderDetail>
+    public class OrderDetail : EntityBase
     {
         private int _orderDetailId;
         public int OrderDetailId
@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _orderDetailId) return;
                 _orderDetailId = value;
-                NotifyPropertyChanged(m => m.OrderDetailId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _productId) return;
                 _productId = value;
-                NotifyPropertyChanged(m => m.ProductId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _orderId) return;
                 _orderId = value;
-                NotifyPropertyChanged(m => m.OrderId);
+                NotifyPropertyChanged();
             }
         }
 
@@ -54,7 +54,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
                 _product = value;
                 ProductChangeTracker = _product == null ? null
                     : new ChangeTrackingCollection<Product> { _product };
-                NotifyPropertyChanged(m => m.Product);
+                NotifyPropertyChanged();
             }
         }
         private ChangeTrackingCollection<Product> ProductChangeTracker { get; set; }
@@ -67,7 +67,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _order) return;
                 _order = value;
-                NotifyPropertyChanged(m => m.Order);
+                NotifyPropertyChanged();
             }
         }
 
@@ -79,7 +79,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _unitPrice) return;
                 _unitPrice = value;
-                NotifyPropertyChanged(m => m.UnitPrice);
+                NotifyPropertyChanged();
             }
         }
 
@@ -91,25 +91,8 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (Math.Abs(value - _quanity) < double.Epsilon) return;
                 _quanity = value;
-                NotifyPropertyChanged(m => m.Quantity);
+                NotifyPropertyChanged();
             }
         }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<OrderDetail>.Equals(OrderDetail other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
     }
 }

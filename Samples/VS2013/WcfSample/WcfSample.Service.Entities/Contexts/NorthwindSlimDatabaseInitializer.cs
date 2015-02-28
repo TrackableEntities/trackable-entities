@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using WcfSample.Service.Entities.Models;
+using TrackableEntities.Client;
+using WcfSample.Client.Entities.Models;
 
-namespace WcfSample.Service.Entities.Contexts
+namespace WcfSample.Client.Entities.Contexts
 {
     public class NorthwindSlimDatabaseInitializer : DropCreateDatabaseIfModelChanges<NorthwindSlimContext>
     {
@@ -26,7 +26,7 @@ namespace WcfSample.Service.Entities.Contexts
                 OrderDate = DateTime.Today,
                 ShippedDate = DateTime.Today,
                 Freight = 41.34M,
-                OrderDetails = new List<OrderDetail>
+                OrderDetails = new ChangeTrackingCollection<OrderDetail>
                 {
                     new OrderDetail
                     {
@@ -49,7 +49,7 @@ namespace WcfSample.Service.Entities.Contexts
                 OrderDate = DateTime.Today,
                 ShippedDate = DateTime.Today,
                 Freight = 41.34M,
-                OrderDetails = new List<OrderDetail>
+                OrderDetails = new ChangeTrackingCollection<OrderDetail>
                 {
                     new OrderDetail
                     {
@@ -66,7 +66,7 @@ namespace WcfSample.Service.Entities.Contexts
                 OrderDate = DateTime.Today,
                 ShippedDate = DateTime.Today,
                 Freight = 41.34M,
-                OrderDetails = new List<OrderDetail>
+                OrderDetails = new ChangeTrackingCollection<OrderDetail>
                 {
                     new OrderDetail
                     {
@@ -83,7 +83,7 @@ namespace WcfSample.Service.Entities.Contexts
                 OrderDate = DateTime.Today,
                 ShippedDate = DateTime.Today,
                 Freight = 41.34M,
-                OrderDetails = new List<OrderDetail>
+                OrderDetails = new ChangeTrackingCollection<OrderDetail>
                 {
                     new OrderDetail
                     {
@@ -249,7 +249,7 @@ namespace WcfSample.Service.Entities.Contexts
                 HireDate = DateTime.Parse("1992-05-01"),
                 City = "Seattle",
                 Country = "USA",
-                Territories = new List<Territory> { territory1, territory2, territory3 }
+                Territories = new ChangeTrackingCollection<Territory> { territory1, territory2, territory3 }
             });
             context.Employees.Add(new Employee
             {
@@ -260,7 +260,7 @@ namespace WcfSample.Service.Entities.Contexts
                 HireDate = DateTime.Parse("1992-08-14"),
                 City = "Tacoma",
                 Country = "USA",
-                Territories = new List<Territory> { territory2, territory3 }
+                Territories = new ChangeTrackingCollection<Territory> { territory2, territory3 }
             });
             context.Employees.Add(new Employee
             {
@@ -271,7 +271,7 @@ namespace WcfSample.Service.Entities.Contexts
                 HireDate = DateTime.Parse("1992-05-01"),
                 City = "Kirkland",
                 Country = "USA",
-                Territories = new List<Territory> { territory3, territory4 }
+                Territories = new ChangeTrackingCollection<Territory> { territory3, territory4 }
             });
             context.Employees.Add(new Employee
             {
@@ -282,7 +282,7 @@ namespace WcfSample.Service.Entities.Contexts
                 HireDate = DateTime.Parse("1993-05-03"),
                 City = "Redmond",
                 Country = "USA",
-                Territories = new List<Territory> { territory1, territory3 }
+                Territories = new ChangeTrackingCollection<Territory> { territory1, territory3 }
             });
         }
     }

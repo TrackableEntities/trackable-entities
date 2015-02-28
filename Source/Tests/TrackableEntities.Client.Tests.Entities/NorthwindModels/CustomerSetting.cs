@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class CustomerSetting : ModelBase<CustomerSetting>, ITrackable, IEquatable<CustomerSetting>
+    public class CustomerSetting : EntityBase
     {
         private string _customerId;
         public string CustomerId
@@ -15,7 +15,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _customerId) return;
                 _customerId = value;
-                NotifyPropertyChanged(m => m.CustomerId);
+                NotifyPropertyChanged(() => CustomerId);
             }
         }
 
@@ -27,7 +27,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _setting) return;
                 _setting = value;
-                NotifyPropertyChanged(m => m.Setting);
+                NotifyPropertyChanged(() => Setting);
             }
         }
 
@@ -41,26 +41,9 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
                 _customer = value;
                 CustomerChangeTracker = _customer == null ? null
                     : new ChangeTrackingCollection<Customer> { _customer };
-                NotifyPropertyChanged(m => m.Customer);
+                NotifyPropertyChanged(() => Customer);
             }
         }
         private ChangeTrackingCollection<Customer> CustomerChangeTracker { get; set; }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<CustomerSetting>.Equals(CustomerSetting other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
     }
 }

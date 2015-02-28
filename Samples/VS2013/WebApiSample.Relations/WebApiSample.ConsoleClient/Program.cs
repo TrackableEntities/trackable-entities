@@ -79,7 +79,7 @@ namespace WebApiSample.Client.ConsoleApp
             };
 
             // Update customer, then accept changes
-            updatedCustomer = UpdateTEntity(client, customer);
+            updatedCustomer = UpdateEntity(client, customer);
             Console.WriteLine("\tCustomer setting added: {0}",
                 updatedCustomer.CustomerSetting != null);
             customer.AcceptChanges();
@@ -93,7 +93,7 @@ namespace WebApiSample.Client.ConsoleApp
             var newSetting = customer.CustomerSetting.Setting += " - Changed";
 
             // Update customer, then accept changes
-            updatedCustomer = UpdateTEntity(client, customer);
+            updatedCustomer = UpdateEntity(client, customer);
             Console.WriteLine("\tCustomer setting modified: {0}", 
                 updatedCustomer.CustomerSetting.Setting == newSetting);
             customer.AcceptChanges();
@@ -108,7 +108,7 @@ namespace WebApiSample.Client.ConsoleApp
             customer.CustomerSetting.TrackingState = TrackingState.Deleted;
 
             // Update customer, then set 1-1 property to null
-            updatedCustomer = UpdateTEntity(client, customer);
+            updatedCustomer = UpdateEntity(client, customer);
             Console.WriteLine("\tCustomer setting removed: {0}",
                 updatedCustomer.CustomerSetting == null);
             customer.CustomerSetting = null;
@@ -117,7 +117,7 @@ namespace WebApiSample.Client.ConsoleApp
             // Delete the customer
             Console.WriteLine("\nPress Enter to delete the customer");
             Console.ReadLine();
-            DeleteTEntity<Customer, string>(client, customer.CustomerId);
+            DeleteEntity<Customer, string>(client, customer.CustomerId);
 
             // Verify order was deleted
             var deleted = VerifyEntityDeleted<Customer, string>(client, customer.CustomerId);
@@ -161,7 +161,7 @@ namespace WebApiSample.Client.ConsoleApp
             order.CustomerId = customerId; // cust will be assigned to order
 
             // Update order, then accept changes
-            updatedOrder = UpdateTEntity(client, order);
+            updatedOrder = UpdateEntity(client, order);
             Console.WriteLine("\tOrder's customer added: {0}", updatedOrder.Customer != null);
             order.AcceptChanges();
             PrintOrder(order);
@@ -174,7 +174,7 @@ namespace WebApiSample.Client.ConsoleApp
             var newCompanyName = order.Customer.CompanyName += " - Changed";
 
             // Update order, then accept changes
-            UpdateTEntity(client, order);
+            UpdateEntity(client, order);
             var updatedCustomer = GetEntity<Customer, string>(client, customerId);
             Console.WriteLine("\tOrder customer's name modified: {0}",
                 updatedCustomer.CompanyName == newCompanyName);
@@ -186,14 +186,14 @@ namespace WebApiSample.Client.ConsoleApp
             Console.ReadLine();
 
             // Delete order and verify
-            DeleteTEntity<Order, int>(client, order.OrderId);
+            DeleteEntity<Order, int>(client, order.OrderId);
             var orderDeleted = VerifyEntityDeleted<Order, int>(client, order.OrderId);
             Console.WriteLine(orderDeleted ?
                 "Order was successfully deleted" :
                 "Order was NOT deleted");
 
             // Delete order and verify
-            DeleteTEntity<Customer, string>(client, customer.CustomerId);
+            DeleteEntity<Customer, string>(client, customer.CustomerId);
             var customerDeleted = VerifyEntityDeleted<Customer, string>(client, customer.CustomerId);
             Console.WriteLine(customerDeleted ?
                 "Customer was successfully deleted" :
@@ -241,7 +241,8 @@ namespace WebApiSample.Client.ConsoleApp
             employee.Territories.Add(territory4);
 
             // Update employee, then merge changes
-            updatedEmployee = UpdateTEntity(client, employee);
+            var changedEmployee = employeeChangeTracker.GetChanges().SingleOrDefault();
+            updatedEmployee = UpdateEntity(client, changedEmployee);
             employeeChangeTracker.MergeChanges(updatedEmployee);
             PrintEmployee(employee);
 
@@ -250,7 +251,7 @@ namespace WebApiSample.Client.ConsoleApp
             Console.ReadLine();
 
             // Delete order and verify
-            DeleteTEntity<Employee, int>(client, employee.EmployeeId);
+            DeleteEntity<Employee, int>(client, employee.EmployeeId);
             var employeeDeleted = VerifyEntityDeleted<Employee, int>(client, employee.EmployeeId);
             Console.WriteLine(employeeDeleted ?
                 "Employee was successfully deleted" :
@@ -289,7 +290,7 @@ namespace WebApiSample.Client.ConsoleApp
             return result;
         }
 
-        private static TEntity UpdateTEntity<TEntity>(HttpClient client, TEntity entity)
+        private static TEntity UpdateEntity<TEntity>(HttpClient client, TEntity entity)
         {
             string request = string.Format("api/{0}", typeof(TEntity).Name);
             var response = client.PutAsJsonAsync(request, entity).Result;
@@ -298,7 +299,7 @@ namespace WebApiSample.Client.ConsoleApp
             return result;
         }
 
-        private static void DeleteTEntity<TEntity, TKey>(HttpClient client, TKey id)
+        private static void DeleteEntity<TEntity, TKey>(HttpClient client, TKey id)
         {
             string request = string.Format("api/{0}/{1}", typeof(TEntity).Name, id);
             var response = client.DeleteAsync(request);

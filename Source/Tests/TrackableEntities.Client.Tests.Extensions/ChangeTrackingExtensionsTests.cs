@@ -466,15 +466,19 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.Pass();
         }
 
-        [Test, ExpectedException(typeof(ArgumentException))]
-        public void MergeChanges_On_Non_Equatable_Customer_Should_Throw_ArgumentException()
+        [Test]
+        public void MergeChanges_On_Equatable_PromotionalProduct_Should_Not_Throw_ArgumentException()
         {
             // Arrange
-            var bogusCustomer = new BogusCustomer { CustomerId = "BOGUS" };
-            var changeTracker = new ChangeTrackingCollection<BogusCustomer>(bogusCustomer);
+            var product = new MockNorthwind().Products.OfType<PromotionalProduct>().First();
+            var changeTracker = new ChangeTrackingCollection<PromotionalProduct>(product);
+            var clonedProduct = product.Clone();
 
             // Act
-            changeTracker.MergeChanges();
+            changeTracker.MergeChanges(clonedProduct);
+
+            // Assert
+            Assert.Pass();
         }
 
         #endregion

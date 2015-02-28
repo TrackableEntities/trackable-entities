@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.ComponentModel;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
@@ -6,6 +8,7 @@ using NUnit.Framework;
 using TrackableEntities.Client.Tests.Entities.Mocks;
 using TrackableEntities.Client.Tests.Entities.FamilyModels;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
+using TrackableEntities.Common;
 
 namespace TrackableEntities.Client.Tests.Extensions
 {
@@ -198,6 +201,38 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.IsTrue(modifieds.All(t => t.Contains("Children")));
         }
 
+        [Test]
+        public void Child_Set_Modified_Props_Should_Not_Set_Parent_Siblings()
+        {
+            // NOTE: SetModifiedProperties should only set ModifiedProperties on
+            // downstream 1-M entities.
+
+            // Arrange
+            const string propName = "UnitPrice";
+            var nw = new MockNorthwind();
+            var order = nw.Orders[0];
+            var customer = order.Customer;
+            var detail1 = order.OrderDetails[0];
+            var detail2 = order.OrderDetails[1];
+            var detail3 = order.OrderDetails[2];
+            detail1.Order = order;
+            detail2.Order = order;
+            detail3.Order = order;
+
+            var visitationHelper = new ObjectVisitationHelper(null);
+            visitationHelper.TryVisit(order.OrderDetails);
+
+            // Act
+            detail1.SetModifiedProperties(new List<string> { propName }, visitationHelper.Clone());
+
+            // Assert
+            Assert.Null(order.ModifiedProperties);
+            Assert.Null(customer.ModifiedProperties);
+            Assert.Null(detail1.ModifiedProperties);
+            Assert.Null(detail2.ModifiedProperties);
+            Assert.Null(detail3.ModifiedProperties);
+        }
+
         #endregion
 
         #region GetChanges Tests
@@ -313,6 +348,9 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.AreNotSame(categoryOrig, categoryCopy);
             Assert.AreNotSame(categoryOrig.Products[0], categoryCopy.Products[0]);
             Assert.AreNotSame(categoryOrig.Products[1], categoryCopy.Products[1]);
+            Assert.AreEqual(categoryOrig.Products.Count, categoryCopy.Products.Count);
+            for (int i = 0; i < categoryOrig.Products.Count; ++i)
+                Assert.AreSame(categoryOrig.Products[i].GetType(), categoryCopy.Products[i].GetType());
         }
 
         [Test]
@@ -494,8 +532,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             var customer1 = northwind.Customers[0];
             var customer2 = northwind.Customers[1];
             customer1.SetEntityIdentifier();
-            Guid entityIdentifier = GetEntityIdentifier(customer1);
-            customer2.SetEntityIdentifier(entityIdentifier);
+            customer2.SetEntityIdentifier(customer1);
 
             // Act
             bool areEquatable = customer1.IsEquatable(customer2);
@@ -512,10 +549,9 @@ namespace TrackableEntities.Client.Tests.Extensions
             var customer1 = northwind.Customers[0];
             var customer2 = northwind.Customers[1];
             customer1.SetEntityIdentifier();
-            Guid entityIdentifier = GetEntityIdentifier(customer1);
-            customer2.SetEntityIdentifier(entityIdentifier);
+            customer2.SetEntityIdentifier(customer1);
 
-            customer1.SetEntityIdentifier(default(Guid)); // Cleared
+            customer1.SetEntityIdentifier(new Customer()); // Cleared
 
             // Act
             bool areEquatable = customer1.IsEquatable(customer2);
@@ -532,18 +568,59 @@ namespace TrackableEntities.Client.Tests.Extensions
             var customer1 = northwind.Customers[0];
             var customer2 = northwind.Customers[1];
             customer1.SetEntityIdentifier();
-            Guid entityIdentifier = GetEntityIdentifier(customer1);
-            customer2.SetEntityIdentifier(entityIdentifier);
+            customer2.SetEntityIdentifier(customer1);
             bool wereEquatable = customer1.IsEquatable(customer2);
 
             // Act
-            customer1.SetEntityIdentifier(default(Guid)); // Cleared
+            customer1.SetEntityIdentifier(new Customer()); // Cleared
             customer1.SetEntityIdentifier(); // Reset
             bool areEquatable = customer1.IsEquatable(customer2);
 
             // Assert
             Assert.IsTrue(wereEquatable);
             Assert.IsFalse(areEquatable);
+        }
+
+        #endregion
+
+        #region NotifyPropertyChanged Tests
+
+        [Test]
+        public void Product_Property_Setter_Should_Fire_PropertyChanged_Event()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var product = northwind.Products[0];
+            var subscriber = new Subscriber<Product>
+            {
+                Model = product
+            };
+
+            // Act
+            product.ProductName += "_X";
+
+            // Assert
+            Assert.True(subscriber.ModelChanged);
+            Assert.AreEqual("ProductName", subscriber.ChangedPropertyName);
+        }
+
+        [Test]
+        public void PromotionalProduct_Property_Setter_Should_Fire_PropertyChanged_Event()
+        {
+            // Arrange
+            var northwind = new MockNorthwind();
+            var product = northwind.Products.OfType<PromotionalProduct>().First();
+            var subscriber = new Subscriber<Product>
+            {
+                Model = product
+            };
+
+            // Act
+            product.PromoCode += "_X";
+
+            // Assert
+            Assert.True(subscriber.ModelChanged);
+            Assert.AreEqual("PromoCode", subscriber.ChangedPropertyName);
         }
 
         #endregion
@@ -594,12 +671,31 @@ namespace TrackableEntities.Client.Tests.Extensions
             return modifieds;
         }
 
-        private Guid GetEntityIdentifier(object item)
+        #endregion
+
+        #region Helper Classes
+
+        class Subscriber<TModel>
+            where TModel : INotifyPropertyChanged
         {
-            var property = typeof(Customer).GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-                .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifierProperty);
-            var entityIdentifier = (Guid)property.GetValue(item);
-            return entityIdentifier;
+            public TModel Model
+            {
+                set
+                {
+                    _model = value;
+                    _model.PropertyChanged += OnPropertyChanged;
+                }
+            }
+            private TModel _model;
+            
+            public bool ModelChanged { get; private set; }
+            public string ChangedPropertyName { get; private set; }
+
+            void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                ModelChanged = true;
+                ChangedPropertyName = e.PropertyName;
+            }
         }
 
         #endregion

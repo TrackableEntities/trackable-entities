@@ -119,7 +119,8 @@ namespace TrackableEntities.Client
                 item.SetTracking(value, visitationHelper);
 
                 // Set entity identifier
-                item.SetEntityIdentifier();
+                if (item is IIdentifiable)
+                    ((IIdentifiable)item).SetEntityIdentifier();
             }
             _tracking = value;
         }
@@ -139,8 +140,13 @@ namespace TrackableEntities.Client
                 if (entity == null) return;
 
                 // Enable tracking on reference properties
+#if SILVERLIGHT || NET40
                 var prop = entity.GetType().GetProperty(e.PropertyName);
-                if (prop != null && typeof (ITrackable).IsAssignableFrom(prop.PropertyType))
+                if (prop != null && typeof(ITrackable).IsAssignableFrom(prop.PropertyType))
+#else
+                var prop = entity.GetType().GetTypeInfo().GetDeclaredProperty(e.PropertyName);
+                if (prop != null && typeof(ITrackable).GetTypeInfo().IsAssignableFrom(prop.PropertyType.GetTypeInfo()))
+#endif
                 {
                     ITrackingCollection refPropChangeTracker = entity.GetRefPropertyChangeTracker(e.PropertyName);
                     if (refPropChangeTracker != null)
@@ -182,7 +188,8 @@ namespace TrackableEntities.Client
             if (Tracking)
             {
                 // Set entity identifier
-                item.SetEntityIdentifier();
+                if (item is IIdentifiable)
+                    ((IIdentifiable)item).SetEntityIdentifier();
 
                 // Listen for property changes
                 item.PropertyChanged += OnPropertyChanged;
@@ -272,7 +279,7 @@ namespace TrackableEntities.Client
             private readonly ObjectVisitationHelper visitationHelper = new ObjectVisitationHelper();
 
             private readonly Dictionary<ITrackable, EntityChangedInfo> entityChangedInfos =
-                new Dictionary<ITrackable, EntityChangedInfo>();
+                new Dictionary<ITrackable, EntityChangedInfo>(ObjectReferenceEqualityComparer<ITrackable>.Default);
 
             public static ChangeTrackingCollection<TEntity> GetChanges(ChangeTrackingCollection<TEntity> source)
             {
@@ -421,7 +428,9 @@ namespace TrackableEntities.Client
                                 if (!visitationHelper.IsVisited(trackingItems))
                                 {
                                     // Get changes on child collection
-                                    var trackingCollChanges = new HashSet<ITrackable>(GetChanges(trackingItems.Cast<ITrackable>()));
+                                    var trackingCollChanges = new HashSet<ITrackable>(
+                                        GetChanges(trackingItems.Cast<ITrackable>()),
+                                        ObjectReferenceEqualityComparer<ITrackable>.Default);
 
                                     // Set flag for downstream changes
                                     hasDownstreamChanges |= trackingCollChanges.Any();
@@ -481,8 +490,12 @@ namespace TrackableEntities.Client
 
                 static CollectionValueProvider()
                 {
-                    Func<IEnumerable<ITrackable>, object> func = CollectionValueProvider.CastResult<int>;
+                    Func<IEnumerable<ITrackable>, object> func = CastResult<int>;
+#if SILVERLIGHT || NET40
                     _genericCast = func.Method.GetGenericMethodDefinition();
+#else
+                    _genericCast = func.GetMethodInfo().GetGenericMethodDefinition();
+#endif
                 }
 
                 public CollectionValueProvider(CloneChangesHelper resolver,
@@ -519,7 +532,11 @@ namespace TrackableEntities.Client
 
                     var items = cnp.EntityCollection.Where(i => _resolver.IncludeCollectionItem(entity, cnp.Property, i));
 
+#if SILVERLIGHT || NET40
                     return _genericCast.MakeGenericMethod(cnp.Property.PropertyType.GetGenericArguments()).Invoke(null, new[] { items });
+#else
+                    return _genericCast.MakeGenericMethod(cnp.Property.PropertyType.GetTypeInfo().GenericTypeArguments).Invoke(null, new[] { items });
+#endif
                 }
 
                 private static object CastResult<T>(IEnumerable<ITrackable> items)
@@ -601,13 +618,17 @@ namespace TrackableEntities.Client
         {
             foreach (var refProp in child.GetNavigationProperties()
                 .OfReferenceType()
+#if SILVERLIGHT || NET40
                 .Where(rp => rp.Property.PropertyType.IsAssignableFrom(parent.GetType()))
+#else
+                .Where(rp => rp.Property.PropertyType.GetTypeInfo().IsAssignableFrom(parent.GetType().GetTypeInfo()))
+#endif
                 .Where(rp => !ReferenceEquals(rp.EntityReference, parent)))
-            {
-                Tracking = false;
-                refProp.Property.SetValue(child, parent, null);
-                Tracking = isTracking;
-            }
+                {
+                    Tracking = false;
+                    refProp.Property.SetValue(child, parent, null);
+                    Tracking = isTracking;
+                }
         }
     }
 }

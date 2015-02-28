@@ -1,15 +1,18 @@
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using WcfSample.Service.Entities.Models;
-using WcfSample.Service.Entities.Models.Mapping;
+using WcfSample.Client.Entities.Models;
+using WcfSample.Client.Entities.Models.Mapping;
 
-namespace WcfSample.Service.Entities.Contexts
+namespace WcfSample.Client.Entities.Contexts
 {
     public partial class NorthwindSlimContext : DbContext
     {
         static NorthwindSlimContext()
         {
-            Database.SetInitializer(new NorthwindSlimDatabaseInitializer());
+            // Uncomment to create the database and seed with data.
+            //Database.SetInitializer(new NorthwindSlimDatabaseInitializer());
+
+            Database.SetInitializer(new NullDatabaseInitializer<NorthwindSlimContext>());
         }
 
         public NorthwindSlimContext()

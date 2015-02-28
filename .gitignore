@@ -3,4 +3,8 @@ bin
 obj
 *.suo
 *.user
+*.ds_store
+*._.ds_store
 
+/Build/Output
+/Build/Logs

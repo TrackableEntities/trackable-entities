@@ -24,8 +24,6 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
     BeginNamespace(code);
 #>
 <#=codeStringGenerator.UsingDirectives(inHeader: false)#>
-[JsonObject(IsReference = true)]
-[DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
 <#=codeStringGenerator.EntityClassOpening(entity)#>
 {
 <#
@@ -71,7 +69,6 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
         {
 #>
     
-	[DataMember]
 	<#=Accessibility.ForProperty(edmProperty)#> <#=typeMapper.GetTypeName(edmProperty.TypeUsage)#> <#=code.Escape(edmProperty)#>
 	{ 
 		get { return _<#=code.Escape(edmProperty)#>; }
@@ -79,7 +76,7 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
 		{
 			if (Equals(value, _<#=code.Escape(edmProperty)#>)) return;
 			_<#=code.Escape(edmProperty)#> = value;
-			NotifyPropertyChanged(m => m.<#=code.Escape(edmProperty)#>);
+			NotifyPropertyChanged(() => <#=code.Escape(edmProperty)#>);
 		}
 	}
 	private <#=typeMapper.GetTypeName(edmProperty.TypeUsage)#> _<#=code.Escape(edmProperty)#>;
@@ -96,7 +93,6 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
         {
 #>
 
-	[DataMember]
 	<#=Accessibility.ForProperty(complexProperty)#> <#=typeMapper.GetTypeName(complexProperty.TypeUsage)#> <#=code.Escape(complexProperty)#>
 	{ 
 		get { return _<#=code.Escape(complexProperty)#>; }
@@ -104,7 +100,7 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
 		{
 			if (Equals(value, _<#=code.Escape(complexProperty)#>)) return;
 			_<#=code.Escape(complexProperty)#> = value;
-			NotifyPropertyChanged(m => m.<#=code.Escape(complexProperty)#>);
+			NotifyPropertyChanged(() => <#=code.Escape(complexProperty)#>);
 		}
 	}
 	private <#=typeMapper.GetTypeName(complexProperty.TypeUsage)#> _<#=code.Escape(complexProperty)#>;
@@ -122,7 +118,6 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
             {
 #>
 
-	[DataMember]
 	<#=Accessibility.ForProperty(navProperty)#> <#="ChangeTrackingCollection<" + endType + ">"#> <#=code.Escape(navProperty)#>
 	{
 		get { return _<#=code.Escape(navProperty)#>; }
@@ -130,7 +125,7 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
 		{
 			if (Equals(value, _<#=code.Escape(navProperty)#>)) return;
 			_<#=code.Escape(navProperty)#> = value;
-			NotifyPropertyChanged(m => m.<#=code.Escape(navProperty)#>);
+			NotifyPropertyChanged(() => <#=code.Escape(navProperty)#>);
 		}
 	}
 	private <#="ChangeTrackingCollection<" + endType + ">"#> _<#=code.Escape(navProperty)#>;
@@ -140,7 +135,6 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
             {
 #>
 
-	[DataMember]
 	<#=Accessibility.ForProperty(navProperty)#> <#=endType#> <#=code.Escape(navProperty)#>
 	{
 		get { return _<#=code.Escape(navProperty)#>; }
@@ -150,7 +144,7 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
 			_<#=code.Escape(navProperty)#> = value;
 			<#=code.Escape(navProperty)#>ChangeTracker = _<#=code.Escape(navProperty)#> == null ? null
 				: new ChangeTrackingCollection<<#=endType#>> { _<#=code.Escape(navProperty)#> };
-			NotifyPropertyChanged(m => m.<#=code.Escape(navProperty)#>);
+			NotifyPropertyChanged(() => <#=code.Escape(navProperty)#>);
 		}
 	}
 	private <#=endType#> _<#=code.Escape(navProperty)#>;
@@ -160,33 +154,6 @@ foreach (var entity in typeMapper.GetItemsToGenerate<EntityType>(itemCollection)
         }
     }
 #>
-
-    #region Change Tracking
-
-	[DataMember]
-	public TrackingState TrackingState { get; set; }
-
-	[DataMember]
-	public ICollection<string> ModifiedProperties { get; set; }
-
-	[JsonProperty, DataMember]
-	private Guid EntityIdentifier { get; set; }
-
-	#pragma warning disable 414
-
-	[JsonProperty, DataMember]
-	private Guid _entityIdentity = default(Guid);
-
-	#pragma warning restore 414
-
-	bool IEquatable<<#=code.Escape(entity)#>>.Equals(<#=code.Escape(entity)#> other)
-	{
-		if (EntityIdentifier != default(Guid))
-			return EntityIdentifier == other.EntityIdentifier;
-		return false;
-	}
-
-    #endregion
 }
 <#
     EndNamespace(code);
@@ -197,8 +164,8 @@ foreach (var complex in typeMapper.GetItemsToGenerate<ComplexType>(itemCollectio
     fileManager.StartNewFile(complex.Name + ".cs");
     BeginNamespace(code);
 #>
-<#=codeStringGenerator.UsingDirectives(inHeader: false, includeCollections: false)#>
-<#=Accessibility.ForType(complex)#> partial class <#=code.Escape(complex)#>
+<#=codeStringGenerator.UsingDirectives(inHeader: false, includeCollections: true)#>
+<#=Accessibility.ForType(complex)#> partial class <#=code.Escape(complex)#> : EntityBase
 {
 <#
     var complexProperties = typeMapper.GetComplexProperties(complex);
@@ -236,7 +203,6 @@ foreach (var complex in typeMapper.GetItemsToGenerate<ComplexType>(itemCollectio
         {
 #>
 
-	[DataMember]
 	<#=Accessibility.ForProperty(edmProperty)#> <#=typeMapper.GetTypeName(edmProperty.TypeUsage)#> <#=code.Escape(edmProperty)#>
 	{ 
 		get { return _<#=code.Escape(edmProperty)#>; }
@@ -244,7 +210,7 @@ foreach (var complex in typeMapper.GetItemsToGenerate<ComplexType>(itemCollectio
 		{
 			if (Equals(value, _<#=code.Escape(edmProperty)#>)) return;
 			_<#=code.Escape(edmProperty)#> = value;
-			NotifyPropertyChanged(m => m.<#=code.Escape(edmProperty)#>);
+			NotifyPropertyChanged(() => <#=code.Escape(edmProperty)#>);
 		}
 	}
 	private <#=typeMapper.GetTypeName(edmProperty.TypeUsage)#> _<#=code.Escape(edmProperty)#>;
@@ -260,7 +226,6 @@ foreach (var complex in typeMapper.GetItemsToGenerate<ComplexType>(itemCollectio
         foreach(var edmProperty in complexProperties)
         {
 #>
-	[DataMember]
 	<#=Accessibility.ForProperty(edmProperty)#> <#=typeMapper.GetTypeName(edmProperty.TypeUsage)#> <#=code.Escape(edmProperty)#>
 	{ 
 		get { return _<#=code.Escape(edmProperty)#>; }
@@ -268,7 +233,7 @@ foreach (var complex in typeMapper.GetItemsToGenerate<ComplexType>(itemCollectio
 		{
 			if (Equals(value, _<#=code.Escape(edmProperty)#>)) return;
 			_<#=code.Escape(edmProperty)#> = value;
-			NotifyPropertyChanged(m => m.<#=code.Escape(edmProperty)#>);
+			NotifyPropertyChanged(() => <#=code.Escape(edmProperty)#>);
 		}
 	}
 	private <#=typeMapper.GetTypeName(edmProperty.TypeUsage)#> _<#=code.Escape(edmProperty)#>;
@@ -388,8 +353,7 @@ public class CodeStringGenerator
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "{0}    {1} {2} {3} {{ {4}get; {5}set; }}",
-			"[DataMember]" + Environment.NewLine,
+            "{0} {1} {2} {{ {3}get; {4}set; }}",
             Accessibility.ForProperty(edmProperty),
             _typeMapper.GetTypeName(edmProperty.TypeUsage),
             _code.Escape(edmProperty),
@@ -419,7 +383,7 @@ public class CodeStringGenerator
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "{0} {1}partial class {2}{3} : ModelBase<{2}>, IEquatable<{2}>, ITrackable",
+            "{0} {1}partial class {2}{3} : EntityBase",
             Accessibility.ForType(entity),
             _code.SpaceAfter(_code.AbstractOption(entity)),
             _code.Escape(entity),
@@ -531,15 +495,9 @@ public class CodeStringGenerator
                 CultureInfo.InvariantCulture,
                 "{0}using System;{1}" +
                 "{2}" +
-				"{3}" +
-				"{4}" +
-				"{5}" +
-				"{6}",
+				"{3}",
                 inHeader ? Environment.NewLine : "",
                 includeCollections ? (Environment.NewLine + "using System.Collections.Generic;") : "",
-				Environment.NewLine + "using System.Runtime.Serialization;",
-				Environment.NewLine + "using Newtonsoft.Json;",
-				Environment.NewLine + "using TrackableEntities;",
 				Environment.NewLine + "using TrackableEntities.Client;",
                 inHeader ? "" : Environment.NewLine)
             : "";

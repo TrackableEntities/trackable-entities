@@ -7,7 +7,7 @@ namespace TrackableEntities.Common
     /// <summary>
     /// This class facilitates proper checking for circular references when iterating the graph nodes.
     /// </summary>
-    public class ObjectVisitationHelper : IEqualityComparer<object>
+    public class ObjectVisitationHelper
     {
         private readonly Dictionary<object, object> _objectSet;
 
@@ -28,7 +28,7 @@ namespace TrackableEntities.Common
         /// </summary>
         public ObjectVisitationHelper(object obj = null)
         {
-            _objectSet = new Dictionary<object, object>(this);
+            _objectSet = new Dictionary<object, object>(ObjectReferenceEqualityComparer<object>.Default);
             if (obj != null)
                 _objectSet.Add(obj, obj);
         }
@@ -97,21 +97,5 @@ namespace TrackableEntities.Common
             if (_objectSet.TryGetValue(obj, out result)) return result;
             return null;
         }
-
-        #region Default IEqualityComparer based on object references
-
-        bool IEqualityComparer<object>.Equals(object x, object y)
-        {
-            // Reference equality
-            return ReferenceEquals(x, y);
-        }
-
-        int IEqualityComparer<object>.GetHashCode(object obj)
-        {
-            // Reference hash
-            return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj);
-        }
-
-        #endregion Default IEqualityComparer based on object references
     }
 }

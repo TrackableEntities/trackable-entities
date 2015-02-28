@@ -28,6 +28,7 @@ namespace WebApiSample.Service.Entities.Models.Mapping
             // Tracking Properties
 			this.Ignore(t => t.TrackingState);
 			this.Ignore(t => t.ModifiedProperties);
+			this.Ignore(t => t.EntityIdentifier);
         }
     }
 }

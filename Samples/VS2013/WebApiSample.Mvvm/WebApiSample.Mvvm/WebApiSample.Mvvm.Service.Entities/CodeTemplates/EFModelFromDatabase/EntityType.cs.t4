@@ -31,8 +31,6 @@ namespace <#= Namespace #>
     using System.Data.Entity.Spatial;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-	using System.Runtime.Serialization;
-	using Newtonsoft.Json;
 	using TrackableEntities;
 
 <#
@@ -45,9 +43,7 @@ namespace <#= Namespace #>
 <#
     }
 #>
-    [JsonObject(IsReference = true)]
-    [DataContract(IsReference = true, Namespace = "http://schemas.datacontract.org/2004/07/TrackableEntities.Models")]
-    public partial class <#= code.Type(entityType) #> : ITrackable
+    public partial class <#= code.Type(entityType) #> : ITrackable, IMergeable
     {
 <#
     var collectionProperties = from p in entityType.NavigationProperties
@@ -94,7 +90,6 @@ namespace <#= Namespace #>
 <#
         }
 #>
-		[DataMember]
         public <#= code.Type(property) #> <#= code.Property(property) #> { get; set; }
 <#
     }
@@ -111,22 +106,18 @@ namespace <#= Namespace #>
         }
 
 #>
-		[DataMember]
         public <#= code.Type(navigationProperty) #> <#= code.Property(navigationProperty) #> { get; set; }
 <#
     }
 #>
 
 		[NotMapped]
-        [DataMember]
         public TrackingState TrackingState { get; set; }
 
 		[NotMapped]
-        [DataMember]
         public ICollection<string> ModifiedProperties { get; set; }
 
 		[NotMapped]
-        [JsonProperty, DataMember]
-        private Guid EntityIdentifier { get; set; }
+        public Guid EntityIdentifier { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading.Tasks;
-//using $saferootprojectname$.Client.Entities.Models;
+//using $saferootprojectname$.$cliententitiestemplate$;
 
 // Use this example as a guide for copying the service contract from Service.Core
 // after adding a Trackable WCF Service Type.

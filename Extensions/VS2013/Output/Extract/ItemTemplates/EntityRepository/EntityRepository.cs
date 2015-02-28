@@ -5,8 +5,8 @@ using System.Data.Entity;
 using System.Threading.Tasks;
 using TrackableEntities.Patterns.EF6;
 using $entitiesNamespace$;
-using $baseNamespace$.EF.Contexts;
-using $baseNamespace$.Persistence.Repositories;
+using $baseNamespace$.Service.EF.Contexts;
+using $baseNamespace$.Service.Persistence.Repositories;
 
 namespace $rootnamespace$
 {

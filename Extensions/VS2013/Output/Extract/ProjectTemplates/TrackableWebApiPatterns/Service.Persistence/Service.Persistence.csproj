@@ -38,12 +38,20 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TrackableEntities.Common">
-      <HintPath>..\..\packages\TrackableEntities.Common.2.1.0.0\lib\portable-net40+sl5+win8+windowsphone8\TrackableEntities.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="TrackableEntities.Patterns, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
+    <Reference Include="TrackableEntities.Client, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\TrackableEntities.Patterns.2.1.0.0\lib\net45\TrackableEntities.Patterns.dll</HintPath>
+      <HintPath>..\..\packages\TrackableEntities.Client.2.5.0\lib\portable-net45+wp80+win8+wpa81\TrackableEntities.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="TrackableEntities.Common">
+      <HintPath>..\..\packages\TrackableEntities.Common.2.5.0\lib\portable-net40+sl50+win+wpa81+wp80\TrackableEntities.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="TrackableEntities.Patterns, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\TrackableEntities.Patterns.2.5.0\lib\net45\TrackableEntities.Patterns.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -58,9 +66,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WebApiSample.Service.Entities\WebApiSample.Service.Entities.csproj">
-      <Project>{8556c7c8-72a6-4857-bafd-489e42a2a453}</Project>
-      <Name>WebApiSample.Service.Entities</Name>
+    <ProjectReference Include="..\$saferootprojectname$.$serviceentitiestemplate$\$saferootprojectname$.$serviceentitiestemplate$.csproj">
+      <Project>{82ef229a-122c-4c25-bb67-82eefc4358fc}</Project>
+      <Name>$saferootprojectname$.$serviceentitiestemplate$</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

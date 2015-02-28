@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using WcfSample.Service.Entities.Models;
+using WcfSample.Shared.Entities.Net45.Models;
+using WcfSerializationHelper;
 
 namespace WcfSample.Service.Core
 {
     [ServiceContract(Namespace = "urn:trackable-entities:samples")]
+    [DataContractSerializerPreserveReferences] // Configure serializer to handle cycles
     public interface IOrderService
     {
         [OperationContract]

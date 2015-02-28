@@ -5,8 +5,7 @@ using Newtonsoft.Json;
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
     [JsonObject(IsReference = true)]
-    public class Territory : ModelBase<Territory>, ITrackable, IEquatable<Territory>,
-        IRefPropertyChangeTrackerResolver
+    public class Territory : EntityBase, IRefPropertyChangeTrackerResolver
     {
         private string _territoryId;
         public string TerritoryId
@@ -16,7 +15,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _territoryId) return;
                 _territoryId = value;
-                NotifyPropertyChanged(m => m.TerritoryId);
+                NotifyPropertyChanged(() => TerritoryId);
             }
         }
 
@@ -28,7 +27,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _territoryDescription) return;
                 _territoryDescription = value;
-                NotifyPropertyChanged(m => m.TerritoryDescription);
+                NotifyPropertyChanged(() => TerritoryDescription);
             }
         }
 
@@ -40,7 +39,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _data) return;
                 _data = value;
-                NotifyPropertyChanged(m => m.Data);
+                NotifyPropertyChanged(() => Data);
             }
         }
 
@@ -52,7 +51,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (value == _areaId) return;
                 _areaId = value;
-                NotifyPropertyChanged(m => m.AreaId);
+                NotifyPropertyChanged(() => AreaId);
             }
         }
 
@@ -66,7 +65,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
                 _area = value;
                 AreaChangeTracker_NON_STANDARD = _area == null ? null
                     : new ChangeTrackingCollection<Area> { _area };
-                NotifyPropertyChanged(m => m.Area);
+                NotifyPropertyChanged(() => Area);
             }
         }
         private ChangeTrackingCollection<Area> AreaChangeTracker_NON_STANDARD { get; set; }
@@ -80,7 +79,7 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
                 if (value != null) value.Parent = this;
                 if (Equals(value, _employees)) return;
                 _employees = value;
-                NotifyPropertyChanged(m => m.Employees);
+                NotifyPropertyChanged(() => Employees);
             }
         }
 
@@ -92,26 +91,9 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             {
                 if (Equals(value, _customers)) return;
                 _customers = value;
-                NotifyPropertyChanged(m => m.Customers);
+                NotifyPropertyChanged(() => Customers);
             }
         }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<Territory>.Equals(Territory other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
 
         ITrackingCollection IRefPropertyChangeTrackerResolver.GetRefPropertyChangeTracker(string propertyName)
         {

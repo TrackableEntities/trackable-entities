@@ -1,6 +1,8 @@
-using System.Data.Entity.ModelConfiguration;
 
-namespace WcfSample.Service.Entities.Models.Mapping
+using System.Data.Entity.ModelConfiguration;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WcfSample.Client.Entities.Models.Mapping
 {
     public class ProductMap : EntityTypeConfiguration<Product>
     {
@@ -31,6 +33,7 @@ namespace WcfSample.Service.Entities.Models.Mapping
             // Tracking Properties
 			this.Ignore(t => t.TrackingState);
 			this.Ignore(t => t.ModifiedProperties);
+			this.Ignore(t => t.EntityIdentifier);
 
             // Relationships
             this.HasOptional(t => t.Category)

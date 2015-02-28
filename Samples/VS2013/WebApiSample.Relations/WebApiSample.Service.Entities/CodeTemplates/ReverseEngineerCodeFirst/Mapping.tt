@@ -142,6 +142,7 @@ namespace <#= code.EscapeNamespace(efHost.Namespace) #>
             // Tracking Properties
 			this.Ignore(t => t.TrackingState);
 			this.Ignore(t => t.ModifiedProperties);
+			this.Ignore(t => t.EntityIdentifier);
 <#        
     // Find m:m relationshipsto configure 
     var manyManyRelationships = efHost.EntityType.NavigationProperties

@@ -8,19 +8,19 @@ using System.Threading.Tasks;
 using TrackableEntities;
 using TrackableEntities.Common;
 using TrackableEntities.EF6;
-using WcfSample.Service.Entities.Contexts;
-using WcfSample.Service.Entities.Models;
+using WcfSample.Shared.Entities.Net45.Contexts;
+using WcfSample.Shared.Entities.Net45.Models;
 
 namespace WcfSample.Service.Core
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class OrderService : IOrderService, IDisposable
     {
-        private readonly NorthwindSlimContext _dbContext;
+        private readonly NorthwindSlim _dbContext;
 
         public OrderService()
         {
-            _dbContext = new NorthwindSlimContext();
+            _dbContext = new NorthwindSlim();
         }
 
         public async Task<IEnumerable<Order>> GetOrders()

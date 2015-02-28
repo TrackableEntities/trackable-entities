@@ -1,7 +1,7 @@
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using WebApiSample.Service.EF.Mapping;
 using WebApiSample.Service.Entities.Models;
-using WebApiSample.Service.Entities.Models.Mapping;
 
 namespace WebApiSample.Service.EF.Contexts
 {

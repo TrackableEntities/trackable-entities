@@ -115,30 +115,13 @@ namespace TrackableEntities.Client
             if (!visitationHelper.TryVisit(item)) return;
 
             // Iterate entity properties
-            foreach (var navProp in item.GetNavigationProperties())
+            foreach (var colProp in item.GetNavigationProperties().OfCollectionType<ITrackingCollection>())
             {
-                ITrackingCollection trackingCollection = null;
-
-                // 1-1 and M-1 properties
-                foreach (var refProp in navProp.AsReferenceProperty())
-                {
-                    trackingCollection = item.GetRefPropertyChangeTracker(refProp.Property.Name);
-                }
-
-                // 1-M and M-M properties
-                foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
-                {
-                    trackingCollection = colProp.EntityCollection;
-                }
-
                 // Recursively set modified
-                if (trackingCollection != null)
+                foreach (ITrackable child in colProp.EntityCollection)
                 {
-                    foreach (ITrackable child in trackingCollection)
-                    {
-                        child.SetModifiedProperties(modified, visitationHelper);
-                        child.ModifiedProperties = modified;
-                    }
+                    child.SetModifiedProperties(modified, visitationHelper);
+                    child.ModifiedProperties = modified;
                 }
             }
         }
@@ -289,15 +272,20 @@ namespace TrackableEntities.Client
             {
                 using (var writer = new BsonWriter(stream))
                 {
-                    var setWr = new JsonSerializerSettings { ContractResolver = contractResolver ?? new EntityNavigationPropertyResolver() };
-                    var serWr = JsonSerializer.Create(setWr);
+                    var settings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.Objects,
+                        ContractResolver = contractResolver ?? new EntityNavigationPropertyResolver(),
+                        PreserveReferencesHandling = PreserveReferencesHandling.All
+                    };
+                    var serWr = JsonSerializer.Create(settings);
                     serWr.Serialize(writer, item);
 
                     stream.Position = 0;
                     using (var reader = new BsonReader(stream))
                     {
-                        var setRd = new JsonSerializerSettings { ContractResolver = new EntityNavigationPropertyResolver() };
-                        var serRd = JsonSerializer.Create(setRd);
+                        settings.ContractResolver = new EntityNavigationPropertyResolver();
+                        var serRd = JsonSerializer.Create(settings);
                         var copy = serRd.Deserialize<T>(reader);
                         return copy;
                     }
@@ -325,64 +313,6 @@ namespace TrackableEntities.Client
                             return !isEmptyNavProp;
                         };
                 return property;
-            }
-        }
-
-        /// <summary>
-        /// Determines if two entities have the same identifier.
-        /// </summary>
-        /// <param name="item">Trackable object</param>
-        /// <param name="other">Other trackable object</param>
-        /// <returns>True if item is equatable, otherwise false</returns>
-        public static bool IsEquatable(this ITrackable item, ITrackable other)
-        {
-            var method = GetEquatableMethod(item.GetType());
-            if (method != null)
-            {
-                return (bool)method.Invoke(item, new object[] { other });
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Get entity identifier for correlation with MergeChanges.
-        /// </summary>
-        /// <param name="item">ITrackable object</param>
-        /// <returns>Entity identifier used for correlation with MergeChanges</returns>
-        public static Guid GetEntityIdentifier(this ITrackable item)
-        {
-            var property = GetEntityIdentifierProperty(item.GetType());
-            if (property == null) return default(Guid);
-            return (Guid)property.GetValue(item, null);
-        }
-
-        /// <summary>
-        /// Set entity identifier used for correlation with MergeChanges.
-        /// </summary>
-        /// <param name="item">ITrackable object</param>
-        /// <param name="value">Unique identifier (optional)</param>
-        public static void SetEntityIdentifier(this ITrackable item, Guid? value = null)
-        {
-            // Get entity identifier property
-            var property = GetEntityIdentifierProperty(item.GetType());
-            if (property == null) return;
-
-            // Set entity identifier prop value explicitly
-            if (value != null)
-            {
-                property.SetValue(item, value, null);
-                return;
-            }
-
-            // Get entity identifier prop value
-            var entityIdentifier = (Guid)property.GetValue(item, null);
-
-            // If entity identifier prop has not been set yet,
-            // set it based on entity identity field.
-            if (entityIdentifier == default(Guid))
-            {
-                var entityIdentity = item.GetOrSetEntityIdentity();
-                property.SetValue(item, entityIdentity, null);
             }
         }
 
@@ -415,40 +345,29 @@ namespace TrackableEntities.Client
             return isManyToManyChild;
         }
 
+        internal static IEnumerable<Type> BaseTypes(this Type type)
+        {
+#if SILVERLIGHT || NET40
+            for (Type t = type; t != null; t = t.BaseType)
+#else
+            for (Type t = type; t != null; t = t.GetTypeInfo().BaseType)
+#endif
+                yield return t;
+        }
+
         private static PropertyInfo GetChangeTrackingProperty(Type entityType, string propertyName)
         {
-            var property = entityType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
+#if SILVERLIGHT || NET40
+            var property = entityType.BaseTypes()
+                .SelectMany(t => t.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic))
                 .SingleOrDefault(m => m.Name == propertyName + Constants.ChangeTrackingMembers.ChangeTrackingPropEnd);
+#else
+            var property = entityType.BaseTypes()
+                .SelectMany(t => t.GetTypeInfo().DeclaredProperties)
+                .SingleOrDefault(p => !p.GetMethod.IsStatic && p.GetMethod.IsPrivate &&
+                    p.Name == propertyName + Constants.ChangeTrackingMembers.ChangeTrackingPropEnd);
+#endif
             return property;
-        }
-
-        private static MethodInfo GetEquatableMethod(Type type)
-        {
-            var method = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-                .SingleOrDefault(m => m.Name.StartsWith(Constants.EquatableMembers.EquatableMethodStart)
-                    && m.Name.EndsWith(Constants.EquatableMembers.EquatableMethodEnd));
-            return method;
-        }
-
-        private static PropertyInfo GetEntityIdentifierProperty(Type type)
-        {
-            var property = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-                .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifierProperty);
-            return property;
-        }
-
-        private static Guid GetOrSetEntityIdentity(this ITrackable item)
-        {
-            var newIdentity = Guid.NewGuid();
-            var property = GetEntityIdentifierProperty(item.GetType());
-            if (property != null)
-            {
-                var entityIdentity = (Guid)property.GetValue(item, null);
-                if (entityIdentity != default(Guid))
-                    return entityIdentity;
-                property.SetValue(item, newIdentity, null);
-            }
-            return newIdentity;
         }
     }
 }

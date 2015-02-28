@@ -37,6 +37,10 @@ namespace WebApiSample.Service.Entities.Contexts
             modelBuilder.Configurations.Add(new OrderDetailMap());
             modelBuilder.Configurations.Add(new ProductMap());
             modelBuilder.Configurations.Add(new TerritoryMap());
+
+            ModelCreating(modelBuilder);
         }
+
+        partial void ModelCreating(DbModelBuilder modelBuilder);
     }
 }

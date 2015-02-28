@@ -6,7 +6,7 @@ using TrackableEntities.Client;
 namespace TrackableEntities.Tests.Acceptance.ClientEntities
 {
     [JsonObject(IsReference = true)]
-    public class Employee : ModelBase<Employee>, ITrackable, IEquatable<Employee>
+    public class Employee : EntityBase
     {
         private int _employeeId;
         public int EmployeeId
@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _employeeId) return;
                 _employeeId = value;
-                NotifyPropertyChanged(m => m.EmployeeId);
+                NotifyPropertyChanged();
             }
         }
         
@@ -28,7 +28,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _lastName) return;
                 _lastName = value;
-                NotifyPropertyChanged(m => m.LastName);
+                NotifyPropertyChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _firstName) return;
                 _firstName = value;
-                NotifyPropertyChanged(m => m.FirstName);
+                NotifyPropertyChanged();
             }
         }
 
@@ -52,7 +52,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _birthDate) return;
                 _birthDate = value;
-                NotifyPropertyChanged(m => m.BirthDate);
+                NotifyPropertyChanged();
             }
         }
 
@@ -64,7 +64,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _hireDate) return;
                 _hireDate = value;
-                NotifyPropertyChanged(m => m.HireDate);
+                NotifyPropertyChanged();
             }
         }
 
@@ -76,7 +76,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _city) return;
                 _city = value;
-                NotifyPropertyChanged(m => m.City);
+                NotifyPropertyChanged();
             }
         }
 
@@ -88,7 +88,7 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
             {
                 if (value == _country) return;
                 _country = value;
-                NotifyPropertyChanged(m => m.Country);
+                NotifyPropertyChanged();
             }
         }
 
@@ -101,25 +101,8 @@ namespace TrackableEntities.Tests.Acceptance.ClientEntities
                 if (value != null) value.Parent = this;
                 if (Equals(value, _territories)) return;
                 _territories = value;
-                NotifyPropertyChanged(m => m.Territories);
+                NotifyPropertyChanged();
             }
         }
-
-        public TrackingState TrackingState { get; set; }
-        public ICollection<string> ModifiedProperties { get; set; }
-
-        bool IEquatable<Employee>.Equals(Employee other)
-        {
-            if (EntityIdentifier != default(Guid))
-                return EntityIdentifier == other.EntityIdentifier;
-            return false;
-        }
-
-#pragma warning disable 414
-        [JsonProperty]
-        private Guid EntityIdentifier { get; set; }
-        [JsonProperty]
-        private Guid _entityIdentity = default(Guid);
-#pragma warning restore 414
     }
 }

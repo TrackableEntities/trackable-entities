@@ -1298,13 +1298,14 @@ namespace TrackableEntities.Client.Tests
             var changeTracker = new ChangeTrackingCollection<Order>(order);
             var modifiedCustomer = order.Customer;
             modifiedCustomer.CustomerName = "xxx";
+            order.OrderDetails[0].ModifiedProperties = new List<string> { "UnitPrice "};
 
             // Act
             changeTracker.Remove(order);
 
             // Assert
-            Assert.IsTrue(modifiedCustomer.ModifiedProperties == null
-                || modifiedCustomer.ModifiedProperties.Count == 0);
+            Assert.IsTrue(modifiedCustomer.ModifiedProperties.Count == 1);
+            Assert.IsTrue(order.OrderDetails[0].ModifiedProperties == null);
         }
 
         #endregion
@@ -1720,30 +1721,6 @@ namespace TrackableEntities.Client.Tests
             Assert.Contains("Setting", (ICollection)customer.CustomerSetting.ModifiedProperties);
         }
 
-        [Test]
-        public void Existing_Customer_Removed_With_Modified_CustomerSetting_Has_Children_ModifiedProperties_Cleared()
-        {
-            // Arrange
-            var database = new MockNorthwind();
-            var customer = database.Customers[0];
-            customer.CustomerSetting = new CustomerSetting
-            {
-                CustomerId = customer.CustomerId,
-                Setting = "Setting1",
-                Customer = customer
-            };
-            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
-            var modifiedSetting = customer.CustomerSetting;
-            modifiedSetting.Setting = "xxx";
-
-            // Act
-            changeTracker.Remove(customer);
-
-            // Assert
-            Assert.IsTrue(modifiedSetting.ModifiedProperties == null
-                || modifiedSetting.ModifiedProperties.Count == 0);
-        }
-        
         #endregion
 
         #region OneToOne - GetChangesTests

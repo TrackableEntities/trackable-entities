@@ -41,16 +41,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.ServiceModel" />
@@ -96,9 +98,9 @@
       <Project>{ebf8d59d-981d-4917-a175-be50f60b7dc6}</Project>
       <Name>WcfSample.Service.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WcfSample.Service.Entities\WcfSample.Service.Entities.csproj">
-      <Project>{82ef229a-122c-4c25-bb67-82eefc4358fc}</Project>
-      <Name>WcfSample.Service.Entities</Name>
+    <ProjectReference Include="..\WcfSample.Shared.Entities.Net45\WcfSample.Shared.Entities.Net45.csproj">
+      <Project>{254add45-1218-4b68-ae34-f1822d9a4767}</Project>
+      <Name>WcfSample.Shared.Entities.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

@@ -13,7 +13,7 @@ namespace WebApiSample.Mvvm.WpfClient
             const string request = "api/Customer";
             var response = await ServiceProxy.Instance.GetAsync(request);
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadAsAsync<IEnumerable<Customer>>();
+            var result = await response.Content.ReadAsAsync<IEnumerable<Customer>>(new[] { ServiceProxy.Formatter });
             return result;
         }
     }
