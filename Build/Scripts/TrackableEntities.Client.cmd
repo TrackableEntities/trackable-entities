@@ -14,6 +14,9 @@ set output=Build\Output\%name%
 set target-portable=portable-net45+wp80+win8+wpa81
 set target-sl5=sl5
 set target-net45=net45
+set src-portable=TrackableEntities.Client
+set src-sl5=TrackableEntities.Client.Sl5
+set src-net45=TrackableEntities.Client.Net45
 
 REM Restore:
 if "%debug%"=="1" pause
@@ -39,10 +42,10 @@ xcopy "%source%\bin\%config%\%name%.dll" "%output%\lib\%target-portable%\" /y
 xcopy "%source%\bin\%config%\%name%.xml" "%output%\lib\%target-portable%\" /y
 xcopy "%source%\bin\%config%\%name%.pdb" "%output%\lib\%target-portable%\" /y
 
-mkdir "%output%\src\%target-portable%\Properties"
-xcopy "Source\AssemblyVersion.cs" "%output%\src\%target-portable%\Properties\" /y
-xcopy "%source%\Properties\AssemblyInfo.cs" "%output%\src\%target-portable%\Properties\" /y
-xcopy "%source%\*.cs" "%output%\src\%target-portable%\" /y
+mkdir "%output%\src\%src-portable%\Properties"
+xcopy "Source\AssemblyVersion.cs" "%output%\src\%src-portable%\Properties\" /y
+xcopy "%source%\Properties\AssemblyInfo.cs" "%output%\src\%src-portable%\Properties\" /y
+xcopy "%source%\*.cs" "%output%\src\%src-portable%\" /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
@@ -53,10 +56,10 @@ xcopy "%source%\bin\%config%\%name%.dll" "%output%\lib\%target-sl5%\" /y
 xcopy "%source%\bin\%config%\%name%.xml" "%output%\lib\%target-sl5%\" /y
 xcopy "%source%\bin\%config%\%name%.pdb" "%output%\lib\%target-sl5%\" /y
 
-mkdir "%output%\src\%target-sl5%\Properties"
-xcopy "Source\AssemblyVersion.cs" "%output%\src\%target-sl5%\Properties\" /y
-xcopy "%source%\Properties\AssemblyInfo.cs" "%output%\src\%target-sl5%\Properties\" /y
-xcopy "%source%\*.cs" "%output%\src\%target-sl5%\" /y
+mkdir "%output%\src\%src-sl5%\Properties"
+xcopy "Source\AssemblyVersion.cs" "%output%\src\%src-sl5%\Properties\" /y
+xcopy "%source%\Properties\AssemblyInfo.cs" "%output%\src\%src-sl5%\Properties\" /y
+xcopy "%source%\*.cs" "%output%\src\%src-sl5%\" /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
@@ -67,12 +70,12 @@ xcopy "%source%.Net45\bin\%config%\%name%.dll" "%output%\lib\%target-net45%\" /y
 xcopy "%source%.Net45\bin\%config%\%name%.xml" "%output%\lib\%target-net45%\" /y
 xcopy "%source%.Net45\bin\%config%\%name%.pdb" "%output%\lib\%target-net45%\" /y
 
-mkdir "%output%\src\%target-net45%\Properties"
-xcopy "Source\AssemblyVersion.cs" "%output%\src\%target-net45%\Properties\" /y
-xcopy "%source%\Properties\AssemblyInfo.cs" "%output%\src\%target-net45%\Properties\" /y
-xcopy "%source%\*.cs" "%output%\src\%target-net45%\" /y
-del "%output%\src\%target-net45%\EntityBasePortable.cs"
-xcopy "%source%.Net45\*.cs" "%output%\src\%target-net45%\" /y
+mkdir "%output%\src\%src-net45%\Properties"
+xcopy "Source\AssemblyVersion.cs" "%output%\src\%src-net45%\Properties\" /y
+xcopy "%source%\Properties\AssemblyInfo.cs" "%output%\src\%src-net45%\Properties\" /y
+xcopy "%source%\*.cs" "%output%\src\%src-net45%\" /y
+del "%output%\src\%src-net45%\EntityBasePortable.cs"
+xcopy "%source%.Net45\*.cs" "%output%\src\%src-net45%\" /y
 if "%debug%"=="1" pause
 if not "%errorlevel%"=="0" exit
 
