@@ -28,22 +28,22 @@
         ConsoleClient\ConsoleClient.vstemplate
       </ProjectTemplateLink>
       <ProjectTemplateLink ProjectName="$safeprojectname$.Entities.Client.Net45">
-        Entities\Entities.Client.Net45\Entities.Client.Net45.vstemplate
+        Entities.Client.Net45\Entities.Client.Net45.vstemplate
       </ProjectTemplateLink>
       <ProjectTemplateLink ProjectName="$safeprojectname$.Entities.Client.Portable">
-        Entities\Entities.Client.Portable\Entities.Client.Portable.vstemplate
+        Entities.Client.Portable\Entities.Client.Portable.vstemplate
       </ProjectTemplateLink>
       <ProjectTemplateLink ProjectName="$safeprojectname$.Entities.Service.Net45">
-        Entities\Entities.Service.Net45\Entities.Service.Net45.vstemplate
+        Entities.Service.Net45\Entities.Service.Net45.vstemplate
       </ProjectTemplateLink>
       <ProjectTemplateLink ProjectName="$safeprojectname$.Entities.Shared.Net45">
-        Entities\Entities.Shared.Net45\Entities.Shared.Net45.vstemplate
+        Entities.Shared.Net45\Entities.Shared.Net45.vstemplate
       </ProjectTemplateLink>
       <ProjectTemplateLink ProjectName="$safeprojectname$.Entities.Shared.Portable">
-        Entities\Entities.Shared.Portable\Entities.Shared.Portable.vstemplate
+        Entities.Shared.Portable\Entities.Shared.Portable.vstemplate
       </ProjectTemplateLink>
       <ProjectTemplateLink ProjectName="$safeprojectname$.Service.Data">
-        Entities\Entities.Shared.Portable.Data\Entities.Shared.Portable.Data.vstemplate
+        Entities.Shared.Portable.Data\Entities.Shared.Portable.Data.vstemplate
       </ProjectTemplateLink>
     </ProjectCollection>
   </TemplateContent>
