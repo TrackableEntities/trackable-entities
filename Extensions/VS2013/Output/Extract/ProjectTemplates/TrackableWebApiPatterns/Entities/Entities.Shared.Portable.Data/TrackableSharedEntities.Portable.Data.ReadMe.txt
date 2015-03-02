@@ -1,9 +1,0 @@
-Trackable Service Data for Portable Shared Entities ReadMe
-
-The purpose of this project is to contain the DataContext
-and optional mapping classes. These should be generated
-for the Shared Portable Entities project and then moved
-to this project.
-
-IMPORTANT: You will need to add a reference to this project
-from the Core (WCF) or WebApi project.
