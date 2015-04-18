@@ -402,6 +402,26 @@ namespace TrackableEntities.EF5.Tests
         }
 
         [Test]
+        public void Apply_Changes_Should_Mark_Unchanged_Product_Of_Added_OrderDetail_Of_Added_Order_As_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new MockNorthwind().Orders[0];
+            var orderDetail = order.OrderDetails[0];
+            var product = orderDetail.Product;
+            order.TrackingState = TrackingState.Added;
+            orderDetail.TrackingState = TrackingState.Added;
+
+            // Act
+            context.ApplyChanges(order);
+
+            // Assert
+            Assert.AreEqual(EntityState.Added, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(orderDetail).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(product).State);
+        }
+
+        [Test]
         public void Apply_Changes_Should_Mark_Unchanged_Order_With_Multiple_OrderDetails_Added()
         {
             // Arrange
