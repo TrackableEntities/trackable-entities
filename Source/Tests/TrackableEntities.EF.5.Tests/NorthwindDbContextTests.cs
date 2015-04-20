@@ -399,6 +399,7 @@ namespace TrackableEntities.EF5.Tests
             Assert.AreEqual(EntityState.Modified, context.Entry(detail2).State);
             Assert.AreEqual(EntityState.Deleted, context.Entry(detail3).State);
             Assert.AreEqual(EntityState.Unchanged, context.Entry(detail4).State);
+            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail1.Product).State);
         }
 
         [Test]
