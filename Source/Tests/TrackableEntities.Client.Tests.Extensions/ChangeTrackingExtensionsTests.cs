@@ -122,8 +122,9 @@ namespace TrackableEntities.Client.Tests.Extensions
         {
             // Arrange
             var database = new MockNorthwind();
-            var origOrder = new Order
+            var origOrder = new PriorityOrder
             {
+                PriorityPlan = "Silver",
                 OrderDate = DateTime.Parse("1996-07-04"),
                 CustomerId = "ALFKI"
             };
