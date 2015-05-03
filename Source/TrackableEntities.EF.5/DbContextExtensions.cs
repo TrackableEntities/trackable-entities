@@ -126,14 +126,19 @@ namespace TrackableEntities.EF5
 
             // Set state to Added if item marked as Added
             if (item.TrackingState == TrackingState.Added
-                && (state == null || state == TrackingState.Added)
-            // Or if parent marked as Added and 1-M or 1-1 relation
-            || (parent != null
-                && parent.TrackingState == TrackingState.Added
-                && (context.IsRelatedProperty(parent.GetType(), propertyName, RelationshipType.OneToMany)
-                    || context.IsRelatedProperty(parent.GetType(), propertyName, RelationshipType.OneToOne))))
+                && (state == null || state == TrackingState.Added))
             {
                 context.Entry(item).State = EntityState.Added;
+                context.ApplyChangesOnProperties(item, visitationHelper);
+                return;
+            }
+
+            // Or if parent has been set to Added and 1-M or 1-1 relation
+            if (parent != null
+                && context.Entry(parent).State == EntityState.Added
+                && (context.IsRelatedProperty(parent.GetType(), propertyName, RelationshipType.OneToMany)
+                    || context.IsRelatedProperty(parent.GetType(), propertyName, RelationshipType.OneToOne)))
+            {
                 context.ApplyChangesOnProperties(item, visitationHelper);
                 return;
             }
@@ -569,7 +574,8 @@ namespace TrackableEntities.EF5
                     return navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many
                            && navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many;
                 case RelationshipType.OneToMany:
-                    return navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One
+                    return (navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One
+                            || navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.ZeroOrOne)
                            && navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many;
                 default:
                     return false;
