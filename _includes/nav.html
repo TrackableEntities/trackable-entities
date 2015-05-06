@@ -1,0 +1,22 @@
+<nav class="nav-primary">
+   <h1 style="">Trackable Entities Documentation</h1>
+	<hr/>
+    <ul>    	
+    	<li>
+    		<a href="{{ site.baseurl }}/">
+    	    Home
+    	    </a>
+    	</li>
+        {% for p in site.pages %}
+        	{% if p.home %}
+        	{% else %}
+        <li>
+        	<a {% if p.url == page.url %}class="active"{% endif %} href="{{ site.baseurl }}{{ p.url }}">
+            {{ p.title }}
+            </a>
+        </li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+	<hr/>
+</nav>

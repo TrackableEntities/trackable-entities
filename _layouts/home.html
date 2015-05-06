@@ -1,0 +1,24 @@
+{% include head.html %}
+
+        <header>
+          <h1>{{ page.title }}</h1>
+          <h2>{{ page.subtitle }}</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/tonysneed/trackable-entities/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/tonysneed/trackable-entities/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/tonysneed/trackable-entities" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+	{% include nav.html %}
+
+  <section id="main_content">
+
+	<main role="main">
+	    {{ content }}
+	</main>
+
+{% include foot.html %}
