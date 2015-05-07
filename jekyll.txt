@@ -1,0 +1,5 @@
+Jekyll Instructions
+
+1. Open Terminal at folder location
+2. Enter: bundle exec jekyll serve --watch
+3. Open in browser: http://localhost:4000/trackable-entities/
