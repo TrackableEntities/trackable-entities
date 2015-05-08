@@ -238,6 +238,62 @@ public class CustomerController : ApiController
 }
 ```
 
+- Now add an **Order** controller to the **WebApi** project.
+- Add a ```GetOrders``` method that accepts a ```customerId``` parameter of type ```string``` and filters orders by the specified customer id.
+- Update all the **Get** methods in ```OrderController``` to use the ```Include``` operator for eager-loading **Customer, OrderDetails, and Product** properties. Note you'll want to use an overload of ```Include``` that accepts a ```string```, so that you can pass a **dot-delimitted path** for "OrderDetails.Product".  *This will fetch all the details for an order and will populate the products for each detail.*
+- Also modify the **Delete** method to include order details: ```.Include(e => e.OrderDetails)```
+
+```csharp
+public class OrderController : ApiController
+{
+    private readonly NorthwindSlim _dbContext = new NorthwindSlim();
+
+    // GET api/Order
+    [ResponseType(typeof(IEnumerable<Order>))]
+    public async Task<IHttpActionResult> GetOrders()
+    {
+        IEnumerable<Order> entities = await _dbContext.Orders
+            .Include(e => e.Customer)        // Include customer
+            .Include("OrderDetails.Product") // Include details
+            .ToListAsync();
+
+        return Ok(entities);
+    }
+
+    // GET api/Order/5
+    [ResponseType(typeof(Order))]
+    public async Task<IHttpActionResult> GetOrder(int id)
+    {
+        Order entity = await _dbContext.Orders
+            .Include(e => e.Customer)        // Include customer
+            .Include("OrderDetails.Product") // Include details
+            .SingleOrDefaultAsync(e => e.OrderId == id);
+
+        if (entity == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(entity);
+    }
+
+    // GET api/Order?customerId=ABCD
+    [ResponseType(typeof(IEnumerable<Order>))]
+    public async Task<IHttpActionResult> GetOrder(string customerId)
+    {
+        IEnumerable<Order> entities = await _dbContext.Orders
+            .Include(e => e.Customer)        // Include customer
+            .Include("OrderDetails.Product") // Include details
+            .Where(e => e.CustomerId == customerId)
+            .ToListAsync();
+
+        return Ok(entities);
+    }
+
+    // Other methods elided for clarity ...
+}
+```
+
 ### 8. Test the Web API controller actions
 
 - Build the solution, then browse to the WebApi project (Ctrl+Shift+W) to dispay the home page. Once there, click the **API** link to display the **Web API Help Page**.
@@ -247,15 +303,13 @@ public class CustomerController : ApiController
 
 - Repeat the prior steps to add controllers for other entities to the **WebApi** project, for example, for ```Products``` and ```Orders```.
 
-## Client Configuration
+## Retrieving Entities
 
-Now that controllers have been added to the **WebApi** project, it's time to configure the **ConsoleClient** to consume the Web API services by submitting HTTP requests for GET, POST, PUT and DELETE. Most importantly, the client will use the **TrackableEntities.Client** library to automatically track changes to entities that are added, modified or deleted.
+Now that controllers have been added to the **WebApi** project, it's time to configure the **ConsoleClient** to retrieve customers and orders from the Web API service.
 
-### 9. Copy the Web API project's port number
+### 9. Retrieve customers and orders
 
 - Copy the **port number** from the browser you used to test the Web API service, then paste it to replace the placeholder used for the port number in the ```Program.Main``` method of the **ConsoleClient** app.
-
-### 10. Uncomment code in Program.Main to use the Web API service
 
 - Uncomment code in ```Program.Main``` to retrieve customers from the Web API service and print them to the console.
 - Also uncomment the **Service methods** and **Helper methods** in ```Program```.
@@ -264,14 +318,14 @@ Now that controllers have been added to the **WebApi** project, it's time to con
 ```csharp
 class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
         Console.WriteLine("Press Enter to start");
         Console.ReadLine();
 
         // Create http client
         const string serviceBaseAddress = "http://localhost:" + "49424" + "/";
-        var client = new HttpClient { BaseAddress = new Uri(serviceBaseAddress) };
+        var client = new HttpClient {BaseAddress = new Uri(serviceBaseAddress)};
 
         // Get customers
         Console.WriteLine("Customers:");
@@ -279,15 +333,120 @@ class Program
         if (customers == null) return;
         foreach (var c in customers)
             PrintCustomer(c);
+
+        // Get orders for a customer
+        Console.WriteLine("\nGet customer orders {CustomerId}:");
+        string customerId = Console.ReadLine();
+        if (!customers.Any(c => string.Equals(c.CustomerId, customerId, StringComparison.OrdinalIgnoreCase)))
+        {
+            Console.WriteLine("Invalid customer id: {0}", customerId.ToUpper());
+            return;
+        }
+        IEnumerable<Order> orders = GetCustomerOrders(client, customerId);
+        foreach (var o in orders)
+            PrintOrder(o);
+
+        // Get an order
+        Console.WriteLine("\nGet an order {OrderId}:");
+        int orderId = int.Parse(Console.ReadLine());
+        if (!orders.Any(o => o.OrderId == orderId))
+        {
+            Console.WriteLine("Invalid order id: {0}", orderId);
+            return;
+        }
+        Order order = GetOrder(client, orderId);
+        PrintOrderWithDetails(order);
+
+        // TODO: Create an order, then update and delete it
     }
 }
 ```
 
-### 11. Uncomment the rest of the code in Program.Main to create, update and delete entities
+## Updating Entities
 
-The purpose of Trackable Entities is to facilitate *change tracking across service boundaries*. It does this by setting a ```TrackingState``` on each entity on the client, then sending a graph or entities to the service, so that changes may be persisted in a **single transaction** and in a **single round trip** to the service.
+Next we'll add code to **ConsoleClient** for **creating** a new order, then **updating** the order by *adding, removing and deleting details*.  Lastly, we'll **delete** the order we created and confirm that it was in fact deleted.
 
-- The remaining code in ```Program.Main``` will **create, update and delete** Orders and OrderDetails using a ```ChangeTrackingCollection<T>``` to perform client-side change-tracking.
-- Before transmitting entities to the service, the client will invoke ```GetChanges``` on the change tracker in order to obtain only the entities which have been added, modified or deleted. This will improve performance by *not sending unchanged entities* over the wire.
-- Once changes to entities have been persisted by the service, they will be returned to the client, along with r**elated entities** and **database generated values** (for example, *identity* and *concurrency* values). The client will then call ```MergeChanges``` on the change tracker in order to merge updates from the service back into the original entities on the client.
- 
+### 10. Create an order
+
+- Create a **new order** with details. Populate the *foreign key values* for the ```CustomerId``` property of the order, as well as ```ProductId``` for each detail.
+
+```csharp
+// Create a new order
+Console.WriteLine("\nPress Enter to create a new order for {0}",
+    customerId.ToUpper());
+Console.ReadLine();
+
+var newOrder = new Order
+{
+    CustomerId = customerId,
+    OrderDate = DateTime.Today,
+    ShippedDate = DateTime.Today.AddDays(1),
+    OrderDetails = new ChangeTrackingCollection<OrderDetail>
+        {
+            new OrderDetail { ProductId = 1, Quantity = 5, UnitPrice = 10 },
+            new OrderDetail { ProductId = 2, Quantity = 10, UnitPrice = 20 },
+            new OrderDetail { ProductId = 4, Quantity = 40, UnitPrice = 40 }
+        }
+};
+var createdOrder = CreateOrder(client, newOrder);
+PrintOrderWithDetails(createdOrder);
+```
+
+### 11. Update the order and details
+
+- Start **change tracking** the order by adding it to a new ```ChangeTrackingCollection```.
+- Add a new detail, modify an existing detail, then remove a detail. Leave one detail unchanged.
+- Call ```GetChanges``` on the change tracker to obtain *only items which have been added, updated or deleted*. This will help us avoid sending unchanged entities to the service.
+- After sending changes to the service **PUT operation** for updating, call ```MergeChanges``` on the change tracker, passing the updated order returned by the PUT operation.  This will ensure that database-generated values (for example identity and concurrency) will be merged back into the original object graph.
+
+```csharp
+// Update the order
+Console.WriteLine("\nPress Enter to update order details");
+Console.ReadLine();
+
+// Start change-tracking the order
+var changeTracker = new ChangeTrackingCollection<Order>(createdOrder);
+
+// Modify order details
+createdOrder.OrderDetails[0].UnitPrice++;
+createdOrder.OrderDetails.RemoveAt(1);
+createdOrder.OrderDetails.Add(new OrderDetail
+{
+    OrderId = createdOrder.OrderId,
+    ProductId = 3,
+    Quantity = 15,
+    UnitPrice = 30
+});
+
+// Submit changes
+var changedOrder = changeTracker.GetChanges().SingleOrDefault();
+var updatedOrder = UpdateOrder(client, changedOrder);
+
+// Merge changes
+changeTracker.MergeChanges(updatedOrder);
+Console.WriteLine("Updated order:");
+PrintOrderWithDetails(createdOrder);
+```
+
+### 12. Delete the order and confirm that delete was successful
+
+- To delete the order, we simply pass the ```OrderId``` to the **DELETE** service operation.
+- To confirm that the delete was successful, simply call **GET** and pass the id of the deleted order. The operation will return null if the order was deleted.
+
+```csharp
+// Delete the order
+Console.WriteLine("\nPress Enter to delete the order");
+Console.ReadLine();
+DeleteOrder(client, createdOrder);
+
+// Verify order was deleted
+var deleted = VerifyOrderDeleted(client, createdOrder.OrderId);
+Console.WriteLine(deleted ?
+    "Order was successfully deleted" :
+    "Order was not deleted");
+
+// Keep console open
+Console.WriteLine("Press any key to exit");
+Console.ReadKey(true);
+```
+
