@@ -41,6 +41,7 @@ This tutorial provides step-by-step instructions for building an N-Tier **ASP.NE
 
   - **Update Solution NuGet Packages**: Right-click *solution* and select **Manage NuGet packages for solution**.
   - Search for **trackable**, then update the *Trackable Client, Common, and EF6* packages to the latest version.
+  - While you're at it, update the **Entity Framework** NuGet package to the latest *6.x version*.
 
 ![Update NuGet Packages](images/update-solution-packages.png)
 
@@ -362,6 +363,38 @@ class Program
 }
 ```
 
+- The following client methods are used to **retrieve** entities.
+
+```csharp
+private static IEnumerable<Customer> GetCustomers(HttpClient client)
+{
+    const string request = "api/Customer";
+    var response = client.GetAsync(request).Result;
+    response.EnsureSuccessStatusCode();
+    var result = response.Content.ReadAsAsync<IEnumerable<Customer>>().Result;
+    return result;
+}
+
+private static IEnumerable<Order> GetCustomerOrders
+    (HttpClient client, string customerId)
+{
+    string request = "api/Order?customerId=" + customerId;
+    var response = client.GetAsync(request).Result;
+    response.EnsureSuccessStatusCode();
+    var result = response.Content.ReadAsAsync<IEnumerable<Order>>().Result;
+    return result;
+}
+
+private static Order GetOrder(HttpClient client, int orderId)
+{
+    string request = "api/Order/" + orderId;
+    var response = client.GetAsync(request).Result;
+    response.EnsureSuccessStatusCode();
+    var result = response.Content.ReadAsAsync<Order>().Result;
+    return result;
+}
+```
+
 ## Updating Entities
 
 Next we'll add code to **ConsoleClient** for **creating** a new order, then **updating** the order by *adding, removing and deleting details*.  Lastly, we'll **delete** the order we created and confirm that it was in fact deleted.
@@ -450,3 +483,31 @@ Console.WriteLine("Press any key to exit");
 Console.ReadKey(true);
 ```
 
+- The following client methods are used to **udpate** entities.
+
+```csharp
+private static Order CreateOrder(HttpClient client, Order order)
+{
+    string request = "api/Order";
+    var response = client.PostAsJsonAsync(request, order).Result;
+    response.EnsureSuccessStatusCode();
+    var result = response.Content.ReadAsAsync<Order>().Result;
+    return result;
+}
+
+private static Order UpdateOrder(HttpClient client, Order order)
+{
+    string request = "api/Order";
+    var response = client.PutAsJsonAsync(request, order).Result;
+    response.EnsureSuccessStatusCode();
+    var result = response.Content.ReadAsAsync<Order>().Result;
+    return result;
+}
+
+private static void DeleteOrder(HttpClient client, Order order)
+{
+    string request = "api/Order/" + order.OrderId;
+    var response = client.DeleteAsync(request);
+    response.Result.EnsureSuccessStatusCode();
+}
+```
