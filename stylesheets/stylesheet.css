@@ -165,31 +165,36 @@ a.button span {
   margin-right: 0;
 }
 
-code, pre {
+pre, code {
+  width: 100%;
   margin-bottom: 30px;
-  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal;
-  font-size: 14px;
   color: #222;
-}
+  background-color: #fff;
 
-code {
-  padding: 0 3px;
-  background-color: #f2f2f2;
-  border: solid 1px #ddd;
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  font-size: 14px;
+
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
 }
 
 pre {
-  padding: 20px;
+  width: 100%;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,.1);
   overflow: auto;
-  color: #f2f2f2;
-  text-shadow: none;
-  background: #303030;
 }
+
+code {
+  padding: 3px;
+  margin: 0 3px;
+  box-shadow: 0 0 10px rgba(0,0,0,.1);
+}
+
 pre code {
-  padding: 0;
-  color: #f2f2f2;
-  background-color: #303030;
-  border: none;
+  display: block;
+  box-shadow: none;
 }
 
 ul, ol, dl {
