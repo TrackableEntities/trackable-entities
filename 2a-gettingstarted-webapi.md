@@ -85,7 +85,7 @@ Trackable entities are generated with EF designer tools using *customizable* **T
 
 ## Web API Controllers
 
-In this part you'll add *controllers* to the Web API project which perform CRUD operation (Create, Retrieve, Update and Delete) using trackable entities generated for the **Entities.Service.Net45** project.
+In this part you'll add *controllers* to the **WebApi** project to perform CRUD operation (Create, Retrieve, Update and Delete) using trackable entities generated for the **Entities.Service.Net45** project.
 
 ### 6. Copy Database Connection String to Web.Config
 
