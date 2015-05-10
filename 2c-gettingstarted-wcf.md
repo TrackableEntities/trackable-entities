@@ -52,14 +52,8 @@ Trackable entities are generated with EF designer tools using *customizable* **T
 
 ### 4. Generate Entities with EF 6.x Tools for Visual Studio
 
-  - Important: WCF requires that client and service entities use the s**ame namespace**. Prior to v2.5 Trackable Entities included the **[DataContract]** attribute in generated entities, where a *common namespace* was specified. But as of v2.5 T4 templates generate entities which *do not include any serialization attributes*, which means that the CLR namespace for client and service entities must match.
-  - For *shared entities* this is not a problem, because both client and service reference the same entities project. But if you choose the option for creating **separate client / service entities**, then you will need to set the **default namespace** for both client and service entities projects to be the same. You can set the default namespace by going to the **Application** tab of the **Properties** page of both the *Entities.Client* and *Entities.Service* projects.
-  - Note that you need to set the default namespace **prior** to generating trackable entities using either the *EF 6.x Tools for VS* or the *EF Power Tools*.
-
-![Add Entity Data Model](images/entities-namespace-service.png)
-
-![Add Entity Data Model](images/entities-namespace-client.png)
-
+  - **Important**: As of v2.5 Trackable Entities generates entities that are *free of serialization attributes*, therefore the **[DataContract]** attribute is no longer included. For this reason, if you select the option for separate client / service entities, each entities project will have the **same default namespace**. If you would like to add these projects manually, *be sure that the default namespaces match*.
+  
   - Add an **ADO.NET Entity Data Model** to the **Entities.Service.Net45** project. This option is also appropriate for *shared entities*.
 
 ![Add Entity Data Model](images/add-edm.png)
@@ -90,7 +84,7 @@ Trackable entities are generated with EF designer tools using *customizable* **T
 
   **Important**: After the EF Power Tools wizard has finished generating entities, *delete* both the **NorthwindSlimContext.cs** file and the **Mapping** folder.
 
-  - **Important**: Because WCF requires that client and service entities *share the same namespace*, you will need to **move** the client entities *out of the Models folder* and remove **.Models** from the namespace for each entities class.
+  - **Important**: Because WCF requires that client and service entities *share the same namespace*, you should **move** the **service entities** *into the Models folder* and add **.Models** to the namespace for each entity class.
 
   - *Build the solution.*
 
@@ -351,106 +345,109 @@ public interface IOrderService
 ```
 
 - Copy the **port number** from the browser you used to test the WCF service, then paste it to replace the placeholder used for the port number in **App.config**.  Uncomment the endpoint section, then rename Example to Customer. Copy the endpoint for Order.
+- You may also wish to increase the maxReceivedMessageSize and maxBufferSize parameters of the basicHttpBinding configuration to increase their values.
 
 ```xml
 <system.serviceModel>
-    <client>
-        <endpoint address="http://localhost:61722/CustomerService.svc"
-                binding="basicHttpBinding" 
-                contract="TrackableGettingStarted.ConsoleClient.ICustomerService"
-                name="customerService">
-      </endpoint>
-      <endpoint address="http://localhost:61722/OrderService.svc"
-                binding="basicHttpBinding"
-                contract="TrackableGettingStarted.ConsoleClient.IOrderService"
-                name="orderService">
-      </endpoint>
-    </client>
+  <bindings>
+    <basicHttpBinding>
+      <binding maxReceivedMessageSize="2147483647"
+                maxBufferSize="2147483647">
+      </binding>
+    </basicHttpBinding>
+  </bindings>
+  <client>
+    <endpoint address="http://localhost:50198/CustomerService.svc"
+              binding="basicHttpBinding"
+              contract="TrackableGettingStarted.ConsoleClient.ICustomerService"
+              name="customerService">
+    </endpoint>
+    <endpoint address="http://localhost:50198/OrderService.svc"
+              binding="basicHttpBinding"
+              contract="TrackableGettingStarted.ConsoleClient.IOrderService"
+              name="orderService">
+    </endpoint>
+  </client>
 </system.serviceModel>
 ```
 
 - Uncomment code in ```Program.Main``` to retrieve customers from the WCF service and print them to the console.
 - Also uncomment the **Helper methods** in ```Program```.
-- With the **Web** service still running, you can set **ConsoleClient** as the solution *Startup Project*, then press **Ctrl+F5** to run it.  You should see a list of customers from the **NorthwindSlim** database printed to the console.
 
 ```csharp
 class Program
 {
     private static void Main(string[] args)
     {
+        // Main method
+
         Console.WriteLine("Press Enter to start");
         Console.ReadLine();
 
-        // Create http client
-        const string serviceBaseAddress = "http://localhost:" + "49424" + "/";
-        var client = new HttpClient {BaseAddress = new Uri(serviceBaseAddress)};
+        ICustomerService customerService = new ChannelFactory<ICustomerService>("customerService").CreateChannel();
+        IOrderService orderService = new ChannelFactory<IOrderService>("orderService").CreateChannel();
 
-        // Get customers
-        Console.WriteLine("Customers:");
-        IEnumerable<Customer> customers = GetCustomers(client);
-        if (customers == null) return;
-        foreach (var c in customers)
-            PrintCustomer(c);
-
-        // Get orders for a customer
-        Console.WriteLine("\nGet customer orders {CustomerId}:");
-        string customerId = Console.ReadLine();
-        if (!customers.Any(c => string.Equals(c.CustomerId, customerId, StringComparison.OrdinalIgnoreCase)))
+        using ((IDisposable) customerService)
+        using ((IDisposable) orderService)
         {
-            Console.WriteLine("Invalid customer id: {0}", customerId.ToUpper());
-            return;
-        }
-        IEnumerable<Order> orders = GetCustomerOrders(client, customerId);
-        foreach (var o in orders)
-            PrintOrder(o);
+            try
+            {
+                // Get customers
+                Console.WriteLine("Customers:");
+                IEnumerable<Customer> customers = customerService.GetCustomersAsync().Result;
+                if (customers == null) return;
+                foreach (var c in customers)
+                    PrintCustomer(c);
 
-        // Get an order
-        Console.WriteLine("\nGet an order {OrderId}:");
-        int orderId = int.Parse(Console.ReadLine());
-        if (!orders.Any(o => o.OrderId == orderId))
-        {
-            Console.WriteLine("Invalid order id: {0}", orderId);
-            return;
-        }
-        Order order = GetOrder(client, orderId);
-        PrintOrderWithDetails(order);
+                // Get orders for a customer
+                Console.WriteLine("\nGet customer orders {CustomerId}:");
+                string customerId = Console.ReadLine();
+                if (!customers.Any(c => string.Equals(c.CustomerId, customerId, StringComparison.OrdinalIgnoreCase)))
+                {
+                    Console.WriteLine("Invalid customer id: {0}", customerId.ToUpper());
+                    return;
+                }
+                IEnumerable<Order> orders = orderService.GetCustomerOrdersAsync(customerId).Result;
+                foreach (var o in orders)
+                    PrintOrder(o);
 
-        // TODO: Create an order, then update and delete it
+                // Get an order
+                Console.WriteLine("\nGet an order {OrderId}:");
+                int orderId = int.Parse(Console.ReadLine());
+                if (!orders.Any(o => o.OrderId == orderId))
+                {
+                    Console.WriteLine("Invalid order id: {0}", orderId);
+                    return;
+                }
+                Order order = orderService.GetOrderAsync(orderId).Result;
+                PrintOrderWithDetails(order);
+
+                // TODO: Create an order, then update and delete it
+            }
+            catch (AggregateException aggEx)
+            {
+                var baseEx = aggEx.Flatten().GetBaseException();
+                var innerExMsg = baseEx.InnerException != null ? "\r\n" + baseEx.InnerException.Message : "";
+                Console.WriteLine(baseEx.Message + innerExMsg);
+            }
+            finally
+            {
+                var channel = customerService as IClientChannel;
+                if (channel != null && channel.State == CommunicationState.Faulted)
+                {
+                    channel.Abort();
+                }
+            }
+
+            // Keep console open
+            Console.WriteLine("Press any key to exit");
+            Console.ReadKey(true);
+        }
     }
 }
 ```
 
-- The following client methods are used to **retrieve** entities.
-
-```csharp
-private static IEnumerable<Customer> GetCustomers(HttpClient client)
-{
-    const string request = "api/Customer";
-    var response = client.GetAsync(request).Result;
-    response.EnsureSuccessStatusCode();
-    var result = response.Content.ReadAsAsync<IEnumerable<Customer>>().Result;
-    return result;
-}
-
-private static IEnumerable<Order> GetCustomerOrders
-    (HttpClient client, string customerId)
-{
-    string request = "api/Order?customerId=" + customerId;
-    var response = client.GetAsync(request).Result;
-    response.EnsureSuccessStatusCode();
-    var result = response.Content.ReadAsAsync<IEnumerable<Order>>().Result;
-    return result;
-}
-
-private static Order GetOrder(HttpClient client, int orderId)
-{
-    string request = "api/Order/" + orderId;
-    var response = client.GetAsync(request).Result;
-    response.EnsureSuccessStatusCode();
-    var result = response.Content.ReadAsAsync<Order>().Result;
-    return result;
-}
-```
+- With the **Web** service still running, you can set **ConsoleClient** as the solution *Startup Project*, then press **Ctrl+F5** to run it.  You should see a list of customers from the **NorthwindSlim** database printed to the console.
 
 ## Updating Entities
 
@@ -462,8 +459,7 @@ Next we'll add code to **ConsoleClient** for **creating** a new order, then **up
 
 ```csharp
 // Create a new order
-Console.WriteLine("\nPress Enter to create a new order for {0}",
-    customerId.ToUpper());
+Console.WriteLine("\nPress Enter to create a new order for {0}", customerId.ToUpper());
 Console.ReadLine();
 
 var newOrder = new Order
@@ -478,7 +474,7 @@ var newOrder = new Order
             new OrderDetail { ProductId = 4, Quantity = 40, UnitPrice = 40 }
         }
 };
-var createdOrder = CreateOrder(client, newOrder);
+var createdOrder = orderService.CreateOrderAsync(newOrder).Result;
 PrintOrderWithDetails(createdOrder);
 ```
 
@@ -509,8 +505,8 @@ createdOrder.OrderDetails.Add(new OrderDetail
 });
 
 // Submit changes
-var changedOrder = changeTracker.GetChanges().SingleOrDefault();
-var updatedOrder = UpdateOrder(client, changedOrder);
+Order changedOrder = changeTracker.GetChanges().SingleOrDefault();
+Order updatedOrder = orderService.UpdateOrderAsync(changedOrder).Result;
 
 // Merge changes
 changeTracker.MergeChanges(updatedOrder);
@@ -527,44 +523,12 @@ PrintOrderWithDetails(createdOrder);
 // Delete the order
 Console.WriteLine("\nPress Enter to delete the order");
 Console.ReadLine();
-DeleteOrder(client, createdOrder);
+bool deleted = orderService.DeleteOrderAsync(createdOrder.OrderId).Result;
 
 // Verify order was deleted
-var deleted = VerifyOrderDeleted(client, createdOrder.OrderId);
-Console.WriteLine(deleted ?
-    "Order was successfully deleted" :
-    "Order was not deleted");
-
-// Keep console open
-Console.WriteLine("Press any key to exit");
-Console.ReadKey(true);
+Order deletedOrder = orderService.GetOrderAsync(createdOrder.OrderId).Result;
+Console.WriteLine(deleted && deletedOrder == null
+    ? "Order was successfully deleted"
+    : "Order was not deleted");
 ```
 
-- The following client methods are used to **udpate** entities.
-
-```csharp
-private static Order CreateOrder(HttpClient client, Order order)
-{
-    string request = "api/Order";
-    var response = client.PostAsJsonAsync(request, order).Result;
-    response.EnsureSuccessStatusCode();
-    var result = response.Content.ReadAsAsync<Order>().Result;
-    return result;
-}
-
-private static Order UpdateOrder(HttpClient client, Order order)
-{
-    string request = "api/Order";
-    var response = client.PutAsJsonAsync(request, order).Result;
-    response.EnsureSuccessStatusCode();
-    var result = response.Content.ReadAsAsync<Order>().Result;
-    return result;
-}
-
-private static void DeleteOrder(HttpClient client, Order order)
-{
-    string request = "api/Order/" + order.OrderId;
-    var response = client.DeleteAsync(request);
-    response.Result.EnsureSuccessStatusCode();
-}
-```
