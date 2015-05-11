@@ -435,6 +435,120 @@ namespace TrackableEntities.Client.Tests
                 || product.ModifiedProperties.Count == 0);
         }
 
+        [Test]
+        public void Removed_Items_Should_Disable_Change_Tracking_On_Entity()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            changeTracker.Remove(order);
+            order.TrackingState = TrackingState.Unchanged;
+
+            // Act
+            order.OrderDate = order.OrderDate.AddDays(1);
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
+        }
+
+        [Test]
+        public void Removed_Items_Should_Disable_Change_Tracking_On_Related_Entities_OneToMany()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var detail = order.OrderDetails[0];
+
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            changeTracker.Remove(order);
+            detail.TrackingState = TrackingState.Unchanged;
+
+            // Act
+            detail.Quantity++;
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, detail.TrackingState);
+        }
+
+        [Test]
+        public void Removed_Items_Should_NOT_Disable_Change_Tracking_On_Related_Entities_ManyToOne()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var customer = order.Customer;
+
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            changeTracker.Remove(order);
+
+            // Act
+            customer.CustomerName = "XXX";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Modified, customer.TrackingState);
+        }
+
+        [Test]
+        public void Removed_Items_Should_NOT_Disable_Change_Tracking_On_Related_Entities_OneToOne()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var customer = database.Orders[0].Customer;
+            var setting = customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Customer = customer,
+                Setting = "Setting1"
+            };
+
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+            changeTracker.Remove(customer);
+
+            // Act
+            setting.Setting = "XXX";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Modified, setting.TrackingState);
+        }
+
+        [Test]
+        public void Removed_Items_Should_NOT_Disable_Change_Tracking_On_Related_Entities_ManyToMany()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var territory = employee.Territories[0];
+
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            changeTracker.Remove(employee);
+
+            // Act
+            territory.TerritoryDescription = "XXX";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Modified, territory.TrackingState);
+        }
+
+        [Test]
+        public void Removed_Items_Should_NOT_Disable_Change_Tracking_On_Related_Entities_OneToMany_ToOne()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var product = order.OrderDetails[0].Product;
+
+            var changeTracker = new ChangeTrackingCollection<Order>(order);
+            changeTracker.Remove(order);
+
+            // Act
+            product.ProductName = "XXX";
+
+            // Assert
+            Assert.AreEqual(TrackingState.Modified, product.TrackingState);
+        }
+
         #endregion
 
         #region GetChanges Test
