@@ -2,13 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>TrackableEntities.EF.5</id>
-    	<version>$PackageVersion$</version>
+        <version>$PackageVersion$</version>
         <title>Trackable Entities for EF5</title>
         <authors>Tony Sneed</authors>
-        <owners />
-        <licenseUrl>http://trackable.codeplex.com/license</licenseUrl>
-        <projectUrl>http://trackable.codeplex.com</projectUrl>
-        <iconUrl>http://tonysneed.com/images/trackable/tracking-small.png</iconUrl>
+        <owners>Tony Sneed</owners>
+        <licenseUrl>https://github.com/tonysneed/trackable-entities/blob/master/License.txt</licenseUrl>
+        <projectUrl>http://tonysneed.github.io/trackable-entities</projectUrl>
+        <iconUrl>http://bit.ly/tracking-logo-small</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Provides an ApplyChanges extension method for DbContext that sets EntityState on trackable entities, so they can be saved in a single transaction as part of a batch update.</description>
         <language>en-US</language>
