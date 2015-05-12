@@ -1,16 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using TrackableEntities;
-using TrackableEntities.EF6;
 using TrackableEntities.Common;
-using WebApiSample.Shared.Entities.Data.Contexts;
-using WebApiSample.Shared.Entities.Portable.Models;
+using TrackableEntities.EF6;
+using WebApiSample.Service.Entities.Contexts;
+using WebApiSample.Service.Entities.Models;
 
 namespace WebApiSample.Service.WebApi.Controllers
 {
