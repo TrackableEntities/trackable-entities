@@ -354,27 +354,14 @@ namespace TrackableEntities.Client
 
         internal static IEnumerable<Type> BaseTypes(this Type type)
         {
-            for (Type t = type; t != null; t = t
-#if SILVERLIGHT || NET40
-                .BaseType
-#else
-                .GetTypeInfo().BaseType
-#endif
-                )
+            for (Type t = type; t != null; t = PortableReflectionHelper.Instance.GetBaseType(t))
                 yield return t;
         }
 
         private static PropertyInfo GetChangeTrackingProperty(Type entityType, string propertyName)
         {
             var property = entityType.BaseTypes()
-                .SelectMany(t => t
-#if SILVERLIGHT || NET40
-                    .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-#else
-                    .GetTypeInfo().DeclaredProperties
-                    .Where(p => !p.GetMethod.IsStatic && p.GetMethod.IsPrivate)
-#endif
-                    )
+                .SelectMany(t => PortableReflectionHelper.Instance.GetPrivateInstanceProperties(t))
                 .SingleOrDefault(p => p.Name == propertyName + Constants.ChangeTrackingMembers.ChangeTrackingPropEnd);
             return property;
         }

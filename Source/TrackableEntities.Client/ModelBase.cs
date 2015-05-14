@@ -134,15 +134,7 @@ namespace TrackableEntities.Client
                 Constants.EquatableMembers.EquatableMethodStart +
                 type.FullName +
                 Constants.EquatableMembers.EquatableMethodEnd;
-            var method = type
-#if SILVERLIGHT || NET40
-                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-                
-#else
-                .GetTypeInfo()
-                .DeclaredMethods
-                .Where(m => !m.IsStatic && m.IsPrivate)
-#endif
+            var method = PortableReflectionHelper.Instance.GetPrivateInstanceMethods(type)
                 .SingleOrDefault(m => m.Name == equatableMethod);
             return method;
         }
@@ -150,15 +142,7 @@ namespace TrackableEntities.Client
         private static PropertyInfo GetEntityIdentifierProperty(object obj)
         {
             var property = obj.GetType().BaseTypes()
-                .SelectMany(t => t
-#if SILVERLIGHT || NET40
-                    .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
-#else
-                    .GetTypeInfo()
-                    .DeclaredProperties
-                    .Where(p => !p.GetMethod.IsStatic && p.GetMethod.IsPrivate)
-#endif
-                    )
+                .SelectMany(t => PortableReflectionHelper.Instance.GetPrivateInstanceProperties(t))
                 .SingleOrDefault(p => p.Name == Constants.EquatableMembers.EntityIdentifierProperty);
             return property;
         }
