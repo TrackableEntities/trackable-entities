@@ -5,9 +5,9 @@
     	<version>2.5.0</version>
         <title>Trackable Entities Patterns for EF6</title>
         <authors>Tony Sneed</authors>
-        <owners />
-        <licenseUrl>http://trackable.codeplex.com/license</licenseUrl>
-        <projectUrl>http://trackable.codeplex.com</projectUrl>
+        <owners>Tony Sneed</owners>
+        <licenseUrl>https://github.com/tonysneed/trackable-entities/blob/master/License.txt</licenseUrl>
+        <projectUrl>http://tonysneed.github.io/trackable-entities</projectUrl>
         <iconUrl>http://tonysneed.com/images/trackable/tracking-small.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Provides a basic generic implementation of Repository and Unit of Work patterns.</description>
@@ -15,10 +15,10 @@
         <tags>change-tracking entity-framework repository unitofwork patterns</tags>
         <dependencies>
             <group targetFramework="net45">
-                <dependency id="EntityFramework" version="6.1.2" />
-                <dependency id="TrackableEntities.Common" version="2.5.0" />
-                <dependency id="TrackableEntities.EF.6" version="2.5.0" />
-                <dependency id="TrackableEntities.Patterns" version="2.5.0" />
+                <dependency id="EntityFramework" version="6.1.3" />
+                <dependency id="TrackableEntities.Common" version="2.5.2" />
+                <dependency id="TrackableEntities.EF.6" version="2.5.2" />
+                <dependency id="TrackableEntities.Patterns" version="2.5.2" />
             </group>
         </dependencies>
     </metadata>
