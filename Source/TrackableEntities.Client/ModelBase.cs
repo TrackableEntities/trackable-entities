@@ -134,27 +134,32 @@ namespace TrackableEntities.Client
                 Constants.EquatableMembers.EquatableMethodStart +
                 type.FullName +
                 Constants.EquatableMembers.EquatableMethodEnd;
+            var method = type
 #if SILVERLIGHT || NET40
-            var method = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-                .SingleOrDefault(m => m.Name == equatableMethod);
+                .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
+                
 #else
-            var method = type.GetTypeInfo().DeclaredMethods
-                .SingleOrDefault(m => !m.IsStatic && m.IsPrivate && m.Name == equatableMethod);
+                .GetTypeInfo()
+                .DeclaredMethods
+                .Where(m => !m.IsStatic && m.IsPrivate)
 #endif
+                .SingleOrDefault(m => m.Name == equatableMethod);
             return method;
         }
 
         private static PropertyInfo GetEntityIdentifierProperty(object obj)
         {
             var property = obj.GetType().BaseTypes()
+                .SelectMany(t => t
 #if SILVERLIGHT || NET40
-                .SelectMany(t => t.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic))
-                .SingleOrDefault(m => m.Name == Constants.EquatableMembers.EntityIdentifierProperty);
+                    .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic)
 #else
-                .SelectMany(t => t.GetTypeInfo().DeclaredProperties)
-                .SingleOrDefault(p => !p.GetMethod.IsStatic && p.GetMethod.IsPrivate &&
-                    p.Name == Constants.EquatableMembers.EntityIdentifierProperty);
+                    .GetTypeInfo()
+                    .DeclaredProperties
+                    .Where(p => !p.GetMethod.IsStatic && p.GetMethod.IsPrivate)
 #endif
+                    )
+                .SingleOrDefault(p => p.Name == Constants.EquatableMembers.EntityIdentifierProperty);
             return property;
         }
 
