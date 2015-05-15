@@ -1,7 +1,7 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="ProjectGroup">
   <TemplateData>
     <Name>Trackable Entities Class Library</Name>
-    <Description>Class library with templates for reverse engineering trackable entitites. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
+    <Description>Class library with templates for reverse engineering trackable entitites.</Description>
     <ProjectType>CSharp</ProjectType>
     <TemplateGroupID>Trackable</TemplateGroupID>
     <SortOrder>1000</SortOrder>
