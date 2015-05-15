@@ -31,7 +31,7 @@ namespace <#= Namespace #>
     using System.Data.Entity.Spatial;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-	using TrackableEntities;
+	using TrackableEntities.Client;
 
 <#
     var typeConfigurations = edm.GetConfigurations(EntitySet, Model).OfType<IAttributeConfiguration>();
@@ -43,7 +43,7 @@ namespace <#= Namespace #>
 <#
     }
 #>
-    public partial class <#= code.Type(entityType) #> : ITrackable, IMergeable
+    public partial class <#= code.Type(entityType) #> : EntityBase
     {
 <#
     var collectionProperties = from p in entityType.NavigationProperties
@@ -59,7 +59,7 @@ namespace <#= Namespace #>
     foreach (var collectionProperty in collectionProperties)
     {
 #>
-            <#= code.Property(collectionProperty) #> = new List<<#= code.Type(collectionProperty.ToEndMember.GetEntityType()) #>>();
+            <#= code.Property(collectionProperty) #> = new ChangeTrackingCollection<<#= code.Type(collectionProperty.ToEndMember.GetEntityType()) #>>();
 <#
     }
 #>
@@ -90,11 +90,21 @@ namespace <#= Namespace #>
 <#
         }
 #>
-        public <#= code.Type(property) #> <#= code.Property(property) #> { get; set; }
+		public <#= code.Type(property) #> <#= code.Property(property) #>
+		{ 
+			get { return _<#= code.Property(property) #>; }
+			set
+			{
+				if (Equals(value, _<#= code.Property(property) #>)) return;
+				_<#= code.Property(property) #> = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private <#= code.Type(property) #> _<#= code.Property(property) #>;
 <#
     }
 
-    foreach (var navigationProperty in entityType.NavigationProperties)
+    foreach (var navProperty in entityType.NavigationProperties)
     {
         if (!first)
         {
@@ -105,19 +115,43 @@ namespace <#= Namespace #>
             first = false;
         }
 
+        if (navProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
+        {
 #>
-        public <#= code.Type(navigationProperty) #> <#= code.Property(navigationProperty) #> { get; set; }
+		public ChangeTrackingCollection<<#= code.Type(navProperty.ToEndMember.GetEntityType()) #>> <#= code.Property(navProperty) #>
+		{
+			get { return _<#= code.Property(navProperty) #>; }
+			set
+			{
+				if (Equals(value, _<#= code.Property(navProperty) #>)) return;
+				_<#= code.Property(navProperty) #> = value;
+				NotifyPropertyChanged();
+			}
+		}
+		private ChangeTrackingCollection<<#= code.Type(navProperty.ToEndMember.GetEntityType()) #>> _<#= code.Property(navProperty) #>;
 <#
+        }
+		else
+		{
+#>
+
+		public <#= code.Type(navProperty.ToEndMember.GetEntityType()) #> <#= code.Property(navProperty) #>
+		{
+			get { return _<#= code.Property(navProperty) #>; }
+			set
+			{
+				if (Equals(value, _<#= code.Property(navProperty) #>)) return;
+				_<#= code.Property(navProperty) #> = value;
+				<#= code.Property(navProperty) #>ChangeTracker = _<#= code.Property(navProperty) #> == null ? null
+					: new ChangeTrackingCollection<<#= code.Type(navProperty.ToEndMember.GetEntityType()) #>> { _<#= code.Property(navProperty) #> };
+				NotifyPropertyChanged();
+			}
+		}
+		private <#= code.Type(navProperty.ToEndMember.GetEntityType()) #> _<#= code.Property(navProperty) #>;
+		private ChangeTrackingCollection<<#= code.Type(navProperty.ToEndMember.GetEntityType()) #>> <#= code.Property(navProperty) #>ChangeTracker { get; set; }
+<#
+        }
     }
 #>
-
-		[NotMapped]
-        public TrackingState TrackingState { get; set; }
-
-		[NotMapped]
-        public ICollection<string> ModifiedProperties { get; set; }
-
-		[NotMapped]
-        public Guid EntityIdentifier { get; set; }
     }
 }

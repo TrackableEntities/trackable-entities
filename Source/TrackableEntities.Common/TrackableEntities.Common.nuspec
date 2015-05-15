@@ -2,13 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>TrackableEntities.Common</id>
-    	<version>$PackageVersion$</version>
+        <version>$PackageVersion$</version>
         <title>Trackable Entities Common</title>
         <authors>Tony Sneed</authors>
         <owners>Tony Sneed</owners>
-        <licenseUrl>http://trackable.codeplex.com/license</licenseUrl>
-        <projectUrl>http://trackable.codeplex.com</projectUrl>
-        <iconUrl>http://tonysneed.com/images/trackable/tracking-small.png</iconUrl>
+        <licenseUrl>https://github.com/tonysneed/trackable-entities/blob/master/License.txt</licenseUrl>
+        <projectUrl>http://tonysneed.github.io/trackable-entities</projectUrl>
+        <iconUrl>http://bit.ly/tracking-logo-small</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Assembly containing ITrackable interface and TrackingState enum.</description>
         <language>en-US</language>

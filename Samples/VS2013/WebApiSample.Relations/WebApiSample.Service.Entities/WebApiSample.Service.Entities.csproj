@@ -32,13 +32,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -53,12 +53,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TrackableEntities.Common, Version=2.5.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\TrackableEntities.Common.2.5.0\lib\portable-net40+sl50+win+wpa81+wp80\TrackableEntities.Common.dll</HintPath>
+    <Reference Include="TrackableEntities.Common">
+      <HintPath>..\packages\TrackableEntities.Common.2.5.2.1\lib\portable-net40+sl50+win+wpa81+wp80\TrackableEntities.Common.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="TrackableEntities.EF.6">
-      <HintPath>..\packages\TrackableEntities.EF.6.2.5.0\lib\net45\TrackableEntities.EF.6.dll</HintPath>
+      <HintPath>..\packages\TrackableEntities.EF.6.2.5.2\lib\net45\TrackableEntities.EF.6.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

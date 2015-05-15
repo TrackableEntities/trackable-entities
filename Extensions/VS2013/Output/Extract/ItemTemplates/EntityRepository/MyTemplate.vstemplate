@@ -2,7 +2,7 @@
   <TemplateData>
     <DefaultName>EntityRepository.cs</DefaultName>
     <Name>Entity Repository Class (Patterns)</Name>
-    <Description>Entity Repository Class for Patterns EF project. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
+    <Description>Entity Repository Class for Patterns EF project.</Description>
     <ProjectType>CSharp</ProjectType>
     <SortOrder>10</SortOrder>
     <Icon>__TemplateIcon.png</Icon>

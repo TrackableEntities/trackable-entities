@@ -19,28 +19,35 @@ namespace TrackableEntities.Client
         /// <param name="item">Trackable object</param>
         /// <param name="enableTracking">Enable or disable change-tracking</param>
         /// <param name="visitationHelper">Circular reference checking helper</param>
-        public static void SetTracking(this ITrackable item,
-            bool enableTracking, ObjectVisitationHelper visitationHelper = null)
+        /// <param name="oneToManyOnly">True if tracking should be set only for OneToMany relations</param>
+        public static void SetTracking(this ITrackable item, bool enableTracking, 
+            ObjectVisitationHelper visitationHelper = null, bool oneToManyOnly = false)
         {
             // Iterator entity properties
             foreach (var navProp in item.GetNavigationProperties())
             {
-                // Set tracking on 1-1 and M-1 properties
-                foreach (var refProp in navProp.AsReferenceProperty())
+                // Skip if 1-M only
+                if (!oneToManyOnly)
                 {
-                    // Get ref prop change tracker
-                    ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
-                    if (refChangeTracker != null)
+                    // Set tracking on 1-1 and M-1 properties
+                    foreach (var refProp in navProp.AsReferenceProperty())
                     {
-                        // Set tracking on ref prop change tracker
-                        refChangeTracker.SetTracking(enableTracking, visitationHelper);
-                    }
+                        // Get ref prop change tracker
+                        ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
+                        if (refChangeTracker != null)
+                        {
+                            // Set tracking on ref prop change tracker
+                            refChangeTracker.SetTracking(enableTracking, visitationHelper, oneToManyOnly);
+                        }
+                    } 
                 }
 
-                // Set tracking on 1-M and M-M properties
+                // Set tracking on 1-M and M-M properties (if not 1-M only)
                 foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
                 {
-                    colProp.EntityCollection.SetTracking(enableTracking, visitationHelper);
+                    bool isOneToMany = !IsManyToManyChildCollection(colProp.EntityCollection);
+                    if (!oneToManyOnly || isOneToMany)
+                        colProp.EntityCollection.SetTracking(enableTracking, visitationHelper, oneToManyOnly);
                 }
             }
         }

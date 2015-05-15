@@ -56,7 +56,7 @@ namespace <#= Namespace #>
     foreach (var entitySet in Model.ConceptualModel.Container.EntitySets)
     {
 #>
-        public DbSet<<#= code.Type(entitySet.ElementType) #>> <#= code.Property(entitySet) #> { get; set; }
+        public virtual DbSet<<#= code.Type(entitySet.ElementType) #>> <#= code.Property(entitySet) #> { get; set; }
 <#
     }
 #>

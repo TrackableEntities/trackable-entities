@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
 #if EF_6
@@ -1573,6 +1574,37 @@ namespace TrackableEntities.EF5.Tests
 			Assert.AreEqual(EntityState.Added, context.Entry(customer).State);
 			Assert.AreEqual(EntityState.Added, context.Entry(setting).State);
 		}
+
+        [Test]
+        public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Unchanged_Setting_Order_OrderDetail_As_Added()
+        {
+            // NOTE: Customer is added, Order and OrderDetail are added due to 1-M relation
+
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+
+            var customer = nw.Customers[0];
+            customer.TrackingState = TrackingState.Added;
+
+            var customerSetting = new CustomerSetting() { CustomerId = customer.CustomerId, Setting = "Setting1" };
+            customer.CustomerSetting = customerSetting;
+
+            var order = new Order() { OrderDate = DateTime.Now };
+            customer.Orders = new List<Order>() { order };
+
+            var orderDetail = new OrderDetail() { ProductId = nw.Products[0].ProductId, Quantity = 1, UnitPrice = 1 };
+            order.OrderDetails = new List<OrderDetail>() { orderDetail };
+
+            // Act
+            context.ApplyChanges(customer);
+
+            // Assert
+            Assert.AreEqual(EntityState.Added, context.Entry(customer).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(customerSetting).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(order).State);
+            Assert.AreEqual(EntityState.Added, context.Entry(orderDetail).State);
+        }
 
 		[Test]
 		public void Apply_Changes_Should_Mark_Added_Customer_As_Modified_And_Deleted_Setting_As_Deleted()
