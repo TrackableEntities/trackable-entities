@@ -25,7 +25,7 @@ The [Installation Guide](1-installation.html) will show you how to install the p
 The [Getting Started Guide](2-gettingstarted.html) will help you quickly get up to speed building N-Tier applications using the Visual Studio project and item templates installed with the **Visual Studio extension** for Trackable Entities.  Here you'll find guides for using the templates for ASP.NET Web API, Repository and Unit of Work patterns, and Windows Communication Foundation.  And don't forget to watch the [How-To Videos](3-howtovideos.html), where Tony will show you how to harness the power of Trackable Entities for building great N-Tier apps in a fraction of the time.
 
 ## Samples
-To further explore what Trackable Entities can do, simply download the project [Samples](3-samples.html).  There you'll find the following Visual Studio solutions:
+To further explore what Trackable Entities can do, simply download the project [Samples](4-samples.html).  There you'll find the following Visual Studio solutions:
 
     1. ASP.NET Web API
     2. Repository and Unit of Work Patterns

@@ -1,6 +1,7 @@
 ---
 layout: default
-title: News and Updates
+title: Donate
+home: true
 ---
 
 ### ASP.NET Web API

@@ -1,6 +1,7 @@
 ---
 layout: default
-title: Debugging and Getting Latest
+title: News and Updates
+home: true
 ---
 
 ### ASP.NET Web API
