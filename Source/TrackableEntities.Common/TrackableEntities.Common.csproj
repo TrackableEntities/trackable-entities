@@ -72,7 +72,6 @@
       <Link>Properties\AssemblyVersion.cs</Link>
     </Compile>
     <Compile Include="EntityNavigationProperty.cs" />
-    <Compile Include="IMergeable.cs" />
     <Compile Include="INavigationPropertyInspector.cs" />
     <Compile Include="ITrackable.cs" />
     <Compile Include="ObjectReferenceEqualityComparer.cs" />
