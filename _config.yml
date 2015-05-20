@@ -1,5 +1,12 @@
 name: Trackable Entities
+
 markdown: redcarpet
+
+redcarpet:
+    extensions: [with_toc_data]
+
 highlighter: pygments
+
 encoding: UTF-8
+
 baseurl: /trackable-entities
