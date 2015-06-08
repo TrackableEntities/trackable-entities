@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 #if EF_6
 using TrackableEntities.EF6;
 #else
@@ -19,12 +19,11 @@ namespace TrackableEntities.EF6.Tests
 namespace TrackableEntities.EF5.Tests
 #endif
 {
-    [TestFixture]
     public class FamilyDbContextTests
     {
         const CreateDbOptions CreateFamilyDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Added_Parent()
         {
             // Arrange
@@ -36,10 +35,10 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(parent);
 
             // Assert
-            Assert.AreEqual(EntityState.Added, context.Entry(parent).State);
+            Assert.Equal(EntityState.Added, context.Entry(parent).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Modified_Parent()
         {
             // Arrange
@@ -51,10 +50,10 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(parent);
 
             // Assert
-            Assert.AreEqual(EntityState.Modified, context.Entry(parent).State);
+            Assert.Equal(EntityState.Modified, context.Entry(parent).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Modified_Parent_Properties()
         {
             // Arrange
@@ -68,11 +67,11 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(parent);
 
             // Assert
-            Assert.AreEqual(EntityState.Modified, context.Entry(parent).State);
-            Assert.IsTrue(context.Entry(parent).Property("Name").IsModified);
+            Assert.Equal(EntityState.Modified, context.Entry(parent).State);
+            Assert.True(context.Entry(parent).Property("Name").IsModified);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Deleted_Parent()
         {
             // Arrange
@@ -84,10 +83,10 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(parent);
 
             // Assert
-            Assert.AreEqual(EntityState.Deleted, context.Entry(parent).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(parent).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Added_Parent_With_Children()
         {
             // Arrange
@@ -110,13 +109,13 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(parent);
 
             // Assert
-            Assert.AreEqual(EntityState.Added, context.Entry(parent).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(parent.Children[0]).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(parent.Children[1]).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(parent.Children[2]).State);
+            Assert.Equal(EntityState.Added, context.Entry(parent).State);
+            Assert.Equal(EntityState.Added, context.Entry(parent.Children[0]).State);
+            Assert.Equal(EntityState.Added, context.Entry(parent.Children[1]).State);
+            Assert.Equal(EntityState.Added, context.Entry(parent.Children[2]).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Family_Unchanged()
         {
             // Arrange
@@ -128,10 +127,10 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             IEnumerable<EntityState> states = context.GetEntityStates(parent, EntityState.Unchanged);
-            Assert.AreEqual(40, states.Count());
+            Assert.Equal(40, states.Count());
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Family_Added()
         {
             // Arrange
@@ -145,10 +144,10 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             IEnumerable<EntityState> states = context.GetEntityStates(parent, EntityState.Added);
-            Assert.AreEqual(40, states.Count());
+            Assert.Equal(40, states.Count());
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Family_Modified()
         {
             // Arrange
@@ -162,10 +161,10 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             IEnumerable<EntityState> states = context.GetEntityStates(parent, EntityState.Modified);
-            Assert.AreEqual(40, states.Count());
+            Assert.Equal(40, states.Count());
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Parent_With_Added_Modified_Deleted_Children()
         {
             // Arrange
@@ -185,10 +184,10 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(parent);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(parent).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(child1).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(child2).State);
-            Assert.AreEqual(EntityState.Deleted, context.Entry(child3).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(parent).State);
+            Assert.Equal(EntityState.Added, context.Entry(child1).State);
+            Assert.Equal(EntityState.Modified, context.Entry(child2).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(child3).State);
         }
     }
 }

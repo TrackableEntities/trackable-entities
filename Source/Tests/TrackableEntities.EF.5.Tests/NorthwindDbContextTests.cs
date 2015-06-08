@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 #if EF_6
 using TrackableEntities.EF6;
 #else
@@ -20,14 +20,13 @@ namespace TrackableEntities.EF6.Tests
 namespace TrackableEntities.EF5.Tests
 #endif
 {
-	[TestFixture]
 	public class NorthwindDbContextTests
 	{
 		const CreateDbOptions CreateNorthwindDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
 
 		#region Product: Single Entity
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Product_Unchanged()
 		{
 			// Arrange
@@ -39,10 +38,10 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(parent);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(parent).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(parent).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Product_Added()
 		{
 			// Arrange
@@ -54,10 +53,10 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(parent);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(parent).State);
+			Assert.Equal(EntityState.Added, context.Entry(parent).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Product_Modified()
 		{
 			// Arrange
@@ -69,10 +68,10 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(parent);
 
 			// Assert
-			Assert.AreEqual(EntityState.Modified, context.Entry(parent).State);
+			Assert.Equal(EntityState.Modified, context.Entry(parent).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Product_Deleted()
 		{
 			// Arrange
@@ -84,14 +83,14 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(parent);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(parent).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(parent).State);
 		}
 
 		#endregion
 
 		#region Product: Multiple Entities
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Products_Unchanged()
 		{
 			// Arrange
@@ -107,11 +106,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(products);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(products[0]).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(products[1]).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(products[0]).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(products[1]).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Products_Added()
 		{
 			// Arrange
@@ -127,11 +126,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(products);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(products[0]).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(products[1]).State);
+			Assert.Equal(EntityState.Added, context.Entry(products[0]).State);
+			Assert.Equal(EntityState.Added, context.Entry(products[1]).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Products_Modified()
 		{
 			// Arrange
@@ -147,11 +146,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(products);
 
 			// Assert
-			Assert.AreEqual(EntityState.Modified, context.Entry(products[0]).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(products[1]).State);
+			Assert.Equal(EntityState.Modified, context.Entry(products[0]).State);
+			Assert.Equal(EntityState.Modified, context.Entry(products[1]).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Products_Deleted()
 		{
 			// Arrange
@@ -167,11 +166,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(products);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(products[0]).State);
-			Assert.AreEqual(EntityState.Deleted, context.Entry(products[1]).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(products[0]).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(products[1]).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Products()
 		{
 			// Arrange
@@ -191,17 +190,17 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(products);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(products[0]).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(products[1]).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(products[2]).State);
-			Assert.AreEqual(EntityState.Deleted, context.Entry(products[3]).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(products[0]).State);
+			Assert.Equal(EntityState.Modified, context.Entry(products[1]).State);
+			Assert.Equal(EntityState.Added, context.Entry(products[2]).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(products[3]).State);
 		}
 
 		#endregion
 
 		#region Order: One to Many
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Order_Unchanged()
 		{
 			// Arrange
@@ -216,14 +215,14 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(detail1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(detail2).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(detail3).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(detail4).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(detail1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(detail2).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(detail3).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(detail4).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Order_Added()
 		{
 			// Arrange
@@ -239,14 +238,14 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(detail1).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(detail2).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(detail3).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(detail4).State);
+			Assert.Equal(EntityState.Added, context.Entry(order).State);
+			Assert.Equal(EntityState.Added, context.Entry(detail1).State);
+			Assert.Equal(EntityState.Added, context.Entry(detail2).State);
+			Assert.Equal(EntityState.Added, context.Entry(detail3).State);
+			Assert.Equal(EntityState.Added, context.Entry(detail4).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Order_Deleted()
 		{
 			// Arrange
@@ -264,14 +263,14 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Deleted, context.Entry(detail1).State);
-			Assert.AreEqual(EntityState.Deleted, context.Entry(detail2).State);
-			Assert.AreEqual(EntityState.Deleted, context.Entry(detail3).State);
-			Assert.AreEqual(EntityState.Deleted, context.Entry(detail4).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(order).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(detail1).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(detail2).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(detail3).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(detail4).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Order_Only_Modified()
 		{
 			// Arrange
@@ -287,14 +286,14 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(detail1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(detail2).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(detail3).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(detail4).State);
+			Assert.Equal(EntityState.Modified, context.Entry(order).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(detail1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(detail2).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(detail3).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(detail4).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Order_Details_Only_Modified()
 		{
 			// Arrange
@@ -313,14 +312,14 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(detail1).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(detail2).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(detail3).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(detail4).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+			Assert.Equal(EntityState.Modified, context.Entry(detail1).State);
+			Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
+			Assert.Equal(EntityState.Modified, context.Entry(detail3).State);
+			Assert.Equal(EntityState.Modified, context.Entry(detail4).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Order_With_Details_Modified()
 		{
 			// Arrange
@@ -340,14 +339,14 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(detail1).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(detail2).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(detail3).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(detail4).State);
+			Assert.Equal(EntityState.Modified, context.Entry(order).State);
+			Assert.Equal(EntityState.Modified, context.Entry(detail1).State);
+			Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
+			Assert.Equal(EntityState.Modified, context.Entry(detail3).State);
+			Assert.Equal(EntityState.Modified, context.Entry(detail4).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Order_Unchanged_With_OrderDetails_Added_Modified_Deleted_Unchanged()
 		{
 			// Arrange
@@ -367,14 +366,14 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(detail1).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(detail2).State);
-			Assert.AreEqual(EntityState.Deleted, context.Entry(detail3).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(detail4).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+			Assert.Equal(EntityState.Added, context.Entry(detail1).State);
+			Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(detail3).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(detail4).State);
 		}
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Order_Modified_With_OrderDetails_Added_Modified_Deleted_Unchanged()
         {
             // Arrange
@@ -395,15 +394,15 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(detail1).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(detail2).State);
-            Assert.AreEqual(EntityState.Deleted, context.Entry(detail3).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail4).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(detail1.Product).State);
+            Assert.Equal(EntityState.Modified, context.Entry(order).State);
+            Assert.Equal(EntityState.Added, context.Entry(detail1).State);
+            Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(detail3).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(detail4).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(detail1.Product).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Product_Of_Added_OrderDetail_Of_Added_Order_As_Unchanged()
         {
             // Arrange
@@ -418,12 +417,12 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Added, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(orderDetail).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(product).State);
+            Assert.Equal(EntityState.Added, context.Entry(order).State);
+            Assert.Equal(EntityState.Added, context.Entry(orderDetail).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(product).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Order_With_Multiple_OrderDetails_Added()
         {
             // Arrange
@@ -440,12 +439,12 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(detail1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(detail2).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+            Assert.Equal(EntityState.Added, context.Entry(detail1).State);
+            Assert.Equal(EntityState.Added, context.Entry(detail2).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Modified_Order_With_Multiple_OrderDetails_Added()
         {
             // Arrange
@@ -464,16 +463,16 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(detail1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(detail2).State);
+            Assert.Equal(EntityState.Modified, context.Entry(order).State);
+            Assert.Equal(EntityState.Added, context.Entry(detail1).State);
+            Assert.Equal(EntityState.Added, context.Entry(detail2).State);
         }
 
         #endregion
 
         #region Order: Many to One to Many
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Addresses_Multiple_Added()
         {
             // Arrange
@@ -503,13 +502,13 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Addresses_Mutliple_Added_And_Modified()
         {
             // Arrange
@@ -546,14 +545,14 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(address3).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Modified, context.Entry(address3).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Addresses_Multiple_Added_And_Deleted()
         {
             // Arrange
@@ -590,14 +589,14 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
-            Assert.AreEqual(EntityState.Deleted, context.Entry(address3).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(address3).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Order_Unchanged_Customer_With_Addresses_Multiple_Added_And_Unchanged()
         {
             // Arrange
@@ -634,14 +633,14 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(address3).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(address3).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Order_Modified_Customer_With_Addresses_Multiple_Added()
         {
             // Arrange
@@ -671,13 +670,13 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+            Assert.Equal(EntityState.Modified, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Order_Modified_Customer_With_Addresses_Mutliple_Added_And_Modified()
         {
             // Arrange
@@ -715,14 +714,14 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(address3).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+            Assert.Equal(EntityState.Modified, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Modified, context.Entry(address3).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Order_Modified_Customer_With_Addresses_Multiple_Added_And_Deleted()
         {
             // Arrange
@@ -760,14 +759,14 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
-            Assert.AreEqual(EntityState.Deleted, context.Entry(address3).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+            Assert.Equal(EntityState.Modified, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(address3).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Order_Modified_Customer_With_Addresses_Multiple_Added_And_Unchanged()
         {
             // Arrange
@@ -805,11 +804,11 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(address3).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+            Assert.Equal(EntityState.Modified, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(address3).State);
         }
 
         [Test, ExpectedException(typeof(InvalidOperationException), 
@@ -844,7 +843,7 @@ namespace TrackableEntities.EF5.Tests
             Assert.Fail("ApplyChanges didn't throw");
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Modified_Order_Unchanged_Customer_With_Addresses_Multiple_Added()
         {
             // Arrange
@@ -874,13 +873,13 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Modified, context.Entry(order).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Modified_Order_Unchanged_Customer_With_Addresses_Mutliple_Added_And_Modified()
         {
             // Arrange
@@ -918,14 +917,14 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(address3).State);
+            Assert.Equal(EntityState.Modified, context.Entry(order).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Modified, context.Entry(address3).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Modified_Order_Unchanged_Customer_With_Addresses_Multiple_Added_And_Deleted()
         {
             // Arrange
@@ -963,14 +962,14 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
-            Assert.AreEqual(EntityState.Deleted, context.Entry(address3).State);
+            Assert.Equal(EntityState.Modified, context.Entry(order).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(address3).State);
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Modified_Order_Unchanged_Customer_With_Addresses_Multiple_Added_And_Unchanged()
         {
             // Arrange
@@ -1008,17 +1007,17 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Modified, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(address3).State);
+            Assert.Equal(EntityState.Modified, context.Entry(order).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(order.Customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(address1).State);
+            Assert.Equal(EntityState.Added, context.Entry(address2).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(address3).State);
         }
         #endregion
 
         #region Employee-Territory: Many to Many
 
-        [Test]
+        [Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Unchanged_Territories_As_Unchanged()
 		{
 			// Arrange
@@ -1033,13 +1032,13 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Modified_Territories_As_Modified()
 		{
 			// Arrange
@@ -1055,13 +1054,13 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(territory3).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Modified, context.Entry(territory3).State);
 		}
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Added_Territories_Without_Employee_As_Unchanged()
         {
             // Arrange
@@ -1079,12 +1078,12 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(employee);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-            Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory1));
+            Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.True(context.RelatedItemHasBeenAdded(employee, territory1));
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Deleted_Territories_Without_Employee_As_Unchanged()
         {
             // Arrange
@@ -1101,12 +1100,12 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(employee);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-            Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory1));
+            Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.True(context.RelatedItemHasBeenRemoved(employee, territory1));
         }
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Unchanged_Territories_With_Modified_Area_As_Modified()
         {
             // Ensure that changes are applied across M-M relationships.
@@ -1131,14 +1130,14 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(employee);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
-            Assert.AreEqual(EntityState.Modified, context.Entry(area).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
+            Assert.Equal(EntityState.Modified, context.Entry(area).State);
         }
 
-        [Test]
+        [Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Added_Territories_As_Unchanged()
 		{
 			// NOTE: With M-M properties there is no way to tell if the related entity is new or should 
@@ -1160,15 +1159,15 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory4).State);
-			Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory4));
+			Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory4).State);
+			Assert.True(context.RelatedItemHasBeenAdded(employee, territory4));
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Employee_As_Unchanged_And_Deleted_Territories_As_Unchanged()
 		{
 			// NOTE: With M-M properties there is no way to tell if the related entity should be deleted
@@ -1188,15 +1187,15 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory3));
-			Assert.AreEqual(2, employee.Territories.Count);
+			Assert.Equal(EntityState.Unchanged, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory3));
+			Assert.Equal(2, employee.Territories.Count);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Unchanged_Territories_As_Unchanged()
 		{
 			// NOTE: Because parent is added, unchanged children will be added to M-M relation,
@@ -1215,16 +1214,16 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
-			Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory1));
-			Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory2));
-			Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory3));
+			Assert.Equal(EntityState.Added, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
+			Assert.True(context.RelatedItemHasBeenAdded(employee, territory1));
+			Assert.True(context.RelatedItemHasBeenAdded(employee, territory2));
+			Assert.True(context.RelatedItemHasBeenAdded(employee, territory3));
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Modified_Territories_As_Modified()
 		{
 			// NOTE: Modified children of an added parent will remain modified,
@@ -1244,16 +1243,16 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(territory3).State);
-			Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory1));
-			Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory2));
-			Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory3));
+			Assert.Equal(EntityState.Added, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Modified, context.Entry(territory3).State);
+			Assert.True(context.RelatedItemHasBeenAdded(employee, territory1));
+			Assert.True(context.RelatedItemHasBeenAdded(employee, territory2));
+			Assert.True(context.RelatedItemHasBeenAdded(employee, territory3));
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Added_Territories_As_Unchanged()
 		{
 			// NOTE: Because parent is added, added children will be marked as unchanged
@@ -1275,15 +1274,15 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory4).State);
-			Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory4));
+			Assert.Equal(EntityState.Added, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory4).State);
+			Assert.True(context.RelatedItemHasBeenAdded(employee, territory4));
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Deleted_Territories_As_Deleted()
 		{
 			// NOTE: If a deleted child is assocated with an added parent, 
@@ -1303,14 +1302,14 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
-			Assert.IsTrue(context.RelatedItemHasBeenAdded(employee, territory3));
+			Assert.Equal(EntityState.Added, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
+			Assert.True(context.RelatedItemHasBeenAdded(employee, territory3));
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Unchanged_Territories_As_Unchanged()
 		{
 			// NOTE: Because parent is deleted, unchanged children will be deleted from M-M relation,
@@ -1329,17 +1328,17 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory1));
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory2));
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory3));
-			Assert.AreEqual(0, employee.Territories.Count);
+			Assert.Equal(EntityState.Deleted, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory1));
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory2));
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory3));
+			Assert.Equal(0, employee.Territories.Count);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Modified_Territories_As_Modified()
 		{
 			// NOTE: Modified children of a deleted parent will remain modified,
@@ -1359,17 +1358,17 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(territory3).State);
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory1));
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory2));
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory3));
-			Assert.AreEqual(0, employee.Territories.Count);
+			Assert.Equal(EntityState.Deleted, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Modified, context.Entry(territory3).State);
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory1));
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory2));
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory3));
+			Assert.Equal(0, employee.Territories.Count);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Added_Territories_As_Unchanged()
 		{
 			// NOTE: Because parent is deleted, added children will be marked as unchanged
@@ -1391,19 +1390,19 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory4).State);
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory1));
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory2));
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory3));
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory4));
-			Assert.AreEqual(0, employee.Territories.Count);
+			Assert.Equal(EntityState.Deleted, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory4).State);
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory1));
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory2));
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory3));
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory4));
+			Assert.Equal(0, employee.Territories.Count);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Employee_As_Deleted_And_Deleted_Territories_As_Unchanged()
 		{
 			// NOTE: If a deleted child is assocated with a deleted parent, 
@@ -1423,21 +1422,21 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(employee);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(employee).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(territory3).State);
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory1));
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory2));
-			Assert.IsTrue(context.RelatedItemHasBeenRemoved(employee, territory3));
-			Assert.AreEqual(0, employee.Territories.Count);
+			Assert.Equal(EntityState.Deleted, context.Entry(employee).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory1));
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory2));
+			Assert.True(context.RelatedItemHasBeenRemoved(employee, territory3));
+			Assert.Equal(0, employee.Territories.Count);
 		}
 
 		#endregion
 
 		#region Customer-CustomerSetting: One to One
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Unchanged_Setting_As_Unchanged()
 		{
 			// Arrange
@@ -1451,11 +1450,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(setting).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(setting).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Modified_Setting_As_Modified()
 		{
 			// Arrange
@@ -1470,11 +1469,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(setting).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+			Assert.Equal(EntityState.Modified, context.Entry(setting).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Added_Setting_As_Added()
 		{
 			// Arrange
@@ -1489,11 +1488,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(setting).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+			Assert.Equal(EntityState.Added, context.Entry(setting).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Customer_As_Unchanged_And_Deleted_Setting_As_Deleted()
 		{
 			// Arrange
@@ -1508,12 +1507,12 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Deleted, context.Entry(setting).State);
-			Assert.IsNull(customer.CustomerSetting);
+			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
+			Assert.Null(customer.CustomerSetting);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Unchanged_Setting_As_Added()
 		{
 			// Arrange
@@ -1528,11 +1527,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(setting).State);
+			Assert.Equal(EntityState.Added, context.Entry(customer).State);
+			Assert.Equal(EntityState.Added, context.Entry(setting).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Modified_Setting_As_Added()
 		{
 			// NOTE: Because customer is added, modified setting will be added.
@@ -1549,11 +1548,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(setting).State);
+			Assert.Equal(EntityState.Added, context.Entry(customer).State);
+			Assert.Equal(EntityState.Added, context.Entry(setting).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Added_Setting_As_Added()
 		{
 			// Arrange
@@ -1568,11 +1567,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(setting).State);
+			Assert.Equal(EntityState.Added, context.Entry(customer).State);
+			Assert.Equal(EntityState.Added, context.Entry(setting).State);
 		}
 
-        [Test]
+        [Fact]
         public void Apply_Changes_Should_Mark_Added_Customer_As_Added_And_Unchanged_Setting_Order_OrderDetail_As_Added()
         {
             // NOTE: Customer is added, Order and OrderDetail are added due to 1-M relation
@@ -1597,13 +1596,13 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(customer);
 
             // Assert
-            Assert.AreEqual(EntityState.Added, context.Entry(customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(customerSetting).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(orderDetail).State);
+            Assert.Equal(EntityState.Added, context.Entry(customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(customerSetting).State);
+            Assert.Equal(EntityState.Added, context.Entry(order).State);
+            Assert.Equal(EntityState.Added, context.Entry(orderDetail).State);
         }
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Customer_As_Modified_And_Deleted_Setting_As_Deleted()
 		{
 			// NOTE: Because customer is added, removing setting is ignored
@@ -1620,12 +1619,12 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(setting).State);
-			Assert.IsNotNull(customer.CustomerSetting);
+			Assert.Equal(EntityState.Added, context.Entry(customer).State);
+			Assert.Equal(EntityState.Added, context.Entry(setting).State);
+			Assert.NotNull(customer.CustomerSetting);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Unchanged_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
@@ -1642,12 +1641,12 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Deleted, context.Entry(setting).State);
-			Assert.IsNull(customer.CustomerSetting);
+			Assert.Equal(EntityState.Deleted, context.Entry(customer).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
+			Assert.Null(customer.CustomerSetting);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
@@ -1664,12 +1663,12 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Deleted, context.Entry(setting).State);
-			Assert.IsNull(customer.CustomerSetting);
+			Assert.Equal(EntityState.Deleted, context.Entry(customer).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
+			Assert.Null(customer.CustomerSetting);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Deleted_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
@@ -1686,16 +1685,16 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(customer);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(customer).State);
-			Assert.AreEqual(EntityState.Deleted, context.Entry(setting).State);
-			Assert.IsNull(customer.CustomerSetting);
+			Assert.Equal(EntityState.Deleted, context.Entry(customer).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(setting).State);
+			Assert.Null(customer.CustomerSetting);
 		}
 
 		#endregion
 
 		#region Order-Customer: Many-to-One
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Unchanged_Customer_As_Unchanged()
 		{
 			// Arrange
@@ -1708,11 +1707,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(customer).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Modified_Customer_As_Modified()
 		{
 			// Arrange
@@ -1726,11 +1725,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(customer).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+			Assert.Equal(EntityState.Modified, context.Entry(customer).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Added_Customer_As_Added()
 		{
 			// Arrange
@@ -1744,11 +1743,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(customer).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+			Assert.Equal(EntityState.Added, context.Entry(customer).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Unchanged_Order_As_Unchanged_And_Deleted_Customer_As_Unchanged()
 		{
 			// NOTE: We ignore deletes of related M-1 entities to because it may be related
@@ -1765,11 +1764,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(customer).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Unchanged_Customer_As_Unchanged()
 		{
 			// Arrange
@@ -1783,11 +1782,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(customer).State);
+			Assert.Equal(EntityState.Added, context.Entry(order).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Modified_Customer_As_Modified()
 		{
 			// Arrange
@@ -1802,11 +1801,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(customer).State);
+			Assert.Equal(EntityState.Added, context.Entry(order).State);
+			Assert.Equal(EntityState.Modified, context.Entry(customer).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Added_Customer_As_Added()
 		{
 			// Arrange
@@ -1821,11 +1820,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(customer).State);
+			Assert.Equal(EntityState.Added, context.Entry(order).State);
+			Assert.Equal(EntityState.Added, context.Entry(customer).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Added_Order_As_Added_And_Deleted_Customer_As_Unchanged()
 		{
 			// NOTE: We ignore deletes of related M-1 entities to because it may be related
@@ -1843,11 +1842,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Added, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(customer).State);
+			Assert.Equal(EntityState.Added, context.Entry(order).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Unchanged_Customer_As_Unchanged()
 		{
 			// Arrange
@@ -1861,11 +1860,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(customer).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(order).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Modified_Customer_As_Modified()
 		{
 			// Arrange
@@ -1880,11 +1879,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Modified, context.Entry(customer).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(order).State);
+			Assert.Equal(EntityState.Modified, context.Entry(customer).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Added_Customer_As_Added()
 		{
 			// Arrange
@@ -1899,11 +1898,11 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Added, context.Entry(customer).State);
+			Assert.Equal(EntityState.Deleted, context.Entry(order).State);
+			Assert.Equal(EntityState.Added, context.Entry(customer).State);
 		}
 
-		[Test]
+		[Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Order_As_Deleted_And_Deleted_Customer_As_Unchanged()
 		{
 			// NOTE: We ignore deletes of related M-1 entities to because it may be related
@@ -1921,10 +1920,10 @@ namespace TrackableEntities.EF5.Tests
 			context.ApplyChanges(order);
 
 			// Assert
-			Assert.AreEqual(EntityState.Deleted, context.Entry(order).State);
-			Assert.AreEqual(EntityState.Unchanged, context.Entry(customer).State);
-			Assert.IsNull(order.Customer);
-			Assert.IsNull(order.CustomerId);
+			Assert.Equal(EntityState.Deleted, context.Entry(order).State);
+			Assert.Equal(EntityState.Unchanged, context.Entry(customer).State);
+			Assert.Null(order.Customer);
+			Assert.Null(order.CustomerId);
 		}
 
 		#endregion

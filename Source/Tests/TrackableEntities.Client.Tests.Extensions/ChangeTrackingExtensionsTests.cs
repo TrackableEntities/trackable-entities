@@ -2,22 +2,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 using TrackableEntities.Client.Tests.Entities.FamilyModels;
 using TrackableEntities.Client.Tests.Entities.Mocks;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
 using TrackableEntities.Common;
+using Xunit;
 
 namespace TrackableEntities.Client.Tests.Extensions
 {
-    [TestFixture]
     public class ChangeTrackingExtensionsTests
     {
         #region MergeChanges Tests
 
         #region MergeChanges: Single Entity
         
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_Properties_For_Modified_Order_With_Updated_Customer()
         {
             // Arrange
@@ -31,12 +30,12 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(updatedOrder);
 
             // Assert
-            Assert.AreEqual(updatedOrder.CustomerId, origOrder.CustomerId);
-            Assert.AreEqual(updatedOrder.Customer.CustomerId, origOrder.Customer.CustomerId);
-            Assert.AreEqual(updatedOrder.OrderDate, origOrder.OrderDate);
+            Assert.Equal(updatedOrder.CustomerId, origOrder.CustomerId);
+            Assert.Equal(updatedOrder.Customer.CustomerId, origOrder.Customer.CustomerId);
+            Assert.Equal(updatedOrder.OrderDate, origOrder.OrderDate);
         }
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_TrackingState_To_Unchanged_For_Modified_Order_With_Updated_Customer()
         {
             // Arrange
@@ -51,11 +50,11 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(updatedOrder);
 
             // Assert
-            Assert.AreEqual(TrackingState.Modified, origTrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, origOrder.TrackingState);
+            Assert.Equal(TrackingState.Modified, origTrackingState);
+            Assert.Equal(TrackingState.Unchanged, origOrder.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_ModifiedProperties_To_Null_For_Modified_Order_With_Updated_Customer()
         {
             // Arrange
@@ -70,11 +69,11 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(updatedOrder);
 
             // Assert
-            Assert.Contains("CustomerId", (ICollection)origModifiedProps);
-            Assert.IsNull(origOrder.ModifiedProperties);
+            Assert.Contains("CustomerId", origModifiedProps);
+            Assert.Null(origOrder.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_ChangeTracker_For_Modified_Order_With_Updated_Customer()
         {
             // Arrange
@@ -90,12 +89,12 @@ namespace TrackableEntities.Client.Tests.Extensions
             origOrder.Customer.CustomerName = "xxx";
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, origTrackingState);
-            Assert.AreEqual(TrackingState.Modified, origOrder.Customer.TrackingState);
-            Assert.Contains("CustomerName", (ICollection)origOrder.Customer.ModifiedProperties);
+            Assert.Equal(TrackingState.Unchanged, origTrackingState);
+            Assert.Equal(TrackingState.Modified, origOrder.Customer.TrackingState);
+            Assert.Contains("CustomerName", origOrder.Customer.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_Properties_For_Added_Order_With_Null_Customer()
         {
             // Arrange
@@ -113,11 +112,11 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(addedOrder);
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, origTrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, origOrder.TrackingState);
+            Assert.Equal(TrackingState.Added, origTrackingState);
+            Assert.Equal(TrackingState.Unchanged, origOrder.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_TrackingState_To_Unchanged_For_Added_Order_With_Null_Customer()
         {
             // Arrange
@@ -135,12 +134,12 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(addedOrder);
 
             // Assert
-            Assert.AreEqual(addedOrder.CustomerId, origOrder.CustomerId);
-            Assert.AreEqual(addedOrder.Customer.CustomerId, origOrder.Customer.CustomerId);
-            Assert.AreEqual(addedOrder.OrderDate, origOrder.OrderDate);
+            Assert.Equal(addedOrder.CustomerId, origOrder.CustomerId);
+            Assert.Equal(addedOrder.Customer.CustomerId, origOrder.Customer.CustomerId);
+            Assert.Equal(addedOrder.OrderDate, origOrder.OrderDate);
         }
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_ChangeTracker_For_Added_Order_With_Null_Customer()
         {
             // Arrange
@@ -159,16 +158,16 @@ namespace TrackableEntities.Client.Tests.Extensions
             origOrder.Customer.CustomerName = "xxx";
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, origTrackingState);
-            Assert.AreEqual(TrackingState.Modified, origOrder.Customer.TrackingState);
-            Assert.Contains("CustomerName", (ICollection)origOrder.Customer.ModifiedProperties);
+            Assert.Equal(TrackingState.Unchanged, origTrackingState);
+            Assert.Equal(TrackingState.Modified, origOrder.Customer.TrackingState);
+            Assert.Contains("CustomerName", origOrder.Customer.ModifiedProperties);
         }
 
         #endregion
 
         #region MergeChanges: Multiple Entities
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_Properties_For_Multiple_Modified_Orders_With_Updated_Customer()
         {
             // Arrange
@@ -184,19 +183,19 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(updatedOrders.ToArray());
 
             // Assert
-            Assert.AreEqual(updatedOrders[0].CustomerId, origOrder1.CustomerId);
-            Assert.AreEqual(updatedOrders[0].Customer.CustomerId, origOrder1.Customer.CustomerId);
-            Assert.AreEqual(updatedOrders[0].OrderDate, origOrder1.OrderDate);
-            Assert.AreEqual(updatedOrders[1].CustomerId, origOrder2.CustomerId);
-            Assert.AreEqual(updatedOrders[1].Customer.CustomerId, origOrder2.Customer.CustomerId);
-            Assert.AreEqual(updatedOrders[1].OrderDate, origOrder2.OrderDate);
+            Assert.Equal(updatedOrders[0].CustomerId, origOrder1.CustomerId);
+            Assert.Equal(updatedOrders[0].Customer.CustomerId, origOrder1.Customer.CustomerId);
+            Assert.Equal(updatedOrders[0].OrderDate, origOrder1.OrderDate);
+            Assert.Equal(updatedOrders[1].CustomerId, origOrder2.CustomerId);
+            Assert.Equal(updatedOrders[1].Customer.CustomerId, origOrder2.Customer.CustomerId);
+            Assert.Equal(updatedOrders[1].OrderDate, origOrder2.OrderDate);
         }
 
         #endregion
 
         #region MergeChanges: One-to-Many
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Merge_Updates_For_Unchanged_Order_With_Changed_OrderDetails()
         {
             // Arrange
@@ -224,23 +223,23 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Assert
             Assert.Contains(unchangedDetail, origOrder.OrderDetails); // Unchanged present
-            Assert.AreEqual("xxx", origOrder.OrderDetails[1].Product.ProductName); // Prod name updated
-            Assert.AreEqual(updatedOrder.OrderDetails[1].ProductId, origOrder.OrderDetails[2].Product.ProductId); // Changed Product set
-            Assert.AreEqual(newUnitPrice, origOrder.OrderDetails[2].UnitPrice); // Db-generated value set
-            Assert.AreEqual(updatedOrder.OrderDetails[2].Product.ProductId, origOrder.OrderDetails[3].Product.ProductId); // Added detail Product set
-            Assert.IsTrue(origOrder.OrderDetails.All(d => d.TrackingState == TrackingState.Unchanged)); // Details unchanged
-            Assert.AreSame(addedDetail, origOrder.OrderDetails.Single(d => d.ProductId == 51)); // Ref equality
-            Assert.AreSame(modifiedDetail, origOrder.OrderDetails.Single(d => d.ProductId == 42)); // Ref equality
-            Assert.That(origOrder.OrderDetails, Has.No.Member(deletedDetail)); // Detail deleted
+            Assert.Equal("xxx", origOrder.OrderDetails[1].Product.ProductName); // Prod name updated
+            Assert.Equal(updatedOrder.OrderDetails[1].ProductId, origOrder.OrderDetails[2].Product.ProductId); // Changed Product set
+            Assert.Equal(newUnitPrice, origOrder.OrderDetails[2].UnitPrice); // Db-generated value set
+            Assert.Equal(updatedOrder.OrderDetails[2].Product.ProductId, origOrder.OrderDetails[3].Product.ProductId); // Added detail Product set
+            Assert.True(origOrder.OrderDetails.All(d => d.TrackingState == TrackingState.Unchanged)); // Details unchanged
+            Assert.Same(addedDetail, origOrder.OrderDetails.Single(d => d.ProductId == 51)); // Ref equality
+            Assert.Same(modifiedDetail, origOrder.OrderDetails.Single(d => d.ProductId == 42)); // Ref equality
+            Assert.DoesNotContain(deletedDetail, origOrder.OrderDetails); // Detail deleted
             ICollection cachedDeletes = ((ITrackingCollection)origOrder.OrderDetails).GetChanges(true);
-            Assert.IsEmpty(cachedDeletes); // Cached deletes have been removed
+            Assert.Empty(cachedDeletes); // Cached deletes have been removed
         }
 
         #endregion
 
         #region MergeChanges: Many-to-One
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_Modified_Order_With_Unchanged_Customer()
         {
             // Arrange
@@ -258,14 +257,14 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(updatedOrder);
 
             // Assert
-            Assert.AreEqual(date, order.OrderDate); // Changed order date is preserved
-            Assert.IsNull(changedOrder.Customer); // GetChanges sets unchanges ref props to null
-            Assert.IsNotNull(order.Customer); // Unchanged order.Customer is not overwritten
-            Assert.AreEqual(TrackingState.Modified, origState); // Changed state is modified
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState); // State set to unchanged
+            Assert.Equal(date, order.OrderDate); // Changed order date is preserved
+            Assert.Null(changedOrder.Customer); // GetChanges sets unchanges ref props to null
+            Assert.NotNull(order.Customer); // Unchanged order.Customer is not overwritten
+            Assert.Equal(TrackingState.Modified, origState); // Changed state is modified
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState); // State set to unchanged
         }
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_Order_With_Modified_Customer_With_Db_Generated_Values()
         {
             // Arrange
@@ -283,15 +282,15 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(updatedOrder);
 
             // Assert
-            Assert.AreEqual(name, order.Customer.CustomerName);
-            Assert.AreEqual(data, order.Customer.Data);
+            Assert.Equal(name, order.Customer.CustomerName);
+            Assert.Equal(data, order.Customer.Data);
         }
 
         #endregion
 
         #region MergeChanges: One-to-One
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_Modified_Customer_With_Unchanged_Setting()
         {
             // Arrange
@@ -316,14 +315,14 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(updatedOrder);
 
             // Assert
-            Assert.AreEqual(name, customer.CustomerName); // Changed customer name is preserved
-            Assert.IsNull(changedCustomer.CustomerSetting); // GetChanges sets unchanges ref props to null
-            Assert.IsNotNull(order.Customer.CustomerSetting); // Unchanged ref props not overwritten
-            Assert.AreEqual(TrackingState.Modified, origState); // Changed state is modified
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState); // State set to unchanged
+            Assert.Equal(name, customer.CustomerName); // Changed customer name is preserved
+            Assert.Null(changedCustomer.CustomerSetting); // GetChanges sets unchanges ref props to null
+            Assert.NotNull(order.Customer.CustomerSetting); // Unchanged ref props not overwritten
+            Assert.Equal(TrackingState.Modified, origState); // Changed state is modified
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState); // State set to unchanged
         }
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_Unchanged_Customer_With_Modified_Setting()
         {
             // Arrange
@@ -348,16 +347,16 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(updatedOrder);
 
             // Assert
-            Assert.AreEqual(setting, customer.CustomerSetting.Setting); // Changed customer setting is preserved
-            Assert.AreEqual(TrackingState.Modified, origState); // Changed state is modified
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState); // State set to unchanged
+            Assert.Equal(setting, customer.CustomerSetting.Setting); // Changed customer setting is preserved
+            Assert.Equal(TrackingState.Modified, origState); // Changed state is modified
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState); // State set to unchanged
         }
         
         #endregion
 
         #region MergeChanges: Many-to-Many
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Set_Modified_Employee_With_Unchanged_Territories()
         {
             // Arrange
@@ -385,12 +384,12 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(updatedEmployee);
 
             // Assert
-            Assert.AreEqual(name, employee.LastName); // Changed prop is preserved
-            Assert.IsEmpty(changedTerritories); // GetChanges sets unchanges ref props to null
-            Assert.AreEqual(3, employee.Territories.Count); // Unchanged items preserved
+            Assert.Equal(name, employee.LastName); // Changed prop is preserved
+            Assert.Empty(changedTerritories); // GetChanges sets unchanges ref props to null
+            Assert.Equal(3, employee.Territories.Count); // Unchanged items preserved
         }
 
-        [Test]
+        [Fact]
         public void MergeChanges_Should_Merge_Updates_For_Unchanged_Employee_With_Changed_Territories()
         {
             // Arrange
@@ -437,23 +436,23 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Assert
             Assert.Contains(unchangedTerritory, employee.Territories); // Unchanged present
-            Assert.AreEqual("zzz", addedExistingTerritory.Area.AreaName); // Area name updated
-            Assert.AreEqual("yyy", addedNewTerritory.Data); // Db-generated value set
-            Assert.AreEqual(addedNewTerritory.AreaId, addedNewTerritory.Area.AreaId); // Added territory Area set
-            Assert.AreEqual(modifiedTerritory.AreaId, modifiedTerritory.Area.AreaId); // Modified territory Area set
-            Assert.AreSame(addedExistingTerritory, employee.Territories.Single(t => t.TerritoryId == "02116")); // Ref equality
-            Assert.AreSame(addedNewTerritory, employee.Territories.Single(t => t.TerritoryId == "91360")); // Ref equality
-            Assert.AreSame(modifiedTerritory, employee.Territories.Single(t => t.TerritoryId == "01730")); // Ref equality
-            Assert.That(employee.Territories, Has.No.Member(deletedTerritory)); // Detail deleted
+            Assert.Equal("zzz", addedExistingTerritory.Area.AreaName); // Area name updated
+            Assert.Equal("yyy", addedNewTerritory.Data); // Db-generated value set
+            Assert.Equal(addedNewTerritory.AreaId, addedNewTerritory.Area.AreaId); // Added territory Area set
+            Assert.Equal(modifiedTerritory.AreaId, modifiedTerritory.Area.AreaId); // Modified territory Area set
+            Assert.Same(addedExistingTerritory, employee.Territories.Single(t => t.TerritoryId == "02116")); // Ref equality
+            Assert.Same(addedNewTerritory, employee.Territories.Single(t => t.TerritoryId == "91360")); // Ref equality
+            Assert.Same(modifiedTerritory, employee.Territories.Single(t => t.TerritoryId == "01730")); // Ref equality
+            Assert.DoesNotContain(deletedTerritory, employee.Territories); // Detail deleted
             ICollection cachedDeletes = ((ITrackingCollection)employee.Territories).GetChanges(true);
-            Assert.IsEmpty(cachedDeletes); // Cached deletes have been removed
+            Assert.Empty(cachedDeletes); // Cached deletes have been removed
         }
 
         #endregion
 
         #region MergeChanges Exceptions
 
-        [Test]
+        [Fact]
         public void MergeChanges_On_Equatable_Customer_Should_Not_Throw_ArgumentException()
         {
             // Arrange
@@ -464,10 +463,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges();
 
             // Assert
-            Assert.Pass();
+            Assert.True(true);
         }
 
-        [Test]
+        [Fact]
         public void MergeChanges_On_Equatable_PromotionalProduct_Should_Not_Throw_ArgumentException()
         {
             // Arrange
@@ -479,7 +478,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.MergeChanges(clonedProduct);
 
             // Assert
-            Assert.Pass();
+            Assert.True(true);
         }
 
         #endregion
@@ -490,7 +489,7 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #region HasChanges: One-to-Many
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Parent_Should_Return_False()
         {
             // Arrange
@@ -501,10 +500,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsFalse(hasChanges);
+            Assert.False(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Modified_Parent_Should_Return_True()
         {
             // Arrange
@@ -516,10 +515,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Added_Parent_Should_Return_True()
         {
             // Arrange
@@ -531,10 +530,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Deleted_Parent_Should_Return_True()
         {
             // Arrange
@@ -546,10 +545,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Parent_With_Unchanged_Children_Should_Return_False()
         {
             // Arrange
@@ -567,10 +566,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsFalse(hasChanges);
+            Assert.False(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Parent_With_Modified_Child_Should_Return_True()
         {
             // Arrange
@@ -589,10 +588,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Parent_With_Added_Child_Should_Return_True()
         {
             // Arrange
@@ -611,10 +610,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Parent_With_Removed_Child_Should_Return_True()
         {
             // Arrange
@@ -633,10 +632,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Parent_With_Unchanged_Grandchildren_Should_Return_False()
         {
             // Arrange
@@ -661,10 +660,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsFalse(hasChanges);
+            Assert.False(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Parent_With_Modified_Grandchild_Should_Return_True()
         {
             // Arrange
@@ -690,10 +689,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Parent_With_Added_Grandchild_Should_Return_True()
         {
             // Arrange
@@ -719,10 +718,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Parent_With_Removed_Grandchild_Should_Return_True()
         {
             // Arrange
@@ -748,10 +747,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = parent.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_OrderDetail_With_Modified_Product_Should_Return_True()
         {
             // Arrange
@@ -764,10 +763,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_OrderDetail_With_Product_Set_To_Null_Should_Return_False()
         {
             // NOTE: Setting OrderDetail.Product to null is not considered a change,
@@ -783,10 +782,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsFalse(hasChanges);
+            Assert.False(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_OrderDetail_With_Product_Set_To_Unchanged_Product_Should_Return_False()
         {
             // NOTE: Setting null OrderDetail.Product to a product is not considered a change,
@@ -803,10 +802,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsFalse(hasChanges);
+            Assert.False(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_OrderDetail_Set_Product_To_Added_Product_Should_Return_True()
         {
             // Arrange
@@ -821,10 +820,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_OrderDetail_Set_Product_To_Deleted_Product_Should_Return_True()
         {
             // Arrange
@@ -839,14 +838,14 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
         #endregion
 
         #region HasChanges: Many-to-One
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_Customer_With_Unchanged_Territory_Should_Return_False()
         {
             // Arrange
@@ -862,10 +861,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsFalse(hasChanges);
+            Assert.False(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_Customer_With_Territory_Set_To_Null_Should_Return_False()
         {
             // Arrange
@@ -882,10 +881,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsFalse(hasChanges);
+            Assert.False(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_Customer_With_Territory_Set_To_Unchanged_Territory_Should_Return_False()
         {
             // Arrange
@@ -902,10 +901,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsFalse(hasChanges);
+            Assert.False(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_Customer_With_Modified_Territory_Should_Return_True()
         {
             // Arrange
@@ -922,10 +921,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_Customer_Territory_With_Modified_Employee_Should_Return_True()
         {
             // Arrange
@@ -942,10 +941,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_Customer_Territory_With_Added_Employee_Should_Return_True()
         {
             // Arrange
@@ -962,10 +961,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_Customer_Territory_With_Removed_Employee_Should_Return_True()
         {
             // Arrange
@@ -982,14 +981,14 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
         #endregion
 
         #region HasChanges: One-to-One
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_Customer_With_Unchanged_Setting_Should_Return_False()
         {
             // Arrange
@@ -1007,10 +1006,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsFalse(hasChanges);
+            Assert.False(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_Customer_With_Modified_Setting_Should_Return_True()
         {
             // Arrange
@@ -1029,10 +1028,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Order_Customer_With_Setting_Set_To_Null_Should_Return_False()
         {
             // NOTE: Setting ref prop to false will not result in updated entities.
@@ -1053,14 +1052,14 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = order.HasChanges();
 
             // Assert
-            Assert.IsFalse(hasChanges);
+            Assert.False(hasChanges);
         }
 
         #endregion
 
         #region HasChanges: Many-to-Many
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Employee_With_Unchanged_Territories_Should_Return_False()
         {
             // Arrange
@@ -1072,10 +1071,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = employee.HasChanges();
 
             // Assert
-            Assert.IsFalse(hasChanges);
+            Assert.False(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Employee_With_Modified_Territory_Should_Return_True()
         {
             // Arrange
@@ -1088,10 +1087,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = employee.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Employee_With_Added_Territory_Should_Return_True()
         {
             // Arrange
@@ -1104,10 +1103,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = employee.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
-        [Test]
+        [Fact]
         public void HasChanges_Unchanged_Employee_With_Removed_Territory_Should_Return_True()
         {
             // Arrange
@@ -1120,7 +1119,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool hasChanges = employee.HasChanges();
 
             // Assert
-            Assert.IsTrue(hasChanges);
+            Assert.True(hasChanges);
         }
 
         #endregion
@@ -1129,7 +1128,7 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #region Clone Tests
 
-        [Test]
+        [Fact]
         public void Clone_Of_ChangeTrackingCollection_Should_Create_Deep_Copy()
         {
             // Arrange
@@ -1144,14 +1143,14 @@ namespace TrackableEntities.Client.Tests.Extensions
             var clonedChangeTracker = changeTracker.Clone();
 
             // Assert
-            Assert.AreNotSame(order, clonedChangeTracker[0]);
-            Assert.AreNotSame(customer, clonedChangeTracker[0].Customer);
-            Assert.AreNotSame(details, clonedChangeTracker[0].OrderDetails);
-            Assert.IsTrue(order.IsEquatable(clonedChangeTracker[0]));
-            Assert.IsTrue(customer.IsEquatable(clonedChangeTracker[0].Customer));
-            Assert.IsTrue(object.ReferenceEquals(order.Customer, order3.Customer));
-            Assert.IsFalse(object.ReferenceEquals(order.Customer, clonedChangeTracker[0].Customer));
-            Assert.IsTrue(object.ReferenceEquals(clonedChangeTracker[0].Customer, clonedChangeTracker[1].Customer));
+            Assert.NotSame(order, clonedChangeTracker[0]);
+            Assert.NotSame(customer, clonedChangeTracker[0].Customer);
+            Assert.NotSame(details, clonedChangeTracker[0].OrderDetails);
+            Assert.True(order.IsEquatable(clonedChangeTracker[0]));
+            Assert.True(customer.IsEquatable(clonedChangeTracker[0].Customer));
+            Assert.True(object.ReferenceEquals(order.Customer, order3.Customer));
+            Assert.False(object.ReferenceEquals(order.Customer, clonedChangeTracker[0].Customer));
+            Assert.True(object.ReferenceEquals(clonedChangeTracker[0].Customer, clonedChangeTracker[1].Customer));
         }
 
         #endregion

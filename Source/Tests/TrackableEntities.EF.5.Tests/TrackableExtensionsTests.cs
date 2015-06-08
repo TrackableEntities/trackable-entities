@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using NUnit.Framework;
 using TrackableEntities.Common;
 using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.Mocks;
 using TrackableEntities.EF.Tests.NorthwindModels;
+using Xunit;
 
 #if EF_6
 namespace TrackableEntities.EF6.Tests
@@ -13,12 +13,11 @@ namespace TrackableEntities.EF6.Tests
 namespace TrackableEntities.EF5.Tests
 #endif
 {
-    [TestFixture]
     public class TrackableExtensionsTests
     {
         #region OneToMany AcceptChanges Tests
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Mark_Family_Unchanged()
         {
             // Arrange
@@ -45,10 +44,10 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             var states = parent.GetTrackingStates(TrackingState.Unchanged).ToList();
-            Assert.AreEqual(26, states.Count());
+            Assert.Equal(26, states.Count());
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Remove_ModifiedProperties_From_Family()
         {
             // Arrange
@@ -63,10 +62,10 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             IEnumerable<IEnumerable<string>> modifiedProps = parent.GetModifiedProperties();
-            Assert.IsFalse(modifiedProps.Any(p => p != null));
+            Assert.False(modifiedProps.Any(p => p != null));
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Remove_Family_Deleted()
         {
             // Arrange
@@ -92,11 +91,11 @@ namespace TrackableEntities.EF5.Tests
             parent.AcceptChanges();
 
             // Assert
-            Assert.AreEqual(2, parent.Children.Count);
-            Assert.AreEqual(2, parent.Children[0].Children[0].Children.Count);
+            Assert.Equal(2, parent.Children.Count);
+            Assert.Equal(2, parent.Children[0].Children[0].Children.Count);
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Mark_Multiple_Orders_As_Unchanged()
         {
             // Arrange
@@ -119,19 +118,19 @@ namespace TrackableEntities.EF5.Tests
             orders.AcceptChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order1.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, order1.Customer.TrackingState);
-            Assert.IsFalse(order1.OrderDetails.Any(d => d.TrackingState != TrackingState.Unchanged));
-            Assert.AreEqual(TrackingState.Unchanged, order2.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, order2.Customer.TrackingState);
-            Assert.IsFalse(order2.OrderDetails.Any(d => d.TrackingState != TrackingState.Unchanged));
+            Assert.Equal(TrackingState.Unchanged, order1.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order1.Customer.TrackingState);
+            Assert.False(order1.OrderDetails.Any(d => d.TrackingState != TrackingState.Unchanged));
+            Assert.Equal(TrackingState.Unchanged, order2.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order2.Customer.TrackingState);
+            Assert.False(order2.OrderDetails.Any(d => d.TrackingState != TrackingState.Unchanged));
         }
 
         #endregion
 
         #region ManyToMany AcceptChanges Tests
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Mark_Employee_With_Territories_Unchanged()
         {
             // Arrange
@@ -153,10 +152,10 @@ namespace TrackableEntities.EF5.Tests
             employee.AcceptChanges();
 
             // Assert
-            Assert.IsTrue(employee.GetTrackingStates().All(s => s == TrackingState.Unchanged));
+            Assert.True(employee.GetTrackingStates().All(s => s == TrackingState.Unchanged));
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Remove_ModifiedProperties_From_Employee_With_Territories()
         {
             // Arrange
@@ -171,10 +170,10 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             IEnumerable<IEnumerable<string>> modifiedProps = employee.GetModifiedProperties();
-            Assert.IsFalse(modifiedProps.Any(p => p != null));
+            Assert.False(modifiedProps.Any(p => p != null));
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Remove_Deleted_Territories_From_Employee()
         {
             // Arrange
@@ -196,14 +195,14 @@ namespace TrackableEntities.EF5.Tests
             employee.AcceptChanges();
 
             // Assert
-            Assert.AreEqual(3, employee.Territories.Count);
+            Assert.Equal(3, employee.Territories.Count);
         }
 
         #endregion
 
         #region ManyToOne AcceptChanges Tests
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Mark_Order_With_Modified_Customer_Unchanged()
         {
             // Arrange
@@ -216,11 +215,11 @@ namespace TrackableEntities.EF5.Tests
             order.AcceptChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.Customer.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Mark_Order_With_Added_Customer_Unchanged()
         {
             // Arrange
@@ -233,11 +232,11 @@ namespace TrackableEntities.EF5.Tests
             order.AcceptChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.Customer.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Mark_Order_With_Deleted_Customer_Unchanged()
         {
             // Arrange
@@ -250,11 +249,11 @@ namespace TrackableEntities.EF5.Tests
             order.AcceptChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.Customer.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Remove_ModifiedProperties_From_Order_With_Customer()
         {
             // Arrange
@@ -269,11 +268,11 @@ namespace TrackableEntities.EF5.Tests
             order.AcceptChanges();
 
             // Assert
-            Assert.IsFalse(order.GetModifiedProperties().Any(p => p != null));
-            Assert.IsFalse(order.Customer.GetModifiedProperties().Any(p => p != null));
+            Assert.False(order.GetModifiedProperties().Any(p => p != null));
+            Assert.False(order.Customer.GetModifiedProperties().Any(p => p != null));
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Not_Remove_Deleted_Customer_From_Order()
         {
             // NOTE: Reference entities cannot be deleted from a related entity, because
@@ -289,15 +288,15 @@ namespace TrackableEntities.EF5.Tests
             order.AcceptChanges();
 
             // Assert
-            Assert.IsNotNull(order.Customer);
-            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.NotNull(order.Customer);
+            Assert.Equal(TrackingState.Unchanged, order.Customer.TrackingState);
         }
 
         #endregion
 
         #region OneToOne AcceptChanges Tests
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Mark_Customer_With_Modified_CustomerSetting_Unchanged()
         {
             // Arrange
@@ -311,11 +310,11 @@ namespace TrackableEntities.EF5.Tests
             customer.AcceptChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Mark_Customer_With_Added_CustomerSetting_Unchanged()
         {
             // Arrange
@@ -329,11 +328,11 @@ namespace TrackableEntities.EF5.Tests
             customer.AcceptChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Mark_Customer_With_Deleted_CustomerSetting_Unchanged()
         {
             // Arrange
@@ -347,11 +346,11 @@ namespace TrackableEntities.EF5.Tests
             customer.AcceptChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Remove_ModifiedProperties_From_Customer_With_CustomerSetting()
         {
             // Arrange
@@ -367,11 +366,11 @@ namespace TrackableEntities.EF5.Tests
             customer.AcceptChanges();
 
             // Assert
-            Assert.IsFalse(customer.GetModifiedProperties().Any(p => p != null));
-            Assert.IsFalse(customer.CustomerSetting.GetModifiedProperties().Any(p => p != null));
+            Assert.False(customer.GetModifiedProperties().Any(p => p != null));
+            Assert.False(customer.CustomerSetting.GetModifiedProperties().Any(p => p != null));
         }
 
-        [Test]
+        [Fact]
         public void Accept_Changes_Should_Not_Remove_Deleted_CustomerSetting_From_Customer()
         {
             // NOTE: Reference entities cannot be deleted from a related entity, because
@@ -387,8 +386,8 @@ namespace TrackableEntities.EF5.Tests
             customer.AcceptChanges();
 
             // Assert
-            Assert.IsNotNull(customer.CustomerSetting);
-            Assert.AreEqual(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
+            Assert.NotNull(customer.CustomerSetting);
+            Assert.Equal(TrackingState.Unchanged, customer.CustomerSetting.TrackingState);
         }
 
         #endregion
