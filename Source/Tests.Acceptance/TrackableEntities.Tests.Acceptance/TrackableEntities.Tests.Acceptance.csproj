@@ -153,6 +153,7 @@
     <Compile Include="Helpers\EntityExtensions.cs" />
     <Compile Include="Helpers\TestsHelper.cs" />
     <Compile Include="Helpers\HttpClientExtensions.cs" />
+    <Compile Include="IUseFixture_WORKAROUND.cs" />
     <Compile Include="ModelExtensions\Area.cs" />
     <Compile Include="ModelExtensions\Category.cs" />
     <Compile Include="ModelExtensions\Customer.cs" />
