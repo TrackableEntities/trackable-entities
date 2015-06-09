@@ -499,8 +499,8 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Assert
             Assert.Equal(1, order.OrderDetails.Count);
-            Assert.That(changeTracker, Has.No.Member(deleted1));
-            Assert.That(changeTracker, Has.No.Member(deleted2));
+            Assert.DoesNotContain(deleted1, changeTracker.Cast<object>());
+            Assert.DoesNotContain(deleted2, changeTracker.Cast<object>());
         }
 
         #endregion
