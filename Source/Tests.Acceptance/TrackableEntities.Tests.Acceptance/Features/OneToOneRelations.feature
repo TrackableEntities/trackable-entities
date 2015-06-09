@@ -3,7 +3,7 @@
 	As a Web API client
 	I want to save one-to-one relations to the database
 
-@entity_relations
+@ignore @entity_relations
 Scenario: Create Customer Setting
 	Given the following new customer
 	| CustomerId | CustomerName |

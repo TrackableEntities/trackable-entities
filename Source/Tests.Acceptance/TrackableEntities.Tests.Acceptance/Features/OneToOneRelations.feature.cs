@@ -67,10 +67,12 @@ namespace TrackableEntities.Tests.Acceptance.Features
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Create Customer Setting")]
+        [NUnit.Framework.IgnoreAttribute()]
         [NUnit.Framework.CategoryAttribute("entity_relations")]
         public virtual void CreateCustomerSetting()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Create Customer Setting", new string[] {
+                        "ignore",
                         "entity_relations"});
 #line 7
 this.ScenarioSetup(scenarioInfo);
