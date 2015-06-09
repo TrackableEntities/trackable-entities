@@ -841,10 +841,7 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(order);
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order).State);
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(order.Customer).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address1).State);
-            Assert.AreEqual(EntityState.Added, context.Entry(address2).State);
+            Assert.Fail("ApplyChanges didn't throw");
         }
 
         [Test]
