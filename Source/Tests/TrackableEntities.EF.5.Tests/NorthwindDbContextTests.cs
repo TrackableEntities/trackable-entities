@@ -811,8 +811,7 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(EntityState.Unchanged, context.Entry(address3).State);
         }
 
-        [Test, ExpectedException(typeof(InvalidOperationException), 
-            ExpectedMessage = Constants.ExceptionMessages.DeletedWithAddedChildren)]
+        [Fact]
         public void Apply_Changes_Should_Mark_Unchanged_Order_Deleted_Customer_With_Addresses_Multiple_Added()
         {
             // Arrange
@@ -836,11 +835,11 @@ namespace TrackableEntities.EF5.Tests
             order.Customer.CustomerAddresses = new List<CustomerAddress> { address1, address2 };
             order.Customer.TrackingState = TrackingState.Deleted;
 
-            // Act
-            context.ApplyChanges(order);
+            // Act / Assert
+            Exception ex = Assert.Throws(typeof(InvalidOperationException), () => context.ApplyChanges(order));
 
             // Assert
-            Assert.Fail("ApplyChanges didn't throw");
+            Assert.Equal(Constants.ExceptionMessages.DeletedWithAddedChildren, ex.Message);
         }
 
         [Fact]
