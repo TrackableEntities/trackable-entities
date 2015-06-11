@@ -48,6 +48,9 @@
     <Compile Include="..\..\TrackableEntities.Client\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>
+    <Compile Include="..\..\TrackableEntities.Client\PortableReflectionHelper.cs">
+      <Link>PortableReflectionHelper.cs</Link>
+    </Compile>
     <Compile Include="..\..\TrackableEntities.Client\TrackableExtensions.cs">
       <Link>TrackableExtensions.cs</Link>
     </Compile>
