@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http.SelfHost;
-using NUnit.Framework;
 using TechTalk.SpecFlow;
 using TrackableEntities.Client;
 using TrackableEntities.Common;
 using TrackableEntities.Tests.Acceptance.ClientEntities;
 using TrackableEntities.Tests.Acceptance.Helpers;
 using TrackableEntities.Tests.Acceptance.WebHost;
+using Xunit;
 
 namespace TrackableEntities.Tests.Acceptance.Steps
 {
@@ -94,8 +94,8 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             var customer = ScenarioContext.Current.Get<Customer>("Customer");
             Customer result = _client.GetEntity<Customer, string>(customer.CustomerId);
             Assert.NotNull(result);
-            Assert.AreEqual(customer.CustomerName, result.CustomerName);
-            Assert.AreEqual(customer.CustomerSetting.Setting, result.CustomerSetting.Setting);
+            Assert.Equal(customer.CustomerName, result.CustomerName);
+            Assert.Equal(customer.CustomerSetting.Setting, result.CustomerSetting.Setting);
         }
     }
 }

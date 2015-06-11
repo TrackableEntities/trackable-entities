@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.NorthwindModels;
 using TrackableEntities.Tests.Acceptance.Contexts;
+using Xunit;
 
 namespace TrackableEntities.Tests.Acceptance.Helpers
 {
@@ -16,7 +16,7 @@ namespace TrackableEntities.Tests.Acceptance.Helpers
         {
             // Create new context for all tests
             var context = new NorthwindTestDbContext(createDbOptions);
-            Assert.GreaterOrEqual(context.Products.Count(), 0);
+            Assert.True(context.Products.Count() >= 0);
             return context;
         }
 

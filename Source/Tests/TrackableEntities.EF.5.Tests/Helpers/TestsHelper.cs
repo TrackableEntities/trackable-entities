@@ -4,8 +4,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using NUnit.Framework;
 using TrackableEntities.EF.Tests.Contexts;
+using Xunit;
 
 namespace TrackableEntities.EF.Tests
 {
@@ -15,7 +15,7 @@ namespace TrackableEntities.EF.Tests
         {
             // Create new context for all tests
             var context = new FamilyDbContext(createDbOptions);
-            Assert.GreaterOrEqual(context.Parents.Count(), 0);
+            Assert.True(context.Parents.Count() >= 0);
             return context;
         }
 
@@ -23,7 +23,7 @@ namespace TrackableEntities.EF.Tests
         {
             // Create new context for all tests
             var context = new NorthwindDbContext(createDbOptions);
-            Assert.GreaterOrEqual(context.Products.Count(), 0);
+            Assert.True(context.Products.Count() >= 0);
             return context;
         }
     }

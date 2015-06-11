@@ -5,7 +5,7 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using TrackableEntities.EF.Tests.Contexts;
 #if EF_6
 using TrackableEntities.EF6;
@@ -24,7 +24,6 @@ namespace TrackableEntities.EF6.Tests
 namespace TrackableEntities.EF5.Tests
 #endif
 {
-    [TestFixture]
     public class LoadRelatedEntitiesTests
     {
         private const string TestCustomerId1 = "AAAA";
@@ -36,8 +35,7 @@ namespace TrackableEntities.EF5.Tests
 
         #region Setup
 
-        [TestFixtureSetUp]
-        public void Init()
+        public LoadRelatedEntitiesTests()
         {
             // Make sure that reference data exists for tables with non-idendity keys
             using (var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions))
@@ -242,7 +240,7 @@ namespace TrackableEntities.EF5.Tests
 
         #region Order-Customer: Many-to-One
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Should_Populate_Order_With_Customer()
         {
             // Arrange
@@ -254,11 +252,11 @@ namespace TrackableEntities.EF5.Tests
             context.LoadRelatedEntities(order);
 
             // Assert
-            Assert.IsNotNull(order.Customer);
-            Assert.AreEqual(order.CustomerId, order.Customer.CustomerId);
+            Assert.NotNull(order.Customer);
+            Assert.Equal(order.CustomerId, order.Customer.CustomerId);
         }
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Load_All_Should_Populate_Order_With_Customer()
         {
             // Arrange
@@ -269,11 +267,11 @@ namespace TrackableEntities.EF5.Tests
             context.LoadRelatedEntities(order, true);
 
             // Assert
-            Assert.IsNotNull(order.Customer);
-            Assert.AreEqual(order.CustomerId, order.Customer.CustomerId);
+            Assert.NotNull(order.Customer);
+            Assert.Equal(order.CustomerId, order.Customer.CustomerId);
         }
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Should_Populate_Multiple_Orders_With_Customer()
         {
             // Arrange
@@ -285,11 +283,11 @@ namespace TrackableEntities.EF5.Tests
             context.LoadRelatedEntities(orders);
 
             // Assert
-            Assert.IsFalse(orders.Any(o => o.Customer == null));
-            Assert.IsFalse(orders.Any(o => o.Customer.CustomerId != o.CustomerId));
+            Assert.False(orders.Any(o => o.Customer == null));
+            Assert.False(orders.Any(o => o.Customer.CustomerId != o.CustomerId));
         }
 
-        [Test]
+        [Fact]
         public void Edmx_LoadRelatedEntities_Should_Populate_Multiple_Orders_With_Customer()
         {
             // Create DB usng CodeFirst context
@@ -321,11 +319,11 @@ namespace TrackableEntities.EF5.Tests
             context.LoadRelatedEntities(orders);
 
             // Assert
-            Assert.IsFalse(orders.Any(o => o.Customer == null));
-            Assert.IsFalse(orders.Any(o => o.Customer.CustomerId != o.CustomerId));
+            Assert.False(orders.Any(o => o.Customer == null));
+            Assert.False(orders.Any(o => o.Customer.CustomerId != o.CustomerId));
         }
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Should_Populate_Order_With_Customer_With_Territory()
         {
             // Arrange
@@ -337,11 +335,11 @@ namespace TrackableEntities.EF5.Tests
             context.LoadRelatedEntities(order);
 
             // Assert
-            Assert.IsNotNull(order.Customer.Territory);
-            Assert.AreEqual(order.Customer.TerritoryId, order.Customer.Territory.TerritoryId);
+            Assert.NotNull(order.Customer.Territory);
+            Assert.Equal(order.Customer.TerritoryId, order.Customer.Territory.TerritoryId);
         }
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Should_Populate_Order_With_Customer_With_Setting()
         {
             // Arrange
@@ -353,15 +351,15 @@ namespace TrackableEntities.EF5.Tests
             context.LoadRelatedEntities(order);
 
             // Assert
-            Assert.IsNotNull(order.Customer.CustomerSetting);
-            Assert.AreEqual(order.Customer.CustomerId, order.Customer.CustomerSetting.CustomerId);
-            Assert.IsNotNull(order.Customer.CustomerSetting.Customer);
-            Assert.IsTrue(ReferenceEquals(order.Customer, order.Customer.CustomerSetting.Customer));
+            Assert.NotNull(order.Customer.CustomerSetting);
+            Assert.Equal(order.Customer.CustomerId, order.Customer.CustomerSetting.CustomerId);
+            Assert.NotNull(order.Customer.CustomerSetting.Customer);
+            Assert.True(ReferenceEquals(order.Customer, order.Customer.CustomerSetting.Customer));
         }
 
 #if EF_6
         
-        [Test]
+        [Fact]
         public async void LoadRelatedEntitiesAsync_Should_Populate_Order_With_Customer()
         {
             // Arrange
@@ -373,11 +371,11 @@ namespace TrackableEntities.EF5.Tests
             await context.LoadRelatedEntitiesAsync(order);
 
             // Assert
-            Assert.IsNotNull(order.Customer);
-            Assert.AreEqual(order.CustomerId, order.Customer.CustomerId);
+            Assert.NotNull(order.Customer);
+            Assert.Equal(order.CustomerId, order.Customer.CustomerId);
         }
 
-        [Test]
+        [Fact]
         public async void LoadRelatedEntitiesAsync_Load_All_Should_Populate_Order_With_Customer()
         {
             // Arrange
@@ -388,11 +386,11 @@ namespace TrackableEntities.EF5.Tests
             await context.LoadRelatedEntitiesAsync(order, true);
 
             // Assert
-            Assert.IsNotNull(order.Customer);
-            Assert.AreEqual(order.CustomerId, order.Customer.CustomerId);
+            Assert.NotNull(order.Customer);
+            Assert.Equal(order.CustomerId, order.Customer.CustomerId);
         }
 
-        [Test]
+        [Fact]
         public async void LoadRelatedEntitiesAsync_Should_Populate_Multiple_Orders_With_Customer()
         {
             // Arrange
@@ -404,11 +402,11 @@ namespace TrackableEntities.EF5.Tests
             await context.LoadRelatedEntitiesAsync(orders);
 
             // Assert
-            Assert.IsFalse(orders.Any(o => o.Customer == null));
-            Assert.IsFalse(orders.Any(o => o.Customer.CustomerId != o.CustomerId));
+            Assert.False(orders.Any(o => o.Customer == null));
+            Assert.False(orders.Any(o => o.Customer.CustomerId != o.CustomerId));
         }
 
-        [Test]
+        [Fact]
         public async void LoadRelatedEntitiesAsync_Should_Populate_Order_With_Customer_With_Territory()
         {
             // Arrange
@@ -420,11 +418,11 @@ namespace TrackableEntities.EF5.Tests
             await context.LoadRelatedEntitiesAsync(order);
 
             // Assert
-            Assert.IsNotNull(order.Customer.Territory);
-            Assert.AreEqual(order.Customer.TerritoryId, order.Customer.Territory.TerritoryId);
+            Assert.NotNull(order.Customer.Territory);
+            Assert.Equal(order.Customer.TerritoryId, order.Customer.Territory.TerritoryId);
         }
 
-        [Test]
+        [Fact]
         public async void LoadRelatedEntitiesAsync_Should_Populate_Order_With_Customer_With_Setting()
         {
             // Arrange
@@ -436,8 +434,8 @@ namespace TrackableEntities.EF5.Tests
             await context.LoadRelatedEntitiesAsync(order);
 
             // Assert
-            Assert.IsNotNull(order.Customer.CustomerSetting);
-            Assert.AreEqual(order.Customer.CustomerId, order.Customer.CustomerSetting.CustomerId);
+            Assert.NotNull(order.Customer.CustomerSetting);
+            Assert.Equal(order.Customer.CustomerId, order.Customer.CustomerSetting.CustomerId);
         }
 #endif
 
@@ -445,7 +443,7 @@ namespace TrackableEntities.EF5.Tests
 
         #region Order-OrderDetail-Product-Category: One-to-Many-to-One
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Should_Populate_Order_Details_With_Product_With_Category()
         {
             // Arrange
@@ -458,13 +456,13 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             var details = order.OrderDetails;
-            Assert.IsFalse(details.Any(d => d.Product == null));
-            Assert.IsFalse(details.Any(d => d.Product.ProductId != d.ProductId));
-            Assert.IsFalse(details.Any(d => d.Product.Category == null));
-            Assert.IsFalse(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
+            Assert.False(details.Any(d => d.Product == null));
+            Assert.False(details.Any(d => d.Product.ProductId != d.ProductId));
+            Assert.False(details.Any(d => d.Product.Category == null));
+            Assert.False(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
         }
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Load_All_Should_Populate_Order_Details_With_Product_With_Category()
         {
             // Arrange
@@ -476,13 +474,13 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             var details = order.OrderDetails;
-            Assert.IsFalse(details.Any(d => d.Product == null));
-            Assert.IsFalse(details.Any(d => d.Product.ProductId != d.ProductId));
-            Assert.IsFalse(details.Any(d => d.Product.Category == null));
-            Assert.IsFalse(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
+            Assert.False(details.Any(d => d.Product == null));
+            Assert.False(details.Any(d => d.Product.ProductId != d.ProductId));
+            Assert.False(details.Any(d => d.Product.Category == null));
+            Assert.False(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
         }
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Should_Populate_Order_With_Added_Details_With_Product_With_Category()
         {
             // Arrange
@@ -495,13 +493,13 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             var details = order.OrderDetails;
-            Assert.IsFalse(details.Any(d => d.Product == null));
-            Assert.IsFalse(details.Any(d => d.Product.ProductId != d.ProductId));
-            Assert.IsFalse(details.Any(d => d.Product.Category == null));
-            Assert.IsFalse(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
+            Assert.False(details.Any(d => d.Product == null));
+            Assert.False(details.Any(d => d.Product.ProductId != d.ProductId));
+            Assert.False(details.Any(d => d.Product.Category == null));
+            Assert.False(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
         }
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Should_Populate_Multiple_Orders_Details_With_Product_With_Category()
         {
             // Arrange
@@ -516,15 +514,15 @@ namespace TrackableEntities.EF5.Tests
             var details1 = orders[0].OrderDetails;
             var details2 = orders[1].OrderDetails;
             var allDetails = orders.SelectMany(o => o.OrderDetails).ToList();
-            Assert.IsFalse(allDetails.Any(d => d.Product == null));
-            Assert.IsFalse(allDetails.Any(d => d.Product.Category == null));
-            Assert.IsFalse(details1.Any(d => d.Product.ProductId != d.ProductId));
-            Assert.IsFalse(details2.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
+            Assert.False(allDetails.Any(d => d.Product == null));
+            Assert.False(allDetails.Any(d => d.Product.Category == null));
+            Assert.False(details1.Any(d => d.Product.ProductId != d.ProductId));
+            Assert.False(details2.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
         }
 
 #if EF_6
         
-        [Test]
+        [Fact]
         public async void LoadRelatedEntitiesAsync_Should_Populate_Order_Details_With_Product_With_Category()
         {
             // Arrange
@@ -537,13 +535,13 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             var details = order.OrderDetails;
-            Assert.IsFalse(details.Any(d => d.Product == null));
-            Assert.IsFalse(details.Any(d => d.Product.ProductId != d.ProductId));
-            Assert.IsFalse(details.Any(d => d.Product.Category == null));
-            Assert.IsFalse(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
+            Assert.False(details.Any(d => d.Product == null));
+            Assert.False(details.Any(d => d.Product.ProductId != d.ProductId));
+            Assert.False(details.Any(d => d.Product.Category == null));
+            Assert.False(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
         }
 
-        [Test]
+        [Fact]
         public async void LoadRelatedEntitiesAsync_Load_All_Should_Populate_Order_Details_With_Product_With_Category()
         {
             // Arrange
@@ -555,13 +553,13 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             var details = order.OrderDetails;
-            Assert.IsFalse(details.Any(d => d.Product == null));
-            Assert.IsFalse(details.Any(d => d.Product.ProductId != d.ProductId));
-            Assert.IsFalse(details.Any(d => d.Product.Category == null));
-            Assert.IsFalse(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
+            Assert.False(details.Any(d => d.Product == null));
+            Assert.False(details.Any(d => d.Product.ProductId != d.ProductId));
+            Assert.False(details.Any(d => d.Product.Category == null));
+            Assert.False(details.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
         }
 
-        [Test]
+        [Fact]
         public async void LoadRelatedEntitiesAsync_Should_Populate_Multiple_Orders_Details_With_Product_With_Category()
         {
             // Arrange
@@ -576,10 +574,10 @@ namespace TrackableEntities.EF5.Tests
             var details1 = orders[0].OrderDetails;
             var details2 = orders[1].OrderDetails;
             var allDetails = orders.SelectMany(o => o.OrderDetails).ToList();
-            Assert.IsFalse(allDetails.Any(d => d.Product == null));
-            Assert.IsFalse(allDetails.Any(d => d.Product.Category == null));
-            Assert.IsFalse(details1.Any(d => d.Product.ProductId != d.ProductId));
-            Assert.IsFalse(details2.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
+            Assert.False(allDetails.Any(d => d.Product == null));
+            Assert.False(allDetails.Any(d => d.Product.Category == null));
+            Assert.False(details1.Any(d => d.Product.ProductId != d.ProductId));
+            Assert.False(details2.Any(d => d.Product.Category.CategoryId != d.Product.CategoryId));
         }
 
 #endif
@@ -588,7 +586,7 @@ namespace TrackableEntities.EF5.Tests
 
         #region Employee-Territory-Area: Many-to-Many-to-One
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Should_Populate_Employee_Territories_With_Area()
         {
             // Arrange
@@ -600,11 +598,11 @@ namespace TrackableEntities.EF5.Tests
             context.LoadRelatedEntities(employee);
 
             // Assert
-            Assert.IsFalse(employee.Territories.Any(t => t.Area == null));
-            Assert.IsFalse(employee.Territories.Any(t => t.AreaId != t.Area.AreaId));
+            Assert.False(employee.Territories.Any(t => t.Area == null));
+            Assert.False(employee.Territories.Any(t => t.AreaId != t.Area.AreaId));
         }
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Load_All_Should_Populate_Employee_Territories_With_Area()
         {
             // Arrange
@@ -616,11 +614,11 @@ namespace TrackableEntities.EF5.Tests
             context.LoadRelatedEntities(employee, true);
 
             // Assert
-            Assert.IsFalse(employee.Territories.Any(t => t.Area == null));
-            Assert.IsFalse(employee.Territories.Any(t => t.AreaId != t.Area.AreaId));
+            Assert.False(employee.Territories.Any(t => t.Area == null));
+            Assert.False(employee.Territories.Any(t => t.AreaId != t.Area.AreaId));
         }
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Should_Populate_Employee_Territories_With_Overlapping_Areas()
         {
             // Arrange
@@ -632,11 +630,11 @@ namespace TrackableEntities.EF5.Tests
             context.LoadRelatedEntities(employee);
 
             // Assert
-            Assert.IsFalse(employee.Territories.Any(t => t.Area == null));
-            Assert.IsFalse(employee.Territories.Any(t => t.AreaId != t.Area.AreaId));
+            Assert.False(employee.Territories.Any(t => t.Area == null));
+            Assert.False(employee.Territories.Any(t => t.AreaId != t.Area.AreaId));
         }
 
-        [Test]
+        [Fact]
         public void LoadRelatedEntities_Should_Populate_Multiple_Employees_Territories_With_Area()
         {
             // Arrange
@@ -648,15 +646,15 @@ namespace TrackableEntities.EF5.Tests
             context.LoadRelatedEntities(employees);
 
             // Assert
-            Assert.IsFalse(employees[0].Territories.Any(t => t.Area == null));
-            Assert.IsFalse(employees[0].Territories.Any(t => t.AreaId != t.Area.AreaId));
-            Assert.IsFalse(employees[1].Territories.Any(t => t.Area == null));
-            Assert.IsFalse(employees[1].Territories.Any(t => t.AreaId != t.Area.AreaId));
+            Assert.False(employees[0].Territories.Any(t => t.Area == null));
+            Assert.False(employees[0].Territories.Any(t => t.AreaId != t.Area.AreaId));
+            Assert.False(employees[1].Territories.Any(t => t.Area == null));
+            Assert.False(employees[1].Territories.Any(t => t.AreaId != t.Area.AreaId));
         }
 
 #if EF_6
         
-        [Test]
+        [Fact]
         public async void LoadRelatedEntitiesAsync_Should_Populate_Employee_Territories_With_Area()
         {
             // Arrange
@@ -668,11 +666,11 @@ namespace TrackableEntities.EF5.Tests
             await context.LoadRelatedEntitiesAsync(employee);
 
             // Assert
-            Assert.IsFalse(employee.Territories.Any(t => t.Area == null));
-            Assert.IsFalse(employee.Territories.Any(t => t.AreaId != t.Area.AreaId));
+            Assert.False(employee.Territories.Any(t => t.Area == null));
+            Assert.False(employee.Territories.Any(t => t.AreaId != t.Area.AreaId));
         }
 
-        [Test]
+        [Fact]
         public async void LoadRelatedEntitiesAsync_Should_Populate_Multiple_Employees_Territories_With_Area()
         {
             // Arrange
@@ -684,10 +682,10 @@ namespace TrackableEntities.EF5.Tests
             await context.LoadRelatedEntitiesAsync(employees);
 
             // Assert
-            Assert.IsFalse(employees[0].Territories.Any(t => t.Area == null));
-            Assert.IsFalse(employees[0].Territories.Any(t => t.AreaId != t.Area.AreaId));
-            Assert.IsFalse(employees[1].Territories.Any(t => t.Area == null));
-            Assert.IsFalse(employees[1].Territories.Any(t => t.AreaId != t.Area.AreaId));
+            Assert.False(employees[0].Territories.Any(t => t.Area == null));
+            Assert.False(employees[0].Territories.Any(t => t.AreaId != t.Area.AreaId));
+            Assert.False(employees[1].Territories.Any(t => t.Area == null));
+            Assert.False(employees[1].Territories.Any(t => t.AreaId != t.Area.AreaId));
         }
 
 #endif
