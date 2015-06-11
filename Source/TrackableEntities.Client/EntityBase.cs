@@ -44,7 +44,9 @@ namespace TrackableEntities.Client
         /// <param name="other">Other trackable object</param>
         public void SetEntityIdentifier(IIdentifiable other)
         {
-            EntityIdentifier = other.EntityIdentifier;
+            var otherEntity = other as EntityBase;
+            if (otherEntity != null)
+                EntityIdentifier = otherEntity.EntityIdentifier;
         }
 
         /// <summary>
@@ -60,7 +62,11 @@ namespace TrackableEntities.Client
             if (EntityIdentifier == default(Guid))
                 return false;
 
-            return EntityIdentifier.Equals(other.EntityIdentifier);
+            var otherEntity = other as EntityBase;
+            if (otherEntity == null)
+                return false;
+
+            return EntityIdentifier.Equals(otherEntity.EntityIdentifier);
         }
 
         bool IEquatable<IIdentifiable>.Equals(IIdentifiable other)
