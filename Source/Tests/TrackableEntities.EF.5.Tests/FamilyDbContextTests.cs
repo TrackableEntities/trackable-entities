@@ -196,8 +196,13 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
             var parent = new MockFamily().Parent;
+            parent.Children.RemoveAt(2);
+            parent.Children.RemoveAt(1);
             var child = parent.Children[0];
+            child.Children.RemoveAt(2);
+            child.Children.RemoveAt(1);
             var grandchild = child.Children[0];
+            grandchild.Children = null;
             parent.TrackingState = TrackingState.Unchanged;
             child.TrackingState = TrackingState.Deleted;
             grandchild.TrackingState = TrackingState.Deleted;
