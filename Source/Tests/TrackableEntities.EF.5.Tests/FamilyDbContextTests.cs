@@ -189,5 +189,31 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(EntityState.Modified, context.Entry(child2).State);
             Assert.Equal(EntityState.Deleted, context.Entry(child3).State);
         }
+
+        [Fact]
+        public void Apply_Changes_Should_Mark_Grandchild_Deleted()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var parent = new MockFamily().Parent;
+            parent.Children.RemoveAt(2);
+            parent.Children.RemoveAt(1);
+            var child = parent.Children[0];
+            child.Children.RemoveAt(2);
+            child.Children.RemoveAt(1);
+            var grandchild = child.Children[0];
+            grandchild.Children = null;
+            parent.TrackingState = TrackingState.Unchanged;
+            child.TrackingState = TrackingState.Deleted;
+            grandchild.TrackingState = TrackingState.Deleted;
+
+            // Act
+            context.ApplyChanges(parent);
+
+            // Assert
+            Assert.Equal(EntityState.Unchanged, context.Entry(parent).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(child).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(grandchild).State);
+        }
     }
 }
