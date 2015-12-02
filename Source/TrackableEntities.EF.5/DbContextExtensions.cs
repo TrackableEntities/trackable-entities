@@ -99,9 +99,10 @@ namespace TrackableEntities.EF5
                 return;
             }
 
-            // Exit if parent is deleted and not a M-1 relation
+            // Exit if item is not deleted, parent is deleted, and not a M-1 relation
             if (parent != null
-                && (parent.TrackingState == TrackingState.Deleted)
+                && item.TrackingState != TrackingState.Deleted
+                && parent.TrackingState == TrackingState.Deleted
                 && !context.IsRelatedProperty(parent.GetType(),
                     propertyName, RelationshipType.ManyToOne))
                 return;
@@ -161,7 +162,13 @@ namespace TrackableEntities.EF5
             {
                 // Set added state for reference or child properties
                 context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Added); // Clone to avoid interference
-                    
+
+                // Delete children prior to parent
+                if (item.TrackingState == TrackingState.Deleted)
+                {
+                    context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Deleted);
+                }
+
                 // Set modified properties
                 if (item.TrackingState == TrackingState.Modified
                     && (state == null || state == TrackingState.Modified)
