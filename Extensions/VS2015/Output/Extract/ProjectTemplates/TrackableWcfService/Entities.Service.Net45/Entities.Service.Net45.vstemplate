@@ -31,7 +31,6 @@
       </Folder>
       <Folder Name="Contexts" TargetFolderName="Contexts" />
       <Folder Name="Models" TargetFolderName="Models" />
-      <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
       <Folder Name="Properties" TargetFolderName="Properties">
         <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
       </Folder>
@@ -44,7 +43,7 @@
   </WizardExtension>
   <WizardData>
     <packages repository="extension"
-              repositoryId="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7">
+              repositoryId="TrackableEntities.VS2015..4f848cae-142a-4eb6-a217-017d04f8f2e5">
 		<package id="Newtonsoft.Json" version="6.0.8" />
 		<package id="EntityFramework" version="6.1.3" />
     <package id="TrackableEntities.Client" version="2.5.2" />

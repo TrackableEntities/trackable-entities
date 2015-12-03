@@ -191,7 +191,6 @@
       <ProjectItem ReplaceParameters="true" TargetFileName="Global.asax">Global.asax</ProjectItem>
       <ProjectItem ReplaceParameters="true" TargetFileName="Global.asax.cs">Global.asax.cs</ProjectItem>
       <Folder Name="Models" TargetFolderName="Models" />
-      <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
       <ProjectItem ReplaceParameters="true" TargetFileName="Project_Readme.html">Project_Readme.html</ProjectItem>
       <Folder Name="Properties" TargetFolderName="Properties">
         <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
@@ -240,7 +239,7 @@
   </WizardExtension>
   <WizardData>
     <packages repository="extension"
-              repositoryId="TrackableEntities.VS2013..ce1f4a31-3d64-4a4a-a8d4-f84a44a753e7">
+              repositoryId="TrackableEntities.VS2015..4f848cae-142a-4eb6-a217-017d04f8f2e5">
 	  <package id="Antlr" version="3.5.0.2" />
 	  <package id="AspNetWebApi2Helpers.Serialization" version="1.0.0" />
 	  <package id="bootstrap" version="3.3.1" />

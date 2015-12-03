@@ -53,7 +53,6 @@
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Context.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Mapping.tt" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TrackableSharedEntities.Portable.ReadMe.txt" />

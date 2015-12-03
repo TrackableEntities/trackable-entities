@@ -31,6 +31,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,6 +40,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -104,14 +106,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="ProjectTemplates\Trackable\TrackableClientEntities.zip">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ProjectTemplates\Trackable\TrackableServiceEntities.zip">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="ProjectTemplates\Trackable\TrackableWcfService.zip">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -132,126 +126,170 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Antlr.3.5.0.2.nupkg">
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Antlr.3.5.0.2.nupkg">
       <Link>Packages\Antlr.3.5.0.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\AspNetWebApi2Helpers.Serialization.1.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\AspNetWebApi2Helpers.Serialization.1.0.0.nupkg">
       <Link>Packages\AspNetWebApi2Helpers.Serialization.1.0.0.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\bootstrap.3.3.1.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\bootstrap.3.3.1.nupkg">
       <Link>Packages\bootstrap.3.3.1.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\EntityFramework.5.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\EntityFramework.5.0.0.nupkg">
       <Link>Packages\EntityFramework.5.0.0.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\EntityFramework.6.1.3.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\EntityFramework.6.1.3.nupkg">
       <Link>Packages\EntityFramework.6.1.3.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\jQuery.2.1.1.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\jQuery.2.1.1.nupkg">
       <Link>Packages\jQuery.2.1.1.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\jQuery.UI.Combined.1.10.4.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\jQuery.UI.Combined.1.10.4.nupkg">
       <Link>Packages\jQuery.UI.Combined.1.10.4.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\knockoutjs.3.2.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\knockoutjs.3.2.0.nupkg">
       <Link>Packages\knockoutjs.3.2.0.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.Mvc.5.2.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.Mvc.5.2.2.nupkg">
       <Link>Packages\Microsoft.AspNet.Mvc.5.2.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.Razor.3.2.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.Razor.3.2.2.nupkg">
       <Link>Packages\Microsoft.AspNet.Razor.3.2.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.Web.Optimization.1.1.3.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.Web.Optimization.1.1.3.nupkg">
       <Link>Packages\Microsoft.AspNet.Web.Optimization.1.1.3.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.5.2.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.5.2.2.nupkg">
       <Link>Packages\Microsoft.AspNet.WebApi.5.2.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.Client.5.2.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.Client.5.2.2.nupkg">
       <Link>Packages\Microsoft.AspNet.WebApi.Client.5.2.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.Core.5.2.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.Core.5.2.2.nupkg">
       <Link>Packages\Microsoft.AspNet.WebApi.Core.5.2.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.HelpPage.5.2.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.HelpPage.5.2.2.nupkg">
       <Link>Packages\Microsoft.AspNet.WebApi.HelpPage.5.2.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.WebHost.5.2.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebApi.WebHost.5.2.2.nupkg">
       <Link>Packages\Microsoft.AspNet.WebApi.WebHost.5.2.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebPages.3.2.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.AspNet.WebPages.3.2.2.nupkg">
       <Link>Packages\Microsoft.AspNet.WebPages.3.2.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.Web.Infrastructure.1.0.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Microsoft.Web.Infrastructure.1.0.0.0.nupkg">
       <Link>Packages\Microsoft.Web.Infrastructure.1.0.0.0.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Modernizr.2.8.3.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Modernizr.2.8.3.nupkg">
       <Link>Packages\Modernizr.2.8.3.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Newtonsoft.Json.6.0.8.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Newtonsoft.Json.6.0.8.nupkg">
       <Link>Packages\Newtonsoft.Json.6.0.8.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Respond.1.4.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\Respond.1.4.2.nupkg">
       <Link>Packages\Respond.1.4.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\SimpleInjector.2.7.3.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\SimpleInjector.2.7.3.nupkg">
       <Link>Packages\SimpleInjector.2.7.3.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\SimpleInjector.Extensions.ExecutionContextScoping.2.7.3.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\SimpleInjector.Extensions.ExecutionContextScoping.2.7.3.nupkg">
       <Link>Packages\SimpleInjector.Extensions.ExecutionContextScoping.2.7.3.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\SimpleInjector.Integration.WebApi.2.7.3.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\SimpleInjector.Integration.WebApi.2.7.3.nupkg">
       <Link>Packages\SimpleInjector.Integration.WebApi.2.7.3.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Client.2.5.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Client.2.5.2.nupkg">
       <Link>Packages\TrackableEntities.Client.2.5.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Client.Net4.2.5.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Client.Net4.2.5.2.nupkg">
       <Link>Packages\TrackableEntities.Client.Net4.2.5.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.CodeTemplates.Client.Net45.2.5.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.CodeTemplates.Client.Net45.2.5.0.nupkg">
       <Link>Packages\TrackableEntities.CodeTemplates.Client.Net45.2.5.0.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.CodeTemplates.Client.Portable.2.5.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.CodeTemplates.Client.Portable.2.5.0.nupkg">
       <Link>Packages\TrackableEntities.CodeTemplates.Client.Portable.2.5.0.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.CodeTemplates.Service.Net45.2.5.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.CodeTemplates.Service.Net45.2.5.0.nupkg">
       <Link>Packages\TrackableEntities.CodeTemplates.Service.Net45.2.5.0.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.CodeTemplates.Shared.Net45.2.5.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.CodeTemplates.Shared.Net45.2.5.0.nupkg">
       <Link>Packages\TrackableEntities.CodeTemplates.Shared.Net45.2.5.0.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.CodeTemplates.Shared.Portable.2.5.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.CodeTemplates.Shared.Portable.2.5.0.nupkg">
       <Link>Packages\TrackableEntities.CodeTemplates.Shared.Portable.2.5.0.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Common.2.5.2.1.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Common.2.5.2.1.nupkg">
       <Link>Packages\TrackableEntities.Common.2.5.2.1.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.EF.5.2.5.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.EF.5.2.5.2.nupkg">
       <Link>Packages\TrackableEntities.EF.5.2.5.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.EF.6.2.5.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.EF.6.2.5.2.nupkg">
       <Link>Packages\TrackableEntities.EF.6.2.5.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Patterns.2.5.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Patterns.2.5.2.nupkg">
       <Link>Packages\TrackableEntities.Patterns.2.5.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Patterns.EF.6.2.5.2.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\TrackableEntities.Patterns.EF.6.2.5.2.nupkg">
       <Link>Packages\TrackableEntities.Patterns.EF.6.2.5.2.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\WcfSerializationHelper.1.0.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\WcfSerializationHelper.1.0.0.nupkg">
       <Link>Packages\WcfSerializationHelper.1.0.0.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\WebActivator.1.4.4.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\WebActivator.1.4.4.nupkg">
       <Link>Packages\WebActivator.1.4.4.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\WebApiTestOnHelpPage.1.3.4.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\WebApiTestOnHelpPage.1.3.4.nupkg">
       <Link>Packages\WebApiTestOnHelpPage.1.3.4.nupkg</Link>
-    </None>
-    <None Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\WebGrease.1.6.0.nupkg">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\..\..\VS2013\Deploy\TrackableEntities.VS2013.Deploy\Packages\WebGrease.1.6.0.nupkg">
       <Link>Packages\WebGrease.1.6.0.nupkg</Link>
-    </None>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="ProjectTemplates\Trackable\TrackableEntities.zip">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
