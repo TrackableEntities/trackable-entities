@@ -1,0 +1,15 @@
+Steps to debug the Template Wizard Project
+
+1. Run the Visual Studio Deploy solution as *administrator*
+
+2. Set build configuration to Debug
+
+3. Select Build tab on Deploy project, set project outout to IDE\PrivateAssemblies folder
+   - VS2015: C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies
+
+4. On the Debug tab, set Start Action to Start External Program:
+   - VS2015: C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe
+
+5. Set breakpoint in the root or child wizard, then press F5 to start debugging
+   - This will lanuch Visual Studio with the VSIX installed
+   - If template does not appear in New Project dialog, install the VSIX from the output file.
