@@ -330,7 +330,7 @@
       <Project>{8e21f5fd-3941-45a6-b8f8-9628b8a58594}</Project>
       <Name>TrackableEntities.ItemWizard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EntitiesSelectionWizard\EntitiesSelectionWizard.csproj">
+    <ProjectReference Include="..\..\..\Common\Wizards\EntitiesSelectionWizard\EntitiesSelectionWizard.csproj">
       <Project>{A1DC5D35-B381-4A89-9922-E83923D4AD2F}</Project>
       <Name>EntitiesSelectionWizard</Name>
       <VSIXSubPath>Wizards</VSIXSubPath>

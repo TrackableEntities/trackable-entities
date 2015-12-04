@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateWizard.Service.Entities", "TemplateWizard.Service.Entities\TemplateWizard.Service.Entities.csproj", "{8556C7C8-72A6-4857-BAFD-489E42A2A453}"
 EndProject
@@ -17,6 +17,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.ItemWizard", "TrackableEntities.ItemWizard\TrackableEntities.ItemWizard.csproj", "{8E21F5FD-3941-45A6-B8F8-9628B8A58594}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItemTemplateParametersWizard", "ItemTemplateParametersWizard\ItemTemplateParametersWizard.csproj", "{046940FE-CC75-43E2-9C41-346AEBBBB03B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.TemplateWizard", "TrackableEntities.TemplateWizard\TrackableEntities.TemplateWizard.csproj", "{C9646BE1-E999-47BD-8A9D-083017E6269A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntitiesSelectionWizard", "EntitiesSelectionWizard\EntitiesSelectionWizard.csproj", "{A1DC5D35-B381-4A89-9922-E83923D4AD2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntitiesSelectionHarness", "EntitiesSelectionHarness\EntitiesSelectionHarness.csproj", "{A784F6D4-D974-4E5C-9DE1-FA571C9214C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +46,18 @@ Global
 		{046940FE-CC75-43E2-9C41-346AEBBBB03B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{046940FE-CC75-43E2-9C41-346AEBBBB03B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{046940FE-CC75-43E2-9C41-346AEBBBB03B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9646BE1-E999-47BD-8A9D-083017E6269A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9646BE1-E999-47BD-8A9D-083017E6269A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9646BE1-E999-47BD-8A9D-083017E6269A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9646BE1-E999-47BD-8A9D-083017E6269A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1DC5D35-B381-4A89-9922-E83923D4AD2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1DC5D35-B381-4A89-9922-E83923D4AD2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1DC5D35-B381-4A89-9922-E83923D4AD2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1DC5D35-B381-4A89-9922-E83923D4AD2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A784F6D4-D974-4E5C-9DE1-FA571C9214C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A784F6D4-D974-4E5C-9DE1-FA571C9214C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A784F6D4-D974-4E5C-9DE1-FA571C9214C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A784F6D4-D974-4E5C-9DE1-FA571C9214C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
