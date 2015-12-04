@@ -90,7 +90,7 @@ namespace TrackableEntities.TemplateWizard
 
         private Project GetProject(string extension)
         {
-            string projectName = RootDictionary["$saferootprojectname$"] + extension;
+            string projectName = RootDictionary[Constants.DictionaryEntries.SafeRootProjectName] + extension;
             foreach (Project project in _dte2.Solution.Projects)
             {
                 if (Path.GetFileNameWithoutExtension(project.FullName).Equals(projectName))

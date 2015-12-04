@@ -47,28 +47,25 @@ namespace TrackableEntities.TemplateWizard
 
         public void BeforeOpeningFile(ProjectItem projectItem)
         {
-            Wizard.BeforeOpeningFile(projectItem);
         }
 
         public void ProjectFinishedGenerating(Project project)
         {
+            MoveGeneratedProject(ref project);
             Wizard.ProjectFinishedGenerating(project);
-            PostProjectFinishedGenerating(project);
         }
 
         public void ProjectItemFinishedGenerating(ProjectItem projectItem)
         {
-            Wizard.ProjectItemFinishedGenerating(projectItem);
         }
 
         public void RunFinished()
         {
-            Wizard.RunFinished();
         }
 
         public bool ShouldAddProjectItem(string filePath)
         {
-            return Wizard.ShouldAddProjectItem(filePath);
+            return true;
         }
 
         protected virtual void ProcessEntitiesTemplate(
@@ -76,7 +73,7 @@ namespace TrackableEntities.TemplateWizard
         {            
         }
 
-        protected virtual void PostProjectFinishedGenerating(Project project)
+        protected virtual void MoveGeneratedProject(ref Project project)
         {
         }
 

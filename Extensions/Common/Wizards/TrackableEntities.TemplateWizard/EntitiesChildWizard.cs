@@ -39,20 +39,24 @@ namespace TrackableEntities.TemplateWizard
                 }
             }
 
-            // Store destination directory info
-            string solutionPath = replacementsDictionary[Constants.DictionaryEntries.SolutionDirectory];
-            string projectName = replacementsDictionary[Constants.DictionaryEntries.SafeProjectName];
-            var destDirectory = new DirectoryInfo(Path.Combine(solutionPath, projectName));
+            // Set root dictionary values
+            var projectName = replacementsDictionary[Constants.DictionaryEntries.SafeProjectName];
             EntitiesWizard.RootDictionary[Constants.DictionaryEntries.SafeProjectName] = projectName;
             EntitiesWizard.RootDictionary[Constants.DictionaryEntries.OriginalDestinationDirectory] =
                 replacementsDictionary[Constants.DictionaryEntries.DestinationDirectory];
-            EntitiesWizard.RootDictionary[Constants.DictionaryEntries.DestinationDirectory] = destDirectory.FullName;
 
-            // Set $destinationdirectory$ in replacements dictionary
-            replacementsDictionary[Constants.DictionaryEntries.DestinationDirectory] = destDirectory.FullName;
+            // Set destination directory
+            var directoryInfo = new DirectoryInfo(replacementsDictionary
+                [Constants.DictionaryEntries.DestinationDirectory]).Parent;
+            if (directoryInfo != null && directoryInfo.Parent != null)
+            {
+                string destDirectory = Path.Combine(directoryInfo.Parent.FullName, projectName);
+                EntitiesWizard.RootDictionary[Constants.DictionaryEntries.DestinationDirectory] = destDirectory;
+                replacementsDictionary[Constants.DictionaryEntries.DestinationDirectory] = destDirectory;
+            }
         }
 
-        protected override void PostProjectFinishedGenerating(Project project)
+        protected override void MoveGeneratedProject(ref Project project)
         {
             // Return if parent is root wizard
             if (RootWizard.RootDictionary[Constants.DictionaryEntries.ParentWizardName] ==
@@ -72,6 +76,8 @@ namespace TrackableEntities.TemplateWizard
                 Directory.Move(origDestDirectory, newDestDirectory);
                 string newDestProject = Path.Combine(newDestDirectory, projectName + ".csproj");
                 Dte2.Solution.AddFromFile(newDestProject);
+                project = Dte2.Solution.Projects.Cast<Project>()
+                    .Single(p => p.Name == projectName);
             }
         }
     }
