@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="TrackableEntities.VS2015..4f848cae-142a-4eb6-a217-017d04f8f2e5" Version="2.5.2" Language="en-US" Publisher="Tony Sneed" />
+    <Identity Id="TrackableEntities.VS2015..4f848cae-142a-4eb6-a217-017d04f8f2e5" Version="2.5.2.1" Language="en-US" Publisher="Tony Sneed" />
     <DisplayName>Trackable Entities for Visual Studio 2015</DisplayName>
     <Description xml:space="preserve">N-Tier support for Entity Framework with Visual Studio project and item templates for quickly building n-tier applications using entities that are change-tracked on the client and persisted on the server via WCF or ASP.NET Web API.</Description>
     <MoreInfo>http://tonysneed.github.io/trackable-entities</MoreInfo>

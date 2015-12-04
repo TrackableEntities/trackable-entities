@@ -80,14 +80,30 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dialogs.cs" />
-    <Compile Include="WebApiControllerWizard.cs" />
-    <Compile Include="EntityControllerWizard.cs" />
-    <Compile Include="EntityRepoClassWizard.cs" />
-    <Compile Include="EntityRepoInterfaceWizard.cs" />
-    <Compile Include="ModelReflectionHelper.cs" />
-    <Compile Include="WizardHelper.cs" />
-    <Compile Include="WcfServiceTypeWizard.cs" />
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\Dialogs.cs">
+      <Link>Dialogs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\EntityControllerWizard.cs">
+      <Link>EntityControllerWizard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\EntityRepoClassWizard.cs">
+      <Link>EntityRepoClassWizard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\EntityRepoInterfaceWizard.cs">
+      <Link>EntityRepoInterfaceWizard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\ModelReflectionHelper.cs">
+      <Link>ModelReflectionHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\WcfServiceTypeWizard.cs">
+      <Link>WcfServiceTypeWizard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\WebApiControllerWizard.cs">
+      <Link>WebApiControllerWizard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.ItemWizard\WizardHelper.cs">
+      <Link>WizardHelper.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

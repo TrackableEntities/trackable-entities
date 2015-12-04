@@ -64,22 +64,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IModelTypes.cs" />
-    <Compile Include="ModelType.cs" />
-    <Compile Include="ModelTypesContextDialog.cs">
+    <Compile Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\IModelTypes.cs">
+      <Link>IModelTypes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ModelType.cs">
+      <Link>ModelType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ModelTypeInfo.cs">
+      <Link>ModelTypeInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ModelTypesContextDialog.cs">
+      <Link>ModelTypesContextDialog.cs</Link>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ModelTypesContextDialog.Designer.cs">
-      <DependentUpon>ModelTypesContextDialog.cs</DependentUpon>
+    <Compile Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ModelTypesContextDialog.Designer.cs">
+      <Link>ModelTypesContextDialog.Designer.cs</Link>
     </Compile>
-    <Compile Include="ModelTypesHelper.cs" />
-    <Compile Include="ModelTypesDialogInfo.cs" />
-    <Compile Include="ModelTypeInfo.cs" />
-    <Compile Include="ModelTypesDialog.cs">
+    <Compile Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ModelTypesDialog.cs">
+      <Link>ModelTypesDialog.cs</Link>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ModelTypesDialog.Designer.cs">
-      <DependentUpon>ModelTypesDialog.cs</DependentUpon>
+    <Compile Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ModelTypesDialog.Designer.cs">
+      <Link>ModelTypesDialog.Designer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ModelTypesDialogInfo.cs">
+      <Link>ModelTypesDialogInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ModelTypesHelper.cs">
+      <Link>ModelTypesHelper.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -89,11 +101,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ModelTypesContextDialog.resx">
-      <DependentUpon>ModelTypesContextDialog.cs</DependentUpon>
+    <EmbeddedResource Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ModelTypesContextDialog.resx">
+      <Link>ModelTypesContextDialog.resx</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="ModelTypesDialog.resx">
-      <DependentUpon>ModelTypesDialog.cs</DependentUpon>
+    <EmbeddedResource Include="..\..\..\Common\Wizards\ItemTemplateParametersWizard\ModelTypesDialog.resx">
+      <Link>ModelTypesDialog.resx</Link>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -67,19 +67,29 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntitiesChildWizard.cs" />
-    <Compile Include="ChildWizard.cs" />
-    <Compile Include="Constants.cs" />
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.TemplateWizard\ChildWizard.cs">
+      <Link>ChildWizard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.TemplateWizard\Constants.cs">
+      <Link>Constants.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.TemplateWizard\EntitiesChildWizard.cs">
+      <Link>EntitiesChildWizard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.TemplateWizard\EntitiesWizard.cs">
+      <Link>EntitiesWizard.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Common\Wizards\TrackableEntities.TemplateWizard\RootWizard.cs">
+      <Link>RootWizard.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EntitiesWizard.cs" />
-    <Compile Include="RootWizard.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\VS2013\Deploy\EntitiesSelectionWizard\EntitiesSelectionWizard.csproj">
+    <ProjectReference Include="..\..\..\Common\Wizards\EntitiesSelectionWizard\EntitiesSelectionWizard.csproj">
       <Project>{a1dc5d35-b381-4a89-9922-e83923d4ad2f}</Project>
       <Name>EntitiesSelectionWizard</Name>
     </ProjectReference>
