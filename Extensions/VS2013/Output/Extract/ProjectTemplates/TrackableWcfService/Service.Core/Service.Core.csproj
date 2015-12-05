@@ -74,7 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\$saferootprojectname$.$serviceentitiestemplate$\$saferootprojectname$.$serviceentitiestemplate$.csproj">

@@ -38,7 +38,6 @@
     <None Include="CodeTemplates\EFModelFromDatabase\Context.cs.t4" />
     <None Include="CodeTemplates\EFModelFromDatabase\EntityType.cs.t4" />
     <None Include="CodeTemplates\ReverseEngineerCodeFirst\Entity.tt" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
