@@ -1,18 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 using TrackableEntities.Client.Tests.Entities.Mocks;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
+using Xunit;
 
 namespace TrackableEntities.Client.Tests
 {
-    [TestFixture]
     public class ChangeTrackingCollectionTests
     {
         #region Ctor: Tracking Enablement Tests
 
-        [Test]
+        [Fact]
         public void Tracking_Should_Be_Disabled_With_Default_Ctor()
         {
             // Arrange
@@ -24,10 +23,10 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Add(product);
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, changeTracker[0].TrackingState);
+            Assert.Equal(TrackingState.Unchanged, changeTracker[0].TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Tracking_Should_Be_Enabled_With_Enumerable_Ctor()
         {
             // Arrange
@@ -40,10 +39,10 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Add(product);
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, changeTracker[1].TrackingState);
+            Assert.Equal(TrackingState.Added, changeTracker[1].TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Tracking_Should_Be_Enabled_With_Array_Ctor()
         {
             // Arrange
@@ -55,14 +54,14 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Add(product);
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, changeTracker[1].TrackingState);
+            Assert.Equal(TrackingState.Added, changeTracker[1].TrackingState);
         }
 
         #endregion
 
         #region Ctor: Items Added State Tests
 
-        [Test]
+        [Fact]
         public void Items_Should_Be_Added_As_Unchanged_With_Enumerable_Ctor()
         {
             // Arrange
@@ -74,10 +73,10 @@ namespace TrackableEntities.Client.Tests
             var changeTracker = new ChangeTrackingCollection<Product>(products);
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, changeTracker[0].TrackingState);
+            Assert.Equal(TrackingState.Unchanged, changeTracker[0].TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Items_Should_Be_Added_As_Unchanged_With_Array_Ctor()
         {
             // Arrange
@@ -88,14 +87,14 @@ namespace TrackableEntities.Client.Tests
             var changeTracker = new ChangeTrackingCollection<Product>(product);
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, changeTracker[0].TrackingState);
+            Assert.Equal(TrackingState.Unchanged, changeTracker[0].TrackingState);
         }
 
         #endregion
 
         #region Added Items Tests
 
-        [Test]
+        [Fact]
         public void Added_Items_After_Tracking_Enabled_Should_Be_Marked_As_Added()
         {
             // Arrange
@@ -107,10 +106,10 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Add(product);
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, product.TrackingState);
+            Assert.Equal(TrackingState.Added, product.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Added_Items_With_Enumerable_Ctor_Should_Be_Marked_As_Added()
         {
             // Arrange
@@ -130,14 +129,14 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Add(product);
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, product.TrackingState);
+            Assert.Equal(TrackingState.Added, product.TrackingState);
         }
 
         #endregion
 
         #region Added Items: Many-to-Many Tests
 
-        [Test]
+        [Fact]
         public void Added_Employee_After_Tracking_Enabled_Should_Not_Mark_Manually_Added_Territories_As_Unchanged()
         {
             // Arrange
@@ -150,15 +149,15 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Add(employee);
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, employee.TrackingState);
-            Assert.IsTrue(employee.Territories.All(t => t.TrackingState == TrackingState.Added));
+            Assert.Equal(TrackingState.Added, employee.TrackingState);
+            Assert.True(employee.Territories.All(t => t.TrackingState == TrackingState.Added));
         }
 
         #endregion
 
         #region Modified Items Tests
 
-        [Test]
+        [Fact]
         public void Modified_Added_Items_Should_Be_Marked_As_Added()
         {
             // Arrange
@@ -179,10 +178,10 @@ namespace TrackableEntities.Client.Tests
             product.UnitPrice++;
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, product.TrackingState);
+            Assert.Equal(TrackingState.Added, product.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Modified_Added_Items_Should_Not_Add_ModifiedProperties()
         {
             // Arrange
@@ -203,11 +202,11 @@ namespace TrackableEntities.Client.Tests
             product.UnitPrice++;
 
             // Assert
-            Assert.IsTrue(product.ModifiedProperties == null
+            Assert.True(product.ModifiedProperties == null
                 || product.ModifiedProperties.Count == 0);
         }
 
-        [Test]
+        [Fact]
         public void Modified_Existing_Items_Should_Be_Marked_As_Modified()
         {
             // Arrange
@@ -219,10 +218,10 @@ namespace TrackableEntities.Client.Tests
             product.UnitPrice++;
 
             // Assert
-            Assert.AreEqual(TrackingState.Modified, product.TrackingState);
+            Assert.Equal(TrackingState.Modified, product.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Modified_Existing_Items_Should_Add_ModifiedProperty()
         {
             // Arrange
@@ -234,10 +233,10 @@ namespace TrackableEntities.Client.Tests
             product.UnitPrice++;
 
             // Assert
-            Assert.Contains("UnitPrice", (ICollection)product.ModifiedProperties);
+            Assert.Contains("UnitPrice", product.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void Modified_Existing_Excluded_Items_Should_Not_Be_Marked_As_Modified()
         {
             // Arrange
@@ -250,10 +249,10 @@ namespace TrackableEntities.Client.Tests
             product.UnitPrice++;
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, product.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, product.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Modified_Existing_Excluded_Items_Should_Not_Add_ModifiedProperty()
         {
             // Arrange
@@ -266,11 +265,11 @@ namespace TrackableEntities.Client.Tests
             product.UnitPrice++;
 
             // Assert
-            Assert.IsTrue(product.ModifiedProperties == null
+            Assert.True(product.ModifiedProperties == null
                 || product.ModifiedProperties.Count == 0);
         }
 
-        [Test]
+        [Fact]
         public void Modified_Existing_Items_Should_Add_Multiples_ModifiedProperties()
         {
             // Arrange
@@ -284,12 +283,12 @@ namespace TrackableEntities.Client.Tests
             product.ProductName = "xxxxxxxx";
 
             // Assert
-            Assert.Contains("UnitPrice", (ICollection)product.ModifiedProperties);
-            Assert.Contains("Discontinued", (ICollection)product.ModifiedProperties);
-            Assert.Contains("ProductName", (ICollection)product.ModifiedProperties);
+            Assert.Contains("UnitPrice", product.ModifiedProperties);
+            Assert.Contains("Discontinued", product.ModifiedProperties);
+            Assert.Contains("ProductName", product.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void Modified_Existing_Mixed_Items_Should_Not_Be_Marked_As_Modified()
         {
             // Arrange
@@ -303,16 +302,16 @@ namespace TrackableEntities.Client.Tests
             product.ProductName = "xxxxxxxx";
 
             // Assert
-            Assert.AreEqual(TrackingState.Modified, product.TrackingState);
-            Assert.Contains("ProductName", (ICollection)product.ModifiedProperties);
-            Assert.That(product.ModifiedProperties, Has.No.Member("UnitPrice"));
+            Assert.Equal(TrackingState.Modified, product.TrackingState);
+            Assert.Contains("ProductName", product.ModifiedProperties);
+            Assert.DoesNotContain("UnitPrice", product.ModifiedProperties);
         }
 
         #endregion
 
         #region Removed Items Tests
 
-        [Test]
+        [Fact]
         public void Removed_Added_Items_Should_Be_Marked_As_Unchanged()
         {
             // Arrange
@@ -334,10 +333,10 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(product);
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, product.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, product.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Added_Items_Should_Not_Have_ModifiedProperties()
         {
             // Arrange
@@ -358,11 +357,11 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(product);
 
             // Assert
-            Assert.IsTrue(product.ModifiedProperties == null
+            Assert.True(product.ModifiedProperties == null
                 || product.ModifiedProperties.Count == 0);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Added_Modified_Items_Should_Not_Have_ModifiedProperties()
         {
             // Arrange
@@ -383,11 +382,11 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(product);
 
             // Assert
-            Assert.IsTrue(product.ModifiedProperties == null
+            Assert.True(product.ModifiedProperties == null
                 || product.ModifiedProperties.Count == 0);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Existing_Unchanged_Items_Should_Be_Marked_As_Deleted()
         {
             // Arrange
@@ -399,10 +398,10 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(product);
 
             // Assert
-            Assert.AreEqual(TrackingState.Deleted, product.TrackingState);
+            Assert.Equal(TrackingState.Deleted, product.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Existing_Modified_Items_Should_Be_Marked_As_Deleted()
         {
             // Arrange
@@ -415,10 +414,10 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(product);
 
             // Assert
-            Assert.AreEqual(TrackingState.Deleted, product.TrackingState);
+            Assert.Equal(TrackingState.Deleted, product.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Existing_Modified_Items_Should_Not_Have_ModifiedProperties()
         {
             // Arrange
@@ -431,11 +430,11 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(product);
 
             // Assert
-            Assert.IsTrue(product.ModifiedProperties == null
+            Assert.True(product.ModifiedProperties == null
                 || product.ModifiedProperties.Count == 0);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Items_Should_Disable_Change_Tracking_On_Entity()
         {
             // Arrange
@@ -450,10 +449,10 @@ namespace TrackableEntities.Client.Tests
             order.OrderDate = order.OrderDate.AddDays(1);
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Items_Should_Disable_Change_Tracking_On_Related_Entities_OneToMany()
         {
             // Arrange
@@ -469,10 +468,10 @@ namespace TrackableEntities.Client.Tests
             detail.Quantity++;
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, detail.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, detail.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Items_Should_NOT_Disable_Change_Tracking_On_Related_Entities_ManyToOne()
         {
             // Arrange
@@ -487,10 +486,10 @@ namespace TrackableEntities.Client.Tests
             customer.CustomerName = "XXX";
 
             // Assert
-            Assert.AreEqual(TrackingState.Modified, customer.TrackingState);
+            Assert.Equal(TrackingState.Modified, customer.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Items_Should_NOT_Disable_Change_Tracking_On_Related_Entities_OneToOne()
         {
             // Arrange
@@ -510,10 +509,10 @@ namespace TrackableEntities.Client.Tests
             setting.Setting = "XXX";
 
             // Assert
-            Assert.AreEqual(TrackingState.Modified, setting.TrackingState);
+            Assert.Equal(TrackingState.Modified, setting.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Items_Should_NOT_Disable_Change_Tracking_On_Related_Entities_ManyToMany()
         {
             // Arrange
@@ -528,10 +527,10 @@ namespace TrackableEntities.Client.Tests
             territory.TerritoryDescription = "XXX";
 
             // Assert
-            Assert.AreEqual(TrackingState.Modified, territory.TrackingState);
+            Assert.Equal(TrackingState.Modified, territory.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Items_Should_NOT_Disable_Change_Tracking_On_Related_Entities_OneToMany_ToOne()
         {
             // Arrange
@@ -546,14 +545,14 @@ namespace TrackableEntities.Client.Tests
             product.ProductName = "XXX";
 
             // Assert
-            Assert.AreEqual(TrackingState.Modified, product.TrackingState);
+            Assert.Equal(TrackingState.Modified, product.TrackingState);
         }
 
         #endregion
 
         #region GetChanges Test
 
-        [Test]
+        [Fact]
         public void GetChanges_Should_Return_Added_Items()
         {
             // Arrange
@@ -566,10 +565,10 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Added, changes.First().TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_Should_Return_Modified_Items()
         {
             // Arrange
@@ -582,10 +581,10 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Modified, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Modified, changes.First().TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_Should_Return_Deleted_Items()
         {
             // Arrange
@@ -598,10 +597,10 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Deleted, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes.First().TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_Should_Return_Added_Modified_Deleted_Items()
         {
             // Arrange
@@ -620,16 +619,16 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, changes.ElementAt(1).TrackingState);
-            Assert.AreEqual(TrackingState.Modified, changes.ElementAt(0).TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, changes.ElementAt(2).TrackingState);
+            Assert.Equal(TrackingState.Added, changes.ElementAt(1).TrackingState);
+            Assert.Equal(TrackingState.Modified, changes.ElementAt(0).TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes.ElementAt(2).TrackingState);
         }
 
         #endregion
 
         #region EntityChanged Event Tests
 
-        [Test]
+        [Fact]
         public void EntityChanged_Event_Should_Fire_When_Items_Added_Modified_Deleted()
         {
             // Arrange
@@ -648,7 +647,7 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(deletedProduct);
 
             // Assert
-            Assert.AreEqual(3, changesCount);
+            Assert.Equal(3, changesCount);
         }
 
         #endregion

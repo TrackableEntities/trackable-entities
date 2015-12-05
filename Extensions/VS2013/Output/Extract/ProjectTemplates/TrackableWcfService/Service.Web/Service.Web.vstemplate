@@ -18,7 +18,6 @@
     <Project TargetFileName="Service.Web.csproj" File="Service.Web.csproj" ReplaceParameters="true">
       <Folder Name="App_Data" TargetFolderName="App_Data"/>
       <ProjectItem ReplaceParameters="true" TargetFileName="ExampleService.svc">ExampleService.svc</ProjectItem>
-      <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
       <Folder Name="Properties" TargetFolderName="Properties">
         <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
       </Folder>

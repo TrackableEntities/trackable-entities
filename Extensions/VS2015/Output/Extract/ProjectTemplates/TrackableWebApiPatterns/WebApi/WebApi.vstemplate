@@ -21,8 +21,8 @@
       <Folder Name="App_Start" TargetFolderName="App_Start">
         <ProjectItem ReplaceParameters="true" TargetFileName="BundleConfig.cs">BundleConfig.cs</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="FilterConfig.cs">FilterConfig.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="IoCConfig.cs">IoCConfig.cs</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="RouteConfig.cs">RouteConfig.cs</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="SimpleInjectorWebApiInitializer.cs">SimpleInjectorWebApiInitializer.cs</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="WebApiConfig.cs">WebApiConfig.cs</ProjectItem>
       </Folder>
       <Folder Name="Areas" TargetFolderName="Areas">
@@ -183,9 +183,6 @@
       <Folder Name="Controllers" TargetFolderName="Controllers">
         <ProjectItem ReplaceParameters="true" TargetFileName="HomeController.cs">HomeController.cs</ProjectItem>
       </Folder>
-      <Folder Name="DependencyResolution" TargetFolderName="DependencyResolution">
-        <ProjectItem ReplaceParameters="true" TargetFileName="TinyIoCDependencyResolver.cs">TinyIoCDependencyResolver.cs</ProjectItem>
-      </Folder>
       <ProjectItem ReplaceParameters="false" TargetFileName="favicon.ico">favicon.ico</ProjectItem>
       <Folder Name="fonts" TargetFolderName="fonts">
         <ProjectItem ReplaceParameters="false" TargetFileName="glyphicons-halflings-regular.eot">glyphicons-halflings-regular.eot</ProjectItem>
@@ -196,7 +193,6 @@
       <ProjectItem ReplaceParameters="true" TargetFileName="Global.asax">Global.asax</ProjectItem>
       <ProjectItem ReplaceParameters="true" TargetFileName="Global.asax.cs">Global.asax.cs</ProjectItem>
       <Folder Name="Models" TargetFolderName="Models" />
-      <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
       <ProjectItem ReplaceParameters="true" TargetFileName="Project_Readme.html">Project_Readme.html</ProjectItem>
       <Folder Name="Properties" TargetFolderName="Properties">
         <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
@@ -205,7 +201,6 @@
         <ProjectItem ReplaceParameters="true" TargetFileName="_references.js">_references.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap.js">bootstrap.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap.min.js">bootstrap.min.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.intellisense.js">jquery-2.1.1.intellisense.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.js">jquery-2.1.1.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.min.js">jquery-2.1.1.min.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.min.map">jquery-2.1.1.min.map</ProjectItem>
@@ -222,8 +217,6 @@
         <ProjectItem ReplaceParameters="true" TargetFileName="respond.min.js">respond.min.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="WebApiTestClient.js">WebApiTestClient.js</ProjectItem>
       </Folder>
-      <ProjectItem ReplaceParameters="true" TargetFileName="TinyIoC.cs">TinyIoC.cs</ProjectItem>
-      <ProjectItem ReplaceParameters="true" TargetFileName="TinyIoCAspNetExtensions.cs">TinyIoCAspNetExtensions.cs</ProjectItem>
       <ProjectItem ReplaceParameters="true" TargetFileName="TrackableWebApi.ReadMe.txt">TrackableWebApi.ReadMe.txt</ProjectItem>
       <Folder Name="Views" TargetFolderName="Views">
         <ProjectItem ReplaceParameters="true" TargetFileName="_ViewStart.cshtml">_ViewStart.cshtml</ProjectItem>
@@ -249,8 +242,9 @@
     <packages repository="extension"
               repositoryId="TrackableEntities.VS2015..4f848cae-142a-4eb6-a217-017d04f8f2e5">
 	  <package id="Antlr" version="3.5.0.2" />
+	  <package id="AspNetWebApi2Helpers.Serialization" version="1.0.0" />
 	  <package id="bootstrap" version="3.3.1" />
-	  <package id="EntityFramework" version="6.1.1" />
+	  <package id="EntityFramework" version="6.1.3" />
 	  <package id="jQuery" version="2.1.1" />
 	  <package id="jQuery.UI.Combined" version="1.10.4" />
 	  <package id="knockoutjs" version="3.2.0" />
@@ -265,14 +259,17 @@
 	  <package id="Microsoft.AspNet.WebPages" version="3.2.2" />
 	  <package id="Microsoft.Web.Infrastructure" version="1.0.0.0" />
 	  <package id="Modernizr" version="2.8.3" />
-	  <package id="Newtonsoft.Json" version="6.0.6" />
+	  <package id="Newtonsoft.Json" version="6.0.8" />
 	  <package id="Respond" version="1.4.2" />
-	  <package id="TinyIoC" version="1.2" />
-	  <package id="TinyIoC.AspNetExtensions" version="1.2" />
-	  <package id="TrackableEntities.Common" version="2.2.0" />
-	  <package id="TrackableEntities.EF.6" version="2.2.0" />
-	  <package id="TrackableEntities.Patterns" version="2.2.0" />
-	  <package id="TrackableEntities.Patterns.EF.6" version="2.2.0" />
+    <package id="SimpleInjector" version="2.7.3" />
+    <package id="SimpleInjector.Extensions.ExecutionContextScoping" version="2.7.3" />
+    <package id="SimpleInjector.Integration.WebApi" version="2.7.3" />
+	  <package id="TrackableEntities.Client" version="2.5.2" />
+	  <package id="TrackableEntities.Common" version="2.5.2.1" />
+	  <package id="TrackableEntities.EF.6" version="2.5.2" />
+	  <package id="TrackableEntities.Patterns" version="2.5.2" />
+	  <package id="TrackableEntities.Patterns.EF.6" version="2.5.2" />
+    <package id="WebActivator" version="1.4.4" />
 	  <package id="WebApiTestOnHelpPage" version="1.3.4" />
 	  <package id="WebGrease" version="1.6.0" />
     </packages>

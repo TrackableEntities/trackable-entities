@@ -1,0 +1,3 @@
+Developer Setup for Deploy Projects
+
+Install VS SDK for VS 2015.

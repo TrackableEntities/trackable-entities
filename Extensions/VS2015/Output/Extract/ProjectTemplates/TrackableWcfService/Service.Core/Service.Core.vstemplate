@@ -17,7 +17,6 @@
   <TemplateContent>
     <Project TargetFileName="Service.Core.csproj" File="Service.Core.csproj" ReplaceParameters="true">
       <ProjectItem ReplaceParameters="true" TargetFileName="App.config">App.config</ProjectItem>
-      <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
       <Folder Name="Properties" TargetFolderName="Properties">
         <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
       </Folder>
@@ -31,10 +30,12 @@
   <WizardData>
     <packages repository="extension"
               repositoryId="TrackableEntities.VS2015..4f848cae-142a-4eb6-a217-017d04f8f2e5">
-		<package id="Newtonsoft.Json" version="6.0.6" />
-		<package id="EntityFramework" version="6.1.1" />
-		<package id="TrackableEntities.Common" version="2.2.0" />
-		<package id="TrackableEntities.EF.6" version="2.2.0" />
+		<package id="Newtonsoft.Json" version="6.0.8" />
+		<package id="EntityFramework" version="6.1.3" />
+		<package id="TrackableEntities.Client" version="2.5.2" />
+		<package id="TrackableEntities.Common" version="2.5.2.1" />
+		<package id="TrackableEntities.EF.6" version="2.5.2" />
+		<package id="WcfSerializationHelper" version="1.0.0" />
     </packages>
   </WizardData>	
 </VSTemplate>

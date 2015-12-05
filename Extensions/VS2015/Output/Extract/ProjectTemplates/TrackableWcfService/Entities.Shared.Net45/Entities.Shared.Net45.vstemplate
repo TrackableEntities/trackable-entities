@@ -1,0 +1,55 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>Trackable Shared .NET 4.5 Entities Library</Name>
+    <Description>Class library with templates for reverse engineering trackable shared entitites using Entity Framework Code First. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.</Description>
+    <ProjectType>CSharp</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>Trackable.Shared.Entities.Net45</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <Icon>__TemplateIcon.png</Icon>
+    <PreviewImage>__PreviewImage.png</PreviewImage>
+    <NumberOfParentCategoriesToRollUp>1</NumberOfParentCategoriesToRollUp>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="TrackableShared.Entities.Net45.csproj" File="TrackableShared.Entities.Net45.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="App.config">App.config</ProjectItem>
+      <Folder Name="CodeTemplates" TargetFolderName="CodeTemplates">
+        <Folder Name="EFModelFromDatabase" TargetFolderName="EFModelFromDatabase">
+          <ProjectItem ReplaceParameters="false" TargetFileName="Context.cs.t4">Context.cs.t4</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="EntityType.cs.t4">EntityType.cs.t4</ProjectItem>
+        </Folder>
+        <Folder Name="ReverseEngineerCodeFirst" TargetFolderName="ReverseEngineerCodeFirst">
+          <ProjectItem ReplaceParameters="false" TargetFileName="Context.tt">Context.tt</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Entity.tt">Entity.tt</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="Mapping.tt">Mapping.tt</ProjectItem>
+        </Folder>
+      </Folder>
+      <Folder Name="Contexts" TargetFolderName="Contexts" />
+      <Folder Name="Models" TargetFolderName="Models" />
+      <Folder Name="Properties" TargetFolderName="Properties">
+        <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+      </Folder>
+      <ProjectItem ReplaceParameters="true" TargetFileName="TrackableSharedEntities.Net45.ReadMe.txt">TrackableSharedEntities.Net45.ReadMe.txt</ProjectItem>
+    </Project>
+  </TemplateContent>
+  <WizardExtension>
+    <Assembly>TrackableEntities.TemplateWizard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e</Assembly>
+    <FullClassName>TrackableEntities.TemplateWizard.EntitiesChildWizard</FullClassName>
+  </WizardExtension>
+  <WizardData>
+    <packages repository="extension"
+              repositoryId="TrackableEntities.VS2015..4f848cae-142a-4eb6-a217-017d04f8f2e5">
+		<package id="Newtonsoft.Json" version="6.0.8" />
+		<package id="EntityFramework" version="6.1.3" />
+    <package id="TrackableEntities.Client" version="2.5.2" />
+		<package id="TrackableEntities.CodeTemplates.Shared.Net45" version="2.5.0" />
+		<package id="TrackableEntities.Common" version="2.5.2.1" />
+		<package id="TrackableEntities.EF.6" version="2.5.2" />
+    </packages>
+  </WizardData>	
+</VSTemplate>

@@ -1,0 +1,38 @@
+Trackable Service .NET 4.5 Shared Entities ReadMe
+
+NOTE: You can reverse engineer entities either using the Entity Framework
+Power Tools or the Entity Framework 6.x Tools for Visual Studio.
+
+This project can be referenced by both client and service projects.
+This project template functions as a Data Access Layer and can be
+referenced either by a Repositories class library or directly by
+an ASP.NET Web API or WCF project.
+
+Custom T4 templates are provided for reverse engineering a 
+database to generate Code First classes with fluent API and entities
+that implement the ITrackable interface from the TrackingEntitites
+NuGet packages.
+
+To get started, just right-click on the project produced by the
+template, select Add New Item, Data, ADO.NET Entity Data Model.
+Select or create a data connection. The tool will generate Code First
+entities based on the T4 templates located in the project.
+
+After running the tool, you will need to copy the connection string
+from App.config into the web.config (or app.config) file of the
+service host.
+
+You can also use the EF 6.x Tools for Visual Studio to generate entities
+using either "Code First from Database" or "EF Designer from Database."
+With the Code First option, you may need to insert a partial DbContext
+class with a partial ModelBuilding method, in order to add mappings for
+one-to-one relations.  For example:
+
+public partial class NorthwindSlim
+{
+    partial void ModelCreating(DbModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<CustomerSetting>()
+            .HasKey(e => e.CustomerId);
+    }
+}

@@ -1,0 +1,25 @@
+Trackable Client .NET 4.5 Entities ReadMe
+
+NOTE: Because these client entities are targeted to .NET 4.5 or greater,
+you can use either the Entity Framewor Power Tools or the EF 6.x Tools 
+for Visual Studio to generate entities.
+
+This project template references the TrackableEntities.Client NuGet
+package, which contains a ChangeTrackingCollection<T> that sets the
+TrackingState and ModifiedProperties properties on each entity.
+
+To get started, right-click on the project, select Entity Framework,
+Reverse Engineer Code First.  The tool will generate classes for
+data context and mapping classes, as well as trackable client entities.
+
+IMPORTANT: After running the tool, be sure to delete the Mapping folder
+and classes, and also the DbContext-derived class that was generated.
+These must be removed because the project will not reference the
+Entity Framework NuGet package.  Clients should avoid referencing
+any particular data access library and instead invoke a service
+for retrieving and saving entities to a database.
+
+This project is based on a portable class library and can be referenced
+from clients based on .NET 4.5, Silverlight 5 and higher, Windows Phone
+8 and higher, or Windows Store Apps.
+

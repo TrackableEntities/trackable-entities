@@ -101,6 +101,9 @@
     <Compile Include="..\TrackableEntities.Client\ITrackingCollectionOfT.cs">
       <Link>ITrackingCollectionOfT.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.Client\PortableReflectionHelper.cs">
+      <Link>PortableReflectionHelper.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.Client\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>

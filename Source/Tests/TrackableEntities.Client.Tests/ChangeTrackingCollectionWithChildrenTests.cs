@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using NUnit.Framework;
 using TrackableEntities.Client.Tests.Entities.FamilyModels;
 using TrackableEntities.Client.Tests.Entities.Mocks;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
+using Xunit;
 
 namespace TrackableEntities.Client.Tests
 {
-    [TestFixture]
     public class ChangeTrackingCollectionWithChildrenTests
     {
         #region Set Status Tests
 
-        [Test]
+        [Fact]
         public void Existing_Parent_With_Children_Should_Have_Children_Marked()
         {
             // Arrange
@@ -41,12 +40,12 @@ namespace TrackableEntities.Client.Tests
             orderDetails.Add(addedDetail);
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, addedDetail.TrackingState);
-            Assert.AreEqual(TrackingState.Modified, modifiedDetail.TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, deletedDetail.TrackingState);
+            Assert.Equal(TrackingState.Added, addedDetail.TrackingState);
+            Assert.Equal(TrackingState.Modified, modifiedDetail.TrackingState);
+            Assert.Equal(TrackingState.Deleted, deletedDetail.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Parent_With_Added_Children_Should_Have_Children_Marked_As_Added()
         {
             // Arrange
@@ -74,11 +73,11 @@ namespace TrackableEntities.Client.Tests
             orderDetails.Add(addedDetail2);
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, addedDetail1.TrackingState);
-            Assert.AreEqual(TrackingState.Added, addedDetail2.TrackingState);
+            Assert.Equal(TrackingState.Added, addedDetail1.TrackingState);
+            Assert.Equal(TrackingState.Added, addedDetail2.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Added_Parent_With_Children_Should_Have_Children_Marked_As_Added()
         {
             // Arrange
@@ -91,11 +90,11 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Add(order);
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, order.TrackingState);
-            Assert.AreEqual(TrackingState.Added, orderDetails[0].TrackingState);
+            Assert.Equal(TrackingState.Added, order.TrackingState);
+            Assert.Equal(TrackingState.Added, orderDetails[0].TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Added_Parent_With_Modified_Children_Should_Have_Children_Marked_As_Added()
         {
             // Arrange
@@ -109,11 +108,11 @@ namespace TrackableEntities.Client.Tests
             orderDetails[0].Quantity++;
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, order.TrackingState);
-            Assert.AreEqual(TrackingState.Added, orderDetails[0].TrackingState);
+            Assert.Equal(TrackingState.Added, order.TrackingState);
+            Assert.Equal(TrackingState.Added, orderDetails[0].TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Added_Parent_Then_Removed_Should_Have_Children_Marked_As_Unchanged()
         {
             // Arrange
@@ -128,11 +127,11 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(order);
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, orderDetail.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, orderDetail.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Added_Parent_With_Removed_Children_Should_Have_Children_Marked_As_Unchanged()
         {
             // Arrange
@@ -147,11 +146,11 @@ namespace TrackableEntities.Client.Tests
             order.OrderDetails.Remove(orderDetail);
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, orderDetail.TrackingState);
+            Assert.Equal(TrackingState.Added, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, orderDetail.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Parent_Removed_With_Modified_Children_Should_Have_Children_Marked_As_Deleted()
         {
             // Arrange
@@ -166,15 +165,15 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(order);
 
             // Assert
-            Assert.AreEqual(TrackingState.Deleted, order.TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, orderDetail.TrackingState);
+            Assert.Equal(TrackingState.Deleted, order.TrackingState);
+            Assert.Equal(TrackingState.Deleted, orderDetail.TrackingState);
         }
 
         #endregion
 
         #region Modified Properties Tests
 
-        [Test]
+        [Fact]
         public void Existing_Parent_With_Modified_Children_Should_Add_ModifiedProperties()
         {
             // Arrange
@@ -188,10 +187,10 @@ namespace TrackableEntities.Client.Tests
             modifiedDetail.UnitPrice++;
 
             // Assert
-            Assert.Contains("UnitPrice", (ICollection)modifiedDetail.ModifiedProperties);
+            Assert.Contains("UnitPrice", modifiedDetail.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Parent_With_Modified_Children_Should_Add_Multiple_ModifiedProperties()
         {
             // Arrange
@@ -206,11 +205,11 @@ namespace TrackableEntities.Client.Tests
             modifiedDetail.UnitPrice++;
 
             // Assert
-            Assert.Contains("Quantity", (ICollection)modifiedDetail.ModifiedProperties);
-            Assert.Contains("UnitPrice", (ICollection)modifiedDetail.ModifiedProperties);
+            Assert.Contains("Quantity", modifiedDetail.ModifiedProperties);
+            Assert.Contains("UnitPrice", modifiedDetail.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Parent_With_Excluded_Children_Should_Not_Be_Marked_As_Modified()
         {
             // Arrange
@@ -225,10 +224,10 @@ namespace TrackableEntities.Client.Tests
             modifiedDetail.Quantity++;
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, modifiedDetail.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, modifiedDetail.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Parent_With_Excluded_Children_Should_Not_Add_ModifiedProperty()
         {
             // Arrange
@@ -243,11 +242,11 @@ namespace TrackableEntities.Client.Tests
             modifiedDetail.Quantity++;
 
             // Assert
-            Assert.IsTrue(modifiedDetail.ModifiedProperties == null
+            Assert.True(modifiedDetail.ModifiedProperties == null
                 || modifiedDetail.ModifiedProperties.Count == 0);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Parent_With_Mixed_Children_Should_Not_Add_ModifiedProperty()
         {
             // Arrange
@@ -263,12 +262,12 @@ namespace TrackableEntities.Client.Tests
             modifiedDetail.UnitPrice++;
 
             // Assert
-            Assert.AreEqual(TrackingState.Modified, modifiedDetail.TrackingState);
-            Assert.Contains("UnitPrice", (ICollection)modifiedDetail.ModifiedProperties);
-            Assert.That(modifiedDetail.ModifiedProperties, Has.No.Member("Quantity"));
+            Assert.Equal(TrackingState.Modified, modifiedDetail.TrackingState);
+            Assert.Contains("UnitPrice", modifiedDetail.ModifiedProperties);
+            Assert.DoesNotContain("Quantity", modifiedDetail.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Parent_Removed_With_Modified_Children_Should_Have_Children_Modified_Properties_Cleared()
         {
             // Arrange
@@ -283,7 +282,7 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(order);
 
             // Assert
-            Assert.IsTrue(orderDetail.ModifiedProperties == null
+            Assert.True(orderDetail.ModifiedProperties == null
                 || orderDetail.ModifiedProperties.Count == 0);
         }
         
@@ -291,7 +290,7 @@ namespace TrackableEntities.Client.Tests
 
         #region GetChanges Tests
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Unchanged_Order_With_Details_Should_Return_Marked_Children()
         {
             // Arrange
@@ -325,22 +324,22 @@ namespace TrackableEntities.Client.Tests
             var changedModifiedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == modifiedDetail.ProductId);
             var changedAddedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == addedDetail.ProductId);
             var changedDeletedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == deletedDetail.ProductId);
-            Assert.AreEqual(TrackingState.Unchanged, changedOrder.TrackingState);
-            Assert.AreEqual(3, changedOrder.OrderDetails.Count);
-            Assert.AreEqual(TrackingState.Modified, changedModifiedDetail.TrackingState);
-            Assert.AreEqual(TrackingState.Added, changedAddedDetail.TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, changedDeletedDetail.TrackingState);
-            Assert.That(changedOrder.OrderDetails, Has.No.Member(unchangedDetail));
-            Assert.IsNotNull(order.Customer);
-            Assert.IsNotNull(order3.Customer);
-            Assert.IsNotNull(changedOrder.Customer);
-            Assert.IsNotNull(changedOrder3.Customer);
-            Assert.IsTrue(object.ReferenceEquals(order.Customer, order3.Customer));
-            Assert.IsFalse(object.ReferenceEquals(order.Customer, changedOrder.Customer));
-            Assert.IsTrue(object.ReferenceEquals(changedOrder.Customer, changedOrder3.Customer));
+            Assert.Equal(TrackingState.Unchanged, changedOrder.TrackingState);
+            Assert.Equal(3, changedOrder.OrderDetails.Count);
+            Assert.Equal(TrackingState.Modified, changedModifiedDetail.TrackingState);
+            Assert.Equal(TrackingState.Added, changedAddedDetail.TrackingState);
+            Assert.Equal(TrackingState.Deleted, changedDeletedDetail.TrackingState);
+            Assert.DoesNotContain(unchangedDetail, changedOrder.OrderDetails);
+            Assert.NotNull(order.Customer);
+            Assert.NotNull(order3.Customer);
+            Assert.NotNull(changedOrder.Customer);
+            Assert.NotNull(changedOrder3.Customer);
+            Assert.True(object.ReferenceEquals(order.Customer, order3.Customer));
+            Assert.False(object.ReferenceEquals(order.Customer, changedOrder.Customer));
+            Assert.True(object.ReferenceEquals(changedOrder.Customer, changedOrder3.Customer));
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Added_Order_With_Details_Should_Return_Marked_Children_Added()
         {
             // Arrange
@@ -370,15 +369,15 @@ namespace TrackableEntities.Client.Tests
             var changedExistingDetail = changedOrder.OrderDetails.Single(d => d.ProductId == unchangedDetail.ProductId);
             var changedModifiedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == modifiedDetail.ProductId);
             var changedAddedDetail = changedOrder.OrderDetails.Single(d => d.ProductId == addedDetail.ProductId);
-            Assert.AreEqual(TrackingState.Added, changedOrder.TrackingState);
-            Assert.AreEqual(3, changedOrder.OrderDetails.Count);
-            Assert.AreEqual(TrackingState.Added, changedModifiedDetail.TrackingState);
-            Assert.AreEqual(TrackingState.Added, changedAddedDetail.TrackingState);
-            Assert.AreEqual(TrackingState.Added, changedExistingDetail.TrackingState);
-            Assert.That(changedOrder.OrderDetails, Has.No.Member(deletedDetail));
+            Assert.Equal(TrackingState.Added, changedOrder.TrackingState);
+            Assert.Equal(3, changedOrder.OrderDetails.Count);
+            Assert.Equal(TrackingState.Added, changedModifiedDetail.TrackingState);
+            Assert.Equal(TrackingState.Added, changedAddedDetail.TrackingState);
+            Assert.Equal(TrackingState.Added, changedExistingDetail.TrackingState);
+            Assert.DoesNotContain(deletedDetail, changedOrder.OrderDetails);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Deleted_Order_With_Details_Should_Return_Marked_Children_Deleted()
         {
             // NOTE: Removed order with added detail should exclude added detail
@@ -413,16 +412,16 @@ namespace TrackableEntities.Client.Tests
             var changedModifiedDetail = changedOrder.OrderDetails.SingleOrDefault(d => d.ProductId == modifiedDetail.ProductId);
             var changedAddedDetail = changedOrder.OrderDetails.SingleOrDefault(d => d.ProductId == addedDetail.ProductId);
             var changedDeletedDetail = changedOrder.OrderDetails.SingleOrDefault(d => d.ProductId == deletedDetail.ProductId);
-            Assert.AreEqual(TrackingState.Deleted, changedOrder.TrackingState);
-            Assert.AreEqual(3, changedOrder.OrderDetails.Count);
-            Assert.AreEqual(TrackingState.Deleted, changedModifiedDetail.TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, changedExistingDetail.TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, changedDeletedDetail.TrackingState);
-            Assert.IsNull(changedAddedDetail);
-            Assert.AreEqual(TrackingState.Unchanged, addedDetail.TrackingState);
+            Assert.Equal(TrackingState.Deleted, changedOrder.TrackingState);
+            Assert.Equal(3, changedOrder.OrderDetails.Count);
+            Assert.Equal(TrackingState.Deleted, changedModifiedDetail.TrackingState);
+            Assert.Equal(TrackingState.Deleted, changedExistingDetail.TrackingState);
+            Assert.Equal(TrackingState.Deleted, changedDeletedDetail.TrackingState);
+            Assert.Null(changedAddedDetail);
+            Assert.Equal(TrackingState.Unchanged, addedDetail.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Modified_Order_Should_Return_Order()
         {
             // Arrange
@@ -435,12 +434,12 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsFalse(changes.Tracking);
-            Assert.AreNotSame(changes[0], order);
-            Assert.IsTrue(changes[0].IsEquatable(order));
+            Assert.False(changes.Tracking);
+            Assert.NotSame(changes[0], order);
+            Assert.True(changes[0].IsEquatable(order));
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Unchanged_Order_With_Modified_Detail_Should_Return_Order()
         {
             // Arrange
@@ -453,14 +452,14 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, changes[0].TrackingState);
-            Assert.AreEqual(1, changes[0].OrderDetails.Count);
-            Assert.AreEqual(TrackingState.Modified, changes[0].OrderDetails[0].TrackingState);
-            Assert.IsTrue(changes[0].IsEquatable(order));
-            Assert.IsTrue(changes[0].OrderDetails[0].IsEquatable(order.OrderDetails[0]));
+            Assert.Equal(TrackingState.Unchanged, changes[0].TrackingState);
+            Assert.Equal(1, changes[0].OrderDetails.Count);
+            Assert.Equal(TrackingState.Modified, changes[0].OrderDetails[0].TrackingState);
+            Assert.True(changes[0].IsEquatable(order));
+            Assert.True(changes[0].OrderDetails[0].IsEquatable(order.OrderDetails[0]));
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Unchanged_OrderDetail_With_Modified_Product_Should_Return_OrderDetail()
         {
             // Arrange
@@ -473,15 +472,15 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, changes[0].OrderDetails[0].TrackingState);
-            Assert.AreEqual(1, changes[0].OrderDetails.Count);
-            Assert.AreEqual(TrackingState.Modified, changes[0].OrderDetails[0].Product.TrackingState);
-            Assert.IsTrue(changes[0].IsEquatable(order));
-            Assert.IsTrue(changes[0].OrderDetails[0].IsEquatable(order.OrderDetails[0]));
-            Assert.IsTrue(changes[0].OrderDetails[0].Product.IsEquatable(order.OrderDetails[0].Product));
+            Assert.Equal(TrackingState.Unchanged, changes[0].OrderDetails[0].TrackingState);
+            Assert.Equal(1, changes[0].OrderDetails.Count);
+            Assert.Equal(TrackingState.Modified, changes[0].OrderDetails[0].Product.TrackingState);
+            Assert.True(changes[0].IsEquatable(order));
+            Assert.True(changes[0].OrderDetails[0].IsEquatable(order.OrderDetails[0]));
+            Assert.True(changes[0].OrderDetails[0].Product.IsEquatable(order.OrderDetails[0].Product));
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_With_More_Than_One_ITrackable_Members_Should_Return_NonEmpty_Changeset_if_Modified()
         {
             // Arrange
@@ -509,18 +508,18 @@ namespace TrackableEntities.Client.Tests
 
             //Assert
             Assert.NotNull(changedFamily);
-            Assert.AreEqual(TrackingState.Unchanged, changedFamily.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, changedFamily.TrackingState);
             Assert.NotNull(changedFamily.Father);
-            Assert.AreEqual(TrackingState.Modified, changedFamily.Father.TrackingState);
-            Assert.IsNull(changedFamily.Mother);
-            Assert.IsNull(changedFamily.Child);
+            Assert.Equal(TrackingState.Modified, changedFamily.Father.TrackingState);
+            Assert.Null(changedFamily.Mother);
+            Assert.Null(changedFamily.Child);
         }
 
         #endregion
 
         #region MergeChangesTests
 
-        [Test]
+        [Fact]
         public void Updated_Parent_With_Children_Should_Merge_Unchanged_Children()
         {
             // Arrange
@@ -568,29 +567,29 @@ namespace TrackableEntities.Client.Tests
 
             // Assert
             // Orig reference pointed to updated
-            Assert.IsTrue(ReferenceEquals(origOrder, updatedOrder));
+            Assert.True(ReferenceEquals(origOrder, updatedOrder));
 
             // Tracking states set to unchanged
-            Assert.AreEqual(TrackingState.Unchanged, origOrder.OrderDetails[0].TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, origOrder.OrderDetails[1].TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, origOrder.OrderDetails[2].TrackingState);
+            Assert.Equal(TrackingState.Unchanged, origOrder.OrderDetails[0].TrackingState);
+            Assert.Equal(TrackingState.Unchanged, origOrder.OrderDetails[1].TrackingState);
+            Assert.Equal(TrackingState.Unchanged, origOrder.OrderDetails[2].TrackingState);
 
             // Modified properties set to null
-            Assert.IsNull(origOrder.OrderDetails[0].ModifiedProperties);
-            Assert.IsNull(origOrder.OrderDetails[1].ModifiedProperties);
-            Assert.IsNull(origOrder.OrderDetails[2].ModifiedProperties);
+            Assert.Null(origOrder.OrderDetails[0].ModifiedProperties);
+            Assert.Null(origOrder.OrderDetails[1].ModifiedProperties);
+            Assert.Null(origOrder.OrderDetails[2].ModifiedProperties);
 
             // Detail orders fixed up
-            Assert.IsTrue(ReferenceEquals(origOrder, origOrder.OrderDetails[0].Order));
-            Assert.IsTrue(ReferenceEquals(origOrder, origOrder.OrderDetails[1].Order));
-            Assert.IsTrue(ReferenceEquals(origOrder, origOrder.OrderDetails[2].Order));
+            Assert.True(ReferenceEquals(origOrder, origOrder.OrderDetails[0].Order));
+            Assert.True(ReferenceEquals(origOrder, origOrder.OrderDetails[1].Order));
+            Assert.True(ReferenceEquals(origOrder, origOrder.OrderDetails[2].Order));
         }
 
         #endregion
 
         #region ManyToMany - Set Status Tests
 
-        [Test]
+        [Fact]
         public void Existing_Employee_With_Territories_Should_Have_Territories_Marked()
         {
             // Arrange
@@ -608,14 +607,14 @@ namespace TrackableEntities.Client.Tests
             employee.Territories.Remove(deletedTerritory);
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, employee.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, unchangedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Modified, modifiedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Added, addedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, deletedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, employee.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, unchangedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Modified, modifiedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Added, addedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Deleted, deletedTerritory.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Added_Employee_With_Territories_Should_Have_Territories_Marked_As_Added()
         {
             // NOTE: Removing child from added parent marks child as unchanged.
@@ -637,14 +636,14 @@ namespace TrackableEntities.Client.Tests
             employee.Territories.Remove(deletedTerritory);
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, employee.TrackingState);
-            Assert.AreEqual(TrackingState.Added, unchangedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Added, modifiedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Added, addedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, deletedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Added, employee.TrackingState);
+            Assert.Equal(TrackingState.Added, unchangedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Added, modifiedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Added, addedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, deletedTerritory.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Added_Employee_Then_Removed_With_Territories_Should_Have_Territories_Marked_As_Unchanged()
         {
             // NOTE: Removing an added parent should mark parent and children as unchanged.
@@ -667,14 +666,14 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(employee);
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, employee.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, unchangedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, modifiedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, addedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, deletedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, employee.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, unchangedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, modifiedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, addedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, deletedTerritory.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Removed_Employee_With_Territories_Should_Have_Territories_Marked_As_Deleted()
         {
             // NOTE: Removing a parent will mark both parent and children as deleted.
@@ -697,18 +696,18 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(employee);
 
             // Assert
-            Assert.AreEqual(TrackingState.Deleted, employee.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, unchangedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Modified, modifiedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, addedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, deletedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Deleted, employee.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, unchangedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Modified, modifiedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, addedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Deleted, deletedTerritory.TrackingState);
         }
 
         #endregion
 
         #region ManyToMany - Modified Properties Tests
 
-        [Test]
+        [Fact]
         public void Existing_Employee_With_Modified_Children_Should_Add_ModifiedProperties()
         {
             // Arrange
@@ -721,10 +720,10 @@ namespace TrackableEntities.Client.Tests
             modifiedTerritory.TerritoryDescription = "xxx";
 
             // Assert
-            Assert.Contains("TerritoryDescription", (ICollection)modifiedTerritory.ModifiedProperties);
+            Assert.Contains("TerritoryDescription", modifiedTerritory.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Employee_With_Modified_Children_Should_Add_Multiple_ModifiedProperties()
         {
             // Arrange
@@ -738,11 +737,11 @@ namespace TrackableEntities.Client.Tests
             modifiedTerritory.Data = "xxx";
 
             // Assert
-            Assert.Contains("TerritoryDescription", (ICollection)modifiedTerritory.ModifiedProperties);
-            Assert.Contains("Data", (ICollection)modifiedTerritory.ModifiedProperties);
+            Assert.Contains("TerritoryDescription", modifiedTerritory.ModifiedProperties);
+            Assert.Contains("Data", modifiedTerritory.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Employee_With_Excluded_Children_Should_Not_Be_Marked_As_Modified()
         {
             // Arrange
@@ -756,12 +755,12 @@ namespace TrackableEntities.Client.Tests
             modifiedTerritory.TerritoryDescription = "xxx";
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, modifiedTerritory.TrackingState);
-            Assert.IsTrue(modifiedTerritory.ModifiedProperties == null
+            Assert.Equal(TrackingState.Unchanged, modifiedTerritory.TrackingState);
+            Assert.True(modifiedTerritory.ModifiedProperties == null
                 || modifiedTerritory.ModifiedProperties.Count == 0);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Employee_With_Mixed_Children_Should_Not_Add_ModifiedProperties()
         {
             // Arrange
@@ -776,12 +775,12 @@ namespace TrackableEntities.Client.Tests
             modifiedTerritory.Data = "xxx";
 
             // Assert
-            Assert.AreEqual(TrackingState.Modified, modifiedTerritory.TrackingState);
-            Assert.Contains("Data", (ICollection)modifiedTerritory.ModifiedProperties);
-            Assert.That(modifiedTerritory.ModifiedProperties, Has.No.Member("TerritoryDescription"));
+            Assert.Equal(TrackingState.Modified, modifiedTerritory.TrackingState);
+            Assert.Contains("Data", modifiedTerritory.ModifiedProperties);
+            Assert.DoesNotContain("TerritoryDescription", modifiedTerritory.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Employee_Removed_With_Modified_Children_Have_Children_ModifiedProperties_Cleared()
         {
             // Arrange
@@ -795,7 +794,7 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(employee);
 
             // Assert
-            Assert.IsTrue(modifiedTerritory.ModifiedProperties == null
+            Assert.True(modifiedTerritory.ModifiedProperties == null
                 || modifiedTerritory.ModifiedProperties.Count == 0);
         }
 
@@ -803,7 +802,7 @@ namespace TrackableEntities.Client.Tests
 
         #region ManyToMany - GetChanges Tests
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Employee_With_Territories_Should_Return_Marked_Territories()
         {
             // Arrange
@@ -826,15 +825,15 @@ namespace TrackableEntities.Client.Tests
             var changedDeletedTerritory = changedEmployee.Territories.Single(t => t.TerritoryId == deletedTerritory.TerritoryId);
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, changedEmployee.TrackingState);
-            Assert.AreEqual(3, changedEmployee.Territories.Count);
-            Assert.AreEqual(TrackingState.Modified, changedModifiedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Added, changedAddedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, changedDeletedTerritory.TrackingState);
-            Assert.That(changedEmployee.Territories, Has.No.Member(unchangedTerritory));
+            Assert.Equal(TrackingState.Unchanged, changedEmployee.TrackingState);
+            Assert.Equal(3, changedEmployee.Territories.Count);
+            Assert.Equal(TrackingState.Modified, changedModifiedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Added, changedAddedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Deleted, changedDeletedTerritory.TrackingState);
+            Assert.DoesNotContain(unchangedTerritory, changedEmployee.Territories);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Employee_With_Territory_And_Modified_Area_Should_Return_Marked_Territory()
         {
             // Ensure that changes are retrieved across M-M relationships.
@@ -861,13 +860,13 @@ namespace TrackableEntities.Client.Tests
             var changedArea = changedTerritory.Area;
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, changedEmployee.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, changedTerritory.TrackingState);
-            Assert.AreEqual(TrackingState.Modified, changedArea.TrackingState);
-            Assert.Contains("AreaName", (ICollection)area.ModifiedProperties);
+            Assert.Equal(TrackingState.Unchanged, changedEmployee.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, changedTerritory.TrackingState);
+            Assert.Equal(TrackingState.Modified, changedArea.TrackingState);
+            Assert.Contains("AreaName", area.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Modified_Employee_With_Unchanged_Territories_Should_Return_No_Territories()
         {
             // Arrange
@@ -881,14 +880,14 @@ namespace TrackableEntities.Client.Tests
             var changedEmployee = changes.First();
 
             // Assert
-            Assert.IsEmpty(changedEmployee.Territories);
+            Assert.Empty(changedEmployee.Territories);
         }
 
         #endregion
 
         #region ManyToOne - Set Status Tests
 
-        [Test]
+        [Fact]
         public void Existing_Order_With_Unchanged_Customer_Should_Mark_Customer_As_Unchanged()
         {
             // Arrange
@@ -899,12 +898,12 @@ namespace TrackableEntities.Client.Tests
             // Act
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
-            Assert.IsFalse(order.HasChanges());
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.False(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Existing_Order_With_Assigned_Customer_Should_Mark_Customer_As_Modified()
         {
             // Arrange
@@ -918,12 +917,12 @@ namespace TrackableEntities.Client.Tests
             order.Customer.CustomerName = "xxx";
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
-            Assert.AreEqual(TrackingState.Modified, order.Customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState);
+            Assert.Equal(TrackingState.Modified, order.Customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Existing_Order_With_Modified_Customer_Should_Mark_Customer_As_Modified()
         {
             // Arrange
@@ -935,12 +934,12 @@ namespace TrackableEntities.Client.Tests
             order.Customer.CustomerName = "xxx";
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
-            Assert.AreEqual(TrackingState.Modified, order.Customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState);
+            Assert.Equal(TrackingState.Modified, order.Customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Existing_Order_With_New_Customer_Should_Mark_Customer_As_Unchanged()
         {
             // NOTE: Setting Order.Customer to a new customer will not automatically
@@ -964,12 +963,12 @@ namespace TrackableEntities.Client.Tests
             // NotifyPropertyChanged because it is called by foreign key's property setter.
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
-            Assert.IsFalse(order.HasChanges());
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.False(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Existing_Order_With_Manually_Added_Customer_Should_Mark_Customer_As_Added()
         {
             // NOTE: Manually marking reference as added will create a new entity
@@ -992,12 +991,12 @@ namespace TrackableEntities.Client.Tests
             // NotifyPropertyChanged because it is called by foreign key's property setter.
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
-            Assert.AreEqual(TrackingState.Added, order.Customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState);
+            Assert.Equal(TrackingState.Added, order.Customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Existing_Order_With_Removed_Customer_Should_Mark_Customer_As_Unchanged()
         {
             // NOTE: Setting Order.Customer to null will not automatically
@@ -1018,12 +1017,12 @@ namespace TrackableEntities.Client.Tests
             // NotifyPropertyChanged because it is called by foreign key's property setter.
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.IsFalse(order.HasChanges());
+            Assert.Equal(TrackingState.Unchanged, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.False(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Added_Order_With_Unchanged_Customer_Should_Mark_Customer_As_Unchanged()
         {
             // NOTE: Referenced customer will remain unchanged because Order has no way to  
@@ -1040,12 +1039,12 @@ namespace TrackableEntities.Client.Tests
             // Act
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Added, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Added_Order_With_Modified_Customer_Should_Mark_Customer_As_Modified()
         {
             // NOTE: Modified reference entity will remain modified if parent is added.
@@ -1060,12 +1059,12 @@ namespace TrackableEntities.Client.Tests
             order.Customer.CustomerName = "xxx";
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, order.TrackingState);
-            Assert.AreEqual(TrackingState.Modified, order.Customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Added, order.TrackingState);
+            Assert.Equal(TrackingState.Modified, order.Customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Added_Order_With_New_Customer_Should_Mark_Customer_As_Unchanged()
         {
             // NOTE: Setting Order.Customer to a new customer will not automatically
@@ -1087,12 +1086,12 @@ namespace TrackableEntities.Client.Tests
             };
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Added, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Added_Order_With_Manually_Added_Customer_Should_Mark_Customer_As_Added()
         {
             // NOTE: Manually marking reference as added will create a new entity
@@ -1113,12 +1112,12 @@ namespace TrackableEntities.Client.Tests
             };
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, order.TrackingState);
-            Assert.AreEqual(TrackingState.Added, order.Customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Added, order.TrackingState);
+            Assert.Equal(TrackingState.Added, order.Customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Added_Order_With_Removed_Customer_Should_Mark_Customer_As_Unchanged()
         {
             // NOTE: Removed customer will not be marked as deleted. Instead to be deleted
@@ -1135,12 +1134,12 @@ namespace TrackableEntities.Client.Tests
             order.Customer = null;
 
             // Assert
-            Assert.AreEqual(TrackingState.Added, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Added, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Removed_Order_With_Unchanged_Customer_Should_Mark_Customer_As_Unchanged()
         {
             // NOTE: Removing order will not automatically mark customer as deleted.
@@ -1155,12 +1154,12 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(order);
 
             // Assert
-            Assert.AreEqual(TrackingState.Deleted, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Deleted, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Removed_Order_With_Modified_Customer_Should_Mark_Customer_As_Modified()
         {
             // NOTE: Modified reference entity will remain modified if parent is deleted.
@@ -1175,12 +1174,12 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(order);
 
             // Assert
-            Assert.AreEqual(TrackingState.Deleted, order.TrackingState);
-            Assert.AreEqual(TrackingState.Modified, order.Customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Deleted, order.TrackingState);
+            Assert.Equal(TrackingState.Modified, order.Customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Removed_Order_With_New_Customer_Should_Mark_Customer_As_Unchanged()
         {
             // NOTE: Setting Order.Customer to null will not mark customer as deleted.
@@ -1200,12 +1199,12 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(order);
 
             // Assert
-            Assert.AreEqual(TrackingState.Deleted, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, order.Customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Deleted, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, order.Customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Removed_Order_With_Manually_Added_Customer_Should_Mark_Customer_As_Added()
         {
             // NOTE: Manually marking reference as added will create a new entity
@@ -1226,12 +1225,12 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(order);
 
             // Assert
-            Assert.AreEqual(TrackingState.Deleted, order.TrackingState);
-            Assert.AreEqual(TrackingState.Added, order.Customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Deleted, order.TrackingState);
+            Assert.Equal(TrackingState.Added, order.Customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
-        [Test]
+        [Fact]
         public void Removed_Order_With_Removed_Customer_Should_Mark_Customer_As_Unchanged()
         {
             // NOTE: Removed customer will not be marked as deleted. Instead to be deleted
@@ -1248,16 +1247,16 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(order);
 
             // Assert
-            Assert.AreEqual(TrackingState.Deleted, order.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.IsTrue(order.HasChanges());
+            Assert.Equal(TrackingState.Deleted, order.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.True(order.HasChanges());
         }
 
         #endregion
 
         #region ManyToOne - Modified Properties Tests
 
-        [Test]
+        [Fact]
         public void Existing_Order_With_Modified_Customer_Should_Add_ModifiedProperties()
         {
             // Arrange
@@ -1269,10 +1268,10 @@ namespace TrackableEntities.Client.Tests
             order.Customer.CustomerName = "xxx";
 
             // Assert
-            Assert.Contains("CustomerName", (ICollection)order.Customer.ModifiedProperties);
+            Assert.Contains("CustomerName", order.Customer.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Order_With_Modified_Customer_Should_Add_Multiple_ModifiedProperties()
         {
             // Arrange
@@ -1285,11 +1284,11 @@ namespace TrackableEntities.Client.Tests
             order.Customer.Data = "xxx";
 
             // Assert
-            Assert.Contains("CustomerName", (ICollection)order.Customer.ModifiedProperties);
-            Assert.Contains("Data", (ICollection)order.Customer.ModifiedProperties);
+            Assert.Contains("CustomerName", order.Customer.ModifiedProperties);
+            Assert.Contains("Data", order.Customer.ModifiedProperties);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Order_Removed_With_Modified_Customer_Has_Children_ModifiedProperties_Cleared()
         {
             // Arrange
@@ -1304,15 +1303,15 @@ namespace TrackableEntities.Client.Tests
             changeTracker.Remove(order);
 
             // Assert
-            Assert.IsTrue(modifiedCustomer.ModifiedProperties.Count == 1);
-            Assert.IsTrue(order.OrderDetails[0].ModifiedProperties == null);
+            Assert.True(modifiedCustomer.ModifiedProperties.Count == 1);
+            Assert.True(order.OrderDetails[0].ModifiedProperties == null);
         }
 
         #endregion
 
         #region ManyToOne - GetChanges Tests
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Order_With_Unchanged_Customer_Should_Return_Empty_Collection()
         {
             // Arrange
@@ -1324,10 +1323,10 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsEmpty(changes);
+            Assert.Empty(changes);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Order_With_Modified_Customer_Should_Return_Customer_Marked_As_Modified()
         {
             // Arrange
@@ -1340,12 +1339,12 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsNotEmpty(changes);
-            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
-            Assert.AreEqual(TrackingState.Modified, changes.First().Customer.TrackingState);
+            Assert.NotEmpty(changes);
+            Assert.Equal(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Modified, changes.First().Customer.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Order_With_New_Customer_Should_Return_Empty_Collection()
         {
             // NOTE: Reference properties not explicitly marked as Added will be considered
@@ -1365,10 +1364,10 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsEmpty(changes);
+            Assert.Empty(changes);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Order_With_Manually_Added_Customer_Should_Return_Customer_Marked_As_Added()
         {
             // NOTE: Reference properties must be explicitly marked as Added.
@@ -1388,12 +1387,12 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsNotEmpty(changes);
-            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
-            Assert.AreEqual(TrackingState.Added, changes.First().Customer.TrackingState);
+            Assert.NotEmpty(changes);
+            Assert.Equal(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Added, changes.First().Customer.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Order_With_Removed_Customer_Should_Return_Empty_Collection()
         {
             // NOTE: Reference properties are change-tracked but do not call 
@@ -1410,11 +1409,11 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsEmpty(changes);
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
+            Assert.Empty(changes);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Order_With_Customer_Modified_Territory_Should_Return_Territory_Marked_As_Modified()
         {
             // Arrange
@@ -1432,13 +1431,13 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsNotEmpty(changes);
-            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, changes.First().Customer.TrackingState);
-            Assert.AreEqual(TrackingState.Modified, changes.First().Customer.Territory.TrackingState);
+            Assert.NotEmpty(changes);
+            Assert.Equal(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Unchanged, changes.First().Customer.TrackingState);
+            Assert.Equal(TrackingState.Modified, changes.First().Customer.Territory.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Modified_Order_With_UnModified_Customer_Should_Set_Customer_To_Null()
         {
             // Arrange
@@ -1457,12 +1456,12 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsNotEmpty(changes);
-            Assert.AreEqual(TrackingState.Modified, changes.First().TrackingState);
-            Assert.IsNull(changes.First().Customer);
+            Assert.NotEmpty(changes);
+            Assert.Equal(TrackingState.Modified, changes.First().TrackingState);
+            Assert.Null(changes.First().Customer);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Order_With_Modified_Customer_With_Unmodified_Territory_Should_Set_Territory_To_Null()
         {
             // Arrange
@@ -1481,13 +1480,13 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsNotEmpty(changes);
-            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
-            Assert.AreEqual(TrackingState.Modified, changes.First().Customer.TrackingState);
-            Assert.IsNull(changes.First().Customer.Territory);
+            Assert.NotEmpty(changes);
+            Assert.Equal(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Modified, changes.First().Customer.TrackingState);
+            Assert.Null(changes.First().Customer.Territory);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Order_With_Modified_Customer_With_Deleted_Territory_Should_Set_Territory_To_Null()
         {
             // Arrange
@@ -1507,13 +1506,13 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsNotEmpty(changes);
-            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
-            Assert.AreEqual(TrackingState.Modified, changes.First().Customer.TrackingState);
-            Assert.IsNull(changes.First().Customer.Territory);
+            Assert.NotEmpty(changes);
+            Assert.Equal(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Modified, changes.First().Customer.TrackingState);
+            Assert.Null(changes.First().Customer.Territory);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Order_With_Customer_Territory_Added_Modified_Removed_Employees_Should_Return_Marked_Employees()
         {
             // Arrange
@@ -1545,22 +1544,22 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsNotEmpty(changes);
+            Assert.NotEmpty(changes);
             var changedOrder = changes.First();
-            Assert.AreEqual(TrackingState.Unchanged, changedOrder.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, changedOrder.Customer.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, changedOrder.Customer.Territory.TrackingState);
-            Assert.AreEqual(3, changedOrder.Customer.Territory.Employees.Count);
-            Assert.AreEqual(TrackingState.Modified, changedOrder.Customer.Territory.Employees[0].TrackingState);
-            Assert.AreEqual(TrackingState.Added, changedOrder.Customer.Territory.Employees[1].TrackingState);
-            Assert.AreEqual(TrackingState.Deleted, changedOrder.Customer.Territory.Employees[2].TrackingState);
+            Assert.Equal(TrackingState.Unchanged, changedOrder.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, changedOrder.Customer.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, changedOrder.Customer.Territory.TrackingState);
+            Assert.Equal(3, changedOrder.Customer.Territory.Employees.Count);
+            Assert.Equal(TrackingState.Modified, changedOrder.Customer.Territory.Employees[0].TrackingState);
+            Assert.Equal(TrackingState.Added, changedOrder.Customer.Territory.Employees[1].TrackingState);
+            Assert.Equal(TrackingState.Deleted, changedOrder.Customer.Territory.Employees[2].TrackingState);
         }
 
         #endregion
 
         #region OneToOne - Set Status Tests
 
-        [Test]
+        [Fact]
         public void Existing_Customer_With_Unchanged_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Unchanged()
         {
             // Arrange
@@ -1578,11 +1577,11 @@ namespace TrackableEntities.Client.Tests
             // Act
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, customerSetting.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customerSetting.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Customer_With_Modified_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Modified()
         {
             // Arrange
@@ -1601,11 +1600,11 @@ namespace TrackableEntities.Client.Tests
             customer.CustomerSetting.Setting = "xxx";
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.AreEqual(TrackingState.Modified, customerSetting.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.Equal(TrackingState.Modified, customerSetting.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Customer_With_Assigned_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Modified()
         {
             // Arrange
@@ -1624,11 +1623,11 @@ namespace TrackableEntities.Client.Tests
             customer.CustomerSetting.Setting = "xxx";
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.AreEqual(TrackingState.Modified, customerSetting.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.Equal(TrackingState.Modified, customerSetting.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Customer_With_New_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Unchanged()
         {
             // Arrange
@@ -1646,11 +1645,11 @@ namespace TrackableEntities.Client.Tests
             customer.CustomerSetting = customerSetting;
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, customerSetting.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customerSetting.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Customer_With_Manually_Added_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Added()
         {
             // Arrange
@@ -1669,11 +1668,11 @@ namespace TrackableEntities.Client.Tests
             customer.CustomerSetting = customerSetting;
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.AreEqual(TrackingState.Added, customerSetting.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.Equal(TrackingState.Added, customerSetting.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void Existing_Customer_With_Removed_CustomerSetting_Should_Have_CustomerSetting_Marked_As_Unchanged()
         {
             // Arrange
@@ -1692,15 +1691,15 @@ namespace TrackableEntities.Client.Tests
             customer.CustomerSetting = null;
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, customer.TrackingState);
-            Assert.AreEqual(TrackingState.Unchanged, customerSetting.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customer.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, customerSetting.TrackingState);
         }
 
         #endregion
 
         #region OneToOne - Modified Properties Tests
 
-        [Test]
+        [Fact]
         public void Existing_Customer_With_Modified_CustomerSetting_Should_Add_ModifiedProperties()
         {
             // Arrange
@@ -1718,14 +1717,14 @@ namespace TrackableEntities.Client.Tests
             customer.CustomerSetting.Setting = "xxx";
 
             // Assert
-            Assert.Contains("Setting", (ICollection)customer.CustomerSetting.ModifiedProperties);
+            Assert.Contains("Setting", customer.CustomerSetting.ModifiedProperties);
         }
 
         #endregion
 
         #region OneToOne - GetChangesTests
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Customer_With_Unchanged_CustomerSetting_Should_Return_Empty_Collection()
         {
             // Arrange
@@ -1743,10 +1742,10 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsEmpty(changes);
+            Assert.Empty(changes);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Customer_With_Modified_CustomerSetting_Return_CustomerSetting_Marked_As_Modified()
         {
             // Arrange
@@ -1765,12 +1764,12 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsNotEmpty(changes);
-            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
-            Assert.AreEqual(TrackingState.Modified, changes.First().CustomerSetting.TrackingState);
+            Assert.NotEmpty(changes);
+            Assert.Equal(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Modified, changes.First().CustomerSetting.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Customer_With_New_CustomerSetting_Return_Empty_Collection()
         {
             // Arrange
@@ -1788,10 +1787,10 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsEmpty(changes);
+            Assert.Empty(changes);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Customer_With_Manually_Added_CustomerSetting_Return_CustomerSetting_Marked_As_Added()
         {
             // Arrange
@@ -1810,12 +1809,12 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsNotEmpty(changes);
-            Assert.AreEqual(TrackingState.Unchanged, changes.First().TrackingState);
-            Assert.AreEqual(TrackingState.Added, changes.First().CustomerSetting.TrackingState);
+            Assert.NotEmpty(changes);
+            Assert.Equal(TrackingState.Unchanged, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Added, changes.First().CustomerSetting.TrackingState);
         }
 
-        [Test]
+        [Fact]
         public void GetChanges_On_Existing_Customer_With_Removed_CustomerSetting_Return_Empty_Collection()
         {
             // Arrange
@@ -1835,8 +1834,8 @@ namespace TrackableEntities.Client.Tests
             var changes = changeTracker.GetChanges();
 
             // Assert
-            Assert.IsEmpty(changes);
-            Assert.AreEqual(TrackingState.Unchanged, customerSetting.TrackingState);
+            Assert.Empty(changes);
+            Assert.Equal(TrackingState.Unchanged, customerSetting.TrackingState);
         }
 
         #endregion

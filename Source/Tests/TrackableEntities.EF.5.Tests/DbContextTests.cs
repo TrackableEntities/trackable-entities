@@ -3,9 +3,9 @@ using System.Data.Entity;
 using System.Linq;
 using System.Collections.Generic;
 using System.Data;
-using NUnit.Framework;
 using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.NorthwindModels;
+using Xunit;
 
 #if EF_6
 namespace TrackableEntities.EF6.Tests
@@ -13,7 +13,6 @@ namespace TrackableEntities.EF6.Tests
 namespace TrackableEntities.EF5.Tests
 #endif
 {
-    [TestFixture]
     public class DbContextTests
     {
         // Recreate database if model changed.
@@ -22,7 +21,7 @@ namespace TrackableEntities.EF5.Tests
 
         #region Update Parent State
 
-        [Test]
+        [Fact]
         public void Adding_Parent_Should_Mark_Children_As_Added()
         {
             // Arrange
@@ -39,10 +38,10 @@ namespace TrackableEntities.EF5.Tests
             context.Entry(category).State = EntityState.Added;
 
             // Assert
-            Assert.AreEqual(EntityState.Added, context.Entry(product).State);
+            Assert.Equal(EntityState.Added, context.Entry(product).State);
         }
 
-        [Test]
+        [Fact]
         public void Modifying_Parent_Should_Mark_Children_As_Unchanged()
         {
             // Arrange
@@ -59,10 +58,10 @@ namespace TrackableEntities.EF5.Tests
             context.Entry(category).State = EntityState.Modified;
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(product).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(product).State);
         }
 
-        [Test]
+        [Fact]
         public void Deleting_Parent_And_Children_Should_Mark_Children_As_Deleted()
         {
             // Arrange
@@ -82,14 +81,14 @@ namespace TrackableEntities.EF5.Tests
             context.Entry(category).State = EntityState.Deleted;
 
             // Assert
-            Assert.AreEqual(EntityState.Deleted, context.Entry(product).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(product).State);
         }
 
         #endregion
 
         #region Update Parent State And Save
 
-        [Test]
+        [Fact]
         public void Adding_Parent_Should_Add_Children()
         {
             // Arrange
@@ -106,10 +105,10 @@ namespace TrackableEntities.EF5.Tests
             context.SaveChanges();
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(product).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(product).State);
         }
 
-        [Test]
+        [Fact]
         public void Modifying_Parent_Should_Keep_Children_Unchanged()
         {
             // Arrange
@@ -140,10 +139,10 @@ namespace TrackableEntities.EF5.Tests
             context.SaveChanges();
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(product).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(product).State);
         }
 
-        [Test]
+        [Fact]
         public void Deleting_Parent_Should_Delete_Children()
         {
             // Arrange
@@ -179,15 +178,15 @@ namespace TrackableEntities.EF5.Tests
             context.SaveChanges();
 
             // Assert
-            Assert.AreEqual(EntityState.Detached, context.Entry(category).State);
-            Assert.AreEqual(EntityState.Detached, context.Entry(product).State);
+            Assert.Equal(EntityState.Detached, context.Entry(category).State);
+            Assert.Equal(EntityState.Detached, context.Entry(product).State);
         }
 
         #endregion
 
         #region Update Child State
 
-        [Test]
+        [Fact]
         public void Adding_Child_To_Unchanged_Parent_Should_Keep_Parent_Unchanged()
         {
             // Arrange
@@ -204,10 +203,10 @@ namespace TrackableEntities.EF5.Tests
             context.Entry(product).State = EntityState.Added;
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(category).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(category).State);
         }
 
-        [Test]
+        [Fact]
         public void Adding_Child_To_Modified_Parent_Should_Keep_Parent_Modified()
         {
             // Arrange
@@ -224,10 +223,10 @@ namespace TrackableEntities.EF5.Tests
             context.Entry(product).State = EntityState.Added;
 
             // Assert
-            Assert.AreEqual(EntityState.Modified, context.Entry(category).State);
+            Assert.Equal(EntityState.Modified, context.Entry(category).State);
         }
 
-        [Test]
+        [Fact]
         public void Modified_Child_From_Unchanged_Parent_Should_Keep_Parent_Unchanged()
         {
             // Arrange
@@ -244,10 +243,10 @@ namespace TrackableEntities.EF5.Tests
             context.Entry(product).State = EntityState.Modified;
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(category).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(category).State);
         }
 
-        [Test]
+        [Fact]
         public void Modified_Child_From_Modified_Parent_Should_Keep_Parent_Modified()
         {
             // Arrange
@@ -264,10 +263,10 @@ namespace TrackableEntities.EF5.Tests
             context.Entry(product).State = EntityState.Modified;
 
             // Assert
-            Assert.AreEqual(EntityState.Modified, context.Entry(category).State);
+            Assert.Equal(EntityState.Modified, context.Entry(category).State);
         }
 
-        [Test]
+        [Fact]
         public void Deleting_Child_From_Unchanged_Parent_Should_Keep_Parent_Unchanged()
         {
             // Arrange
@@ -284,10 +283,10 @@ namespace TrackableEntities.EF5.Tests
             context.Entry(product).State = EntityState.Deleted;
 
             // Assert
-            Assert.AreEqual(EntityState.Unchanged, context.Entry(category).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(category).State);
         }
 
-        [Test]
+        [Fact]
         public void Deleting_Child_From_Modified_Parent_Should_Keep_Parent_Modified()
         {
             // Arrange
@@ -304,7 +303,7 @@ namespace TrackableEntities.EF5.Tests
             context.Entry(product).State = EntityState.Deleted;
 
             // Assert
-            Assert.AreEqual(EntityState.Modified, context.Entry(category).State);
+            Assert.Equal(EntityState.Modified, context.Entry(category).State);
         }
 
         #endregion

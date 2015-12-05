@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http.SelfHost;
-using NUnit.Framework;
 using TechTalk.SpecFlow;
 using TrackableEntities.Client;
 using TrackableEntities.EF.Tests.NorthwindModels;
 using TrackableEntities.Tests.Acceptance.Helpers;
 using TrackableEntities.Tests.Acceptance.WebHost;
+using Xunit;
 
 namespace TrackableEntities.Tests.Acceptance.Steps
 {
@@ -221,8 +221,8 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             var custId1 = ScenarioContext.Current.Get<List<string>>("CustIds")[0];
             var custId2 = ScenarioContext.Current.Get<List<string>>("CustIds")[1];
             var result = ScenarioContext.Current.Get<List<ClientEntities.Customer>>("CustomersResult");
-            Assert.IsTrue(result.Any(c => c.CustomerId == custId1));
-            Assert.IsTrue(result.Any(c => c.CustomerId == custId2));
+            Assert.True(result.Any(c => c.CustomerId == custId1));
+            Assert.True(result.Any(c => c.CustomerId == custId2));
         }
 
         [Then(@"the request should return the orders")]
@@ -232,7 +232,7 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             var orders = ScenarioContext.Current.Get<List<Order>>("CustOrders");
             foreach (var order in orders)
             {
-                Assert.IsTrue(result.Any(o => o.OrderId == order.OrderId));
+                Assert.True(result.Any(o => o.OrderId == order.OrderId));
             }
         }
 
@@ -240,7 +240,7 @@ namespace TrackableEntities.Tests.Acceptance.Steps
         public void ThenTheRequestShouldReturnTheNewOrders()
         {
             var result = ScenarioContext.Current.Get<List<ClientEntities.Order>>("CustomerOrdersResult").Single();
-            Assert.Greater(result.OrderId, 0);
+            Assert.True(result.OrderId > 0);
         }
 
         [Then(@"the request should return the modified order")]
@@ -251,10 +251,10 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             var addedDetail = ScenarioContext.Current.Get<ClientEntities.OrderDetail>("AddedDetail");
             var deletedDetail = ScenarioContext.Current.Get<ClientEntities.OrderDetail>("DeletedDetail");
 
-            Assert.AreEqual(modifiedOrder.OrderDate, updatedOrder.OrderDate);
-            Assert.AreEqual(modifiedOrder.OrderDetails[0].UnitPrice, updatedOrder.OrderDetails[0].UnitPrice);
-            Assert.IsTrue(updatedOrder.OrderDetails.Any(d => d.ProductId == addedDetail.ProductId));
-            Assert.IsFalse(updatedOrder.OrderDetails.Any(d => d.ProductId == deletedDetail.ProductId));
+            Assert.Equal(modifiedOrder.OrderDate, updatedOrder.OrderDate);
+            Assert.Equal(modifiedOrder.OrderDetails[0].UnitPrice, updatedOrder.OrderDetails[0].UnitPrice);
+            Assert.True(updatedOrder.OrderDetails.Any(d => d.ProductId == addedDetail.ProductId));
+            Assert.False(updatedOrder.OrderDetails.Any(d => d.ProductId == deletedDetail.ProductId));
         }
 
         [Then(@"the request should return the added order details")]
@@ -265,9 +265,9 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             var addedDetail1 = ScenarioContext.Current.Get<ClientEntities.OrderDetail>("AddedDetail1");
             var addedDetail2 = ScenarioContext.Current.Get<ClientEntities.OrderDetail>("AddedDetail2");
 
-            Assert.AreEqual(modifiedOrder.OrderDetails[0].UnitPrice, updatedOrder.OrderDetails[0].UnitPrice);
-            Assert.IsTrue(updatedOrder.OrderDetails.Any(d => d.ProductId == addedDetail1.ProductId));
-            Assert.IsTrue(updatedOrder.OrderDetails.Any(d => d.ProductId == addedDetail2.ProductId));
+            Assert.Equal(modifiedOrder.OrderDetails[0].UnitPrice, updatedOrder.OrderDetails[0].UnitPrice);
+            Assert.True(updatedOrder.OrderDetails.Any(d => d.ProductId == addedDetail1.ProductId));
+            Assert.True(updatedOrder.OrderDetails.Any(d => d.ProductId == addedDetail2.ProductId));
         }
         
         [Then(@"the order should be deleted")]
@@ -276,7 +276,7 @@ namespace TrackableEntities.Tests.Acceptance.Steps
             var clientOrder = ScenarioContext.Current.Get<List<ClientEntities.Order>>("ExistingCustOrders").First();
             string request = "api/Order/" + clientOrder.OrderId;
             var response = _client.GetAsync(request).Result;
-            Assert.IsFalse(response.IsSuccessStatusCode);
+            Assert.False(response.IsSuccessStatusCode);
         }
     }
 }

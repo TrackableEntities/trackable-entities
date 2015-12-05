@@ -20,7 +20,6 @@
         <ProjectItem ReplaceParameters="true" TargetFileName="UpdateConcurrencyException.cs">UpdateConcurrencyException.cs</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="UpdateException.cs">UpdateException.cs</ProjectItem>
       </Folder>
-      <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
       <Folder Name="Properties" TargetFolderName="Properties">
         <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
       </Folder>

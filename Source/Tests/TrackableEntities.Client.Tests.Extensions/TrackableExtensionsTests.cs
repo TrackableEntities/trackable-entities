@@ -4,15 +4,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
-using NUnit.Framework;
 using TrackableEntities.Client.Tests.Entities.Mocks;
 using TrackableEntities.Client.Tests.Entities.FamilyModels;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
 using TrackableEntities.Common;
+using Xunit;
 
 namespace TrackableEntities.Client.Tests.Extensions
 {
-    [TestFixture]
     public class TrackableExtensionsTests
     {
         #region Setup
@@ -20,8 +19,7 @@ namespace TrackableEntities.Client.Tests.Extensions
         // Mock database
         MockFamily _family;
 
-        [SetUp]
-        public void Init()
+        public TrackableExtensionsTests()
         {
             // Create new mock database for each test
             _family = new MockFamily();
@@ -31,7 +29,7 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #region Set Tracking Tests
 
-        [Test]
+        [Fact]
         public void Parent_Set_Tracking_Should_Enable_Tracking_For_Children()
         {
             // Arrange
@@ -42,10 +40,10 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Assert
             IEnumerable<bool> trackings = GetTrackings(parent);
-            Assert.IsTrue(trackings.All(t => t));
+            Assert.True(trackings.All(t => t));
         }
 
-        [Test]
+        [Fact]
         public void Parent_Set_Tracking_Should_Disable_Tracking_For_Children()
         {
             // Arrange
@@ -57,10 +55,10 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Assert
             IEnumerable<bool> trackings = GetTrackings(parent);
-            Assert.IsTrue(trackings.All(t => !t));
+            Assert.True(trackings.All(t => !t));
         }
 
-        [Test]
+        [Fact]
         public void Collection_Set_Tracking_Should_Enable_Tracking_For_Children()
         {
             // Arrange
@@ -72,12 +70,12 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.Tracking = true;
 
             // Assert
-            Assert.IsTrue(changeTracker.Tracking);
+            Assert.True(changeTracker.Tracking);
             IEnumerable<bool> trackings = GetTrackings(parent);
-            Assert.IsTrue(trackings.All(t => t));
+            Assert.True(trackings.All(t => t));
         }
 
-        [Test]
+        [Fact]
         public void Collection_Ctor_Should_Disable_Tracking_For_Children()
         {
             // Arrange
@@ -87,16 +85,16 @@ namespace TrackableEntities.Client.Tests.Extensions
             var changeTracker = new ChangeTrackingCollection<Parent>(parent);
 
             // Assert
-            Assert.IsTrue(changeTracker.Tracking);
+            Assert.True(changeTracker.Tracking);
             IEnumerable<bool> trackings = GetTrackings(parent);
-            Assert.IsTrue(trackings.All(t => t));
+            Assert.True(trackings.All(t => t));
         }
 
         #endregion
 
         #region Set State Tests
 
-        [Test]
+        [Fact]
         public void Parent_Set_State_As_Added_Should_Mark_Children_As_Added()
         {
             // Arrange
@@ -107,10 +105,10 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Assert
             IEnumerable<TrackingState> trackings = GetStates(parent);
-            Assert.IsTrue(trackings.All(t => t == TrackingState.Added));
+            Assert.True(trackings.All(t => t == TrackingState.Added));
         }
 
-        [Test]
+        [Fact]
         public void Parent_Set_State_As_Deleted_Should_Mark_Children_As_Deleted()
         {
             // Arrange
@@ -121,10 +119,10 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Assert
             IEnumerable<TrackingState> trackings = GetStates(parent);
-            Assert.IsTrue(trackings.All(t => t == TrackingState.Deleted));
+            Assert.True(trackings.All(t => t == TrackingState.Deleted));
         }
 
-        [Test]
+        [Fact]
         public void Parent_Set_State_As_Deleted_Should_Mark_Added_Children_As_Unchanged()
         {
             // NOTE: Deleting an added child should not mark it as deleted, but mark
@@ -151,10 +149,10 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Assert
             IEnumerable<TrackingState> trackings = GetStates(parent);
-            Assert.IsTrue(trackings.All(t => t == TrackingState.Unchanged));
+            Assert.True(trackings.All(t => t == TrackingState.Unchanged));
         }
 
-        [Test]
+        [Fact]
         public void Collection_Set_State_As_Deleted_Should_Mark_Children_As_Deleted()
         {
             // Arrange
@@ -165,12 +163,12 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.Remove(parent);
 
             // Assert
-            Assert.AreEqual(TrackingState.Deleted, parent.TrackingState);
+            Assert.Equal(TrackingState.Deleted, parent.TrackingState);
             IEnumerable<TrackingState> trackings = GetStates(parent);
-            Assert.IsTrue(trackings.All(t => t == TrackingState.Deleted));
+            Assert.True(trackings.All(t => t == TrackingState.Deleted));
         }
 
-        [Test]
+        [Fact]
         public void Collection_Added_Set_State_As_Deleted_Should_Mark_Children_As_Unchanged()
         {
             // Arrange
@@ -182,12 +180,12 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.Remove(parent);
 
             // Assert
-            Assert.AreEqual(TrackingState.Unchanged, parent.TrackingState);
+            Assert.Equal(TrackingState.Unchanged, parent.TrackingState);
             IEnumerable<TrackingState> trackings = GetStates(parent);
-            Assert.IsTrue(trackings.All(t => t == TrackingState.Unchanged));
+            Assert.True(trackings.All(t => t == TrackingState.Unchanged));
         }
 
-        [Test]
+        [Fact]
         public void Parent_Set_Modified_Props_Should_Set_Children()
         {
             // Arrange
@@ -198,10 +196,10 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Assert
             IEnumerable<ICollection<string>> modifieds = GetModifieds(parent);
-            Assert.IsTrue(modifieds.All(t => t.Contains("Children")));
+            Assert.True(modifieds.All(t => t.Contains("Children")));
         }
 
-        [Test]
+        [Fact]
         public void Child_Set_Modified_Props_Should_Not_Set_Parent_Siblings()
         {
             // NOTE: SetModifiedProperties should only set ModifiedProperties on
@@ -237,7 +235,7 @@ namespace TrackableEntities.Client.Tests.Extensions
 
         #region GetChanges Tests
 
-        [Test]
+        [Fact]
         public void Collection_GetChanges_Should_Add_Only_Modified_Children()
         {
             // Arrange
@@ -257,11 +255,11 @@ namespace TrackableEntities.Client.Tests.Extensions
             var changedParent = changes.First();
 
             // Assert
-            Assert.AreEqual(1, changes.Count);
-            Assert.AreEqual(1, changedParent.Children.Count);
+            Assert.Equal(1, changes.Count);
+            Assert.Equal(1, changedParent.Children.Count);
         }
 
-        [Test]
+        [Fact]
         public void Collection_GetChanges_Should_Add_Only_Deleted_Children()
         {
             // Arrange
@@ -280,11 +278,11 @@ namespace TrackableEntities.Client.Tests.Extensions
             var changedParent = changes.First();
 
             // Assert
-            Assert.AreEqual(1, changes.Count);
-            Assert.AreEqual(1, changedParent.Children.Count);
+            Assert.Equal(1, changes.Count);
+            Assert.Equal(1, changedParent.Children.Count);
         }
 
-        [Test]
+        [Fact]
         public void Collection_GetChanges_Should_Add_Only_Added_Modified_Deleted_Children()
         {
             // Arrange
@@ -307,15 +305,15 @@ namespace TrackableEntities.Client.Tests.Extensions
             var changedParent = changes.First();
 
             // Assert
-            Assert.AreEqual(1, changes.Count);
-            Assert.AreEqual(3, changedParent.Children.Count);
+            Assert.Equal(1, changes.Count);
+            Assert.Equal(3, changedParent.Children.Count);
         }
 
         #endregion
 
         #region Clone Tests
 
-        [Test]
+        [Fact]
         public void Clone_Should_Deep_Copy_Object()
         {
             // Arrange
@@ -325,16 +323,16 @@ namespace TrackableEntities.Client.Tests.Extensions
             var parentCopy = parentOrig.Clone<Parent>();
 
             // Assert
-            Assert.AreNotSame(parentOrig, parentCopy);
-            Assert.AreNotSame(parentOrig.Children[0], parentCopy.Children[0]);
-            Assert.AreNotSame(parentOrig.Children[1], parentCopy.Children[1]);
-            Assert.AreNotSame(parentOrig.Children[2], parentCopy.Children[2]);
-            Assert.AreNotSame(parentOrig.Children[0].Children[0], parentCopy.Children[0].Children[0]);
-            Assert.AreNotSame(parentOrig.Children[1].Children[0], parentCopy.Children[1].Children[0]);
-            Assert.AreNotSame(parentOrig.Children[2].Children[0], parentCopy.Children[2].Children[0]);
+            Assert.NotSame(parentOrig, parentCopy);
+            Assert.NotSame(parentOrig.Children[0], parentCopy.Children[0]);
+            Assert.NotSame(parentOrig.Children[1], parentCopy.Children[1]);
+            Assert.NotSame(parentOrig.Children[2], parentCopy.Children[2]);
+            Assert.NotSame(parentOrig.Children[0].Children[0], parentCopy.Children[0].Children[0]);
+            Assert.NotSame(parentOrig.Children[1].Children[0], parentCopy.Children[1].Children[0]);
+            Assert.NotSame(parentOrig.Children[2].Children[0], parentCopy.Children[2].Children[0]);
         }
 
-        [Test]
+        [Fact]
         public void Collection_Clone_Should_Deep_Copy_Category()
         {
             // Arrange
@@ -345,15 +343,15 @@ namespace TrackableEntities.Client.Tests.Extensions
             var categoryCopy = categoryOrig.Clone<Category>();
 
             // Assert
-            Assert.AreNotSame(categoryOrig, categoryCopy);
-            Assert.AreNotSame(categoryOrig.Products[0], categoryCopy.Products[0]);
-            Assert.AreNotSame(categoryOrig.Products[1], categoryCopy.Products[1]);
-            Assert.AreEqual(categoryOrig.Products.Count, categoryCopy.Products.Count);
+            Assert.NotSame(categoryOrig, categoryCopy);
+            Assert.NotSame(categoryOrig.Products[0], categoryCopy.Products[0]);
+            Assert.NotSame(categoryOrig.Products[1], categoryCopy.Products[1]);
+            Assert.Equal(categoryOrig.Products.Count, categoryCopy.Products.Count);
             for (int i = 0; i < categoryOrig.Products.Count; ++i)
-                Assert.AreSame(categoryOrig.Products[i].GetType(), categoryCopy.Products[i].GetType());
+                Assert.Same(categoryOrig.Products[i].GetType(), categoryCopy.Products[i].GetType());
         }
 
-        [Test]
+        [Fact]
         public void Collection_Clone_Should_Deep_Copy_Product()
         {
             // Arrange
@@ -364,15 +362,15 @@ namespace TrackableEntities.Client.Tests.Extensions
             var productCopy = productOrig.Clone<Product>();
 
             // Assert
-            Assert.AreNotSame(productOrig, productCopy);
-            Assert.AreNotSame(productOrig.Category, productCopy.Category);
+            Assert.NotSame(productOrig, productCopy);
+            Assert.NotSame(productOrig.Category, productCopy.Category);
         }
 
         #endregion
 
         #region Restore and Remove Deletes Tests
 
-        [Test]
+        [Fact]
         public void Collection_Restore_Deletes_Should_Add_Deleted_Items()
         {
             // Arrange
@@ -393,10 +391,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             trackableColl.RestoreDeletes();
 
             // Assert
-            Assert.AreEqual(3, trackableColl.Count);
+            Assert.Equal(3, trackableColl.Count);
         }
 
-        [Test]
+        [Fact]
         public void Collection_Remove_Deletes_Should_Remove_Added_Deleted_Items()
         {
             // Arrange
@@ -419,10 +417,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             trackableColl.RemoveRestoredDeletes();
 
             // Assert
-            Assert.AreEqual(2, trackableColl.Count);
+            Assert.Equal(2, trackableColl.Count);
         }
 
-        [Test]
+        [Fact]
         public void Item_Restore_Deletes_Should_Recursively_Add_Deleted_Items()
         {
             // Arrange
@@ -448,10 +446,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             parent.Children[0].Children.RestoreDeletes();
 
             // Assert
-            Assert.AreEqual(count, parent.Children[0].Children.Count);
+            Assert.Equal(count, parent.Children[0].Children.Count);
         }
 
-        [Test]
+        [Fact]
         public void Item_Remove_Deletes_Should_Recursively_Remove_Added_Deleted_Items()
         {
             // Arrange
@@ -479,11 +477,11 @@ namespace TrackableEntities.Client.Tests.Extensions
             trackableColl.RemoveRestoredDeletes();
 
             // Assert
-            Assert.AreEqual(1, parent.Children[0].Children.Count);
-            Assert.That(trackableColl, Has.No.Member(deleted));
+            Assert.Equal(1, parent.Children[0].Children.Count);
+            Assert.DoesNotContain(deleted, (ITrackingCollection<Child>)trackableColl);
         }
 
-        [Test]
+        [Fact]
         public void Order_Remove_Deletes_Should_Remove_Deleted_OrderDetails()
         {
             // Arrange
@@ -500,16 +498,16 @@ namespace TrackableEntities.Client.Tests.Extensions
             changeTracker.RemoveRestoredDeletes();
 
             // Assert
-            Assert.AreEqual(1, order.OrderDetails.Count);
-            Assert.That(changeTracker, Has.No.Member(deleted1));
-            Assert.That(changeTracker, Has.No.Member(deleted2));
+            Assert.Equal(1, order.OrderDetails.Count);
+            Assert.DoesNotContain(deleted1, changeTracker.Cast<object>());
+            Assert.DoesNotContain(deleted2, changeTracker.Cast<object>());
         }
 
         #endregion
 
         #region IsEquatable Tests
 
-        [Test]
+        [Fact]
         public void IsEquatable_Should_Return_False_If_SetEntityIdentifier_Not_Called()
         {
             // Arrange
@@ -521,10 +519,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool areEquatable = customer1.IsEquatable(customer2);
 
             // Assert
-            Assert.IsFalse(areEquatable);
+            Assert.False(areEquatable);
         }
 
-        [Test]
+        [Fact]
         public void IsEquatable_Should_Return_True_If_SetEntityIdentifier_Called()
         {
             // Arrange
@@ -538,10 +536,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool areEquatable = customer1.IsEquatable(customer2);
 
             // Assert
-            Assert.IsTrue(areEquatable);
+            Assert.True(areEquatable);
         }
 
-        [Test]
+        [Fact]
         public void IsEquatable_Should_Return_False_If_EntityIdentifier_Cleared()
         {
             // Arrange
@@ -557,10 +555,10 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool areEquatable = customer1.IsEquatable(customer2);
 
             // Assert
-            Assert.IsFalse(areEquatable);
+            Assert.False(areEquatable);
         }
 
-        [Test]
+        [Fact]
         public void IsEquatable_Should_Return_False_If_EntityIdentifier_Reset()
         {
             // Arrange
@@ -577,15 +575,15 @@ namespace TrackableEntities.Client.Tests.Extensions
             bool areEquatable = customer1.IsEquatable(customer2);
 
             // Assert
-            Assert.IsTrue(wereEquatable);
-            Assert.IsFalse(areEquatable);
+            Assert.True(wereEquatable);
+            Assert.False(areEquatable);
         }
 
         #endregion
 
         #region NotifyPropertyChanged Tests
 
-        [Test]
+        [Fact]
         public void Product_Property_Setter_Should_Fire_PropertyChanged_Event()
         {
             // Arrange
@@ -601,10 +599,10 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Assert
             Assert.True(subscriber.ModelChanged);
-            Assert.AreEqual("ProductName", subscriber.ChangedPropertyName);
+            Assert.Equal("ProductName", subscriber.ChangedPropertyName);
         }
 
-        [Test]
+        [Fact]
         public void PromotionalProduct_Property_Setter_Should_Fire_PropertyChanged_Event()
         {
             // Arrange
@@ -620,7 +618,7 @@ namespace TrackableEntities.Client.Tests.Extensions
 
             // Assert
             Assert.True(subscriber.ModelChanged);
-            Assert.AreEqual("PromoCode", subscriber.ChangedPropertyName);
+            Assert.Equal("PromoCode", subscriber.ChangedPropertyName);
         }
 
         #endregion
