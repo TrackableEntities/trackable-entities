@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="TrackableEntities.VS2015..4f848cae-142a-4eb6-a217-017d04f8f2e5" Version="2.2.0" Language="en-US" Publisher="Tony Sneed" />
+    <Identity Id="TrackableEntities.VS2015..4f848cae-142a-4eb6-a217-017d04f8f2e5" Version="2.5.2.1" Language="en-US" Publisher="Tony Sneed" />
     <DisplayName>Trackable Entities for Visual Studio 2015</DisplayName>
     <Description xml:space="preserve">N-Tier support for Entity Framework with Visual Studio project and item templates for quickly building n-tier applications using entities that are change-tracked on the client and persisted on the server via WCF or ASP.NET Web API.</Description>
-    <MoreInfo>http://trackable.codeplex.com</MoreInfo>
+    <MoreInfo>http://tonysneed.github.io/trackable-entities</MoreInfo>
     <License>License.txt</License>
     <ReleaseNotes>ReleaseNotes-v2.5.rtf</ReleaseNotes>
     <Icon>tracking-small.png</Icon>
@@ -21,8 +21,6 @@
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="ItemTemplateParametersWizard" d:VsixSubPath="Wizards" Path="|ItemTemplateParametersWizard|" AssemblyName="|ItemTemplateParametersWizard;AssemblyName|" />
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="TrackableEntities.ItemWizard" d:VsixSubPath="Wizards" Path="|TrackableEntities.ItemWizard|" AssemblyName="|TrackableEntities.ItemWizard;AssemblyName|" />
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="TrackableEntities.TemplateWizard" d:VsixSubPath="Wizards" Path="|TrackableEntities.TemplateWizard|" AssemblyName="|TrackableEntities.TemplateWizard;AssemblyName|" />
-    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableClientEntities.zip" />
-    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableServiceEntities.zip" />
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableWcfService.zip" />
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableWebApi.zip" />
     <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableWebApiPatterns.zip" />
@@ -36,5 +34,7 @@
     <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\Patterns\IExampleUnitOfWork.zip" />
     <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\WCF\TrackableWcfServiceType.zip" />
     <Asset Type="Microsoft.VisualStudio.ItemTemplate" d:Source="File" Path="ItemTemplates" d:TargetPath="ItemTemplates\Trackable\Web\WebApiController.zip" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="EntitiesSelectionWizard" d:VsixSubPath="Wizards" Path="|EntitiesSelectionWizard|" AssemblyName="|EntitiesSelectionWizard;AssemblyName|" />
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Trackable\TrackableEntities.zip" />
   </Assets>
 </PackageManifest>

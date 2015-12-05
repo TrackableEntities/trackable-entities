@@ -1,0 +1,6 @@
+Template Info
+
+Template Name: IEntityRepository
+Template Desc: Entity Repository interface for Service.Persistence project. Created by Tony Sneed. For more information visit http://trackable.codeplex.com.
+Icon Image: C:\Git\CodePlex\Repos\TrackableEntities\Misc\Images\tracking-small.png
+Preview Image: C:\Git\CodePlex\Repos\TrackableEntities\Misc\Images\tracking.png

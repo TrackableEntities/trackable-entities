@@ -18,7 +18,6 @@
     <Project TargetFileName="Service.Web.csproj" File="Service.Web.csproj" ReplaceParameters="true">
       <Folder Name="App_Data" TargetFolderName="App_Data"/>
       <ProjectItem ReplaceParameters="true" TargetFileName="ExampleService.svc">ExampleService.svc</ProjectItem>
-      <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
       <Folder Name="Properties" TargetFolderName="Properties">
         <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
       </Folder>
@@ -35,8 +34,8 @@
   <WizardData>
     <packages repository="extension"
               repositoryId="TrackableEntities.VS2015..4f848cae-142a-4eb6-a217-017d04f8f2e5">
-		<package id="Newtonsoft.Json" version="6.0.6" />
-		<package id="EntityFramework" version="6.1.1" />
+		<package id="Newtonsoft.Json" version="6.0.8" />
+		<package id="EntityFramework" version="6.1.3" />
     </packages>
   </WizardData>	
 </VSTemplate>

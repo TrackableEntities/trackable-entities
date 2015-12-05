@@ -1,0 +1,25 @@
+Trackable Web Api Patterns ReadMe
+
+Follow these steps to use the Web API project template.
+
+1. Reverse engineer service entities.
+   - Right-click on the ServiceEntities project, select EntityFramework,
+	 Reverse Engineer Code First.
+	 > Enter a server name (for example, .\sqlexpress)
+	 > Select a database
+   - This will generate a DbContext-derived class, mapping classes,
+	 and entities using the supplied code templates.
+	 > Entities will implement the ITrackable interface
+
+2. Copy the connection string from the App.config file in the
+   ServiceEntities project, and paste it into the ConnectionString
+   section of the web.config file in the Web API project.
+
+3. Configure IoC Container
+   - Open SimpleInjectorWebApiInitializer.cs in the App_Start folder
+	 > Register context, unit of work and repos with per request lifetime
+
+4. Press Ctrl+F5 to launch the Web API service
+   - Click the API link to see a description of controllers and actions
+   - Click the Test API button to execute an action.
+	 > Add parameters and/or a body as needed, then click Send

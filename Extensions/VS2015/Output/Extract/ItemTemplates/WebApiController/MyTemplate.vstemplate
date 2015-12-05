@@ -1,0 +1,20 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Item">
+  <TemplateData>
+    <DefaultName>WebApiController.cs</DefaultName>
+    <Name>Entity Web API Controller</Name>
+    <Description>Entity Web API Controller for WebApi project.</Description>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>10</SortOrder>
+    <Icon>__TemplateIcon.png</Icon>
+    <PreviewImage>__PreviewImage.png</PreviewImage>
+    <NumberOfParentCategoriesToRollUp>2</NumberOfParentCategoriesToRollUp>
+  </TemplateData>
+  <TemplateContent>
+    <References />
+    <ProjectItem SubType="" TargetFileName="$fileinputname$.cs" ReplaceParameters="true">WebApiController.cs</ProjectItem>
+  </TemplateContent>
+  <WizardExtension>
+    <Assembly>TrackableEntities.ItemWizard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b10b51e7b9be6a2e</Assembly>
+    <FullClassName>TrackableEntities.ItemWizard.WebApiControllerWizard</FullClassName>
+  </WizardExtension>
+</VSTemplate>

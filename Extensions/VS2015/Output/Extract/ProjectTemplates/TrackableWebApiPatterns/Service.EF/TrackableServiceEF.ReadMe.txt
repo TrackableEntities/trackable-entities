@@ -1,0 +1,36 @@
+Trackable Service EF ReadMe
+
+The Service.EF project contains classes that use Entity Framework for persistence
+by implementing Repository and Unit of Work interfaces from the Services.Persistence
+project.
+
+1. After using the Entity Framework Power Tools to generate entity classes in the
+   Service.Entities project, you will need to copy the generated DbContext-derived
+   class from the Models folder of Service.Entities to the Contexts folder of
+   the Service.EF project.
+   - After coping the DbContext class, you should delete it from Service.Entities.
+
+2. Add an IDatabaseContext interface to the Contexts folder with IDbSet properties
+   for each entity set on the DbContext-derived class
+   - Right-click the Contexts folder, Add New Item, select "Database Context Interface"
+	 from the Trackable category.
+   - Rename the IDatabaseContext class using the DbContext database name
+   - Add IDbSet properties for each entity set in the DbContext class
+   - Change DbSet properties in the DbContext class to IDbSet
+   - Alter the DbContext class to implement the IDatabaseContext interface
+
+3. Add Entity Repository Classes to the Repositories folder
+   - Right-click the Repositories folder, Add New Item, select "Entity Repository Class"
+   - Change IDatabaseContext type name to match the Database Context Interface
+	 added earlier.
+	 > Also change it for the ctor parameter
+   - If needed, add Include statements to the Get method queries
+   - If entity has children, remove them in the Delete method
+
+4. Add a Unit Of Work Class to the UnitsOfWork folder
+   - Right-click the Repositories folder, Add New Item, select "Example Unit of Work Class"
+   - Rename ExampleUnitOfWork and IExampleUnitOfWork
+   - Add read-only fields for each entity repository interface
+   - Modify ctor to rename IDatabaseContext and add parameters for each repository interface
+   - Initizlialize each entity repository field
+   - Add read-only property for each entity repository interface
