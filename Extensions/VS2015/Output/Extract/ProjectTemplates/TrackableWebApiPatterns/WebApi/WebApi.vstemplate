@@ -201,7 +201,6 @@
         <ProjectItem ReplaceParameters="true" TargetFileName="_references.js">_references.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap.js">bootstrap.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="bootstrap.min.js">bootstrap.min.js</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.intellisense.js">jquery-2.1.1.intellisense.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.js">jquery-2.1.1.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.min.js">jquery-2.1.1.min.js</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="jquery-2.1.1.min.map">jquery-2.1.1.min.map</ProjectItem>
