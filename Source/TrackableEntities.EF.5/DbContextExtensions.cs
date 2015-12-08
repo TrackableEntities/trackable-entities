@@ -166,7 +166,7 @@ namespace TrackableEntities.EF5
                 // Delete children prior to parent
                 if (item.TrackingState == TrackingState.Deleted)
                 {
-                    context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Deleted);
+                    context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Deleted);
                 }
 
                 // Set modified properties
@@ -188,8 +188,15 @@ namespace TrackableEntities.EF5
 
                 // Set other state for reference or child properties
                 context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Unchanged); // Clone to avoid interference
-                context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Modified); // Clone to avoid interference
-                context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Deleted);
+                if (item.TrackingState == TrackingState.Deleted)
+                {
+                    context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Modified); // Clone to avoid interference
+                }
+                else
+                {
+                    context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Modified); // Clone to avoid interference
+                    context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Deleted); 
+                }
             }
         }
 

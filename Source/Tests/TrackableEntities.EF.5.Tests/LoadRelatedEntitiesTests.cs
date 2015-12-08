@@ -287,7 +287,7 @@ namespace TrackableEntities.EF5.Tests
             Assert.False(orders.Any(o => o.Customer.CustomerId != o.CustomerId));
         }
 
-        [Fact]
+        [Fact(Skip = "NotSupportedException: Model compatibility cannot be checked because the DbContext instance was not created using Code First patterns.")]
         public void Edmx_LoadRelatedEntities_Should_Populate_Multiple_Orders_With_Customer()
         {
             // Create DB usng CodeFirst context
