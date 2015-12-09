@@ -342,8 +342,6 @@ namespace TrackableEntities.Client.Tests
 		{
 			// Arrange
 			var root = new MultiParentRoot();
-			var changeTracker = new ChangeTrackingCollection<MultiParentRoot>(false);
-			changeTracker.Add(root);
 
 			var parent1 = new ParentType1();
 			root.Parent1Items.Add(parent1);
@@ -351,23 +349,21 @@ namespace TrackableEntities.Client.Tests
 			var parent2 = new ParentType2();
 			root.Parent2Items.Add(parent2);
 
-			// Act
-			changeTracker.Tracking = true;
-			var childItem = new MultiParentChild();
-			parent1.Children.Add(childItem);
-			parent2.Children.Add(childItem);
+            root.Parent1Items.Tracking = true;
+            root.Parent2Items.Tracking = true;
 
-			parent1.Children.Remove(childItem);
+            var childItem = new MultiParentChild();
+
+            // Act
+            // Work with each parent independently to avoid interference
+            parent1.Children.Add(childItem);
+            parent1.Children.Remove(childItem);
+
+		    parent2.Children.Add(childItem);
 			parent2.Children.Remove(childItem);
 
 			// Assert
-			Assert.NotEqual(TrackingState.Deleted, childItem.TrackingState);
-			Assert.NotEqual(TrackingState.Modified, childItem.TrackingState);
-
-			// Alternately, as I don't know a way to ensure that any method that would modify
-			// the TrackingState of a multiple-parent deletion correctly and consistently,
-			// we could test that it was left unaltered as TrackingState.Added
-			//Assert.Equal(TrackingState.Added, childItem.TrackingState);
+			Assert.Equal(TrackingState.Unchanged, childItem.TrackingState);
 		}
 
         [Fact]
@@ -663,8 +659,6 @@ namespace TrackableEntities.Client.Tests
 		{
 			// Arrange
 			var root = new MultiParentRoot();
-			var changeTracker = new ChangeTrackingCollection<MultiParentRoot>(false);
-			changeTracker.Add(root);
 
 			var parent1 = new ParentType1();
 			root.Parent1Items.Add(parent1);
@@ -676,15 +670,19 @@ namespace TrackableEntities.Client.Tests
 			parent1.Children.Add(childItem);
 			parent2.Children.Add(childItem);
 
-			// Act
-			changeTracker.Tracking = true;
-			parent1.Children.Remove(childItem);
+            root.Parent1Items.Tracking = true;
+            root.Parent2Items.Tracking = true;
+
+            // Act
+            parent1.Children.Remove(childItem);
 			parent2.Children.Remove(childItem);
 
-			var changes = changeTracker.GetChanges();
+            // Work with each parent independently to avoid interference
+            var changes1 = root.Parent1Items.GetChanges();
+            var changes2 = root.Parent2Items.GetChanges();
 
-			// Assert
-			Assert.Equal(0, parent1.Children.Count);
+            // Assert
+            Assert.Equal(0, parent1.Children.Count);
 			Assert.Equal(0, parent2.Children.Count);
 		}
         #endregion
