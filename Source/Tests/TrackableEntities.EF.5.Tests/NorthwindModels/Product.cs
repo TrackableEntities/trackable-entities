@@ -14,6 +14,9 @@ namespace TrackableEntities.EF.Tests.NorthwindModels
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
         public Category Category { get; set; }
+        public int? PromoId { get; set; }
+        [ForeignKey("PromoId")]
+        public HolidayPromo HolidayPromo { get; set; }
 
         [NotMapped]
         public TrackingState TrackingState { get; set; }

@@ -78,6 +78,8 @@
     <Compile Include="Mocks\MockFamily.cs" />
     <Compile Include="Mocks\MockNorthwind.cs" />
     <Compile Include="NorthwindDbInitializer.cs" />
+    <Compile Include="NorthwindModels\HolidayPromo.cs" />
+    <Compile Include="NorthwindModels\Promo.cs" />
     <Compile Include="NorthwindModels\CustomerAddress.cs" />
     <Compile Include="NorthwindModels\Area.cs" />
     <Compile Include="NorthwindModels\CustomerSetting.cs" />

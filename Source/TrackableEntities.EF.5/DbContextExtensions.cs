@@ -214,7 +214,7 @@ namespace TrackableEntities.EF5
             var entitySetName =
                 (from c in containers
                  from es in c.BaseEntitySets
-                 where es.ElementType == dbContext.GetEdmSpaceType(entityType)
+                 where GetEntityTypes(dbContext, entityType).Contains(es.ElementType)
                  select es.EntityContainer.Name + "." + es.Name).SingleOrDefault();
             return entitySetName;
         }
@@ -668,15 +668,32 @@ namespace TrackableEntities.EF5
         {
             // Get entity set name
             string entitySetName = context.GetEntitySetName(propertyType);
+            if (string.IsNullOrEmpty(entitySetName)) return null;
 
             // Get foreign key name
             string foreignKeyName = context.GetForeignKeyName(entityType, propertyName);
+            if (string.IsNullOrEmpty(entitySetName)) return null;
 
             // Get key values
             var keyValues = GetKeyValues(foreignKeyName, items);
+            if (!keyValues.Any()) return null;
 
             // Get entity sql
             return GetQueryEntitySql(entitySetName, foreignKeyName, keyValues);
+        }
+
+        private static IEnumerable<EntityType> GetEntityTypes(DbContext dbContext, Type entityType)
+        {
+            // First get concrete entity type
+            yield return dbContext.GetEdmSpaceType(entityType);
+
+            // Then get base entity types
+            var baseType = entityType.BaseType;
+            while (baseType != null && baseType != typeof (object))
+            {
+                yield return dbContext.GetEdmSpaceType(baseType);
+                baseType = baseType.BaseType;
+            }
         }
 
         private static void SetRelatedEntities(this DbContext context, 
