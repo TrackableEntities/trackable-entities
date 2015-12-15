@@ -236,6 +236,43 @@ namespace TrackableEntities.EF5.Tests
             return new List<Employee> { employee1, employee2 };
         }
 
+        private List<Product> CreateTestProductsWithPromos(NorthwindDbContext context)
+        {
+            // Create test entities
+            var promo1 = new HolidayPromo
+            {
+                PromoId = 1,
+                PromoCode = "THX",
+                HolidayName = "Thanksgiving"
+            };
+            var category1 = new Category
+            {
+                CategoryName = "Test Category 1a"
+            };
+            var product1 = new Product
+            {
+                ProductName = "Test Product 1a",
+                UnitPrice = 10M,
+                Category = category1,
+                HolidayPromo = promo1
+            };
+
+            // Persist entities
+            context.Products.Add(product1);
+            context.SaveChanges();
+
+            // Detach entities
+            var objContext = ((IObjectContextAdapter)context).ObjectContext;
+            objContext.Detach(product1);
+
+            // Clear reference properties
+            product1.Category = null;
+            product1.HolidayPromo = null;
+
+            // Return entities
+            return new List<Product> { product1 };
+        }
+
         #endregion
 
         #region Order-Customer: Many-to-One
@@ -438,6 +475,26 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(order.Customer.CustomerId, order.Customer.CustomerSetting.CustomerId);
         }
 #endif
+
+        #endregion
+
+        #region Product-HolidayPromo: Reference-with-Base
+
+        [Fact]
+        public void LoadRelatedEntities_Should_Populate_Product_With_HolidayPromo()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var product = CreateTestProductsWithPromos(context)[0];
+            product.TrackingState = TrackingState.Added;
+
+            // Act
+            context.LoadRelatedEntities(product);
+
+            // Assert
+            Assert.NotNull(product.HolidayPromo);
+            Assert.Equal(product.PromoId, product.HolidayPromo.PromoId);
+        }
 
         #endregion
 
