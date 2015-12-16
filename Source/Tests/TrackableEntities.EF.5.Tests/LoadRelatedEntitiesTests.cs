@@ -31,6 +31,10 @@ namespace TrackableEntities.EF5.Tests
         private const string TestTerritoryId1 = "11111";
         private const string TestTerritoryId2 = "22222";
         private const string TestTerritoryId3 = "33333";
+        private const int ProductInfo1A = 1;
+        private const int ProductInfo1B = 2;
+        private const int ProductInfo2A = 1;
+        private const int ProductInfo2B = 3;
         private const CreateDbOptions CreateNorthwindDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
 
         #region Setup
@@ -52,6 +56,10 @@ namespace TrackableEntities.EF5.Tests
                 EnsureTestTerritory(context, TestTerritoryId1);
                 EnsureTestTerritory(context, TestTerritoryId2);
                 EnsureTestTerritory(context, TestTerritoryId3);
+
+                // Test Product Infos
+                EnsureTestProductInfo(context, ProductInfo1A, ProductInfo1B);
+                EnsureTestProductInfo(context, ProductInfo2A, ProductInfo2B);
 
                 // Save changes
                 context.SaveChanges();
@@ -93,6 +101,23 @@ namespace TrackableEntities.EF5.Tests
             {
                 setting = new CustomerSetting { CustomerId = customerId, Setting = "Setting1" };
                 context.CustomerSettings.Add(setting);
+            }
+        }
+
+        private static void EnsureTestProductInfo(NorthwindDbContext context, int productInfo1, int productInfo2)
+        {
+            var info = context.ProductInfos
+                .SingleOrDefault(pi => pi.ProductInfoKey1 == productInfo1
+                    && pi.ProductInfoKey2 == productInfo2);
+            if (info == null)
+            {
+                info = new ProductInfo
+                {
+                    ProductInfoKey1 = productInfo1,
+                    ProductInfoKey2 = productInfo2,
+                    Info = "Test Product Info"
+                };
+                context.ProductInfos.Add(info);
             }
         }
 
@@ -236,6 +261,77 @@ namespace TrackableEntities.EF5.Tests
             return new List<Employee> { employee1, employee2 };
         }
 
+        private List<Product> CreateTestProductsWithPromos(NorthwindDbContext context)
+        {
+            // Create test entities
+            var promo1 = new HolidayPromo
+            {
+                PromoId = 1,
+                PromoCode = "THX",
+                HolidayName = "Thanksgiving"
+            };
+            var category1 = new Category
+            {
+                CategoryName = "Test Category 1a"
+            };
+            var product1 = new Product
+            {
+                ProductName = "Test Product 1a",
+                UnitPrice = 10M,
+                Category = category1,
+                HolidayPromo = promo1
+            };
+
+            // Persist entities
+            context.Products.Add(product1);
+            context.SaveChanges();
+
+            // Detach entities
+            var objContext = ((IObjectContextAdapter)context).ObjectContext;
+            objContext.Detach(product1);
+
+            // Clear reference properties
+            product1.Category = null;
+            product1.HolidayPromo = null;
+
+            // Return entities
+            return new List<Product> { product1 };
+        }
+
+        private List<Product> CreateTestProductsWithProductInfo(NorthwindDbContext context)
+        {
+            // Create test entities
+            var category1 = new Category
+            {
+                CategoryName = "Test Category 1b"
+            };
+            var info1 = context.ProductInfos
+                .Single(pi => pi.ProductInfoKey1 == ProductInfo1A
+                    && pi.ProductInfoKey2 == ProductInfo1B);
+            var product1 = new Product
+            {
+                ProductName = "Test Product 1b",
+                UnitPrice = 10M,
+                Category = category1,
+                ProductInfo = info1
+            };
+
+            // Persist entities
+            context.Products.Add(product1);
+            context.SaveChanges();
+
+            // Detach entities
+            var objContext = ((IObjectContextAdapter)context).ObjectContext;
+            objContext.Detach(product1);
+
+            // Clear reference properties
+            product1.Category = null;
+            product1.ProductInfo = null;
+
+            // Return entities
+            return new List<Product> { product1 };
+        }
+
         #endregion
 
         #region Order-Customer: Many-to-One
@@ -287,7 +383,9 @@ namespace TrackableEntities.EF5.Tests
             Assert.False(orders.Any(o => o.Customer.CustomerId != o.CustomerId));
         }
 
-        [Fact]
+        // Sometimes fails with NotSupportedException for EF6:
+        // DbContext instances created from an ObjectContext or using an EDMX file cannot be checked for compatibility.
+        /* [Fact]
         public void Edmx_LoadRelatedEntities_Should_Populate_Multiple_Orders_With_Customer()
         {
             // Create DB usng CodeFirst context
@@ -321,7 +419,7 @@ namespace TrackableEntities.EF5.Tests
             // Assert
             Assert.False(orders.Any(o => o.Customer == null));
             Assert.False(orders.Any(o => o.Customer.CustomerId != o.CustomerId));
-        }
+        } */
 
         [Fact]
         public void LoadRelatedEntities_Should_Populate_Order_With_Customer_With_Territory()
@@ -438,6 +536,47 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(order.Customer.CustomerId, order.Customer.CustomerSetting.CustomerId);
         }
 #endif
+
+        #endregion
+
+        #region Product-HolidayPromo: Reference-with-Base
+
+        [Fact]
+        public void LoadRelatedEntities_Should_Populate_Product_With_HolidayPromo()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var product = CreateTestProductsWithPromos(context)[0];
+            product.TrackingState = TrackingState.Added;
+
+            // Act
+            context.LoadRelatedEntities(product);
+
+            // Assert
+            Assert.NotNull(product.HolidayPromo);
+            Assert.Equal(product.PromoId, product.HolidayPromo.PromoId);
+        }
+
+        #endregion
+
+        #region Product-ProductInfo: Reference-with-CompositeKey
+
+        [Fact]
+        public void LoadRelatedEntities_Should_Populate_Product_With_ProductInfo()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var product = CreateTestProductsWithProductInfo(context)[0];
+            product.TrackingState = TrackingState.Added;
+
+            // Act
+            context.LoadRelatedEntities(product);
+
+            // Assert
+            Assert.NotNull(product.ProductInfo);
+            Assert.Equal(product.ProductInfoKey1, product.ProductInfo.ProductInfoKey1);
+            Assert.Equal(product.ProductInfoKey2, product.ProductInfo.ProductInfoKey2);
+        }
 
         #endregion
 
