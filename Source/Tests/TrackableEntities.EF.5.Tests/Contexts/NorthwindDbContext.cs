@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿
+using System.Data.Entity;
 using TrackableEntities.EF.Tests.NorthwindModels;
 
 namespace TrackableEntities.EF.Tests.Contexts
@@ -39,6 +40,7 @@ namespace TrackableEntities.EF.Tests.Contexts
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Promo> Promos { get; set; }
+        public DbSet<ProductInfo> ProductInfos { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public DbSet<CustomerSetting> CustomerSettings { get; set; }
@@ -54,6 +56,7 @@ namespace TrackableEntities.EF.Tests.Contexts
                 .WithOptional(x => x.CustomerSetting);
             modelBuilder.Entity<Promo>().ToTable("Promos");
             modelBuilder.Entity<HolidayPromo>().ToTable("HolidayPromos");
+            modelBuilder.Entity<ProductInfo>().ToTable("ProductInfos");
         }
     }
 }

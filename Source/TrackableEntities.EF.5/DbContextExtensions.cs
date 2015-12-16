@@ -671,15 +671,24 @@ namespace TrackableEntities.EF5
             if (string.IsNullOrEmpty(entitySetName)) return null;
 
             // Get foreign key name
-            string foreignKeyName = context.GetForeignKeyName(entityType, propertyName);
-            if (string.IsNullOrEmpty(entitySetName)) return null;
+            string[] foreignKeyNames = context.GetForeignKeyNames(entityType, propertyName);
+            if (foreignKeyNames == null || foreignKeyNames.Length == 0) return null;
 
-            // Get key values
-            var keyValues = GetKeyValues(foreignKeyName, items);
-            if (!keyValues.Any()) return null;
-
-            // Get entity sql
-            return GetQueryEntitySql(entitySetName, foreignKeyName, keyValues);
+            // Get entity sql based on key values
+            string entitySql;
+            if (foreignKeyNames.Length == 1)
+            {
+                object[] foreignKeyValues = GetKeyValuesFromEntites(foreignKeyNames[0], items);
+                if (foreignKeyValues.Length == 0) return null;
+                entitySql = GetQueryEntitySql(entitySetName, foreignKeyNames[0], foreignKeyValues);
+            }
+            else
+            {
+                List<Dictionary<string, object>> foreignKeyValues = GetForeignKeyValues(foreignKeyNames, items);
+                if (foreignKeyValues.Count == 0) return null;
+                entitySql = GetQueryEntitySql(entitySetName, foreignKeyValues);
+            }
+            return entitySql;
         }
 
         private static IEnumerable<EntityType> GetEntityTypes(DbContext dbContext, Type entityType)
@@ -701,31 +710,72 @@ namespace TrackableEntities.EF5
             Type entityType, string propertyName, Type propertyType)
         {
             // Get names of entity foreign key and related entity primary key
-            string foreignKeyName = context.GetForeignKeyName(entityType, propertyName);
-            string primaryKeyName = context.GetPrimaryKeyName(propertyType);
+            string[] foreignKeyNames = context.GetForeignKeyNames(entityType, propertyName);
+            string[] primaryKeyNames = context.GetPrimaryKeyNames(propertyType);
 
             // Continue if we can't get foreign or primary key names
-            if (foreignKeyName == null || primaryKeyName == null) return;
+            if (foreignKeyNames == null || primaryKeyNames == null) return;
 
             foreach (var entity in entities)
             {
-                // Get foreign key id
-                var foreignKeyProp = entity.GetType().GetProperty(foreignKeyName);
-                if (foreignKeyProp == null) break;
-                var foreignKeyId = foreignKeyProp.GetValue(entity);
-                if (foreignKeyId == null) break;
+                // Get key values
+                var foreignKeyValues = GetKeyValuesFromEntity(foreignKeyNames, entity);
 
                 // Get related entity
                 var relatedEntity = (from e in relatedEntities
-                    let p = e.GetType().GetProperty(primaryKeyName)
-                    let primaryKeyId = p != null ? p.GetValue(e) : null
-                    where KeyValuesAreEqual(primaryKeyId, foreignKeyId)
+                    let relatedKeyValues = GetKeyValuesFromEntity(foreignKeyNames, e)
+                    where KeyValuesAreEqual(relatedKeyValues, foreignKeyValues)
                     select e).SingleOrDefault();
 
                 // Set reference prop to related entity
                 if (relatedEntity != null)
                     referenceProperty.SetValue(entity, relatedEntity);
             }
+        }
+
+        private static object[] GetKeyValuesFromEntites(string foreignKeyName, IEnumerable<object> items)
+        {
+            var values = from item in items
+                         let prop = item.GetType().GetProperty(foreignKeyName)
+                         select prop != null ? prop.GetValue(item) : null;
+            return values.Where(v => v != null).Distinct().ToArray();
+        }
+
+        private static Dictionary<string, object> GetKeyValuesFromEntity(string[] keyNames, object entity)
+        {
+            var keyValues = new Dictionary<string, object>();
+            if (keyNames == null || keyNames.Length == 0)
+                return keyValues;
+
+            foreach (var keyName in keyNames)
+            {
+                // Get key value
+                var keyProp = entity.GetType().GetProperty(keyName);
+                if (keyProp == null) break;
+                var keyValue = keyProp.GetValue(entity);
+                if (keyValue == null) break;
+
+                keyValues.Add(keyName, keyValue);
+            }
+            return keyValues;
+        }
+
+        private static bool KeyValuesAreEqual(Dictionary<string, object> primaryKeys,
+            Dictionary<string, object> foreignKeys)
+        {
+            bool areEqual = false;
+
+            foreach (KeyValuePair<string, object> primaryKey in primaryKeys)
+            {
+                object foreignKeyValue;
+                if (!foreignKeys.TryGetValue(primaryKey.Key, out foreignKeyValue))
+                {
+                    areEqual = false;
+                    break;
+                }
+                areEqual = KeyValuesAreEqual(primaryKey.Value, foreignKeyValue);
+            }
+            return areEqual;
         }
 
         private static bool KeyValuesAreEqual(object primaryKeyValue, object foreignKeyValue)
@@ -741,28 +791,38 @@ namespace TrackableEntities.EF5
             return primaryKeyValue.Equals(foreignKeyValue);
         }
 
-        private static object[] GetKeyValues(string foreignKeyName, IEnumerable<object> items)
+        private static List<Dictionary<string, object>> GetForeignKeyValues(string[] foreignKeyNames, IEnumerable<object> items)
         {
-            var values = from item in items
-                         let prop = item.GetType().GetProperty(foreignKeyName)
-                         select prop != null ? prop.GetValue(item) : null;
-            return values.Where(v => v != null).Distinct().ToArray();
+            var foreignKeyValues = new List<Dictionary<string, object>>();
+
+            foreach (object item in items)
+            {
+                var foreignKeyValue = new Dictionary<string, object>();
+                foreach (var foreignKeyName in foreignKeyNames)
+                {
+                    var prop = item.GetType().GetProperty(foreignKeyName);
+                    var value = prop != null ? prop.GetValue(item) : null;
+                    if (value != null)
+                        foreignKeyValue.Add(foreignKeyName, value);
+                }
+                if (foreignKeyValue.Count > 0)
+                    foreignKeyValues.Add(foreignKeyValue);
+            }
+
+            return foreignKeyValues;
         }
 
-        private static string GetPrimaryKeyName(this DbContext dbContext, Type entityType)
+        private static string[] GetPrimaryKeyNames(this DbContext dbContext, Type entityType)
         {
             var edmEntityType = dbContext.GetEdmSpaceType(entityType);
             if (edmEntityType == null) return null;
 
-            // We're not supporting multiple primary keys for reference types
-            if (edmEntityType.KeyMembers.Count > 1) return null;
-
-            // Get name 
-            var primaryKeyName = edmEntityType.KeyMembers.Select(k => k.Name).FirstOrDefault();
-            return primaryKeyName;
+            // Get key names
+            var primaryKeyNames = edmEntityType.KeyMembers.Select(k => k.Name).ToArray();
+            return primaryKeyNames;
         }
 
-        private static string GetForeignKeyName(this DbContext dbContext,
+        private static string[] GetForeignKeyNames(this DbContext dbContext,
             Type entityType, string propertyName)
         {
             // Get navigation property association
@@ -774,9 +834,10 @@ namespace TrackableEntities.EF5
             var assoc = navProp.RelationshipType as AssociationType;
             if (assoc == null) return null;
 
-            // Get foreign key name
-            var fkPropName = assoc.ReferentialConstraints[0].FromProperties[0].Name;
-            return fkPropName;
+            // Get foreign key names
+            var fkPropNames = assoc.ReferentialConstraints[0].FromProperties
+                .Select(p => p.Name).ToArray();
+            return fkPropNames;
         }
 
         private static string GetQueryEntitySql(string entitySetName,
@@ -790,6 +851,45 @@ namespace TrackableEntities.EF5
                 ("SELECT VALUE x FROM {0} AS x WHERE x.{1} IN {{{2}}}",
                 entitySetName, foreignKeyName, csvIds);
             return entitySql;
+        }
+
+        private static string GetQueryEntitySql(string entitySetName,
+            List<Dictionary<string, object>> primaryKeysList)
+        {
+            string whereSql = GetWhereSql(primaryKeysList);
+            string entitySql = string.Format("SELECT VALUE x FROM {0} AS x {1}", 
+                entitySetName, whereSql);
+            return entitySql;
+        }
+
+        static string GetWhereSql(List<Dictionary<string, object>> primaryKeysList)
+        {
+            string whereSql = string.Empty;
+
+            foreach (var primaryKeys in primaryKeysList)
+            {
+                if (whereSql.Length == 0)
+                    whereSql += "WHERE ";
+                else
+                    whereSql += " OR ";
+
+                string itemSql = string.Empty;
+                foreach (var primaryKey in primaryKeys)
+                {
+                    if (itemSql.Length == 0)
+                        itemSql = "(";
+                    else
+                        itemSql += " AND ";
+
+                    itemSql += string.Format("x.{0} = {1}",
+                        primaryKey.Key, primaryKey.Value);
+                }
+                if (itemSql.Length > 0)
+                    itemSql += ")";
+                whereSql += itemSql;
+            }
+
+            return whereSql;
         }
 
         private static List<object> ExecuteQueryEntitySql(this DbContext dbContext, string entitySql)
@@ -837,7 +937,7 @@ namespace TrackableEntities.EF5
             private object GetKeyValue(object entity)
             {
                 Type entityType = entity.GetType();
-                string primaryKeyName = DbContext.GetPrimaryKeyName(entityType);
+                string primaryKeyName = DbContext.GetPrimaryKeyNames(entityType).FirstOrDefault();
                 return entityType.GetProperty(primaryKeyName).GetValue(entity);
             }
         }
