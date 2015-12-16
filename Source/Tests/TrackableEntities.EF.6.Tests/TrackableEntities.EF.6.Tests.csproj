@@ -143,6 +143,9 @@
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Product.cs">
       <Link>NorthwindModels\Product.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\ProductInfo.cs">
+      <Link>NorthwindModels\ProductInfo.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Promo.cs">
       <Link>NorthwindModels\Promo.cs</Link>
     </Compile>
