@@ -3,7 +3,7 @@
 
 ### *Welcome to the Trackable Entities GitHub Repository!*
 
-### To get started with Trackable Entities please visit the project home page: http://tonysneed.github.io/trackable-entities. There you will find:
+### To get started with Trackable Entities please visit the project home page: http://trackableentities.github.io. There you will find:
 - Installation instructions
 - Getting started videos
 - Samples to download
