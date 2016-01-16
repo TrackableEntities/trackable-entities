@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{320BE240-F2E9-493B-959A-ECDA9A06123E}"
 	ProjectSection(SolutionItems) = preProject
@@ -53,6 +53,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Client.Net45", "TrackableEntities.Client.Net45\TrackableEntities.Client.Net45.csproj", "{70B583CB-FC44-46D8-90F8-9F2B465E3246}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Client.Sl5", "TrackableEntities.Client.Sl5\TrackableEntities.Client.Sl5.csproj", "{12917537-AC55-42FB-AE6B-EC44250B4618}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Common.Extended", "TrackableEntities.Common.Extended\TrackableEntities.Common.Extended.csproj", "{E1A4F435-CAA9-499C-A57A-B9E440B0EFA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,6 +126,10 @@ Global
 		{12917537-AC55-42FB-AE6B-EC44250B4618}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12917537-AC55-42FB-AE6B-EC44250B4618}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12917537-AC55-42FB-AE6B-EC44250B4618}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1A4F435-CAA9-499C-A57A-B9E440B0EFA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1A4F435-CAA9-499C-A57A-B9E440B0EFA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1A4F435-CAA9-499C-A57A-B9E440B0EFA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1A4F435-CAA9-499C-A57A-B9E440B0EFA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
