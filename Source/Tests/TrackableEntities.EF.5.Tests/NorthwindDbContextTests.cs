@@ -2032,6 +2032,82 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(EntityState.Unchanged, context.Entry(products[2]).State);
         }
 
+	    [Fact]
+	    public void Apply_Changes_With_State_Selector_Should_Mark_One_To_Many_Entities_Added_Modified_Deleted()
+	    {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new MockNorthwind().Orders[0];
+            var detail1 = order.OrderDetails[0];
+            var detail2 = order.OrderDetails[1];
+            var detail3 = order.OrderDetails[2];
+
+            var id1 = detail1.OrderDetailId;
+            var id2 = detail2.OrderDetailId;
+            var id3 = detail3.OrderDetailId;
+
+            // Act
+            context.ApplyChanges<ITrackable>(order, (e, rt) =>
+            {
+                var orderEntity = e as Order;
+                var orderDetailEntity = e as OrderDetail;
+
+                if (orderEntity != null)
+                    return EntityState.Added;
+
+                if (orderDetailEntity != null)
+                {
+                    if (orderDetailEntity.OrderDetailId == id1)
+                        return EntityState.Added;
+
+                    if (orderDetailEntity.OrderDetailId == id2)
+                        return EntityState.Modified;
+
+                    if (orderDetailEntity.OrderDetailId == id3)
+                        return EntityState.Deleted;
+                }
+
+                return null;
+            });
+
+            // Assert
+            Assert.Equal(EntityState.Added, context.Entry(order).State);
+            Assert.Equal(EntityState.Added, context.Entry(detail1).State);
+            Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(detail3).State);
+
+        }
+
+        [Fact]
+        public void Apply_Changes_With_State_Selector_Should_Mark_One_To_Many_Entities_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new MockNorthwind().Orders[0];
+            var detail1 = order.OrderDetails[0];
+            var detail2 = order.OrderDetails[1];
+            var detail3 = order.OrderDetails[2];
+
+            order.TrackingState = TrackingState.Added;
+            detail1.TrackingState = TrackingState.Added;
+            detail2.TrackingState = TrackingState.Modified;
+            detail3.TrackingState = TrackingState.Deleted;
+
+            // Act
+            context.ApplyChanges<ITrackable>(order, (e, rt) =>
+            {
+                // set state for every order and it's detail to 'Unchanged'
+                return EntityState.Unchanged;
+            });
+
+            // Assert
+            Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(detail1).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(detail2).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(detail3).State);
+
+        }
+
         #endregion
     }
 }
