@@ -36,7 +36,7 @@ namespace TrackableEntities.EF5
         public static void ApplyChanges(this DbContext context, ITrackable item)
         {
             // Recursively set entity state for DbContext entry
-            ApplyChanges(context, item, null, new ObjectVisitationHelper(), null);
+            ApplyChanges<ITrackable>(context, item, null, new ObjectVisitationHelper(), null);
         }
 
         /// <summary>
@@ -48,12 +48,40 @@ namespace TrackableEntities.EF5
         {
             // Apply changes to collection of items
             foreach (var item in items)
-                ApplyChanges(context, item, null, new ObjectVisitationHelper(), null);
+                ApplyChanges<ITrackable>(context, item, null, new ObjectVisitationHelper(), null);
         }
 
-        private static void ApplyChanges(this DbContext context,
+        /// <summary>
+        /// Update entity state on DbContext for an object graph.
+        /// </summary>
+        /// <param name="context">Used to query and save changes to a database</param>
+        /// <param name="item">Object that implements ITrackable</param>
+        /// <param name="stateSelector">Callback for setting desired state for entity resp. its relationship (first resp. second output parameter)</param>
+        public static void ApplyChanges<TEntity>(this DbContext context, TEntity item,
+            Func<TEntity, RelationshipType, EntityState?> stateSelector) where TEntity : ITrackable
+        {
+            // Recursively set entity state for DbContext entry
+            ApplyChanges(context, item, null, new ObjectVisitationHelper(), null, null, stateSelector);
+        }
+
+        /// <summary>
+        /// Update entity state on DbContext for more than one object graph.
+        /// </summary>
+        /// <param name="context">Used to query and save changes to a database</param>
+        /// <param name="items">Objects that implement ITrackable</param>
+        /// <param name="stateSelector">Callback for setting desired state for entity resp. its relationship (first resp. second output parameter)</param>
+        public static void ApplyChanges<TEntity>(this DbContext context, IEnumerable<TEntity> items,
+            Func<TEntity, RelationshipType, EntityState?> stateSelector) where TEntity : ITrackable
+        {
+            // Apply changes to collection of items
+            foreach (var item in items)
+                ApplyChanges(context, item, null, new ObjectVisitationHelper(), null, null, stateSelector);
+        }
+
+        private static void ApplyChanges<TEntity>(this DbContext context,
             ITrackable item, ITrackable parent, ObjectVisitationHelper visitationHelper,
-            string propertyName, TrackingState? state = null)
+            string propertyName, TrackingState? state = null,
+            Func<TEntity, RelationshipType, EntityState?> stateSelector = null) where TEntity : ITrackable
         {
             // Prevent endless recursion
             if (!visitationHelper.TryVisit(item)) return;
@@ -476,7 +504,7 @@ namespace TrackableEntities.EF5
             {
                 // Apply changes to 1-1 and M-1 properties
                 foreach (var refProp in navProp.AsReferenceProperty())
-                    context.ApplyChanges(refProp.EntityReference, item, visitationHelper, navProp.Property.Name, state);
+                    context.ApplyChanges<ITrackable>(refProp.EntityReference, item, visitationHelper, navProp.Property.Name, state);
 
                 // Apply changes to 1-M and M-M properties
                 foreach (var colProp in navProp.AsCollectionProperty<IList>())
@@ -506,7 +534,7 @@ namespace TrackableEntities.EF5
                         ? trackableChild.TrackingState == stateFilter
                         : trackableChild.TrackingState != stateFilter;
                     if (condition)
-                        context.ApplyChanges(trackableChild, item, visitationHelper, navProp.Property.Name, state);                    
+                        context.ApplyChanges<ITrackable>(trackableChild, item, visitationHelper, navProp.Property.Name, state);                    
                 } 
             }
         }
@@ -527,7 +555,7 @@ namespace TrackableEntities.EF5
                     ITrackable trackableReference = refProp.EntityReference;
                     if (visitationHelper.IsVisited(trackableReference)) continue;
 
-                    context.ApplyChanges(trackableReference, item, visitationHelper, propName);
+                    context.ApplyChanges<ITrackable>(trackableReference, item, visitationHelper, propName);
                     if (context.IsRelatedProperty(item.GetType(), propName, RelationshipType.OneToOne))
                         context.SetChanges(trackableReference, state, visitationHelper, item, propName);
                 }
@@ -622,14 +650,6 @@ namespace TrackableEntities.EF5
                 default:
                     return EntityState.Unchanged;
             }
-        }
-
-        enum RelationshipType
-        {
-            ManyToOne,
-            OneToOne,
-            ManyToMany,
-            OneToMany
         }
 
         #endregion
