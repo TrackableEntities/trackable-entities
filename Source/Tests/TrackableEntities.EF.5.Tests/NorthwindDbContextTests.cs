@@ -1925,6 +1925,113 @@ namespace TrackableEntities.EF5.Tests
 			Assert.Null(order.CustomerId);
 		}
 
-		#endregion
-	}
+        #endregion
+
+        #region Apply Changes with 'state selector' callback
+
+        [Fact]
+        public void Apply_Changes_With_State_Selector_Should_Mark_Single_Entity_Added()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var product = new Product();
+            product.TrackingState = TrackingState.Unchanged;
+
+            // Act
+            context.ApplyChanges(product, (e, rs) =>
+            {
+                // no matter what 'e' and 'rs' is set to,
+                // set state to 'Added'
+                return EntityState.Added;
+            });
+
+            // Assert
+            Assert.Equal(EntityState.Added, context.Entry(product).State);
+        }
+
+        [Fact]
+        public void Apply_Changes_With_State_Selector_Should_Mark_Single_Entity_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var product = new Product();
+            product.TrackingState = TrackingState.Added;
+
+            // Act
+            context.ApplyChanges(product, (e, rs) =>
+            {
+                // no matter what 'e' and 'rs' is set to,
+                // set state to 'Unchanged'
+                return EntityState.Unchanged;
+            });
+
+            // Assert
+            Assert.Equal(EntityState.Unchanged, context.Entry(product).State);
+        }
+
+        [Fact]
+        public void Apply_Changes_With_State_Selector_Should_Mark_Multiple_Entities_Added_Modified_Deleted()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var products = new List<Product>
+            {
+                new Product { ProductId = 1 },
+                new Product { ProductId = 2 },
+                new Product { ProductId = 3 }
+            };
+            products.ForEach(p => p.TrackingState = TrackingState.Unchanged);
+
+            // Act
+            context.ApplyChanges(products, (e, rs) =>
+            {
+                if (e.ProductId == 1)
+                    return EntityState.Added;
+
+                if (e.ProductId == 2)
+                    return EntityState.Modified;
+
+                if (e.ProductId == 3)
+                    return EntityState.Deleted;
+
+                return null;
+            });
+
+            // Assert
+            Assert.Equal(EntityState.Added, context.Entry(products[0]).State);
+            Assert.Equal(EntityState.Modified, context.Entry(products[1]).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(products[2]).State);
+        }
+
+        [Fact]
+        public void Apply_Changes_With_State_Selector_Should_Mark_Multiple_Entities_Unchanged()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var products = new List<Product>
+            {
+                new Product { ProductId = 1 },
+                new Product { ProductId = 2 },
+                new Product { ProductId = 3 }
+            };
+
+            products[0].TrackingState = TrackingState.Added;
+            products[1].TrackingState = TrackingState.Modified;
+            products[2].TrackingState = TrackingState.Deleted;
+
+            // Act
+            context.ApplyChanges<Product>(products, (e, rs) =>
+            {
+                // set state for every product to 'Unchanged'
+                return EntityState.Unchanged;
+            });
+
+            // Assert
+            Assert.Equal(EntityState.Unchanged, context.Entry(products[0]).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(products[1]).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(products[2]).State);
+        }
+
+        #endregion
+    }
 }
