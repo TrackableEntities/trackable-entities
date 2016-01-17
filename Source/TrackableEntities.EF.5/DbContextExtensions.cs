@@ -51,6 +51,26 @@ namespace TrackableEntities.EF5
                 ApplyChanges(context, item, null, new ObjectVisitationHelper(), null);
         }
 
+        /// <summary>
+        /// Update entity state on DbContext for an object graph.
+        /// </summary>
+        /// <param name="context">Used to query and save changes to a database</param>
+        /// <param name="item">Object that implements ITrackable</param>
+        /// <param name="interceptors">Collection of <see cref="IInterceptor"/> instances</param>
+        internal static void ApplyChanges(this DbContext context, ITrackable item, IList<IInterceptor> interceptors)
+        {
+        }
+
+        /// <summary>
+        /// Update entity state on DbContext for more than one object graph.
+        /// </summary>
+        /// <param name="context">Used to query and save changes to a database</param>
+        /// <param name="items">Objects that implement ITrackable</param>
+        /// <param name="interceptors">Collection of <see cref="IInterceptor"/> instances</param>
+        internal static void ApplyChanges(this DbContext context, IEnumerable<ITrackable> items, IList<IInterceptor> interceptors)
+        {
+        }
+
         private static void ApplyChanges(this DbContext context,
             ITrackable item, ITrackable parent, ObjectVisitationHelper visitationHelper,
             string propertyName, TrackingState? state = null)
@@ -622,14 +642,6 @@ namespace TrackableEntities.EF5
                 default:
                     return EntityState.Unchanged;
             }
-        }
-
-        enum RelationshipType
-        {
-            ManyToOne,
-            OneToOne,
-            ManyToMany,
-            OneToMany
         }
 
         #endregion

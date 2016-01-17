@@ -67,6 +67,21 @@
     <Compile Include="..\TrackableEntities.EF.5\DbContextExtensions.cs">
       <Link>DbContextExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5\IInterceptor.cs">
+      <Link>IInterceptor.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5\InterceptorExtensions.cs">
+      <Link>InterceptorExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5\InterceptorPool.cs">
+      <Link>InterceptorPool.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5\RelationshipType.cs">
+      <Link>RelationshipType.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5\StateChangeInterceptor.cs">
+      <Link>StateChangeInterceptor.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
