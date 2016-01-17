@@ -548,7 +548,7 @@ namespace TrackableEntities.EF5
         }
 
         private static void SetChanges(this DbContext context,
-            ITrackable item, EntityState state, 
+            ITrackable item, EntityState state,
             ObjectVisitationHelper visitationHelper,
             IList<IStateInterceptor> interceptors,
             ITrackable parent = null, string propertyName = null)

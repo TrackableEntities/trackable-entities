@@ -1925,7 +1925,7 @@ namespace TrackableEntities.EF5.Tests
 			Assert.Null(order.CustomerId);
 		}
 
-        #endregion
+		#endregion
 
         #region Apply Changes with 'state selector' callback
 
@@ -2111,5 +2111,5 @@ namespace TrackableEntities.EF5.Tests
         }
 
         #endregion
-    }
+	}
 }
