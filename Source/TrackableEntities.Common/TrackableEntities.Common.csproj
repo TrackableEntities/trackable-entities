@@ -78,7 +78,6 @@
     <Compile Include="ObjectReferenceEqualityComparer.cs" />
     <Compile Include="ObjectVisitationHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RelationshipType.cs" />
     <Compile Include="TrackableExtensions.cs" />
     <Compile Include="TrackingState.cs" />
   </ItemGroup>

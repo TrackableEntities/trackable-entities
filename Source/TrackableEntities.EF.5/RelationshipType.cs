@@ -1,4 +1,8 @@
-﻿namespace TrackableEntities
+﻿#if EF_6
+namespace TrackableEntities.EF6
+#else
+namespace TrackableEntities.EF5
+#endif
 {
     /// <summary>
     /// Type of relationship between entities.
