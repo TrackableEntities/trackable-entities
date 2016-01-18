@@ -1925,6 +1925,29 @@ namespace TrackableEntities.EF5.Tests
 			Assert.Null(order.CustomerId);
 		}
 
-		#endregion
-	}
+        #endregion
+
+        #region region Apply Changes with 'state selector' callback
+
+	    [Fact]
+	    public void Apply_Changes_With_State_Selector_Should_Mark_Single_Entity_Added()
+	    {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var product = new Product();
+
+            // Act
+            context.ApplyChanges<Product>(product, (e, rt) =>
+            {
+                // no matter what 'e' and 'rt' is set to,
+                // set state to 'Added'
+                return EntityState.Added;
+            });
+
+            // Assert
+            Assert.Equal(EntityState.Added, context.Entry(product).State);
+        }
+
+        #endregion
+    }
 }
