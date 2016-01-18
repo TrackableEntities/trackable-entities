@@ -57,8 +57,8 @@ namespace TrackableEntities.EF5
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="item">Object that implements ITrackable</param>
         /// <param name="stateSelector">Callback for setting desired state for entity resp. its relationship (first resp. second output parameter)</param>
-        public static void ApplyChanges<TEntity>(this DbContext context, TEntity item,
-            Func<TEntity, RelationshipType, EntityState?> stateSelector) where TEntity : ITrackable
+        public static void ApplyChanges<TEntity>(this DbContext context, ITrackable item,
+            Func<TEntity, RelationshipType, EntityState?> stateSelector)
         {
         }
 
@@ -68,8 +68,8 @@ namespace TrackableEntities.EF5
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="items">Objects that implement ITrackable</param>
         /// <param name="stateSelector">Callback for setting desired state for entity resp. its relationship (first resp. second output parameter)</param>
-        public static void ApplyChanges<TEntity>(this DbContext context, IEnumerable<TEntity> items,
-            Func<TEntity, RelationshipType, EntityState?> stateSelector) where TEntity : ITrackable
+        public static void ApplyChanges<TEntity>(this DbContext context, IEnumerable<ITrackable> items,
+            Func<TEntity, RelationshipType, EntityState?> stateSelector)
         {
         }
 

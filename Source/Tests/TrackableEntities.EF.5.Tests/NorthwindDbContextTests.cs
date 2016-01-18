@@ -1938,7 +1938,7 @@ namespace TrackableEntities.EF5.Tests
             product.TrackingState = TrackingState.Unchanged;
 
             // Act
-            context.ApplyChanges(product, (e, rs) =>
+            context.ApplyChanges<Product>(product, (e, rs) =>
             {
                 // no matter what 'e' and 'rs' is set to,
                 // set state to 'Added'
@@ -1958,7 +1958,7 @@ namespace TrackableEntities.EF5.Tests
             product.TrackingState = TrackingState.Added;
 
             // Act
-            context.ApplyChanges(product, (e, rs) =>
+            context.ApplyChanges<Product>(product, (e, rs) =>
             {
                 // no matter what 'e' and 'rs' is set to,
                 // set state to 'Unchanged'
@@ -1983,7 +1983,7 @@ namespace TrackableEntities.EF5.Tests
             products.ForEach(p => p.TrackingState = TrackingState.Unchanged);
 
             // Act
-            context.ApplyChanges(products, (e, rs) =>
+            context.ApplyChanges<Product>(products, (e, rs) =>
             {
                 if (e.ProductId == 1)
                     return EntityState.Added;
