@@ -51,6 +51,18 @@ namespace TrackableEntities.EF5
                 ApplyChanges(context, item, null, new ObjectVisitationHelper(), null);
         }
 
+        public static void ApplyChanges<TEntity>(this DbContext context, ITrackable item,
+            Func<TEntity, RelationshipType, EntityState?> stateSelector)
+        {
+            
+        }
+
+        public static void ApplyChanges<TEntity>(this DbContext context, IEnumerable<ITrackable> item,
+            Func<TEntity, RelationshipType, EntityState?> stateSelector)
+        {
+            
+        }
+
         private static void ApplyChanges(this DbContext context,
             ITrackable item, ITrackable parent, ObjectVisitationHelper visitationHelper,
             string propertyName, TrackingState? state = null)
@@ -622,14 +634,6 @@ namespace TrackableEntities.EF5
                 default:
                     return EntityState.Unchanged;
             }
-        }
-
-        enum RelationshipType
-        {
-            ManyToOne,
-            OneToOne,
-            ManyToMany,
-            OneToMany
         }
 
         #endregion
