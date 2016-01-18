@@ -61,11 +61,23 @@
     <Compile Include="..\AssemblyVersion.cs">
       <Link>Properties\AssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5\ChangeHandler.cs">
+      <Link>ChangeHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5\ChangeHandlerExtensions.cs">
+      <Link>ChangeHandlerExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5\DbContextExtensions.cs">
       <Link>DbContextExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5\IChangeHandler.cs">
+      <Link>IChangeHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5\IHandleChanges.cs">
+      <Link>IHandleChanges.cs</Link>
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5\RelationshipType.cs">
       <Link>RelationshipType.cs</Link>

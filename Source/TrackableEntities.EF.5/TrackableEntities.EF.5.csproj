@@ -58,8 +58,11 @@
     <Compile Include="..\AssemblyVersion.cs">
       <Link>Properties\AssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="ChangeHandler.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DbContextExtensions.cs" />
+    <Compile Include="ChangeHandlerExtensions.cs" />
+    <Compile Include="IChangeHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RelationshipType.cs" />
   </ItemGroup>

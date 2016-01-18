@@ -54,12 +54,19 @@ namespace TrackableEntities.EF5
         public static void ApplyChanges<TEntity>(this DbContext context, ITrackable item,
             Func<TEntity, RelationshipType, EntityState?> stateSelector)
         {
+            throw new NotImplementedException();
         }
 
-        public static void ApplyChanges<TEntity>(this DbContext context, IEnumerable<ITrackable> item,
-            Func<TEntity, RelationshipType, EntityState?> stateSelector)
+        public static void ApplyChanges(this IChangeHandler handler, ITrackable item)
         {
+            throw new NotImplementedException();
         }
+
+        //public static void ApplyChanges<TEntity>(this DbContext context, IEnumerable<ITrackable> item,
+        //    Func<TEntity, RelationshipType, EntityState?> stateSelector)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         private static void ApplyChanges(this DbContext context,
             ITrackable item, ITrackable parent, ObjectVisitationHelper visitationHelper,

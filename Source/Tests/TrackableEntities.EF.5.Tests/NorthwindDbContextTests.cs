@@ -1937,7 +1937,7 @@ namespace TrackableEntities.EF5.Tests
             var product = new Product();
 
             // Act
-            context.ApplyChanges<Product>(product, (e, rt) =>
+            context.ApplyChanges<Product>(product, (e, r) =>
             {
                 // no matter what 'e' and 'rt' is set to,
                 // set state to 'Added'
@@ -1954,8 +1954,10 @@ namespace TrackableEntities.EF5.Tests
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = new Order();
+            var detail = new OrderDetail();
+            order.OrderDetails.Add(detail);
 
-            Func<ITrackable, RelationshipType, EntityState?> orderCallback = (e, rt) =>
+            Func<ITrackable, RelationshipType, EntityState?> orderHandler = (e, r) =>
             {
                 var o = e as Order;
                 if (o != null && o.OrderId == 0)
@@ -1963,19 +1965,57 @@ namespace TrackableEntities.EF5.Tests
                 return null;
             };
 
-            Func<ITrackable, RelationshipType, EntityState?> detailCallback = (e, rt) =>
+            Func<ITrackable, RelationshipType, EntityState?> detailHandler = (e, r) =>
             {
-                var d = e as OrderDetail;
-                if (d != null && d.OrderDetailId == 0)
+                var o = e as OrderDetail;
+                if (o != null && o.OrderDetailId == 0)
                     return EntityState.Added;
                 return null;
             };
 
             // Act
-            //context.ApplyChanges(order, orderCallback, detailCallback);
+            context
+                .AddChangeHandler(orderHandler)
+                .AddChangeHandler(detailHandler)
+                .ApplyChanges(order);
 
             // Assert
             Assert.Equal(EntityState.Added, context.Entry(order).State);
+            Assert.Equal(EntityState.Added, context.Entry(detail).State);
+        }
+
+        [Fact]
+        public void Apply_Changes_With_Generic_State_Selector_Should_Mark_Different_Entities_Added()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new Order();
+            var detail = new OrderDetail();
+            order.OrderDetails.Add(detail);
+
+            Func<Order, RelationshipType, EntityState?> orderHandler = (e, r) =>
+            {
+                if (e.OrderId == 0)
+                    return EntityState.Added;
+                return null;
+            };
+
+            Func<OrderDetail, RelationshipType, EntityState?> detailHandler = (e, r) =>
+            {
+                if (e.OrderDetailId == 0)
+                    return EntityState.Added;
+                return null;
+            };
+
+            // Act
+            context
+                .AddChangeHandler(orderHandler)
+                .AddChangeHandler(detailHandler)
+                .ApplyChanges(order);
+
+            // Assert
+            Assert.Equal(EntityState.Added, context.Entry(order).State);
+            Assert.Equal(EntityState.Added, context.Entry(detail).State);
         }
 
         #endregion
