@@ -54,13 +54,11 @@ namespace TrackableEntities.EF5
         public static void ApplyChanges<TEntity>(this DbContext context, ITrackable item,
             Func<TEntity, RelationshipType, EntityState?> stateSelector)
         {
-            
         }
 
         public static void ApplyChanges<TEntity>(this DbContext context, IEnumerable<ITrackable> item,
             Func<TEntity, RelationshipType, EntityState?> stateSelector)
         {
-            
         }
 
         private static void ApplyChanges(this DbContext context,

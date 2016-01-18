@@ -1948,6 +1948,36 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(EntityState.Added, context.Entry(product).State);
         }
 
+        [Fact]
+        public void Apply_Changes_With_State_Selector_Should_Mark_Different_Entities_Added()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var order = new Order();
+
+            Func<ITrackable, RelationshipType, EntityState?> orderCallback = (e, rt) =>
+            {
+                var o = e as Order;
+                if (o != null && o.OrderId == 0)
+                    return EntityState.Added;
+                return null;
+            };
+
+            Func<ITrackable, RelationshipType, EntityState?> detailCallback = (e, rt) =>
+            {
+                var d = e as OrderDetail;
+                if (d != null && d.OrderDetailId == 0)
+                    return EntityState.Added;
+                return null;
+            };
+
+            // Act
+            //context.ApplyChanges(order, orderCallback, detailCallback);
+
+            // Assert
+            Assert.Equal(EntityState.Added, context.Entry(order).State);
+        }
+
         #endregion
     }
 }
