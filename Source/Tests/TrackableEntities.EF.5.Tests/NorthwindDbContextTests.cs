@@ -1925,7 +1925,7 @@ namespace TrackableEntities.EF5.Tests
 			Assert.Null(order.CustomerId);
 		}
 
-		#endregion
+        #endregion
 
         #region Apply Changes with 'state selector' callback
 
@@ -1939,8 +1939,8 @@ namespace TrackableEntities.EF5.Tests
 
 	        // Act
 	        context
-                // no matter what 'e' and 'rs' is set to,
-                // set state to 'Added'
+	                    // no matter what 'e' and 'rs' is set to,
+	                    // set state to 'Added'
                 .WithStateChangeInterceptor<Product>((e, rs) => EntityState.Added)
 	            .ApplyChanges(product);
 
@@ -1958,8 +1958,10 @@ namespace TrackableEntities.EF5.Tests
 
             // Act
             context
-                // no matter what 'e' and 'rs' is set to,
-                // set state to 'Unchanged'
+                .WithStateChangeInterceptor<Product>((e, rs) =>
+                {
+                    // no matter what 'e' and 'rs' is set to,
+                    // set state to 'Unchanged'
                 .WithStateChangeInterceptor<Product>((e, rs) => EntityState.Unchanged)
                 .ApplyChanges(product);
 
@@ -2021,7 +2023,9 @@ namespace TrackableEntities.EF5.Tests
 
             // Act
             context
-                // set state for every product to 'Unchanged'
+                .WithStateChangeInterceptor<Product>((e, rs) =>
+                {
+                    // set state for every product to 'Unchanged'
                 .WithStateChangeInterceptor<Product>((e, rs) => EntityState.Unchanged)
                 .ApplyChanges(products);
 
@@ -2097,10 +2101,11 @@ namespace TrackableEntities.EF5.Tests
 
             // Act
             context
-                // set state for every order to 'Unchanged'
-                .WithStateChangeInterceptor<Order>((e, rt) => EntityState.Unchanged)
-                // set state for every order detail to 'Unchanged'
-                .WithStateChangeInterceptor<OrderDetail>((e, rt) => EntityState.Unchanged)
+                .AddStateChangeInterceptor<Order>((e, rt) =>
+                {
+                    // set state for every order and it's detail to 'Unchanged'
+                    return EntityState.Unchanged;
+                })
                 .ApplyChanges(order);
 
             // Assert
@@ -2111,5 +2116,5 @@ namespace TrackableEntities.EF5.Tests
         }
 
         #endregion
-	}
+    }
 }
