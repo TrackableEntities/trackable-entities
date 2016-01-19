@@ -13,77 +13,57 @@ namespace TrackableEntities.EF5
 #endif
 {
     /// <summary>
-    /// Extension methods for <see cref="DbContext"/> with fluent API allowing
-    /// to add inteceptors (instances of <see cref="IInterceptor"/>) to <see cref="DbContextExtensions.ApplyChanges(DbContext,ITrackable)"/>.
+    /// Extension methods for <see cref="DbContext"/> and <see cref="InterceptorPool"/> with fluent API allowing
+    /// to add inteceptors (instances of <see cref="IStateInterceptor"/>) to <see cref="DbContextExtensions.ApplyChanges(DbContext, ITrackable)"/>.
     /// </summary>
     public static class InterceptorExtensions
     {
         /// <summary>
-        /// Add any interceptor implementing <see cref="IInterceptor"/>.
+        /// Injects interceptor implementing <see cref="IStateInterceptor"/> intto <see cref="DbContextExtensions.ApplyChanges(DbContext, ITrackable)"/>.
         /// </summary>
         /// <param name="dbContext"><see cref="DbContext"/> used to query and save changes to a database</param>
-        /// <param name="interceptor">Instance of <see cref="IInterceptor"/></param>
-        public static InterceptorPool AddInterceptor(this DbContext dbContext, IInterceptor interceptor)
+        /// <param name="interceptor">Instance of <see cref="IStateInterceptor"/></param>
+        public static InterceptorPool WithInterceptor(this DbContext dbContext, IStateInterceptor interceptor)
         {
             var pool = new InterceptorPool(dbContext);
-            return pool.AddInterceptor(interceptor);
+            return pool.WithInterceptor(interceptor);
         }
 
         /// <summary>
-        /// Add any interceptor implementing <see cref="IInterceptor"/>.
+        /// Injects interceptor implementing <see cref="IStateInterceptor"/> into <see cref="DbContextExtensions.ApplyChanges(DbContext, ITrackable)"/>.
         /// </summary>
         /// <param name="pool">Pool of interceptors.</param>
-        /// <param name="interceptor">Instance of <see cref="IInterceptor"/></param>
-        public static InterceptorPool AddInterceptor(this InterceptorPool pool, IInterceptor interceptor)
+        /// <param name="interceptor">Instance of <see cref="IStateInterceptor"/></param>
+        public static InterceptorPool WithInterceptor(this InterceptorPool pool, IStateInterceptor interceptor)
         {
             pool.Interceptors.Add(interceptor);
             return pool;
         }
 
         /// <summary>
-        /// Add interceptor for setting explicitly the state of an entity.
+        /// Injects interceptor for setting explicitly the state of an entity into <see cref="DbContextExtensions.ApplyChanges(DbContext, ITrackable)"/>.
         /// </summary>
         /// <param name="dbContext"><see cref="DbContext"/> used to query and save changes to a database</param>
         /// <param name="stateSelector">Used for setting state of entity.</param>
-        public static InterceptorPool AddStateChangeInterceptor<TEntity>(this DbContext dbContext,
+        public static InterceptorPool WithStateChangeInterceptor<TEntity>(this DbContext dbContext,
             Func<TEntity, RelationshipType, EntityState?> stateSelector)
             where TEntity : class, ITrackable
         {
             var pool = new InterceptorPool(dbContext);
-            return pool.AddStateChangeInterceptor(stateSelector);
+            return pool.WithStateChangeInterceptor(stateSelector);
         }
 
         /// <summary>
-        /// Add interceptor for setting explicitly the state of an entity.
+        /// Injects interceptor for setting explicitly the state of an entity into <see cref="DbContextExtensions.ApplyChanges(DbContext, ITrackable)"/>.
         /// </summary>
         /// <param name="pool">Pool of interceptors</param>
         /// <param name="stateSelector">Used for setting state of entity</param>
-        public static InterceptorPool AddStateChangeInterceptor<TEntity>(this InterceptorPool pool,
+        public static InterceptorPool WithStateChangeInterceptor<TEntity>(this InterceptorPool pool,
             Func<TEntity, RelationshipType, EntityState?> stateSelector)
             where TEntity : class, ITrackable
         {
             pool.Interceptors.Add(new StateChangeInterceptor<TEntity>(stateSelector));
             return pool;
-        }
-
-        /// <summary>
-        /// Update entity state on DbContext for an object graph.
-        /// </summary>
-        /// <param name="pool">Pool of interceptors</param>
-        /// <param name="item">Object that implements ITrackable</param>
-        public static void ApplyChanges(this InterceptorPool pool, ITrackable item)
-        {
-            pool.DbContext.ApplyChanges(item, pool.Interceptors);
-        }
-
-        /// <summary>
-        /// Update entity state on DbContext for more than one object graph.
-        /// </summary>
-        /// <param name="pool">Pool of interceptors</param>
-        /// <param name="items">Objects that implement ITrackable</param>
-        public static void ApplyChanges(this InterceptorPool pool, IEnumerable<ITrackable> items)
-        {
-            pool.DbContext.ApplyChanges(items, pool.Interceptors);
         }
     }
 }

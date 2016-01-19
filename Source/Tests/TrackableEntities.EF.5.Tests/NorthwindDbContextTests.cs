@@ -1939,7 +1939,7 @@ namespace TrackableEntities.EF5.Tests
 
 	        // Act
 	        context
-                .AddStateChangeInterceptor<Product>((e, rs) =>
+                .WithStateChangeInterceptor<Product>((e, rs) =>
 	                {
 	                    // no matter what 'e' and 'rs' is set to,
 	                    // set state to 'Added'
@@ -1961,7 +1961,7 @@ namespace TrackableEntities.EF5.Tests
 
             // Act
             context
-                .AddStateChangeInterceptor<Product>((e, rs) =>
+                .WithStateChangeInterceptor<Product>((e, rs) =>
                 {
                     // no matter what 'e' and 'rs' is set to,
                     // set state to 'Unchanged'
@@ -1988,7 +1988,7 @@ namespace TrackableEntities.EF5.Tests
 
             // Act
             context
-                .AddStateChangeInterceptor<Product>((e, rs) =>
+                .WithStateChangeInterceptor<Product>((e, rs) =>
                 {
                     if (e.ProductId == 1)
                     return EntityState.Added;
@@ -2027,7 +2027,7 @@ namespace TrackableEntities.EF5.Tests
 
             // Act
             context
-                .AddStateChangeInterceptor<Product>((e, rs) =>
+                .WithStateChangeInterceptor<Product>((e, rs) =>
                 {
                     // set state for every product to 'Unchanged'
                     return EntityState.Unchanged;
@@ -2057,14 +2057,14 @@ namespace TrackableEntities.EF5.Tests
 
             // Act
             context
-                .AddStateChangeInterceptor<Order>((e, rs) =>
+                .WithStateChangeInterceptor<Order>((e, rs) =>
                 {
                     if (e.OrderId == orderId)
                         return EntityState.Added;
 
                     return null;
                 })
-                .AddStateChangeInterceptor<OrderDetail>((e, rs) =>
+                .WithStateChangeInterceptor<OrderDetail>((e, rs) =>
                 {
                     if (e != null)
                     {
@@ -2106,7 +2106,7 @@ namespace TrackableEntities.EF5.Tests
 
             // Act
             context
-                .AddStateChangeInterceptor<Order>((e, rt) =>
+                .WithStateChangeInterceptor<Order>((e, rt) =>
                 {
                     // set state for every order and it's detail to 'Unchanged'
                     return EntityState.Unchanged;

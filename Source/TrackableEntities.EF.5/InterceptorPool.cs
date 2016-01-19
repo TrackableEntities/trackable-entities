@@ -13,12 +13,12 @@ namespace TrackableEntities.EF5
     public class InterceptorPool
     {
         internal DbContext DbContext { get; private set; }
-        internal IList<IInterceptor> Interceptors { get; private set; }
+        internal IList<IStateInterceptor> Interceptors { get; private set; }
 
         internal InterceptorPool(DbContext dbContext)
         {
             this.DbContext = dbContext;
-            this.Interceptors = new List<IInterceptor>();
+            this.Interceptors = new List<IStateInterceptor>();
         }
     }
 }
