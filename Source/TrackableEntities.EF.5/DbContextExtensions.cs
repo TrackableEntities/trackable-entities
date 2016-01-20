@@ -58,7 +58,6 @@ namespace TrackableEntities.EF5
         /// <param name="item">Object that implements ITrackable</param>
         public static void ApplyChanges(this InterceptorPool pool, ITrackable item)
         {
-            pool.DbContext.ApplyChanges(item, pool.Interceptors);
         }
 
         /// <summary>
@@ -67,27 +66,6 @@ namespace TrackableEntities.EF5
         /// <param name="pool">Pool of interceptors</param>
         /// <param name="items">Objects that implement ITrackable</param>
         public static void ApplyChanges(this InterceptorPool pool, IEnumerable<ITrackable> items)
-        {
-            pool.DbContext.ApplyChanges(items, pool.Interceptors);
-        }
-
-        /// <summary>
-        /// Update entity state on DbContext for an object graph with interception.
-        /// </summary>
-        /// <param name="context">Used to query and save changes to a database</param>
-        /// <param name="item">Object that implements ITrackable</param>
-        /// <param name="interceptors">Collection of <see cref="IStateInterceptor"/> instances</param>
-        internal static void ApplyChanges(this DbContext context, ITrackable item, IList<IStateInterceptor> interceptors)
-        {
-        }
-
-        /// <summary>
-        /// Update entity state on DbContext for more than one object graph.
-        /// </summary>
-        /// <param name="context">Used to query and save changes to a database</param>
-        /// <param name="items">Objects that implement ITrackable</param>
-        /// <param name="interceptors">Collection of <see cref="IStateInterceptor"/> instances</param>
-        internal static void ApplyChanges(this DbContext context, IEnumerable<ITrackable> items, IList<IStateInterceptor> interceptors)
         {
         }
 

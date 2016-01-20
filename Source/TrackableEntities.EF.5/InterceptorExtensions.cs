@@ -26,7 +26,7 @@ namespace TrackableEntities.EF5
         public static InterceptorPool WithInterceptor(this DbContext dbContext, IStateInterceptor interceptor)
         {
             var pool = new InterceptorPool(dbContext);
-            return pool.WithInterceptor(interceptor);
+            return WithInterceptor(pool, interceptor);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace TrackableEntities.EF5
             where TEntity : class, ITrackable
         {
             var pool = new InterceptorPool(dbContext);
-            return pool.WithStateChangeInterceptor(stateSelector);
+            return WithStateChangeInterceptor(pool, stateSelector);
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
-using System.Data.Entity;
 #if EF_6
+using System.Data.Entity;
 #else
 using System.Data;
 #endif

@@ -17,8 +17,8 @@ namespace TrackableEntities.EF5
 
         internal InterceptorPool(DbContext dbContext)
         {
-            this.DbContext = dbContext;
-            this.Interceptors = new List<IStateInterceptor>();
+            DbContext = dbContext;
+            Interceptors = new List<IStateInterceptor>();
         }
     }
 }
