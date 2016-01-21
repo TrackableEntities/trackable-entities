@@ -1,8 +1,5 @@
-#if EF_6
 using System.Data.Entity;
-#else
 using System.Data;
-#endif
 
 #if EF_6
 namespace TrackableEntities.EF6

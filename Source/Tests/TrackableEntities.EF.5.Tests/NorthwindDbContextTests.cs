@@ -1939,12 +1939,9 @@ namespace TrackableEntities.EF5.Tests
 
 	        // Act
 	        context
-                .WithStateChangeInterceptor<Product>((e, rs) =>
-	                {
-	                    // no matter what 'e' and 'rs' is set to,
-	                    // set state to 'Added'
-	                    return EntityState.Added;
-	                })
+                // no matter what 'e' and 'rs' is set to,
+                // set state to 'Added'
+                .WithStateChangeInterceptor<Product>((e, rs) => EntityState.Added)
 	            .ApplyChanges(product);
 
 	        // Assert
@@ -1961,12 +1958,9 @@ namespace TrackableEntities.EF5.Tests
 
             // Act
             context
-                .WithStateChangeInterceptor<Product>((e, rs) =>
-                {
-                    // no matter what 'e' and 'rs' is set to,
-                    // set state to 'Unchanged'
-                    return EntityState.Unchanged;
-                })
+                // no matter what 'e' and 'rs' is set to,
+                // set state to 'Unchanged'
+                .WithStateChangeInterceptor<Product>((e, rs) => EntityState.Unchanged)
                 .ApplyChanges(product);
 
             // Assert
@@ -2027,11 +2021,8 @@ namespace TrackableEntities.EF5.Tests
 
             // Act
             context
-                .WithStateChangeInterceptor<Product>((e, rs) =>
-                {
-                    // set state for every product to 'Unchanged'
-                    return EntityState.Unchanged;
-                })
+                // set state for every product to 'Unchanged'
+                .WithStateChangeInterceptor<Product>((e, rs) => EntityState.Unchanged)
                 .ApplyChanges(products);
 
             // Assert
@@ -2075,7 +2066,7 @@ namespace TrackableEntities.EF5.Tests
                             return EntityState.Modified;
 
                         if (e.OrderDetailId == detailId3)
-                            return EntityState.Deleted;
+                            return EntityState.Modified;
                     }
 
                     return null;
@@ -2086,7 +2077,7 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(EntityState.Added, context.Entry(order).State);
             Assert.Equal(EntityState.Added, context.Entry(detail1).State);
             Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
-            Assert.Equal(EntityState.Deleted, context.Entry(detail3).State);
+            Assert.Equal(EntityState.Modified, context.Entry(detail3).State);
         }
 
         [Fact]
@@ -2106,11 +2097,10 @@ namespace TrackableEntities.EF5.Tests
 
             // Act
             context
-                .WithStateChangeInterceptor<Order>((e, rt) =>
-                {
-                    // set state for every order and it's detail to 'Unchanged'
-                    return EntityState.Unchanged;
-                })
+                // set state for every order to 'Unchanged'
+                .WithStateChangeInterceptor<Order>((e, rt) => EntityState.Unchanged)
+                // set state for every order detail to 'Unchanged'
+                .WithStateChangeInterceptor<OrderDetail>((e, rt) => EntityState.Unchanged)
                 .ApplyChanges(order);
 
             // Assert
