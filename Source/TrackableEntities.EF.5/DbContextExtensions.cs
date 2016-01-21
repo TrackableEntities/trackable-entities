@@ -71,7 +71,7 @@ namespace TrackableEntities.EF5
 
         private static void ApplyChanges(this DbContext context,
             ITrackable item, ITrackable parent, ObjectVisitationHelper visitationHelper,
-            string propertyName, TrackingState? state = null)
+            string propertyName, TrackingState? state = null, IList<IStateInterceptor> interceptors = null)
         {
             // Prevent endless recursion
             if (!visitationHelper.TryVisit(item)) return;
@@ -200,8 +200,29 @@ namespace TrackableEntities.EF5
                 }
                 else
                 {
-                    // Set entity state
-                    context.Entry(item).State = item.TrackingState.ToEntityState();
+                    var isStateAlreadySet = false;
+
+                    // If there are any state interceptors, call them to try to get state
+                    if (interceptors != null && parent != null && propertyName != null)
+                    {
+                        var relationType = GetRelationshipType(context, parent.GetType(), propertyName);
+                        foreach (IStateInterceptor interceptor in interceptors)
+                        {
+                            // If current interceptor returns the state, use it
+                            var entityState = interceptor.GetEntityState(item, relationType);
+                            if (entityState != null)
+                            {
+                                context.Entry(item).State = (EntityState)entityState;
+                                isStateAlreadySet = true;
+                            }
+                        }
+                    }
+
+                    if (!isStateAlreadySet)
+                    {
+                        // Set entity state
+                        context.Entry(item).State = item.TrackingState.ToEntityState();
+                    }
                 }
 
                 // Set other state for reference or child properties
@@ -640,6 +661,39 @@ namespace TrackableEntities.EF5
                 default:
                     return EntityState.Unchanged;
             }
+        }
+
+        private static RelationshipType? GetRelationshipType(this DbContext dbContext, Type entityType, string propertyName)
+        {
+            // Get navigation property
+            var edmEntityType = dbContext.GetEdmSpaceType(entityType);
+            if (edmEntityType == null)
+                return null;
+            var navProp = edmEntityType.NavigationProperties
+                .SingleOrDefault(p => p.Name == propertyName);
+            if (navProp == null)
+                return null;
+
+            if (navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One
+                && (navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.ZeroOrOne
+                    || navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One))
+                return RelationshipType.OneToOne;
+
+            if (navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many
+                && (navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.ZeroOrOne
+                    || navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One))
+                return RelationshipType.ManyToOne;
+
+            if (navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many
+                && navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
+                return RelationshipType.ManyToMany;
+
+            if ((navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One
+                 || navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.ZeroOrOne)
+                && navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
+                return RelationshipType.OneToMany;
+
+            return null;
         }
 
         #endregion

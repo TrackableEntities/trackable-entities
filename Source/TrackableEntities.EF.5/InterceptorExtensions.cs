@@ -46,7 +46,7 @@ namespace TrackableEntities.EF5
         /// <param name="dbContext"><see cref="DbContext"/> used to query and save changes to a database</param>
         /// <param name="stateSelector">Used for setting state of entity.</param>
         public static InterceptorPool WithStateChangeInterceptor<TEntity>(this DbContext dbContext,
-            Func<TEntity, RelationshipType, EntityState?> stateSelector)
+            Func<TEntity, RelationshipType?, EntityState?> stateSelector)
             where TEntity : class, ITrackable
         {
             var pool = new InterceptorPool(dbContext);
@@ -59,7 +59,7 @@ namespace TrackableEntities.EF5
         /// <param name="pool">Pool of interceptors</param>
         /// <param name="stateSelector">Used for setting state of entity</param>
         public static InterceptorPool WithStateChangeInterceptor<TEntity>(this InterceptorPool pool,
-            Func<TEntity, RelationshipType, EntityState?> stateSelector)
+            Func<TEntity, RelationshipType?, EntityState?> stateSelector)
             where TEntity : class, ITrackable
         {
             pool.Interceptors.Add(new StateChangeInterceptor<TEntity>(stateSelector));
