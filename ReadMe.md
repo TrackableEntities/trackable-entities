@@ -1,6 +1,8 @@
 # **Trackable Entities**
 ## N-Tier Support for Entity Framework with WCF or ASP.NET Web API
 
+[![Join the chat at https://gitter.im/TrackableEntities/trackable-entities](https://badges.gitter.im/TrackableEntities/trackable-entities.svg)](https://gitter.im/TrackableEntities/trackable-entities?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ### *Welcome to the Trackable Entities GitHub Repository!*
 
 ### To get started with Trackable Entities please visit the project home page: http://trackableentities.github.io. There you will find:
