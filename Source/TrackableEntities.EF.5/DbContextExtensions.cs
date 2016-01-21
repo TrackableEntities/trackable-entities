@@ -214,30 +214,9 @@ namespace TrackableEntities.EF5
                 }
                 else
                 {
-                    var isStateAlreadySet = false;
-
-                    // If there are any state interceptors, call them to try to get state
-                    if (interceptors != null && parent != null && propertyName != null)
-                    {
-                        var relationType = GetRelationshipType(context, parent.GetType(), propertyName);
-                        foreach (IStateInterceptor interceptor in interceptors)
-                        {
-                            // If current interceptor returns the state, use it
-                            var entityState = interceptor.GetEntityState(item, relationType);
-                            if (entityState != null)
-                            {
-                                context.Entry(item).State = (EntityState)entityState;
-                                isStateAlreadySet = true;
-                            }
-                        }
+                        // Set entity state
+                        context.Entry(item).State = item.TrackingState.ToEntityState();
                     }
-
-                    if (!isStateAlreadySet)
-                    {
-                    // Set entity state
-                    context.Entry(item).State = item.TrackingState.ToEntityState();
-                }
-                }
 
                 // Set other state for reference or child properties
                 context.ApplyChangesOnProperties(item, visitationHelper.Clone(), interceptors, TrackingState.Unchanged); // Clone to avoid interference
