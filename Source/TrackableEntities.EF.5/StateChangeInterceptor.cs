@@ -17,12 +17,12 @@ namespace TrackableEntities.EF5
     /// <typeparam name="TEntity">Type of entity.</typeparam>
     public class StateChangeInterceptor<TEntity> : IStateInterceptor where TEntity : class, ITrackable
     {
-        private readonly Func<TEntity, RelationshipType, EntityState?> _selector;
+        private readonly Func<TEntity, RelationshipType?, EntityState?> _selector;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:StateChangeInterceptor"/> class.
         /// </summary>
-        public StateChangeInterceptor(Func<TEntity, RelationshipType, EntityState?> selector)
+        public StateChangeInterceptor(Func<TEntity, RelationshipType?, EntityState?> selector)
         {
             _selector = selector;
         }
@@ -33,7 +33,7 @@ namespace TrackableEntities.EF5
         /// <param name="item">Current item.</param>
         /// <param name="relationshipType">Relationship of current item.</param>
         /// <returns>State of <paramref name="item"/> based on <paramref name="relationshipType"/>.</returns>
-        public EntityState? GetEntityState(ITrackable item, RelationshipType relationshipType)
+        public EntityState? GetEntityState(ITrackable item, RelationshipType? relationshipType)
         {
             var entity = item as TEntity;
             return entity != null ? _selector(entity, relationshipType) : null;

@@ -21,6 +21,6 @@ namespace TrackableEntities.EF5
         /// <param name="item">Current item.</param>
         /// <param name="relationshipType">Relationship of current item.</param>
         /// <returns>State of <paramref name="item"/> based on <paramref name="relationshipType"/>.</returns>
-        EntityState? GetEntityState(ITrackable item, RelationshipType relationshipType);
+        EntityState? GetEntityState(ITrackable item, RelationshipType? relationshipType);
     }
 }
