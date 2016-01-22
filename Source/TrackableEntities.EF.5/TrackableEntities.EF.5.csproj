@@ -60,7 +60,12 @@
     </Compile>
     <Compile Include="Constants.cs" />
     <Compile Include="DbContextExtensions.cs" />
+    <Compile Include="IStateInterceptor.cs" />
+    <Compile Include="InterceptorPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RelationshipType.cs" />
+    <Compile Include="InterceptorExtensions.cs" />
+    <Compile Include="StateChangeInterceptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TrackableEntities.Common\TrackableEntities.Common.csproj">
