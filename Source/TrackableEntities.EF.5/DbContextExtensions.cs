@@ -605,6 +605,7 @@ namespace TrackableEntities.EF5
             ChangeStateByInterceptors(context, item, parent, propertyName, interceptors);
         }
 
+        // TODO: refactor to use GetRelationshipType() method
         private static bool IsRelatedProperty(this DbContext dbContext,
             Type entityType, string propertyName, RelationshipType relationshipType)
         {
