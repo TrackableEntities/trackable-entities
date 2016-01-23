@@ -67,6 +67,12 @@
     <Compile Include="..\TrackableEntities.EF.5\DbContextExtensions.cs">
       <Link>DbContextExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5\Exceptions\RelationshipNotDeterminedException.cs">
+      <Link>Exceptions\RelationshipNotDeterminedException.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5\Exceptions\TrackableEntitiesException.cs">
+      <Link>Exceptions\TrackableEntitiesException.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5\InterceptorExtensions.cs">
       <Link>InterceptorExtensions.cs</Link>
     </Compile>

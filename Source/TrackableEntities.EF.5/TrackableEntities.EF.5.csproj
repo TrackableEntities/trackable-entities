@@ -60,6 +60,8 @@
     </Compile>
     <Compile Include="Constants.cs" />
     <Compile Include="DbContextExtensions.cs" />
+    <Compile Include="Exceptions\RelationshipNotDeterminedException.cs" />
+    <Compile Include="Exceptions\TrackableEntitiesException.cs" />
     <Compile Include="IStateInterceptor.cs" />
     <Compile Include="InterceptorPool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

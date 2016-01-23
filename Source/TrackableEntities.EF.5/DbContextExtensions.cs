@@ -7,6 +7,7 @@ using System.Data.Entity.Infrastructure;
 using System.Reflection;
 using System.Threading;
 using TrackableEntities.Common;
+using TrackableEntities.EF5.Exceptions;
 #if EF_6
 using System.Threading.Tasks;
 using System.Data.Entity.Core.Objects;
@@ -686,7 +687,7 @@ namespace TrackableEntities.EF5
                 && navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
                 return RelationshipType.OneToMany;
 
-            throw new InvalidOperationException(string.Format("Cannot determine relationship type for {0} property on {1}.", propertyName, entityType.FullName));
+            throw new RelationshipNotDeterminedException(string.Format(Constants.ExceptionMessages.RelationshipNotDetermined, propertyName, entityType.FullName));
         }
 
         private static bool TrySetEntityState(DbContext context,
