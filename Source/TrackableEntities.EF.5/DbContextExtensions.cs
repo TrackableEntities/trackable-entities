@@ -730,10 +730,8 @@ namespace TrackableEntities.EF5
             }
 
             // Try to use interceptors to set the state
-            var interceptionStateUsed = SetStateByInterceptors(context, item, parent, propertyName, interceptors);
-
             // If no interceptor has changed the state, set state normally
-            if (!interceptionStateUsed)
+            if (SetStateByInterceptors(context, item, parent, propertyName, interceptors))
                 context.Entry(item).State = state;
         }
 
