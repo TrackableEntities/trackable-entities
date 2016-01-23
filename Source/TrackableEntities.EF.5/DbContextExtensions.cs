@@ -36,7 +36,7 @@ namespace TrackableEntities.EF5
         public static void ApplyChanges(this DbContext context, ITrackable item)
         {
             // Recursively set entity state for DbContext entry
-            ApplyChanges(context, item, null, new ObjectVisitationHelper(), null, null);
+            ApplyChanges(context, item, null, new ObjectVisitationHelper(), null, null, null);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace TrackableEntities.EF5
         {
             // Apply changes to collection of items
             foreach (var item in items)
-                ApplyChanges(context, item, null, new ObjectVisitationHelper(), null, null);
+                ApplyChanges(context, item, null, new ObjectVisitationHelper(), null, null, null);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace TrackableEntities.EF5
         public static void ApplyChanges(this InterceptorPool pool, ITrackable item)
         {
             // Recursively set entity state for DbContext entry
-            ApplyChanges(pool.DbContext, item, null, new ObjectVisitationHelper(), null, pool.Interceptors);
+            ApplyChanges(pool.DbContext, item, null, new ObjectVisitationHelper(), null, pool.Interceptors, null);
         }
 
         /// <summary>
@@ -71,14 +71,14 @@ namespace TrackableEntities.EF5
         {
             // Apply changes to collection of items
             foreach (var item in items)
-                ApplyChanges(pool.DbContext, item, null, new ObjectVisitationHelper(), null, pool.Interceptors);
+                ApplyChanges(pool.DbContext, item, null, new ObjectVisitationHelper(), null, pool.Interceptors, null);
         }
 
         private static void ApplyChanges(this DbContext context,
             ITrackable item, ITrackable parent, ObjectVisitationHelper visitationHelper,
             string propertyName,
             IList<IStateInterceptor> interceptors,
-            TrackingState? state = null)
+            TrackingState? state)
         {
             // Prevent endless recursion
             if (!visitationHelper.TryVisit(item)) return;
@@ -121,7 +121,7 @@ namespace TrackableEntities.EF5
                 }
 
                 // Set state for child collections
-                context.ApplyChangesOnProperties(item, visitationHelper, interceptors);
+                context.ApplyChangesOnProperties(item, visitationHelper, interceptors, null);
                 return;
             }
 
@@ -159,7 +159,7 @@ namespace TrackableEntities.EF5
                 && (state == null || state == TrackingState.Added))
             {
                 SetEntityState(context, item, parent, propertyName, EntityState.Added, interceptors);
-                context.ApplyChangesOnProperties(item, visitationHelper, interceptors);
+                context.ApplyChangesOnProperties(item, visitationHelper, interceptors, null);
                 return;
             }
 
@@ -169,7 +169,7 @@ namespace TrackableEntities.EF5
                 && (context.IsRelatedProperty(parent.GetType(), propertyName, RelationshipType.OneToMany)
                     || context.IsRelatedProperty(parent.GetType(), propertyName, RelationshipType.OneToOne)))
             {
-                context.ApplyChangesOnProperties(item, visitationHelper, interceptors);
+                context.ApplyChangesOnProperties(item, visitationHelper, interceptors, null);
                 return;
             }
 
@@ -177,8 +177,8 @@ namespace TrackableEntities.EF5
             if (item.TrackingState == TrackingState.Deleted
                 && (state == null || state == TrackingState.Deleted))
             {
-                context.SetChanges(item, EntityState.Unchanged, visitationHelper.Clone(), interceptors); // Clone to avoid interference
-                context.SetChanges(item, EntityState.Deleted, visitationHelper, interceptors);
+                context.SetChanges(item, EntityState.Unchanged, visitationHelper.Clone(), interceptors, null, null); // Clone to avoid interference
+                context.SetChanges(item, EntityState.Deleted, visitationHelper, interceptors, null, null);
                 return;
             }
 
@@ -500,7 +500,7 @@ namespace TrackableEntities.EF5
         private static void ApplyChangesOnProperties(this DbContext context,
             ITrackable item, ObjectVisitationHelper visitationHelper,
             IList<IStateInterceptor> interceptors,
-            TrackingState? state = null)
+            TrackingState? state)
         {
             // Recursively apply changes
             foreach (var navProp in item.GetNavigationProperties())
@@ -526,7 +526,7 @@ namespace TrackableEntities.EF5
             EntityNavigationProperty navProp, EntityCollectionProperty<IList> colProp,
             DbContext context, ITrackable item, ObjectVisitationHelper visitationHelper,
             IList<IStateInterceptor> interceptors,
-            TrackingState? state = null)
+            TrackingState? state)
         {
             // Apply changes to 1-M and M-M properties filtering by tracking state
             var count = colProp.EntityCollection.Count;
@@ -548,7 +548,7 @@ namespace TrackableEntities.EF5
             ITrackable item, EntityState state,
             ObjectVisitationHelper visitationHelper,
             IList<IStateInterceptor> interceptors,
-            ITrackable parent = null, string propertyName = null)
+            ITrackable parent, string propertyName)
         {
             // Set state for child collections
             foreach (var navProp in item.GetNavigationProperties())
@@ -561,7 +561,7 @@ namespace TrackableEntities.EF5
                     ITrackable trackableReference = refProp.EntityReference;
                     if (visitationHelper.IsVisited(trackableReference)) continue;
 
-                    context.ApplyChanges(trackableReference, item, visitationHelper, propName, interceptors);
+                    context.ApplyChanges(trackableReference, item, visitationHelper, propName, interceptors, null);
                     if (context.IsRelatedProperty(item.GetType(), propName, RelationshipType.OneToOne))
                         context.SetChanges(trackableReference, state, visitationHelper, interceptors, item, propName);
                 }
