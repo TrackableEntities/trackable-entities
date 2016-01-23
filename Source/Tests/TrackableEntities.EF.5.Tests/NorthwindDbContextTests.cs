@@ -1967,8 +1967,14 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(EntityState.Unchanged, context.Entry(product).State);
         }
 
-        [Fact]
-        public void Apply_Changes_With_State_Selector_Should_Mark_Multiple_Entities_Added_Modified_Deleted()
+        [Theory]
+        [InlineData(
+            new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
+            new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged })]
+        [InlineData(
+            new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
+            new[] { EntityState.Added, EntityState.Modified, EntityState.Deleted })]
+        public void Apply_Changes_With_State_Selector_Should_Change_Multiple_Entities_State(TrackingState[] initStates, EntityState[] finalStates)
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -1978,61 +1984,46 @@ namespace TrackableEntities.EF5.Tests
                 new Product { ProductId = 2 },
                 new Product { ProductId = 3 }
             };
-            products.ForEach(p => p.TrackingState = TrackingState.Unchanged);
+
+            products[0].TrackingState = initStates[0];
+            products[1].TrackingState = initStates[1];
+            products[2].TrackingState = initStates[2];
 
             // Act
             context
                 .WithStateChangeInterceptor<Product>((e, rs) =>
                 {
                     if (e.ProductId == 1)
-                    return EntityState.Added;
+                        return finalStates[0];
 
                     if (e.ProductId == 2)
-                        return EntityState.Modified;
+                        return finalStates[1];
 
                     if (e.ProductId == 3)
-                        return EntityState.Deleted;
+                        return finalStates[2];
 
                     return null;
                 })
                 .ApplyChanges(products);
 
             // Assert
-            Assert.Equal(EntityState.Added, context.Entry(products[0]).State);
-            Assert.Equal(EntityState.Modified, context.Entry(products[1]).State);
-            Assert.Equal(EntityState.Deleted, context.Entry(products[2]).State);
+            Assert.Equal(finalStates[0], context.Entry(products[0]).State);
+            Assert.Equal(finalStates[1], context.Entry(products[1]).State);
+            Assert.Equal(finalStates[2], context.Entry(products[2]).State);
         }
 
-        [Fact]
-        public void Apply_Changes_With_State_Selector_Should_Mark_Multiple_Entities_Unchanged()
-        {
-            // Arrange
-            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
-            var products = new List<Product>
-            {
-                new Product { ProductId = 1 },
-                new Product { ProductId = 2 },
-                new Product { ProductId = 3 }
-            };
-
-            products[0].TrackingState = TrackingState.Added;
-            products[1].TrackingState = TrackingState.Modified;
-            products[2].TrackingState = TrackingState.Deleted;
-
-            // Act
-            context
-                // set state for every product to 'Unchanged'
-                .WithStateChangeInterceptor<Product>((e, rs) => EntityState.Unchanged)
-                .ApplyChanges(products);
-
-            // Assert
-            Assert.Equal(EntityState.Unchanged, context.Entry(products[0]).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(products[1]).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(products[2]).State);
-        }
-
-	    [Fact]
-	    public void Apply_Changes_With_State_Selector_Should_Mark_One_To_Many_Entities_Added_Modified()
+        [Theory]
+        [InlineData(
+            TrackingState.Added, EntityState.Unchanged,
+            new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
+            new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged })]
+        [InlineData(
+            TrackingState.Unchanged, EntityState.Added,
+            new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged},
+            new[] { EntityState.Added, EntityState.Modified, EntityState.Modified })]
+        public void Apply_Changes_With_State_Selector_Should_Change_One_To_Many_Entities_State(
+            TrackingState orderInitState, EntityState orderFinalState,
+            TrackingState[] detailsInitStates, EntityState[] detailsFinalStates)
 	    {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -2041,7 +2032,12 @@ namespace TrackableEntities.EF5.Tests
             var detail2 = order.OrderDetails[1];
             var detail3 = order.OrderDetails[2];
 
-	        var orderId = order.OrderId;
+            order.TrackingState = orderInitState;
+            detail1.TrackingState = detailsInitStates[0];
+            detail2.TrackingState = detailsInitStates[1];
+            detail3.TrackingState = detailsInitStates[2];
+
+            var orderId = order.OrderId;
             var detailId1 = detail1.OrderDetailId;
             var detailId2 = detail2.OrderDetailId;
             var detailId3 = detail3.OrderDetailId;
@@ -2051,7 +2047,7 @@ namespace TrackableEntities.EF5.Tests
                 .WithStateChangeInterceptor<Order>((e, rs) =>
                 {
                     if (e.OrderId == orderId)
-                        return EntityState.Added;
+                        return orderFinalState;
 
                     return null;
                 })
@@ -2060,13 +2056,13 @@ namespace TrackableEntities.EF5.Tests
                     if (e != null)
                     {
                         if (e.OrderDetailId == detailId1)
-                            return EntityState.Added;
+                            return detailsFinalStates[0];
 
                         if (e.OrderDetailId == detailId2)
-                            return EntityState.Modified;
+                            return detailsFinalStates[1];
 
                         if (e.OrderDetailId == detailId3)
-                            return EntityState.Modified;
+                            return detailsFinalStates[2];
                     }
 
                     return null;
@@ -2074,40 +2070,10 @@ namespace TrackableEntities.EF5.Tests
                 .ApplyChanges(order);
 
             // Assert
-            Assert.Equal(EntityState.Added, context.Entry(order).State);
-            Assert.Equal(EntityState.Added, context.Entry(detail1).State);
-            Assert.Equal(EntityState.Modified, context.Entry(detail2).State);
-            Assert.Equal(EntityState.Modified, context.Entry(detail3).State);
-        }
-
-        [Fact]
-        public void Apply_Changes_With_State_Selector_Should_Mark_One_To_Many_Entities_Unchanged()
-        {
-            // Arrange
-            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
-            var order = new MockNorthwind().Orders[0];
-            var detail1 = order.OrderDetails[0];
-            var detail2 = order.OrderDetails[1];
-            var detail3 = order.OrderDetails[2];
-
-            order.TrackingState = TrackingState.Added;
-            detail1.TrackingState = TrackingState.Added;
-            detail2.TrackingState = TrackingState.Modified;
-            detail3.TrackingState = TrackingState.Deleted;
-
-            // Act
-            context
-                // set state for every order to 'Unchanged'
-                .WithStateChangeInterceptor<Order>((e, rt) => EntityState.Unchanged)
-                // set state for every order detail to 'Unchanged'
-                .WithStateChangeInterceptor<OrderDetail>((e, rt) => EntityState.Unchanged)
-                .ApplyChanges(order);
-
-            // Assert
-            Assert.Equal(EntityState.Unchanged, context.Entry(order).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(detail1).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(detail2).State);
-            Assert.Equal(EntityState.Unchanged, context.Entry(detail3).State);
+            Assert.Equal(orderFinalState, context.Entry(order).State);
+            Assert.Equal(detailsFinalStates[0], context.Entry(detail1).State);
+            Assert.Equal(detailsFinalStates[1], context.Entry(detail2).State);
+            Assert.Equal(detailsFinalStates[2], context.Entry(detail3).State);
         }
 
 	    [Fact]
