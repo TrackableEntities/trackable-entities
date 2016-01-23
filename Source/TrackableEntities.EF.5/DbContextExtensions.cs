@@ -106,7 +106,7 @@ namespace TrackableEntities.EF5
                     var entityState = item.TrackingState == TrackingState.Modified
                         ? EntityState.Modified
                         : EntityState.Unchanged;
-                    SetEntityState(context, item, parent, propertyName, entityState, interceptors);
+                    TrySetEntityState(context, item, parent, propertyName, entityState, interceptors);
                     context.SetRelationshipState(item, parent, propertyName,
                         trackingState.ToEntityState());
                 }
@@ -114,9 +114,9 @@ namespace TrackableEntities.EF5
                 {
                     // Set entity state for modified or unchanged
                     if (item.TrackingState == TrackingState.Modified)
-                        SetEntityState(context, item, parent, propertyName, EntityState.Modified, interceptors);
+                        TrySetEntityState(context, item, parent, propertyName, EntityState.Modified, interceptors);
                     else if (item.TrackingState == TrackingState.Unchanged)
-                        SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
+                        TrySetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
                 }
 
                 // Set state for child collections
@@ -144,7 +144,7 @@ namespace TrackableEntities.EF5
             {
                 try
                 {
-                    SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
+                    TrySetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
                 }
                 catch (InvalidOperationException invalidOpEx)
                 {
@@ -157,7 +157,7 @@ namespace TrackableEntities.EF5
             if (item.TrackingState == TrackingState.Added
                 && (state == null || state == TrackingState.Added))
             {
-                SetEntityState(context, item, parent, propertyName, EntityState.Added, interceptors);
+                TrySetEntityState(context, item, parent, propertyName, EntityState.Added, interceptors);
                 context.ApplyChangesOnProperties(item, visitationHelper, null, interceptors);
                 return;
             }
@@ -204,14 +204,14 @@ namespace TrackableEntities.EF5
                     && item.ModifiedProperties.Count > 0)
                 {
                     // Mark modified properties
-                    SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
+                    TrySetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
                     foreach (var property in item.ModifiedProperties)
                         context.Entry(item).Property(property).IsModified = true;
                 }
                 else
                 {
                     // Set entity state
-                    SetEntityState(context, item, parent, propertyName, item.TrackingState.ToEntityState(), interceptors);
+                    TrySetEntityState(context, item, parent, propertyName, item.TrackingState.ToEntityState(), interceptors);
                 }
 
                 // Set other state for reference or child properties
@@ -587,13 +587,13 @@ namespace TrackableEntities.EF5
                 var entityState = item.TrackingState == TrackingState.Modified
                     ? EntityState.Modified
                     : EntityState.Unchanged;
-                SetEntityState(context, item, parent, propertyName, entityState, interceptors);
+                TrySetEntityState(context, item, parent, propertyName, entityState, interceptors);
                 context.SetRelationshipState(item, parent, propertyName, EntityState.Deleted);
                 return;
             }
 
             // Set entity state
-            SetEntityState(context, item, parent, propertyName, state, interceptors);
+            TrySetEntityState(context, item, parent, propertyName, state, interceptors);
         }
 
         // TODO: refactor to use GetRelationshipType() method
@@ -718,7 +718,7 @@ namespace TrackableEntities.EF5
             return interceptionStateUsed;
         }
 
-        private static void SetEntityState(DbContext context,
+        private static void TrySetEntityState(DbContext context,
             ITrackable item, ITrackable parent, string propertyName,
             EntityState state, IList<IStateInterceptor> interceptors)
         {
