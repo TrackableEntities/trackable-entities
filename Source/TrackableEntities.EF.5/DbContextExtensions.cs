@@ -687,7 +687,7 @@ namespace TrackableEntities.EF5
                 && navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
                 return RelationshipType.OneToMany;
 
-            throw new InvalidOperationException(String.Format("Cannot determine relationship type for {0} property on {1}.", propertyName, entityType.FullName));
+            throw new InvalidOperationException(string.Format("Cannot determine relationship type for {0} property on {1}.", propertyName, entityType.FullName));
         }
 
         private static bool TrySetEntityState(DbContext context,
