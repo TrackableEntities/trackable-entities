@@ -666,16 +666,16 @@ namespace TrackableEntities.EF5
             }
         }
 
-        private static RelationshipType? GetRelationshipType(this DbContext dbContext, Type entityType, string propertyName)
+        private static RelationshipType GetRelationshipType(this DbContext dbContext, Type entityType, string propertyName)
         {
             // Get navigation property
             var edmEntityType = dbContext.GetEdmSpaceType(entityType);
             if (edmEntityType == null)
-                return null;
+                throw new ArgumentException("Getting entity type from metadata failed.", "entityType");
             var navProp = edmEntityType.NavigationProperties
                 .SingleOrDefault(p => p.Name == propertyName);
             if (navProp == null)
-                return null;
+                throw new ArgumentException("Getting navigation property failed.", "propertyName");
 
             if (navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One
                 && (navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.ZeroOrOne
@@ -696,7 +696,7 @@ namespace TrackableEntities.EF5
                 && navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
                 return RelationshipType.OneToMany;
 
-            return null;
+            throw new InvalidOperationException(String.Format("Cannot determine relationship type for {0} property on {1}.", propertyName, entityType.FullName));
         }
 
         private static void ChangeStateByInterceptors(DbContext context,
@@ -706,7 +706,6 @@ namespace TrackableEntities.EF5
             // If there are any state interceptors, call them to try to get state
             if (interceptors != null)
             {
-
                 RelationshipType? relationType = null;
 
                 if (parent != null && propertyName != null)
