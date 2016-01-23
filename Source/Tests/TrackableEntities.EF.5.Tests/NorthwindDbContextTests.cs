@@ -2110,6 +2110,30 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(EntityState.Unchanged, context.Entry(detail3).State);
         }
 
+	    [Fact]
+	    public void Apply_Changes_With_State_Selector_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Added()
+	    {
+	        // NOTE: CustomerSetting will be set to null because customer is deleted.
+
+	        // Arrange
+	        var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+	        var nw = new MockNorthwind();
+	        var customer = nw.Customers[0];
+	        customer.TrackingState = TrackingState.Deleted;
+	        var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId, Setting = "Setting1", Customer = customer };
+	        setting.TrackingState = TrackingState.Added;
+
+	        // Act
+	        context
+	            .WithStateChangeInterceptor<CustomerSetting>((e, r) => EntityState.Added)
+                .ApplyChanges(customer);
+
+            // Assert
+            Assert.Equal(EntityState.Deleted, context.Entry(customer).State);
+            Assert.Equal(EntityState.Added, context.Entry(setting).State);
+            Assert.Null(customer.CustomerSetting);
+        }
+
         #endregion
     }
 }

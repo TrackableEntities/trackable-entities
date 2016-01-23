@@ -131,7 +131,6 @@ namespace TrackableEntities.EF5
                 && !context.IsRelatedProperty(parent.GetType(),
                 propertyName, RelationshipType.ManyToOne))
             {
-                // TODO: we need to add TrySetEntityState(context, item, parent, propertyName, interceptors);
                 return;
             }
 
