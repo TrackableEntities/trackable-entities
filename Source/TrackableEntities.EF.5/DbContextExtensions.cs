@@ -598,7 +598,7 @@ namespace TrackableEntities.EF5
 
         // TODO: refactor to use GetRelationshipType() method
         private static bool IsRelatedProperty(this DbContext dbContext,
-        Type entityType, string propertyName, RelationshipType relationshipType)
+            Type entityType, string propertyName, RelationshipType relationshipType)
         {
             // Get navigation property
             var edmEntityType = dbContext.GetEdmSpaceType(entityType);
