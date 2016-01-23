@@ -29,7 +29,7 @@ namespace TrackableEntities.EF5
     public static class DbContextExtensions
     {
         /// <summary>
-        /// Update entity state on DbContext for an object graph with interception.
+        /// Update entity state on DbContext for an object graph.
         /// </summary>
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="item">Object that implements ITrackable</param>
