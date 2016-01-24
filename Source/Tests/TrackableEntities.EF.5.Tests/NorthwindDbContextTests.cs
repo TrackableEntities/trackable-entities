@@ -1927,9 +1927,9 @@ namespace TrackableEntities.EF5.Tests
 
         #endregion
 
-        #region Apply Changes with 'state selector' callback
+        #region Apply Changes with State Interceptor(s)
 
-	    [Fact]
+        [Fact]
 	    public void Apply_Changes_With_State_Interceptor_Should_Mark_Single_Entity_Added()
 	    {
 	        // Arrange
@@ -2012,65 +2012,100 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(finalStates[2], context.Entry(products[2]).State);
         }
 
-        [Theory]
+	    [Theory]
+        // 1-M
+        // Order: Added -> Unchanged
+        // Details: Added, Modified, Deleted -> Unchanged
         [InlineData(
             TrackingState.Added, EntityState.Unchanged,
             new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
-            new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged })]
+            new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged },
+            RelationshipType.OneToMany)]
+        // 1-M
+        // Order: Unchanged -> Added
+        // Details: Unchanged -> Added, Modified, Modified
         [InlineData(
             TrackingState.Unchanged, EntityState.Added,
-            new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged},
-            new[] { EntityState.Added, EntityState.Modified, EntityState.Modified })]
-        public void Apply_Changes_With_State_Interceptor_Should_Change_One_To_Many_Entities_State(
-            TrackingState orderInitState, EntityState orderFinalState,
-            TrackingState[] detailsInitStates, EntityState[] detailsFinalStates)
+            new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
+            new[] { EntityState.Added, EntityState.Modified, EntityState.Modified },
+            RelationshipType.OneToMany)]
+        // M-1
+        // Order: Added -> Unchanged
+        // Details: Added, Modified, Deleted -> Unchanged
+        [InlineData(
+            TrackingState.Added, EntityState.Unchanged,
+            new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
+            new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged },
+            RelationshipType.ManyToOne)]
+        // M-1
+        // Order: Unchanged -> Added
+        // Details: Unchanged -> Added, Modified, Modified
+        [InlineData(
+            TrackingState.Unchanged, EntityState.Added,
+            new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
+            new[] { EntityState.Added, EntityState.Modified, EntityState.Modified },
+            RelationshipType.ManyToOne)]
+        public void Apply_Changes_With_State_Interceptor_Should_Change_1M_And_M1_Entities_State(
+	        TrackingState orderInitState, EntityState orderFinalState,
+	        TrackingState[] detailsInitStates, EntityState[] detailsFinalStates, RelationshipType relationship)
 	    {
-            // Arrange
+	        // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
             var order = new MockNorthwind().Orders[0];
             var detail1 = order.OrderDetails[0];
             var detail2 = order.OrderDetails[1];
             var detail3 = order.OrderDetails[2];
 
+            // set reference from detail to order
+            detail1.Order = order;
+            detail2.Order = order;
+            detail3.Order = order;
+
             order.TrackingState = orderInitState;
-            detail1.TrackingState = detailsInitStates[0];
-            detail2.TrackingState = detailsInitStates[1];
-            detail3.TrackingState = detailsInitStates[2];
+	        detail1.TrackingState = detailsInitStates[0];
+	        detail2.TrackingState = detailsInitStates[1];
+	        detail3.TrackingState = detailsInitStates[2];
 
-            var orderId = order.OrderId;
-            var detailId1 = detail1.OrderDetailId;
-            var detailId2 = detail2.OrderDetailId;
-            var detailId3 = detail3.OrderDetailId;
+	        var orderId = order.OrderId;
+	        var detailId1 = detail1.OrderDetailId;
+	        var detailId2 = detail2.OrderDetailId;
+	        var detailId3 = detail3.OrderDetailId;
 
-            // Act
-            context
-                .WithStateChangeInterceptor<Order>((e, rs) =>
-                {
-                    if (e.OrderId == orderId)
-                        return orderFinalState;
+	        // Act
+	        var interceptorPool = context
+	            .WithStateChangeInterceptor<Order>((e, rs) =>
+	            {
+	                if (e.OrderId == orderId)
+	                    return orderFinalState;
 
-                    return null;
-                })
-                .WithStateChangeInterceptor<OrderDetail>((e, rs) =>
-                {
-                    if (e.OrderDetailId == detailId1)
-                        return detailsFinalStates[0];
+	                return null;
+	            })
+	            .WithStateChangeInterceptor<OrderDetail>((e, rs) =>
+	            {
+	                if (e.OrderDetailId == detailId1)
+	                    return detailsFinalStates[0];
 
-                    if (e.OrderDetailId == detailId2)
-                        return detailsFinalStates[1];
+	                if (e.OrderDetailId == detailId2)
+	                    return detailsFinalStates[1];
 
-                    if (e.OrderDetailId == detailId3)
-                        return detailsFinalStates[2];
-                    return null;
-                })
-                .ApplyChanges(order);
+	                if (e.OrderDetailId == detailId3)
+	                    return detailsFinalStates[2];
 
-            // Assert
-            Assert.Equal(orderFinalState, context.Entry(order).State);
-            Assert.Equal(detailsFinalStates[0], context.Entry(detail1).State);
-            Assert.Equal(detailsFinalStates[1], context.Entry(detail2).State);
-            Assert.Equal(detailsFinalStates[2], context.Entry(detail3).State);
-        }
+	                return null;
+	            });
+
+            if (relationship == RelationshipType.OneToMany)
+                interceptorPool.ApplyChanges(order);
+            else if (relationship == RelationshipType.ManyToOne)
+                interceptorPool.ApplyChanges(detail2);
+            else throw new ArgumentOutOfRangeException("relationship");
+
+	        // Assert
+	        Assert.Equal(orderFinalState, context.Entry(order).State);
+	        Assert.Equal(detailsFinalStates[0], context.Entry(detail1).State);
+	        Assert.Equal(detailsFinalStates[1], context.Entry(detail2).State);
+	        Assert.Equal(detailsFinalStates[2], context.Entry(detail3).State);
+	    }
 
 	    [Fact]
 	    public void Apply_Changes_With_State_Interceptor_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Added()
