@@ -1930,7 +1930,7 @@ namespace TrackableEntities.EF5.Tests
         #region Apply Changes with 'state selector' callback
 
 	    [Fact]
-	    public void Apply_Changes_With_State_Selector_Should_Mark_Single_Entity_Added()
+	    public void Apply_Changes_With_State_Interceptor_Should_Mark_Single_Entity_Added()
 	    {
 	        // Arrange
 	        var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -1949,7 +1949,7 @@ namespace TrackableEntities.EF5.Tests
 	    }
 
 	    [Fact]
-        public void Apply_Changes_With_State_Selector_Should_Mark_Single_Entity_Unchanged()
+        public void Apply_Changes_With_State_Interceptor_Should_Mark_Single_Entity_Unchanged()
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -1974,7 +1974,7 @@ namespace TrackableEntities.EF5.Tests
         [InlineData(
             new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
             new[] { EntityState.Added, EntityState.Modified, EntityState.Deleted })]
-        public void Apply_Changes_With_State_Selector_Should_Change_Multiple_Entities_State(TrackingState[] initStates, EntityState[] finalStates)
+        public void Apply_Changes_With_State_Interceptor_Should_Change_Multiple_Entities_State(TrackingState[] initStates, EntityState[] finalStates)
         {
             // Arrange
             var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -2021,7 +2021,7 @@ namespace TrackableEntities.EF5.Tests
             TrackingState.Unchanged, EntityState.Added,
             new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged},
             new[] { EntityState.Added, EntityState.Modified, EntityState.Modified })]
-        public void Apply_Changes_With_State_Selector_Should_Change_One_To_Many_Entities_State(
+        public void Apply_Changes_With_State_Interceptor_Should_Change_One_To_Many_Entities_State(
             TrackingState orderInitState, EntityState orderFinalState,
             TrackingState[] detailsInitStates, EntityState[] detailsFinalStates)
 	    {
@@ -2077,7 +2077,7 @@ namespace TrackableEntities.EF5.Tests
         }
 
 	    [Fact]
-	    public void Apply_Changes_With_State_Selector_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Added()
+	    public void Apply_Changes_With_State_Interceptor_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Added()
 	    {
 	        // NOTE: CustomerSetting will be set to null because customer is deleted.
 
