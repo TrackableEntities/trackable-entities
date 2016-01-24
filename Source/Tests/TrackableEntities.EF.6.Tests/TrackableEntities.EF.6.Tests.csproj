@@ -160,11 +160,14 @@
     <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\ITestDataItem.cs">
       <Link>TestData\ITestDataItem.cs</Link>
     </Compile>
-    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\OneToOneStateConfig.cs">
-      <Link>TestData\OneToOneStateConfig.cs</Link>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\OneToManyTestDataItem.cs">
+      <Link>TestData\OneToManyTestDataItem.cs</Link>
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\OneToOneTestDataItem.cs">
       <Link>TestData\OneToOneTestDataItem.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\StateConfig.cs">
+      <Link>TestData\StateConfig.cs</Link>
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\TestDataCollectionBase.cs">
       <Link>TestData\TestDataCollectionBase.cs</Link>

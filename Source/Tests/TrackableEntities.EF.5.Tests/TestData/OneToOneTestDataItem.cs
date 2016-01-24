@@ -5,8 +5,8 @@ namespace TrackableEntities.EF.Tests.TestData
     /// </summary>
     public class OneToOneTestDataItem : ITestDataItem
     {
-        public OneToOneStateConfig Customer { get; set; }
-        public OneToOneStateConfig Setting { get; set; }
+        public StateConfig Customer { get; set; }
+        public StateConfig Setting { get; set; }
 
         public object[] ToArray()
         {
@@ -14,10 +14,10 @@ namespace TrackableEntities.EF.Tests.TestData
             {
                 this.Customer.InitState,
                 this.Customer.FinalState,
-                this.Customer.OverrideState,
+                this.Customer.UseInterceptor,
                 this.Setting.InitState,
                 this.Setting.FinalState,
-                this.Setting.OverrideState
+                this.Setting.UseInterceptor
             };
         }
     }

@@ -71,7 +71,8 @@
       <Link>Constants.cs</Link>
     </Compile>
     <Compile Include="Contexts\NorthwindDbContext.cs" />
-    <Compile Include="TestData\OneToOneStateConfig.cs" />
+    <Compile Include="TestData\StateConfig.cs" />
+    <Compile Include="TestData\OneToManyTestDataItem.cs" />
     <Compile Include="TestData\OneToOneTestDataItem.cs" />
     <Compile Include="TestData\ITestDataItem.cs" />
     <Compile Include="LoadRelatedEntitiesTests.cs" />

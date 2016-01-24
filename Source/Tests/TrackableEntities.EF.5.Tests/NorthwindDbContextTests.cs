@@ -2007,50 +2007,70 @@ namespace TrackableEntities.EF5.Tests
 	        Assert.Equal(finalStates[2], context.Entry(products[2]).State);
 	    }
 
-	    #endregion
+        #endregion
 
         #region Apply_Changes_With_State_Interceptor_Should_Change_1M_And_M1_Entities_State
 
+        public class OneToManyTestData : TestDataCollectionBase<OneToManyTestDataItem>
+        {
+            #region Test Data Items
+
+            public override IList<OneToManyTestDataItem> Items => new List<OneToManyTestDataItem>
+            {
+	            // 1-M
+	            // Order: Added -> Unchanged
+	            // Details: Added, Modified, Deleted -> Unchanged
+                new OneToManyTestDataItem
+                {
+                    Relationship = RelationshipType.OneToMany,
+                    Order = new StateConfig(TrackingState.Added, EntityState.Unchanged),
+                    OrderDetail1 = new StateConfig(TrackingState.Added, EntityState.Unchanged),
+                    OrderDetail2 = new StateConfig(TrackingState.Modified, EntityState.Unchanged),
+                    OrderDetail3 = new StateConfig(TrackingState.Deleted, EntityState.Unchanged)
+                },
+	            // 1-M
+	            // Order: Unchanged -> Added
+	            // Details: Unchanged -> Added, Modified, Modified
+                new OneToManyTestDataItem
+                {
+                    Relationship = RelationshipType.OneToMany,
+                    Order = new StateConfig(TrackingState.Unchanged, EntityState.Added),
+                    OrderDetail1 = new StateConfig(TrackingState.Unchanged, EntityState.Added),
+                    OrderDetail2 = new StateConfig(TrackingState.Unchanged, EntityState.Modified),
+                    OrderDetail3 = new StateConfig(TrackingState.Unchanged, EntityState.Modified)
+                },
+	            // M-1
+	            // Order: Added -> Unchanged
+	            // Details: Added, Modified, Deleted -> Unchanged
+                new OneToManyTestDataItem
+                {
+                    Relationship = RelationshipType.ManyToOne,
+                    Order = new StateConfig(TrackingState.Added, EntityState.Unchanged),
+                    OrderDetail1 = new StateConfig(TrackingState.Added, EntityState.Unchanged),
+                    OrderDetail2 = new StateConfig(TrackingState.Modified, EntityState.Unchanged),
+                    OrderDetail3 = new StateConfig(TrackingState.Deleted, EntityState.Unchanged)
+                },
+	            // M-1
+	            // Order: Unchanged -> Added
+	            // Details: Unchanged -> Added, Modified, Modified
+                new OneToManyTestDataItem
+                {
+                    Relationship = RelationshipType.ManyToOne,
+                    Order = new StateConfig(TrackingState.Unchanged, EntityState.Added),
+                    OrderDetail1 = new StateConfig(TrackingState.Unchanged, EntityState.Added),
+                    OrderDetail2 = new StateConfig(TrackingState.Unchanged, EntityState.Modified),
+                    OrderDetail3 = new StateConfig(TrackingState.Unchanged, EntityState.Modified)
+                },
+            };
+
+            #endregion
+        }
+
         [Theory]
-	    // 1-M
-	    // Order: Added -> Unchanged
-	    // Details: Added, Modified, Deleted -> Unchanged
-	    [InlineData(
-	        TrackingState.Added, EntityState.Unchanged,
-	        new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
-	        new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged },
-	        RelationshipType.OneToMany)]
-
-	    // 1-M
-	    // Order: Unchanged -> Added
-	    // Details: Unchanged -> Added, Modified, Modified
-	    [InlineData(
-	        TrackingState.Unchanged, EntityState.Added,
-	        new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
-	        new[] { EntityState.Added, EntityState.Modified, EntityState.Modified },
-	        RelationshipType.OneToMany)]
-
-	    // M-1
-	    // Order: Added -> Unchanged
-	    // Details: Added, Modified, Deleted -> Unchanged
-	    [InlineData(
-	        TrackingState.Added, EntityState.Unchanged,
-	        new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
-	        new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged },
-	        RelationshipType.ManyToOne)]
-
-	    // M-1
-	    // Order: Unchanged -> Added
-	    // Details: Unchanged -> Added, Modified, Modified
-	    [InlineData(
-	        TrackingState.Unchanged, EntityState.Added,
-	        new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
-	        new[] { EntityState.Added, EntityState.Modified, EntityState.Modified },
-	        RelationshipType.ManyToOne)]
-
-	    public void Apply_Changes_With_State_Interceptor_Should_Change_1M_And_M1_Entities_State(
-	        TrackingState orderInitState, EntityState orderFinalState,
-	        TrackingState[] detailsInitStates, EntityState[] detailsFinalStates, RelationshipType relationship)
+        [ClassData(typeof(OneToManyTestData))]
+        public void Apply_Changes_With_State_Interceptor_Should_Change_1M_And_M1_Entities_State(
+            RelationshipType relationship, StateConfig orderStateConfig,
+            StateConfig detail1StateConfig, StateConfig detail2StateConfig, StateConfig detail3StateConfig)
 	    {
 	        // Arrange
 	        var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
@@ -2064,12 +2084,13 @@ namespace TrackableEntities.EF5.Tests
 	        detail2.Order = order;
 	        detail3.Order = order;
 
-	        order.TrackingState = orderInitState;
-	        detail1.TrackingState = detailsInitStates[0];
-	        detail2.TrackingState = detailsInitStates[1];
-	        detail3.TrackingState = detailsInitStates[2];
+	        order.TrackingState = orderStateConfig.InitState;
+	        detail1.TrackingState = detail1StateConfig.InitState;
+	        detail2.TrackingState = detail2StateConfig.InitState;
+            detail3.TrackingState = detail3StateConfig.InitState;
 
-	        var orderId = order.OrderId;
+
+            var orderId = order.OrderId;
 	        var detailId1 = detail1.OrderDetailId;
 	        var detailId2 = detail2.OrderDetailId;
 	        var detailId3 = detail3.OrderDetailId;
@@ -2078,23 +2099,23 @@ namespace TrackableEntities.EF5.Tests
 	        var interceptorPool = context
 	            .WithStateChangeInterceptor<Order>((e, rs) =>
 	            {
-	                if (e.OrderId == orderId)
-	                    return orderFinalState;
+	                if (e.OrderId == orderId && orderStateConfig.UseInterceptor)
+	                    return orderStateConfig.FinalState;
 
 	                return null;
 	            })
 	            .WithStateChangeInterceptor<OrderDetail>((e, rs) =>
 	            {
-	                if (e.OrderDetailId == detailId1)
-	                    return detailsFinalStates[0];
+                    if (e.OrderDetailId == detailId1 && detail1StateConfig.UseInterceptor)
+                        return detail1StateConfig.FinalState;
 
-	                if (e.OrderDetailId == detailId2)
-	                    return detailsFinalStates[1];
+                    if (e.OrderDetailId == detailId2 && detail2StateConfig.UseInterceptor)
+                        return detail2StateConfig.FinalState;
 
-	                if (e.OrderDetailId == detailId3)
-	                    return detailsFinalStates[2];
+                    if (e.OrderDetailId == detailId3 && detail3StateConfig.UseInterceptor)
+                        return detail3StateConfig.FinalState;
 
-	                return null;
+                    return null;
 	            });
 
 	        if (relationship == RelationshipType.OneToMany)
@@ -2104,10 +2125,10 @@ namespace TrackableEntities.EF5.Tests
 	        else throw new ArgumentOutOfRangeException("relationship");
 
 	        // Assert
-	        Assert.Equal(orderFinalState, context.Entry(order).State);
-	        Assert.Equal(detailsFinalStates[0], context.Entry(detail1).State);
-	        Assert.Equal(detailsFinalStates[1], context.Entry(detail2).State);
-	        Assert.Equal(detailsFinalStates[2], context.Entry(detail3).State);
+	        Assert.Equal(orderStateConfig.FinalState, context.Entry(order).State);
+	        Assert.Equal(detail1StateConfig.FinalState, context.Entry(detail1).State);
+	        Assert.Equal(detail2StateConfig.FinalState, context.Entry(detail2).State);
+	        Assert.Equal(detail3StateConfig.FinalState, context.Entry(detail3).State);
 	    }
 
         #endregion
@@ -2125,67 +2146,67 @@ namespace TrackableEntities.EF5.Tests
                 // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Unchanged_Setting_As_Deleted
                 new OneToOneTestDataItem
                 {
-                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
-                    Setting = new OneToOneStateConfig(TrackingState.Unchanged, EntityState.Deleted, false),
+                    Customer = new StateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new StateConfig(TrackingState.Unchanged, EntityState.Deleted, false),
                 },
                 // Customer: Deleted -> Deleted (do not override state by interceptor)
                 // Settings: Unchanged -> Unchanged
                 // TODO: fails on finals setting state - expected: Unchged, current: modified
                 new OneToOneTestDataItem
                 {
-                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
-                    Setting = new OneToOneStateConfig(TrackingState.Unchanged, EntityState.Unchanged, true),
+                    Customer = new StateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new StateConfig(TrackingState.Unchanged, EntityState.Unchanged),
                 },
                 // Customer: Deleted -> Deleted (do not override state by interceptor)
                 // Settings: Add -> Deleted (do not override state by interceptor)
                 // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Deleted
                 new OneToOneTestDataItem
                 {
-                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
-                    Setting = new OneToOneStateConfig(TrackingState.Added, EntityState.Deleted, false),
+                    Customer = new StateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new StateConfig(TrackingState.Added, EntityState.Deleted, false),
                 },
                 // Customer: Deleted -> Deleted (do not override state by interceptor)
                 // Settings: Added -> Added
                 new OneToOneTestDataItem
                 {
-                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
-                    Setting = new OneToOneStateConfig(TrackingState.Added, EntityState.Added, true),
+                    Customer = new StateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new StateConfig(TrackingState.Added, EntityState.Added),
                 },
                 // Customer: Deleted -> Deleted (do not override state by interceptor)
                 // Settings: Modified -> Deleted (do not override state by interceptor)
                 new OneToOneTestDataItem
                 {
-                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
-                    Setting = new OneToOneStateConfig(TrackingState.Modified, EntityState.Deleted, false),
+                    Customer = new StateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new StateConfig(TrackingState.Modified, EntityState.Deleted, false),
                 },
                 // Customer: Deleted -> Deleted (do not override state by interceptor)
                 // Settings: Modified -> Modified
                 new OneToOneTestDataItem
                 {
-                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
-                    Setting = new OneToOneStateConfig(TrackingState.Modified, EntityState.Modified, true),
+                    Customer = new StateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new StateConfig(TrackingState.Modified, EntityState.Modified),
                 },
                 // Customer: Deleted -> Deleted (do not override state by interceptor)
                 // Settings: Deleted -> Deleted (do not override state by interceptor)
                 // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Deleted_Setting_As_Deleted
                 new OneToOneTestDataItem
                 {
-                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
-                    Setting = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Customer = new StateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new StateConfig(TrackingState.Deleted, EntityState.Deleted, false),
                 },
                 // Customer: Deleted -> Deleted (do not override state by interceptor)
                 // Settings: Deleted -> Modified
                 new OneToOneTestDataItem
                 {
-                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
-                    Setting = new OneToOneStateConfig(TrackingState.Modified, EntityState.Modified, true),
+                    Customer = new StateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new StateConfig(TrackingState.Modified, EntityState.Modified),
                 },
                 // Customer: Modified -> Modified (do not override state by interceptor)
                 // Settings: Deleted -> Deleted (do not override state by interceptor)
                 new OneToOneTestDataItem
                 {
-                    Customer = new OneToOneStateConfig(TrackingState.Modified, EntityState.Modified, false),
-                    Setting = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Customer = new StateConfig(TrackingState.Modified, EntityState.Modified, false),
+                    Setting = new StateConfig(TrackingState.Deleted, EntityState.Deleted, false),
                 }
             };
 
