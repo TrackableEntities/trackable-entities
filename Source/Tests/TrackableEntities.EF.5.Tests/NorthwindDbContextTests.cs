@@ -2053,18 +2053,14 @@ namespace TrackableEntities.EF5.Tests
                 })
                 .WithStateChangeInterceptor<OrderDetail>((e, rs) =>
                 {
-                    if (e != null)
-                    {
-                        if (e.OrderDetailId == detailId1)
-                            return detailsFinalStates[0];
+                    if (e.OrderDetailId == detailId1)
+                        return detailsFinalStates[0];
 
-                        if (e.OrderDetailId == detailId2)
-                            return detailsFinalStates[1];
+                    if (e.OrderDetailId == detailId2)
+                        return detailsFinalStates[1];
 
-                        if (e.OrderDetailId == detailId3)
-                            return detailsFinalStates[2];
-                    }
-
+                    if (e.OrderDetailId == detailId3)
+                        return detailsFinalStates[2];
                     return null;
                 })
                 .ApplyChanges(order);
