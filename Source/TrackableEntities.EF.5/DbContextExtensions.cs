@@ -7,15 +7,16 @@ using System.Data.Entity.Infrastructure;
 using System.Reflection;
 using System.Threading;
 using TrackableEntities.Common;
-using TrackableEntities.EF5.Exceptions;
 #if EF_6
 using System.Threading.Tasks;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Core.Metadata.Edm;
+using TrackableEntities.EF6.Exceptions;
 #else
 using System.Data;
 using System.Data.Objects;
 using System.Data.Metadata.Edm;
+using TrackableEntities.EF5.Exceptions;
 #endif
 
 #if EF_6
