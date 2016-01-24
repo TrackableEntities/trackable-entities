@@ -1929,43 +1929,26 @@ namespace TrackableEntities.EF5.Tests
 
         #region Apply Changes with State Interceptor(s)
 
-        [Fact]
-	    public void Apply_Changes_With_State_Interceptor_Should_Mark_Single_Entity_Added()
+	    [Theory]
+	    [InlineData(TrackingState.Unchanged, EntityState.Added)]
+	    [InlineData(TrackingState.Added, EntityState.Unchanged)]
+	    public void Apply_Changes_With_State_Interceptor_Should_Change_Single_Entity_State(TrackingState initState, EntityState finalState)
 	    {
 	        // Arrange
 	        var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
 	        var product = new Product();
-	        product.TrackingState = TrackingState.Unchanged;
+	        product.TrackingState = initState;
 
 	        // Act
 	        context
-                 // no matter what 'e' and 'rs' is set to,
-                 // set state to 'Added'
-                 .WithStateChangeInterceptor<Product>((e, rs) => EntityState.Added)
+	            // no matter what 'e' and 'rs' is set to,
+	            // set state to 'Added'
+	            .WithStateChangeInterceptor<Product>((e, rs) => finalState)
 	            .ApplyChanges(product);
 
 	        // Assert
-	        Assert.Equal(EntityState.Added, context.Entry(product).State);
+	        Assert.Equal(finalState, context.Entry(product).State);
 	    }
-
-	    [Fact]
-        public void Apply_Changes_With_State_Interceptor_Should_Mark_Single_Entity_Unchanged()
-        {
-            // Arrange
-            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
-            var product = new Product();
-            product.TrackingState = TrackingState.Added;
-
-            // Act
-            context
-                // no matter what 'e' and 'rs' is set to,
-                // set state to 'Unchanged'
-                .WithStateChangeInterceptor<Product>((e, rs) => EntityState.Unchanged)
-                .ApplyChanges(product);
-
-            // Assert
-            Assert.Equal(EntityState.Unchanged, context.Entry(product).State);
-        }
 
         [Theory]
         [InlineData(
