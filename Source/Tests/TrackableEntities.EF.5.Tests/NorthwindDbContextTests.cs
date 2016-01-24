@@ -1623,7 +1623,8 @@ namespace TrackableEntities.EF5.Tests
 			Assert.NotNull(customer.CustomerSetting);
 		}
 
-		[Fact]
+        // TODO: remove (replaced by Apply_Changes_With_State_Interceptor_Should_One_To_One_Entities_State)
+        [Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Unchanged_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
@@ -1645,7 +1646,8 @@ namespace TrackableEntities.EF5.Tests
 			Assert.Null(customer.CustomerSetting);
 		}
 
-		[Fact]
+        // TODO: remove (replaced by Apply_Changes_With_State_Interceptor_Should_One_To_One_Entities_State)
+        [Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
@@ -1667,7 +1669,8 @@ namespace TrackableEntities.EF5.Tests
 			Assert.Null(customer.CustomerSetting);
 		}
 
-		[Fact]
+        // TODO: remove (replaced by Apply_Changes_With_State_Interceptor_Should_One_To_One_Entities_State)
+        [Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Deleted_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
@@ -1929,7 +1932,9 @@ namespace TrackableEntities.EF5.Tests
 
         #region Apply Changes with State Interceptor(s)
 
-	    [Theory]
+        #region Apply_Changes_With_State_Interceptor_Should_Change_Single_Entity_State
+
+        [Theory]
 	    [InlineData(TrackingState.Unchanged, EntityState.Added)]
 	    [InlineData(TrackingState.Added, EntityState.Unchanged)]
 	    public void Apply_Changes_With_State_Interceptor_Should_Change_Single_Entity_State(TrackingState initState, EntityState finalState)
@@ -1950,101 +1955,116 @@ namespace TrackableEntities.EF5.Tests
 	        Assert.Equal(finalState, context.Entry(product).State);
 	    }
 
+	    #endregion
+
+        #region Apply_Changes_With_State_Interceptor_Should_Change_Multiple_Entities_State
+
         [Theory]
-        [InlineData(
-            new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
-            new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged })]
-        [InlineData(
-            new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
-            new[] { EntityState.Added, EntityState.Modified, EntityState.Deleted })]
-        public void Apply_Changes_With_State_Interceptor_Should_Change_Multiple_Entities_State(TrackingState[] initStates, EntityState[] finalStates)
-        {
-            // Arrange
-            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
-            var products = new List<Product>
-            {
-                new Product { ProductId = 1 },
-                new Product { ProductId = 2 },
-                new Product { ProductId = 3 }
-            };
+	    // Added, Modified, Deleted -> Unchanged
+	    [InlineData(
+	        new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
+	        new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged })]
 
-            products[0].TrackingState = initStates[0];
-            products[1].TrackingState = initStates[1];
-            products[2].TrackingState = initStates[2];
+	    // Unchanged -> Added, Modified, Deleted
+	    [InlineData(
+	        new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
+	        new[] { EntityState.Added, EntityState.Modified, EntityState.Deleted })]
+	    public void Apply_Changes_With_State_Interceptor_Should_Change_Multiple_Entities_State(TrackingState[] initStates, EntityState[] finalStates)
+	    {
+	        // Arrange
+	        var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+	        var products = new List<Product>
+	        {
+	            new Product { ProductId = 1 },
+	            new Product { ProductId = 2 },
+	            new Product { ProductId = 3 }
+	        };
 
-            // Act
-            context
-                .WithStateChangeInterceptor<Product>((e, rs) =>
-                {
-                    if (e.ProductId == 1)
-                        return finalStates[0];
+	        products[0].TrackingState = initStates[0];
+	        products[1].TrackingState = initStates[1];
+	        products[2].TrackingState = initStates[2];
 
-                    if (e.ProductId == 2)
-                        return finalStates[1];
+	        // Act
+	        context
+	            .WithStateChangeInterceptor<Product>((e, rs) =>
+	            {
+	                if (e.ProductId == 1)
+	                    return finalStates[0];
 
-                    if (e.ProductId == 3)
-                        return finalStates[2];
+	                if (e.ProductId == 2)
+	                    return finalStates[1];
 
-                    return null;
-                })
-                .ApplyChanges(products);
+	                if (e.ProductId == 3)
+	                    return finalStates[2];
 
-            // Assert
-            Assert.Equal(finalStates[0], context.Entry(products[0]).State);
-            Assert.Equal(finalStates[1], context.Entry(products[1]).State);
-            Assert.Equal(finalStates[2], context.Entry(products[2]).State);
-        }
+	                return null;
+	            })
+	            .ApplyChanges(products);
 
-	    [Theory]
-        // 1-M
-        // Order: Added -> Unchanged
-        // Details: Added, Modified, Deleted -> Unchanged
-        [InlineData(
-            TrackingState.Added, EntityState.Unchanged,
-            new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
-            new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged },
-            RelationshipType.OneToMany)]
-        // 1-M
-        // Order: Unchanged -> Added
-        // Details: Unchanged -> Added, Modified, Modified
-        [InlineData(
-            TrackingState.Unchanged, EntityState.Added,
-            new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
-            new[] { EntityState.Added, EntityState.Modified, EntityState.Modified },
-            RelationshipType.OneToMany)]
-        // M-1
-        // Order: Added -> Unchanged
-        // Details: Added, Modified, Deleted -> Unchanged
-        [InlineData(
-            TrackingState.Added, EntityState.Unchanged,
-            new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
-            new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged },
-            RelationshipType.ManyToOne)]
-        // M-1
-        // Order: Unchanged -> Added
-        // Details: Unchanged -> Added, Modified, Modified
-        [InlineData(
-            TrackingState.Unchanged, EntityState.Added,
-            new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
-            new[] { EntityState.Added, EntityState.Modified, EntityState.Modified },
-            RelationshipType.ManyToOne)]
-        public void Apply_Changes_With_State_Interceptor_Should_Change_1M_And_M1_Entities_State(
+	        // Assert
+	        Assert.Equal(finalStates[0], context.Entry(products[0]).State);
+	        Assert.Equal(finalStates[1], context.Entry(products[1]).State);
+	        Assert.Equal(finalStates[2], context.Entry(products[2]).State);
+	    }
+
+	    #endregion
+
+        #region Apply_Changes_With_State_Interceptor_Should_Change_1M_And_M1_Entities_State
+
+        [Theory]
+	    // 1-M
+	    // Order: Added -> Unchanged
+	    // Details: Added, Modified, Deleted -> Unchanged
+	    [InlineData(
+	        TrackingState.Added, EntityState.Unchanged,
+	        new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
+	        new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged },
+	        RelationshipType.OneToMany)]
+
+	    // 1-M
+	    // Order: Unchanged -> Added
+	    // Details: Unchanged -> Added, Modified, Modified
+	    [InlineData(
+	        TrackingState.Unchanged, EntityState.Added,
+	        new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
+	        new[] { EntityState.Added, EntityState.Modified, EntityState.Modified },
+	        RelationshipType.OneToMany)]
+
+	    // M-1
+	    // Order: Added -> Unchanged
+	    // Details: Added, Modified, Deleted -> Unchanged
+	    [InlineData(
+	        TrackingState.Added, EntityState.Unchanged,
+	        new[] { TrackingState.Added, TrackingState.Modified, TrackingState.Deleted },
+	        new[] { EntityState.Unchanged, EntityState.Unchanged, EntityState.Unchanged },
+	        RelationshipType.ManyToOne)]
+
+	    // M-1
+	    // Order: Unchanged -> Added
+	    // Details: Unchanged -> Added, Modified, Modified
+	    [InlineData(
+	        TrackingState.Unchanged, EntityState.Added,
+	        new[] { TrackingState.Unchanged, TrackingState.Unchanged, TrackingState.Unchanged },
+	        new[] { EntityState.Added, EntityState.Modified, EntityState.Modified },
+	        RelationshipType.ManyToOne)]
+
+	    public void Apply_Changes_With_State_Interceptor_Should_Change_1M_And_M1_Entities_State(
 	        TrackingState orderInitState, EntityState orderFinalState,
 	        TrackingState[] detailsInitStates, EntityState[] detailsFinalStates, RelationshipType relationship)
 	    {
 	        // Arrange
-            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
-            var order = new MockNorthwind().Orders[0];
-            var detail1 = order.OrderDetails[0];
-            var detail2 = order.OrderDetails[1];
-            var detail3 = order.OrderDetails[2];
+	        var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+	        var order = new MockNorthwind().Orders[0];
+	        var detail1 = order.OrderDetails[0];
+	        var detail2 = order.OrderDetails[1];
+	        var detail3 = order.OrderDetails[2];
 
-            // set reference from detail to order
-            detail1.Order = order;
-            detail2.Order = order;
-            detail3.Order = order;
+	        // set reference from detail to order
+	        detail1.Order = order;
+	        detail2.Order = order;
+	        detail3.Order = order;
 
-            order.TrackingState = orderInitState;
+	        order.TrackingState = orderInitState;
 	        detail1.TrackingState = detailsInitStates[0];
 	        detail2.TrackingState = detailsInitStates[1];
 	        detail3.TrackingState = detailsInitStates[2];
@@ -2077,11 +2097,11 @@ namespace TrackableEntities.EF5.Tests
 	                return null;
 	            });
 
-            if (relationship == RelationshipType.OneToMany)
-                interceptorPool.ApplyChanges(order);
-            else if (relationship == RelationshipType.ManyToOne)
-                interceptorPool.ApplyChanges(detail2);
-            else throw new ArgumentOutOfRangeException("relationship");
+	        if (relationship == RelationshipType.OneToMany)
+	            interceptorPool.ApplyChanges(order);
+	        else if (relationship == RelationshipType.ManyToOne)
+	            interceptorPool.ApplyChanges(detail2);
+	        else throw new ArgumentOutOfRangeException("relationship");
 
 	        // Assert
 	        Assert.Equal(orderFinalState, context.Entry(order).State);
@@ -2090,29 +2110,97 @@ namespace TrackableEntities.EF5.Tests
 	        Assert.Equal(detailsFinalStates[2], context.Entry(detail3).State);
 	    }
 
-	    [Fact]
-	    public void Apply_Changes_With_State_Interceptor_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Added()
+	    #endregion
+
+        #region Apply_Changes_With_State_Interceptor_Should_1_1_Entities_State
+
+        [Theory]
+        // Customer: Deleted -> Deleted (do not override state by interceptor)
+        // Settings: Unchanged -> Deleted (do not override state by interceptor)
+        // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Unchanged_Setting_As_Deleted
+        [InlineData(
+            TrackingState.Deleted, EntityState.Deleted, false,
+            TrackingState.Unchanged, EntityState.Deleted, false)]
+
+        // Customer: Deleted -> Deleted (do not override state by interceptor)
+        // Settings: Unchanged -> Unchanged
+        // TODO: fails on finals setting state - expected: Unchged, current: modified
+        [InlineData(
+	        TrackingState.Deleted, EntityState.Deleted, false,
+	        TrackingState.Unchanged, EntityState.Unchanged, true)]
+
+        // Customer: Deleted -> Deleted (do not override state by interceptor)
+        // Settings: Add -> Deleted (do not override state by interceptor)
+        // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Deleted
+        [InlineData(
+            TrackingState.Deleted, EntityState.Deleted, false,
+            TrackingState.Added, EntityState.Deleted, false)]
+
+        // Customer: Deleted -> Deleted (do not override state by interceptor)
+        // Settings: Added -> Added
+        [InlineData(
+            TrackingState.Deleted, EntityState.Deleted, false,
+            TrackingState.Added, EntityState.Added, true)]
+
+        // Customer: Deleted -> Deleted (do not override state by interceptor)
+        // Settings: Modified -> Deleted (do not override state by interceptor)
+        [InlineData(
+            TrackingState.Deleted, EntityState.Deleted, false,
+            TrackingState.Modified, EntityState.Deleted, false)]
+
+        // Customer: Deleted -> Deleted (do not override state by interceptor)
+        // Settings: Modified -> Modified
+        [InlineData(
+            TrackingState.Deleted, EntityState.Deleted, false,
+            TrackingState.Modified, EntityState.Modified, true)]
+
+        // Customer: Deleted -> Deleted (do not override state by interceptor)
+        // Settings: Deleted -> Deleted (do not override state by interceptor)
+        // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Deleted_Setting_As_Deleted
+        [InlineData(
+            TrackingState.Deleted, EntityState.Deleted, false,
+            TrackingState.Deleted, EntityState.Deleted, false)]
+
+        // Customer: Deleted -> Deleted (do not override state by interceptor)
+        // Settings: Deleted -> Modified
+        [InlineData(
+            TrackingState.Deleted, EntityState.Deleted, false,
+            TrackingState.Deleted, EntityState.Modified, true)]
+
+        // Customer: Modified -> Modified (do not override state by interceptor)
+        // Settings: Deleted -> Deleted (do not override state by interceptor)
+        [InlineData(
+            TrackingState.Modified, EntityState.Modified, false,
+            TrackingState.Deleted, EntityState.Deleted, false)]
+
+        public void Apply_Changes_With_State_Interceptor_Should_One_To_One_Entities_State(
+	        TrackingState customerInitState, EntityState? customerFinalState, bool overrideCustomerState,
+	        TrackingState settingInitState, EntityState? settingFinalState, bool overrideSettingState)
 	    {
-	        // NOTE: CustomerSetting will be set to null because customer is deleted.
+	        // NOTE: customer.CustomerSetting will be set to null if customer is deleted.
 
 	        // Arrange
 	        var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
 	        var nw = new MockNorthwind();
 	        var customer = nw.Customers[0];
-	        customer.TrackingState = TrackingState.Deleted;
 	        var setting = customer.CustomerSetting = new CustomerSetting { CustomerId = customer.CustomerId, Setting = "Setting1", Customer = customer };
-	        setting.TrackingState = TrackingState.Added;
+
+	        customer.TrackingState = customerInitState;
+	        setting.TrackingState = settingInitState;
 
 	        // Act
 	        context
-	            .WithStateChangeInterceptor<CustomerSetting>((e, r) => EntityState.Added)
-                .ApplyChanges(customer);
+	            .WithStateChangeInterceptor<Customer>((e, r) => overrideCustomerState ? customerFinalState : null)
+	            .WithStateChangeInterceptor<CustomerSetting>((e, r) => overrideSettingState ? settingFinalState : null)
+	            .ApplyChanges(customer);
 
-            // Assert
-            Assert.Equal(EntityState.Deleted, context.Entry(customer).State);
-            Assert.Equal(EntityState.Added, context.Entry(setting).State);
-            Assert.Null(customer.CustomerSetting);
-        }
+	        // Assert
+	        Assert.Equal(customerFinalState, context.Entry(customer).State);
+	        Assert.Equal(settingFinalState, context.Entry(setting).State);
+	        Assert.Null(customer.CustomerSetting);
+	    }
+
+	    #endregion
 
 	    [Fact]
 	    public void Apply_Changes_With_Multiple_State_Interceptor_Should_Win_Last_Interceptor()
