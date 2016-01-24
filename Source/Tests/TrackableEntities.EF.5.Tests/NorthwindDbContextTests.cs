@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Diagnostics;
-using System.Linq;
 using Xunit;
 #if EF_6
 using TrackableEntities.EF6;
@@ -13,6 +12,7 @@ using TrackableEntities.EF5;
 using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.Mocks;
 using TrackableEntities.EF.Tests.NorthwindModels;
+using TrackableEntities.EF.Tests.TestData;
 
 #if EF_6
 namespace TrackableEntities.EF6.Tests
@@ -2110,69 +2110,90 @@ namespace TrackableEntities.EF5.Tests
 	        Assert.Equal(detailsFinalStates[2], context.Entry(detail3).State);
 	    }
 
-	    #endregion
+        #endregion
 
-        #region Apply_Changes_With_State_Interceptor_Should_1_1_Entities_State
+        #region Apply_Changes_With_State_Interceptor_Should_One_To_One_Entities_State
 
-        [Theory]
-        // Customer: Deleted -> Deleted (do not override state by interceptor)
-        // Settings: Unchanged -> Deleted (do not override state by interceptor)
-        // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Unchanged_Setting_As_Deleted
-        [InlineData(
-            TrackingState.Deleted, EntityState.Deleted, false,
-            TrackingState.Unchanged, EntityState.Deleted, false)]
+        public class OneToOneTestData : TestDataCollectionBase<OneToOneTestDataItem>
+        {
+            #region Test Data Items
 
-        // Customer: Deleted -> Deleted (do not override state by interceptor)
-        // Settings: Unchanged -> Unchanged
-        // TODO: fails on finals setting state - expected: Unchged, current: modified
-        [InlineData(
-	        TrackingState.Deleted, EntityState.Deleted, false,
-	        TrackingState.Unchanged, EntityState.Unchanged, true)]
+            public override IList<OneToOneTestDataItem> Items => new List<OneToOneTestDataItem>
+            {
+                // Customer: Deleted -> Deleted (do not override state by interceptor)
+                // Settings: Unchanged -> Deleted (do not override state by interceptor)
+                // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Unchanged_Setting_As_Deleted
+                new OneToOneTestDataItem
+                {
+                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new OneToOneStateConfig(TrackingState.Unchanged, EntityState.Deleted, false),
+                },
+                // Customer: Deleted -> Deleted (do not override state by interceptor)
+                // Settings: Unchanged -> Unchanged
+                // TODO: fails on finals setting state - expected: Unchged, current: modified
+                new OneToOneTestDataItem
+                {
+                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new OneToOneStateConfig(TrackingState.Unchanged, EntityState.Unchanged, true),
+                },
+                // Customer: Deleted -> Deleted (do not override state by interceptor)
+                // Settings: Add -> Deleted (do not override state by interceptor)
+                // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Deleted
+                new OneToOneTestDataItem
+                {
+                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new OneToOneStateConfig(TrackingState.Added, EntityState.Deleted, false),
+                },
+                // Customer: Deleted -> Deleted (do not override state by interceptor)
+                // Settings: Added -> Added
+                new OneToOneTestDataItem
+                {
+                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new OneToOneStateConfig(TrackingState.Added, EntityState.Added, true),
+                },
+                // Customer: Deleted -> Deleted (do not override state by interceptor)
+                // Settings: Modified -> Deleted (do not override state by interceptor)
+                new OneToOneTestDataItem
+                {
+                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new OneToOneStateConfig(TrackingState.Modified, EntityState.Deleted, false),
+                },
+                // Customer: Deleted -> Deleted (do not override state by interceptor)
+                // Settings: Modified -> Modified
+                new OneToOneTestDataItem
+                {
+                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new OneToOneStateConfig(TrackingState.Modified, EntityState.Modified, true),
+                },
+                // Customer: Deleted -> Deleted (do not override state by interceptor)
+                // Settings: Deleted -> Deleted (do not override state by interceptor)
+                // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Deleted_Setting_As_Deleted
+                new OneToOneTestDataItem
+                {
+                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                },
+                // Customer: Deleted -> Deleted (do not override state by interceptor)
+                // Settings: Deleted -> Modified
+                new OneToOneTestDataItem
+                {
+                    Customer = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                    Setting = new OneToOneStateConfig(TrackingState.Modified, EntityState.Modified, true),
+                },
+                // Customer: Modified -> Modified (do not override state by interceptor)
+                // Settings: Deleted -> Deleted (do not override state by interceptor)
+                new OneToOneTestDataItem
+                {
+                    Customer = new OneToOneStateConfig(TrackingState.Modified, EntityState.Modified, false),
+                    Setting = new OneToOneStateConfig(TrackingState.Deleted, EntityState.Deleted, false),
+                }
+            };
 
-        // Customer: Deleted -> Deleted (do not override state by interceptor)
-        // Settings: Add -> Deleted (do not override state by interceptor)
-        // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Deleted
-        [InlineData(
-            TrackingState.Deleted, EntityState.Deleted, false,
-            TrackingState.Added, EntityState.Deleted, false)]
+            #endregion
+        }
 
-        // Customer: Deleted -> Deleted (do not override state by interceptor)
-        // Settings: Added -> Added
-        [InlineData(
-            TrackingState.Deleted, EntityState.Deleted, false,
-            TrackingState.Added, EntityState.Added, true)]
-
-        // Customer: Deleted -> Deleted (do not override state by interceptor)
-        // Settings: Modified -> Deleted (do not override state by interceptor)
-        [InlineData(
-            TrackingState.Deleted, EntityState.Deleted, false,
-            TrackingState.Modified, EntityState.Deleted, false)]
-
-        // Customer: Deleted -> Deleted (do not override state by interceptor)
-        // Settings: Modified -> Modified
-        [InlineData(
-            TrackingState.Deleted, EntityState.Deleted, false,
-            TrackingState.Modified, EntityState.Modified, true)]
-
-        // Customer: Deleted -> Deleted (do not override state by interceptor)
-        // Settings: Deleted -> Deleted (do not override state by interceptor)
-        // TODO: remove Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Deleted_Setting_As_Deleted
-        [InlineData(
-            TrackingState.Deleted, EntityState.Deleted, false,
-            TrackingState.Deleted, EntityState.Deleted, false)]
-
-        // Customer: Deleted -> Deleted (do not override state by interceptor)
-        // Settings: Deleted -> Modified
-        [InlineData(
-            TrackingState.Deleted, EntityState.Deleted, false,
-            TrackingState.Deleted, EntityState.Modified, true)]
-
-        // Customer: Modified -> Modified (do not override state by interceptor)
-        // Settings: Deleted -> Deleted (do not override state by interceptor)
-        [InlineData(
-            TrackingState.Modified, EntityState.Modified, false,
-            TrackingState.Deleted, EntityState.Deleted, false)]
-
+	    [Theory]
+        [ClassData(typeof(OneToOneTestData))]
         public void Apply_Changes_With_State_Interceptor_Should_One_To_One_Entities_State(
 	        TrackingState customerInitState, EntityState? customerFinalState, bool overrideCustomerState,
 	        TrackingState settingInitState, EntityState? settingFinalState, bool overrideSettingState)
