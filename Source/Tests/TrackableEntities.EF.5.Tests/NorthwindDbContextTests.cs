@@ -2100,6 +2100,85 @@ namespace TrackableEntities.EF5.Tests
             Assert.Null(customer.CustomerSetting);
         }
 
-        #endregion
+	    [Fact]
+	    public void Apply_Changes_With_Multiple_State_Interceptor_Should_Win_Last_Interceptor()
+	    {
+	        // Arrange
+	        var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+	        var order = new MockNorthwind().Orders[0];
+	        var detail1 = order.OrderDetails[0];
+	        var detail2 = order.OrderDetails[1];
+	        var detail3 = order.OrderDetails[2];
+
+	        order.TrackingState = TrackingState.Unchanged;
+	        detail1.TrackingState = TrackingState.Unchanged;
+	        detail2.TrackingState = TrackingState.Unchanged;
+	        detail3.TrackingState = TrackingState.Unchanged;
+
+	        var orderId = order.OrderId;
+	        var detailId1 = detail1.OrderDetailId;
+	        var detailId2 = detail2.OrderDetailId;
+	        var detailId3 = detail3.OrderDetailId;
+
+	        // Act
+	        context
+	            // Order -> Deleted
+	            .WithStateChangeInterceptor<Order>((e, rs) =>
+	            {
+	                if (e.OrderId == orderId)
+	                    return EntityState.Deleted;
+
+	                return null;
+	            })
+                // OrderDetail 1 -> Added   <====== FINAL STATE
+                // OrderDetail 2 -> Modidfied
+                // OrderDetail 3 -> Deleted
+                .WithStateChangeInterceptor<OrderDetail>((e, rs) =>
+	            {
+	                if (e.OrderDetailId == detailId1)
+	                    return EntityState.Added;
+
+	                if (e.OrderDetailId == detailId2)
+	                    return EntityState.Modified;
+
+	                if (e.OrderDetailId == detailId3)
+	                    return EntityState.Deleted;
+
+	                return null;
+	            })
+	            // Order -> Modified   <====== FINAL STATE
+	            .WithStateChangeInterceptor<Order>((e, rs) =>
+	            {
+	                if (e.OrderId == orderId)
+	                    return EntityState.Modified;
+
+	                return null;
+	            })
+                // OrderDetail 2 -> Added   <====== FINAL STATE
+                .WithStateChangeInterceptor<OrderDetail>((e, rs) =>
+	            {
+	                if (e.OrderDetailId == detailId2)
+	                    return EntityState.Added;
+
+	                return null;
+	            })
+                // OrderDetail 3 -> Modified   <====== FINAL STATE
+                .WithStateChangeInterceptor<OrderDetail>((e, rs) =>
+	            {
+	                if (e.OrderDetailId == detailId3)
+	                    return EntityState.Modified;
+
+	                return null;
+	            })
+	            .ApplyChanges(order);
+
+	        // Assert
+	        Assert.Equal(EntityState.Modified, context.Entry(order).State);
+	        Assert.Equal(EntityState.Added, context.Entry(detail1).State);
+	        Assert.Equal(EntityState.Added, context.Entry(detail2).State);
+	        Assert.Equal(EntityState.Modified, context.Entry(detail3).State);
+	    }
+
+	    #endregion
     }
 }
