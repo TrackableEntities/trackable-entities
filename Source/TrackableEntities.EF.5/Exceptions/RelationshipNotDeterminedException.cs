@@ -7,7 +7,7 @@ namespace TrackableEntities.EF5.Exceptions
     /// <summary>
     /// Exception for state when the relationship cannot be determined for a given type and a givven property.
     /// </summary>
-    internal class RelationshipNotDeterminedException : TrackableEntitiesException
+    public class RelationshipNotDeterminedException : TrackableEntitiesException
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="T:RelationshipNotDeterminedException"/> class with a specified error message.
