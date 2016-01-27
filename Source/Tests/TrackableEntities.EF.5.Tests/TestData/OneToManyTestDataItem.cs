@@ -1,8 +1,6 @@
 #if EF_6
-using System.Data.Entity;
 using TrackableEntities.EF6;
 #else
-using System.Data;
 using TrackableEntities.EF5;
 #endif
 
@@ -23,11 +21,11 @@ namespace TrackableEntities.EF.Tests.TestData
         {
             return new object[]
             {
-                this.Relationship,
-                this.Order,
-                this.OrderDetail1,
-                this.OrderDetail2,
-                this.OrderDetail3
+                Relationship,
+                Order,
+                OrderDetail1,
+                OrderDetail2,
+                OrderDetail3
             };
         }
     }

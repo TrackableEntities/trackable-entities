@@ -17,12 +17,12 @@ namespace TrackableEntities.EF.Tests.TestData
 
         public IEnumerator<object[]> GetEnumerator()
         {
-            return this.Items.Select(item => item.ToArray()).GetEnumerator();
+            return Items.Select(item => item.ToArray()).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
     }
 }

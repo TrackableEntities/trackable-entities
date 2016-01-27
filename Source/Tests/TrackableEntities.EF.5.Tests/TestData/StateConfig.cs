@@ -17,9 +17,9 @@ namespace TrackableEntities.EF.Tests.TestData
 
         public StateConfig(TrackingState initState, EntityState finalState, bool useInterceptor = true)
         {
-            this.InitState = initState;
-            this.FinalState = finalState;
-            this.UseInterceptor = useInterceptor;
+            InitState = initState;
+            FinalState = finalState;
+            UseInterceptor = useInterceptor;
         }
     }
 }

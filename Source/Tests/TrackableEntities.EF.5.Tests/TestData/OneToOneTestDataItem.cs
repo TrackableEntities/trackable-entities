@@ -12,12 +12,12 @@ namespace TrackableEntities.EF.Tests.TestData
         {
             return new object[]
             {
-                this.Customer.InitState,
-                this.Customer.FinalState,
-                this.Customer.UseInterceptor,
-                this.Setting.InitState,
-                this.Setting.FinalState,
-                this.Setting.UseInterceptor
+                Customer.InitState,
+                Customer.FinalState,
+                Customer.UseInterceptor,
+                Setting.InitState,
+                Setting.FinalState,
+                Setting.UseInterceptor
             };
         }
     }
