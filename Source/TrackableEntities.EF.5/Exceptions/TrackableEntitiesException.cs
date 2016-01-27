@@ -9,7 +9,7 @@ namespace TrackableEntities.EF5.Exceptions
     /// <summary>
     /// Base class for exceptions defined in Trackable Entities.
     /// </summary>
-    public abstract class TrackableEntitiesException : ApplicationException
+    public abstract class TrackableEntitiesException : Exception
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="T:TrackableEntitiesException"/> class.
