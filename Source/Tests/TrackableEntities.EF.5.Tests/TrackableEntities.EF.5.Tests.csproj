@@ -70,10 +70,13 @@
     <Compile Include="..\..\TrackableEntities.EF.5\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>
+    <Compile Include="ApplyChangesStateInterceptorTests.cs" />
     <Compile Include="Contexts\NorthwindDbContext.cs" />
-    <Compile Include="TestData\StateConfig.cs" />
-    <Compile Include="TestData\OneToManyTestDataItem.cs" />
-    <Compile Include="TestData\OneToOneTestDataItem.cs" />
+    <Compile Include="TestData\GeneratedTestData.cs" />
+    <Compile Include="TestData\StateInterceptor\SingleStateConfigGenerated.cs" />
+    <Compile Include="TestData\StateInterceptor\StateHelperTests.cs" />
+    <Compile Include="TestData\StateInterceptor\TwoStateConfigsGenerated.cs" />
+    <Compile Include="TestData\StateInterceptor\StateConfig.cs" />
     <Compile Include="TestData\ITestDataItem.cs" />
     <Compile Include="LoadRelatedEntitiesTests.cs" />
     <Compile Include="NorthwindDbContextTests.cs" />
@@ -104,7 +107,10 @@
     <Compile Include="Helpers\TestsHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TestData\TestDataCollectionBase.cs" />
+    <Compile Include="TestData\StateInterceptor\StateHelper.cs" />
+    <Compile Include="TestData\TestDataItemAsArray.cs" />
+    <Compile Include="TestData\StaticTestData.cs" />
+    <Compile Include="TestData\StateInterceptor\TwoStateConfigsAsArray.cs" />
     <Compile Include="TrackableExtensionsTests.cs" />
     <Compile Include="Helpers\TrackingStateHelper.cs" />
   </ItemGroup>

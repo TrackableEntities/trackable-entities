@@ -73,6 +73,9 @@
     <Compile Include="..\..\TrackableEntities.EF.5\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\ApplyChangesStateInterceptorTests.cs">
+      <Link>ApplyChangesStateInterceptorTests.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\Contexts\FamilyDbContext.cs">
       <Link>Contexts\FamilyDbContext.cs</Link>
     </Compile>
@@ -157,20 +160,32 @@
     <Compile Include="..\TrackableEntities.EF.5.Tests\NorthwindModels\Territory.cs">
       <Link>NorthwindModels\Territory.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\GeneratedTestData.cs">
+      <Link>TestData\GeneratedTestData.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\ITestDataItem.cs">
       <Link>TestData\ITestDataItem.cs</Link>
     </Compile>
-    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\OneToManyTestDataItem.cs">
-      <Link>TestData\OneToManyTestDataItem.cs</Link>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\StateInterceptor\SingleStateConfigGenerated.cs">
+      <Link>TestData\StateInterceptor\SingleStateConfigGenerated.cs</Link>
     </Compile>
-    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\OneToOneTestDataItem.cs">
-      <Link>TestData\OneToOneTestDataItem.cs</Link>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\StateInterceptor\StateConfig.cs">
+      <Link>TestData\StateInterceptor\StateConfig.cs</Link>
     </Compile>
-    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\StateConfig.cs">
-      <Link>TestData\StateConfig.cs</Link>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\StateInterceptor\StateHelper.cs">
+      <Link>TestData\StateInterceptor\StateHelper.cs</Link>
     </Compile>
-    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\TestDataCollectionBase.cs">
-      <Link>TestData\TestDataCollectionBase.cs</Link>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\StateInterceptor\TwoStateConfigsAsArray.cs">
+      <Link>TestData\StateInterceptor\TwoStateConfigsAsArray.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\StateInterceptor\TwoStateConfigsGenerated.cs">
+      <Link>TestData\StateInterceptor\TwoStateConfigsGenerated.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\StaticTestData.cs">
+      <Link>TestData\StaticTestData.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\TestData\TestDataItemAsArray.cs">
+      <Link>TestData\TestDataItemAsArray.cs</Link>
     </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\TrackableExtensionsTests.cs">
       <Link>TrackableExtensionsTests.cs</Link>

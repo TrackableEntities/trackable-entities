@@ -9,6 +9,6 @@ namespace TrackableEntities.EF.Tests.TestData
         /// Returns test data item as array of objects.
         /// </summary>
         /// <returns></returns>
-        object[] ToArray();
+        object[] AsArray();
     }
 }

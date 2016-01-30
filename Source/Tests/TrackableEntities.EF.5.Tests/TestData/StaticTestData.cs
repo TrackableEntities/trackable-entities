@@ -5,10 +5,10 @@ using System.Linq;
 namespace TrackableEntities.EF.Tests.TestData
 {
     /// <summary>
-    /// Base class for test data used in <see cref="Xunit.ClassDataAttribute"/>.
+    /// Base class for static test data collection used in <see cref="Xunit.ClassDataAttribute"/>.
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
-    public abstract class TestDataCollectionBase<TItem> : IEnumerable<object[]> where TItem : ITestDataItem
+    /// <typeparam name="TItem">Type of item for one test.</typeparam>
+    public abstract class StaticTestData<TItem> : IEnumerable<object[]> where TItem : ITestDataItem
     {
         /// <summary>
         /// Test data items.
@@ -17,12 +17,12 @@ namespace TrackableEntities.EF.Tests.TestData
 
         public IEnumerator<object[]> GetEnumerator()
         {
-            return Items.Select(item => item.ToArray()).GetEnumerator();
+            return Items.Select(item => item.AsArray()).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return ((IEnumerable<object[]>)this).GetEnumerator();
         }
     }
 }
