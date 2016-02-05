@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Diagnostics;
-using System.Linq;
 using Xunit;
 #if EF_6
 using TrackableEntities.EF6;
+using System.Data.Entity;
 #else
 using TrackableEntities.EF5;
+using System.Data;
 #endif
 using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.Mocks;
 using TrackableEntities.EF.Tests.NorthwindModels;
 
+// ReSharper disable CheckNamespace
 #if EF_6
 namespace TrackableEntities.EF6.Tests
 #else
@@ -22,7 +21,8 @@ namespace TrackableEntities.EF5.Tests
 {
 	public class NorthwindDbContextTests
 	{
-		const CreateDbOptions CreateNorthwindDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
+        // ReSharper disable once InconsistentNaming
+        const CreateDbOptions CreateNorthwindDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
 
 		#region Product: Single Entity
 
@@ -1623,7 +1623,8 @@ namespace TrackableEntities.EF5.Tests
 			Assert.NotNull(customer.CustomerSetting);
 		}
 
-		[Fact]
+        // TODO: remove (replaced by Apply_Changes_With_State_Interceptor_Should_One_To_One_Entities_State)
+        [Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Unchanged_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
@@ -1645,7 +1646,8 @@ namespace TrackableEntities.EF5.Tests
 			Assert.Null(customer.CustomerSetting);
 		}
 
-		[Fact]
+        // TODO: remove (replaced by Apply_Changes_With_State_Interceptor_Should_One_To_One_Entities_State)
+        [Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Added_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
@@ -1667,7 +1669,8 @@ namespace TrackableEntities.EF5.Tests
 			Assert.Null(customer.CustomerSetting);
 		}
 
-		[Fact]
+        // TODO: remove (replaced by Apply_Changes_With_State_Interceptor_Should_One_To_One_Entities_State)
+        [Fact]
 		public void Apply_Changes_Should_Mark_Deleted_Customer_As_Deleted_And_Deleted_Setting_As_Deleted()
 		{
 			// NOTE: CustomerSetting will be set to null because customer is deleted.
@@ -1925,6 +1928,6 @@ namespace TrackableEntities.EF5.Tests
 			Assert.Null(order.CustomerId);
 		}
 
-		#endregion
-	}
+        #endregion        
+    }
 }

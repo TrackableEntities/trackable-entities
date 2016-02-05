@@ -13,6 +13,9 @@ namespace TrackableEntities.EF5
             public const string DeletedWithAddedChildren =
                 "An entity may not be marked as Deleted if it has related entities which are marked as Added. " +
                 "Remove added related entities before deleting a parent entity.";
+
+            public const string RelationshipNotDetermined =
+                "Cannot determine relationship type for {0} property on {1}.";
         }
     }
 }
