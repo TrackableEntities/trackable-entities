@@ -8,3 +8,4 @@ obj
 
 /Build/Output
 /Build/Logs
+/Source/.vs/config/applicationhost.config
