@@ -79,7 +79,7 @@ namespace TrackableEntities.EF5
         private static void ApplyChanges(this DbContext context,
             ITrackable item, ITrackable parent, ObjectVisitationHelper visitationHelper,
             string propertyName, TrackingState? state,
-            IList<IStateInterceptor> interceptors)
+            IEnumerable<IStateInterceptor> interceptors)
         {
             // Prevent endless recursion
             if (!visitationHelper.TryVisit(item)) return;
@@ -500,7 +500,7 @@ namespace TrackableEntities.EF5
 
         private static void ApplyChangesOnProperties(this DbContext context,
             ITrackable item, ObjectVisitationHelper visitationHelper,
-            TrackingState? state, IList<IStateInterceptor> interceptors)
+            TrackingState? state, IEnumerable<IStateInterceptor> interceptors)
         {
             // Recursively apply changes
             foreach (var navProp in item.GetNavigationProperties())
@@ -525,7 +525,7 @@ namespace TrackableEntities.EF5
         private static void ApplyChangesOnCollectionProperties(TrackingState stateFilter, bool includeState,
             EntityNavigationProperty navProp, EntityCollectionProperty<IList> colProp,
             DbContext context, ITrackable item, ObjectVisitationHelper visitationHelper,
-            TrackingState? state, IList<IStateInterceptor> interceptors)
+            TrackingState? state, IEnumerable<IStateInterceptor> interceptors)
         {
             // Apply changes to 1-M and M-M properties filtering by tracking state
             var count = colProp.EntityCollection.Count;
@@ -547,7 +547,7 @@ namespace TrackableEntities.EF5
             ITrackable item, EntityState state,
             ObjectVisitationHelper visitationHelper,
             ITrackable parent, string propertyName,
-            IList<IStateInterceptor> interceptors)
+            IEnumerable<IStateInterceptor> interceptors)
         {
             // Set state for child collections
             foreach (var navProp in item.GetNavigationProperties())
@@ -694,10 +694,10 @@ namespace TrackableEntities.EF5
 
         private static bool TrySetEntityState(DbContext context,
             ITrackable item, ITrackable parent, string propertyName,
-            IList<IStateInterceptor> interceptors)
+            IEnumerable<IStateInterceptor> interceptors)
         {
             // If there are no state interceptors, do not use them
-            if (interceptors == null || interceptors.Count <= 0)
+            if (interceptors == null)
                 return false;
 
             var interceptionStateUsed = false;
@@ -722,10 +722,10 @@ namespace TrackableEntities.EF5
 
         private static void SetEntityState(DbContext context,
             ITrackable item, ITrackable parent, string propertyName,
-            EntityState state, IList<IStateInterceptor> interceptors)
+            EntityState state, IEnumerable<IStateInterceptor> interceptors)
         {
             // Set state normally if we cannot perform interception
-            if (interceptors == null || interceptors.Count == 0)
+            if (interceptors == null)
             {
                 context.Entry(item).State = state;
                 return;
