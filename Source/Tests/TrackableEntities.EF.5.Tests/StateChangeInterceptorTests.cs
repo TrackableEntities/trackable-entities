@@ -23,6 +23,25 @@ namespace TrackableEntities.EF5.Tests
 
         #region No Relationship (Product)
 
+        [Fact]
+        public void WithStateChangeInterceptor_Should_Not_Mutate_Pool()
+        {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var product = new Product();
+
+            bool calledX = false, calledY = false;
+            var poolX = context.WithStateChangeInterceptor<Product>((e, r) => { calledX = true; return null; });
+            var poolXY = poolX.WithStateChangeInterceptor<Product>((e, r) => { calledY = true; return null; });
+
+            // Act
+            poolX.ApplyChanges(product);
+
+            // Assert
+            Assert.True(calledX);
+            Assert.False(calledY);
+        }
+
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
