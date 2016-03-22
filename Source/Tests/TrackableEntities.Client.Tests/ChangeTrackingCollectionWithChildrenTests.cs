@@ -1487,7 +1487,7 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Fact]
-        public void GetChanges_On_Existing_Order_With_Modified_Customer_With_Deleted_Territory_Should_Set_Territory_To_Null()
+        public void GetChanges_On_Existing_Order_With_Modified_Customer_With_Deleted_Territory_Should_Return_Marked_Territory()
         {
             // Arrange
             var database = new MockNorthwind();
@@ -1509,7 +1509,7 @@ namespace TrackableEntities.Client.Tests
             Assert.NotEmpty(changes);
             Assert.Equal(TrackingState.Unchanged, changes.First().TrackingState);
             Assert.Equal(TrackingState.Modified, changes.First().Customer.TrackingState);
-            Assert.Null(changes.First().Customer.Territory);
+            Assert.Equal(TrackingState.Deleted, changes.First().Customer.Territory.TrackingState);
         }
 
         [Fact]
