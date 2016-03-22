@@ -1838,6 +1838,31 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(TrackingState.Unchanged, customerSetting.TrackingState);
         }
 
+        [Fact]
+        public void GetChanges_On_Deleted_Customer_With_Deleted_CustomerSetting_Should_Return_CustomerSetting_Marked_As_Deleted()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
+            customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+            customer.CustomerSetting.TrackingState = TrackingState.Deleted;
+            changeTracker.Remove(customer);
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.NotEmpty(changes);
+            Assert.Equal(TrackingState.Deleted, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes.First().CustomerSetting.TrackingState);
+        }
+
         #endregion
     }
 }
