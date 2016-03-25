@@ -376,8 +376,7 @@ namespace TrackableEntities.Client
                             // if already visited and unchanged, set to null
                             if (visitationHelper.IsVisited(trackableRef))
                             {
-                                if ((trackableRef.TrackingState == TrackingState.Unchanged
-                                     || trackableRef.TrackingState == TrackingState.Deleted))
+                                if (trackableRef.TrackingState == TrackingState.Unchanged)
                                 {
                                     EntityInfo(item).RefNavPropUnchanged.Add(refProp.Property);
                                 }
@@ -398,10 +397,9 @@ namespace TrackableEntities.Client
                                     trackableRef.TrackingState == TrackingState.Added ||
                                     trackableRef.TrackingState == TrackingState.Modified;
 
-                                // Set ref prop to null if unchanged or deleted
+                                // Set ref prop to null if unchanged
                                 if (!hasLocalDownstreamChanges &&
-                                    (trackableRef.TrackingState == TrackingState.Unchanged
-                                        || trackableRef.TrackingState == TrackingState.Deleted))
+                                    trackableRef.TrackingState == TrackingState.Unchanged)
                                 {
                                     EntityInfo(item).RefNavPropUnchanged.Add(refProp.Property);
                                     continue;
