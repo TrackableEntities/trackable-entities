@@ -98,8 +98,7 @@ namespace TrackableEntities.ItemWizard
             }
 
             // Test for base class
-            return type.BaseType != null &&
-                type.BaseType.FullName == comparedType.FullName;
+             return (type == comparedType||type.IsSubclassOf(comparedType));
         }
 
         class AssemblyLoader : MarshalByRefObject
