@@ -123,6 +123,10 @@ namespace <#= Namespace #>
 			get { return _<#= code.Property(navProperty) #>; }
 			set
 			{
+<#          if (navProperty.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many)
+            { #>
+				if (value != null) value.Parent = this;
+<#          } #>
 				if (Equals(value, _<#= code.Property(navProperty) #>)) return;
 				_<#= code.Property(navProperty) #> = value;
 				NotifyPropertyChanged();
