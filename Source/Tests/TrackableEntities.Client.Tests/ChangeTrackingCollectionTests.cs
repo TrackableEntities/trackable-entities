@@ -152,6 +152,24 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(TrackingState.Added, employee.TrackingState);
             Assert.True(employee.Territories.All(t => t.TrackingState == TrackingState.Added));
         }
+        
+        [Fact]
+        public void Adding_And_Removing_The_Same_Territory_Should_Not_Keep_Added_Territory_In_Territory_Collection()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+
+            // Act
+            employee.Territories.Add(database.Territories[4]);
+            employee.Territories.Remove(database.Territories[4]);
+
+            // Assert
+            var changes = changeTracker.GetChanges();
+            Assert.Equal(0, changes.Count);
+            Assert.Equal(3, employee.Territories.Count);
+        }
 
         #endregion
 
