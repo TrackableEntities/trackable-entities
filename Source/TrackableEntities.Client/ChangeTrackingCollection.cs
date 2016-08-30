@@ -235,6 +235,7 @@ namespace TrackableEntities.Client
                 item.SetTracking(false, visitationHelper.Clone(), true);
 
                 // Mark item and trackable collection properties
+                bool manyToManyAdded = Parent != null && item.TrackingState == TrackingState.Added;
                 item.SetState(TrackingState.Deleted, visitationHelper.Clone());
 
                 // Fire EntityChanged event
@@ -242,6 +243,7 @@ namespace TrackableEntities.Client
 
                 // Cache deleted item if not added or already cached
                 if (item.TrackingState != TrackingState.Added
+                    && !manyToManyAdded
                     && !_deletedEntities.Contains(item))
                     _deletedEntities.Add(item);
             }
