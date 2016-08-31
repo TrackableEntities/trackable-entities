@@ -154,36 +154,35 @@ namespace TrackableEntities.Client
                 if (item == null) continue;
 
                 // Prevent endless recursion
-                if (!visitationHelper.TryVisit(item)) continue;
-
-                // Iterate entity properties
-                foreach (var navProp in item.GetNavigationProperties())
+                if (visitationHelper.TryVisit(item))
                 {
-                    // Process 1-1 and M-1 properties
-                    foreach (var refProp in navProp.AsReferenceProperty())
+                    // Iterate entity properties
+                    foreach (var navProp in item.GetNavigationProperties())
                     {
-                        // Get changed ref prop
-                        ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
+                        // Process 1-1 and M-1 properties
+                        foreach (var refProp in navProp.AsReferenceProperty())
+                        {
+                            // Get changed ref prop
+                            ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
 
-                        // Remove deletes on rep prop
-                        if (refChangeTracker != null) refChangeTracker.RemoveRestoredDeletes(visitationHelper);
-                    }
+                            // Remove deletes on rep prop
+                            if (refChangeTracker != null) refChangeTracker.RemoveRestoredDeletes(visitationHelper);
+                        }
 
-                    // Process 1-M and M-M properties
-                    foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
-                    {
-                        colProp.EntityCollection.RemoveRestoredDeletes(visitationHelper);
+                        // Process 1-M and M-M properties
+                        foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
+                        {
+                            colProp.EntityCollection.RemoveRestoredDeletes(visitationHelper);
+                        }
                     }
                 }
 
                 // Remove item if marked as deleted
-                var removedDeletes = changeTracker.GetChanges(true).Cast<ITrackable>().ToList();
                 if (item.TrackingState == TrackingState.Deleted)
                 {
                     var isTracking = changeTracker.Tracking;
                     changeTracker.Tracking = false;
-                    if (removedDeletes.Contains(item))
-                        items.Remove(item);
+                    items.RemoveAt(i);
                     changeTracker.Tracking = isTracking;
                 }
             }
