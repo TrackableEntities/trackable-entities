@@ -20,7 +20,7 @@ namespace TrackableEntities.Client
         where TEntity : class, ITrackable, INotifyPropertyChanged
     {
         // Deleted entities cache
-        readonly private Collection<TEntity> _deletedEntities = new Collection<TEntity>();
+        private readonly Collection<TEntity> _deletedEntities = new Collection<TEntity>();
 
         /// <summary>
         /// Event for when an entity in the collection has changed its tracking state.
@@ -539,20 +539,31 @@ namespace TrackableEntities.Client
         /// <summary>
         /// Get entities that have been added, modified or deleted.
         /// </summary>
-        /// <param name="cachedDeletesOnly">True to return only cached deletes</param>
         /// <returns>Collection containing only changed entities</returns>
-        ITrackingCollection ITrackingCollection.GetChanges(bool cachedDeletesOnly)
+        ITrackingCollection ITrackingCollection.GetChanges()
         {
-            // Get removed deletes only
-            if (cachedDeletesOnly)
-                return new ChangeTrackingCollection<TEntity>(_deletedEntities, true);
-
             // Get changed items in this tracking collection
             var changes = (from existing in this
                            where existing.TrackingState != TrackingState.Unchanged
                            select existing)
                           .Union(_deletedEntities);
             return new ChangeTrackingCollection<TEntity>(changes, true);
+        }
+
+        /// <summary>
+        /// Turn change-tracking on and off without graph traversal (internal use).
+        /// </summary>
+        bool ITrackingCollection.InternalTracking
+        {
+            set { _tracking = value; }
+        }
+
+        /// <summary>
+        /// Get deleted entities which have been cached.
+        /// </summary>
+        ICollection ITrackingCollection.CachedDeletes
+        {
+            get { return _deletedEntities; }
         }
 
         /// <summary>

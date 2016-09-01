@@ -160,7 +160,7 @@ namespace TrackableEntities.Client
                 foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
                 {
                     // See if there are any cached deletes
-                    var cachedDeletes = colProp.EntityCollection.GetChanges(true);
+                    var cachedDeletes = colProp.EntityCollection.CachedDeletes;
                     if (cachedDeletes.Count > 0) return true;
 
                     // See if child entities have changes

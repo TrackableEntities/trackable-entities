@@ -181,9 +181,9 @@ namespace TrackableEntities.Client
                 if (item.TrackingState == TrackingState.Deleted)
                 {
                     var isTracking = changeTracker.Tracking;
-                    changeTracker.Tracking = false;
+                    changeTracker.InternalTracking = false;
                     items.RemoveAt(i);
-                    changeTracker.Tracking = isTracking;
+                    changeTracker.InternalTracking = isTracking;
                 }
             }
         }
@@ -198,20 +198,20 @@ namespace TrackableEntities.Client
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
 
             // Get cached deletes
-            var removedDeletes = changeTracker.GetChanges(true).Cast<ITrackable>().ToList();
+            var removedDeletes = changeTracker.CachedDeletes;
 
             // Restore deleted items
-            if (removedDeletes.Any())
+            if (removedDeletes.Count > 0)
             {
                 var isTracking = changeTracker.Tracking;
-                changeTracker.Tracking = false;
+                changeTracker.InternalTracking = false;
                 foreach (var delete in removedDeletes)
                 {
                     var items = changeTracker as IList;
                     if (items != null && !items.Contains(delete))
                         items.Add(delete);
                 }
-                changeTracker.Tracking = isTracking;
+                changeTracker.InternalTracking = isTracking;
             }
 
             foreach (var item in changeTracker.Cast<ITrackable>())
