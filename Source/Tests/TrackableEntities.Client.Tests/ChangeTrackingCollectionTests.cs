@@ -171,6 +171,35 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(3, employee.Territories.Count);
         }
 
+        [Fact]
+        public void Removing_And_Adding_The_Same_Territory_Should_Not_Mark_Territory_As_Added_Or_Removed()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+            
+            // Remove all territories
+            employee.Territories.Remove(employee.Territories.Single(x => x.TerritoryId == "01730"));
+            employee.Territories.Remove(employee.Territories.Single(x => x.TerritoryId == "01581"));
+            employee.Territories.Remove(employee.Territories.Single(x => x.TerritoryId == "01833"));
+
+            // Add previously removed territories
+            employee.Territories.Add(database.Territories.Single(x => x.TerritoryId == "01730"));
+            employee.Territories.Add(database.Territories.Single(x => x.TerritoryId == "01581"));
+            employee.Territories.Add(database.Territories.Single(x => x.TerritoryId == "01833"));
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.Equal(3, employee.Territories.Count);
+            Assert.Equal(TrackingState.Unchanged, employee.Territories[0].TrackingState);
+            Assert.Equal(TrackingState.Unchanged, employee.Territories[1].TrackingState);
+            Assert.Equal(TrackingState.Unchanged, employee.Territories[2].TrackingState);
+            Assert.Equal(0, changes[0].Territories.Count);
+        }
+
         #endregion
 
         #region Modified Items Tests
