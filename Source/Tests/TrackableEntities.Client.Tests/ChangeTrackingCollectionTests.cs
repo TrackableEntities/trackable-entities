@@ -660,6 +660,37 @@ namespace TrackableEntities.Client.Tests
 
             // Assert
             Assert.Equal(0, employee.Territories.Count);
+            Assert.Equal(3, changes[0].Territories.Count);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[0].TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[1].TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[2].TrackingState);
+        }
+
+        [Fact]
+        public void Calling_Get_Changes_Multiple_Times_Should_Be_Possible()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+
+            // Delete all territories, so employee.Territories.Count is 0
+            employee.Territories.Remove(employee.Territories[2]);
+            var changesA = changeTracker.GetChanges();
+            employee.Territories.Remove(employee.Territories[1]);
+            var changesB = changeTracker.GetChanges();
+            employee.Territories.Remove(employee.Territories[0]);
+            var changesC = changeTracker.GetChanges();
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.Equal(0, employee.Territories.Count);
+            Assert.Equal(3, changes[0].Territories.Count);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[0].TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[1].TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[2].TrackingState);
         }
 
         #endregion

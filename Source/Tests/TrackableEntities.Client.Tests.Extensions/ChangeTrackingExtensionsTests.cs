@@ -231,7 +231,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.Same(addedDetail, origOrder.OrderDetails.Single(d => d.ProductId == 51)); // Ref equality
             Assert.Same(modifiedDetail, origOrder.OrderDetails.Single(d => d.ProductId == 42)); // Ref equality
             Assert.DoesNotContain(deletedDetail, origOrder.OrderDetails); // Detail deleted
-            ICollection cachedDeletes = ((ITrackingCollection)origOrder.OrderDetails).GetChanges(true);
+            ICollection cachedDeletes = ((ITrackingCollection)origOrder.OrderDetails).CachedDeletes;
             Assert.Empty(cachedDeletes); // Cached deletes have been removed
         }
 
@@ -444,7 +444,7 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.Same(addedNewTerritory, employee.Territories.Single(t => t.TerritoryId == "91360")); // Ref equality
             Assert.Same(modifiedTerritory, employee.Territories.Single(t => t.TerritoryId == "01730")); // Ref equality
             Assert.DoesNotContain(deletedTerritory, employee.Territories); // Detail deleted
-            ICollection cachedDeletes = ((ITrackingCollection)employee.Territories).GetChanges(true);
+            ICollection cachedDeletes = ((ITrackingCollection)employee.Territories).CachedDeletes;
             Assert.Empty(cachedDeletes); // Cached deletes have been removed
         }
 
