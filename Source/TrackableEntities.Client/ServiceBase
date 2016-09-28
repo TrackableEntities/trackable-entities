@@ -1,0 +1,69 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+namespace ConsoleApplication1
+{
+    public abstract class ServiceBase<T,TKey> where T:class
+    {
+        public string Request { get; set; }
+        public string BaseAddress { get; }
+
+
+        public HttpClient Client { get; }
+
+
+        protected ServiceBase(string baseAddress, string request)
+        {
+            Request = request;
+            BaseAddress = baseAddress;
+            Client = new HttpClient() { BaseAddress = new Uri(baseAddress) };
+        }
+
+        public async Task<IEnumerable<T>> GetAll()
+        {
+            var response = await Client.GetAsync(Request);
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<IEnumerable<T>>();
+        }
+
+        public async Task<T> Update(T entity)
+        {
+            var response = await Client.PutAsJsonAsync(Request, entity);
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<T>();
+        }
+
+        public async Task<T> Create(T entity)
+        {
+            var response = await Client.PostAsJsonAsync(Request, entity);
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<T>();
+        }
+
+        public async Task<T> Find(TKey id)
+        {
+            var response = await Client.GetAsync($"{Request}/{id}");
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<T>();
+        }
+
+        public async Task<bool> VerifyDeleted(TKey id)
+        {
+            string request = Request + id;
+            var response = await Client.GetAsync(request);
+            if (response.IsSuccessStatusCode) return await Task.FromResult(false);
+            return await Task.FromResult(true);
+        }
+
+    }
+}
