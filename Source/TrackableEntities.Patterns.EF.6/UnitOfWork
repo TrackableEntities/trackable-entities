@@ -41,7 +41,7 @@ public abstract class UnitOfWork : IUnitOfWork, IUnitOfWorkAsync, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public T GetRepository<T>()
+    protected T GetRepository<T>()
     {
         return _repositoryFactory.GetRepository<T>();
     }
