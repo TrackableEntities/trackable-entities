@@ -30,6 +30,26 @@ namespace TrackableEntities.Client
             return await response.Content.ReadAsAsync<IEnumerable<T>>();
         }
 
+        public async Task<IEnumerable<T>> GetAll(string route,ExpandoObject parameters)
+        {
+            StringBuilder uri =new StringBuilder();
+            uri.Append($"{Request}").Append("/").Append(route);
+           
+            if (parameters != null)
+            {
+                uri.Append("?");
+                foreach (KeyValuePair<string, object> parameter in parameters)
+                {
+                    uri.Append($"{parameter.Key}={parameter.Value}").Append("&");
+                }
+            }
+            var response = await Client.GetAsync(uri.ToString().Substring(0,uri.ToString().Length-1));
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<IEnumerable<T>>();
+        }
+
         public async Task<T> Update(T entity)
         {
             var response = await Client.PutAsJsonAsync(Request, entity);
