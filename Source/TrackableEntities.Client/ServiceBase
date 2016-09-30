@@ -14,11 +14,15 @@ namespace TrackableEntities.Client
         public HttpClient Client { get; }
 
 
-        protected ServiceBase(string baseAddress, string request)
+        protected ServiceBase(string baseAddress, string request,string token=null)
         {
             Request = request;
             BaseAddress = baseAddress;
             Client = new HttpClient() { BaseAddress = new Uri(baseAddress) };
+            if (token != null)
+            {
+                Client.SetBearerToken(token);
+            }
         }
 
         public async Task<IEnumerable<T>> GetAll()
