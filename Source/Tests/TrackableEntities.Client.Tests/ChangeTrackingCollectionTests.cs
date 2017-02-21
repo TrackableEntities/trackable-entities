@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TrackableEntities.Client.Tests.Entities.Mocks;
+using TrackableEntities.Client.Tests.Entities.MultiParentModels;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
 using Xunit;
 
@@ -354,6 +355,35 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(TrackingState.Unchanged, product.TrackingState);
         }
 
+		[Fact]
+		public void Removed_Added_Items_With_Multiple_Parents_Should_Not_Be_Marked_As_Deleted_Or_Modified()
+		{
+			// Arrange
+			var root = new MultiParentRoot();
+
+			var parent1 = new ParentType1();
+			root.Parent1Items.Add(parent1);
+
+			var parent2 = new ParentType2();
+			root.Parent2Items.Add(parent2);
+
+            root.Parent1Items.Tracking = true;
+            root.Parent2Items.Tracking = true;
+
+            var childItem = new MultiParentChild();
+
+            // Act
+            // Work with each parent independently to avoid interference
+            parent1.Children.Add(childItem);
+            parent1.Children.Remove(childItem);
+
+		    parent2.Children.Add(childItem);
+			parent2.Children.Remove(childItem);
+
+			// Assert
+			Assert.Equal(TrackingState.Unchanged, childItem.TrackingState);
+		}
+
         [Fact]
         public void Removed_Added_Items_Should_Not_Have_ModifiedProperties()
         {
@@ -693,6 +723,37 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(TrackingState.Deleted, changes[0].Territories[2].TrackingState);
         }
 
+		[Fact]
+		public void GetChanges_Should_Not_Leave_Restored_Deleted_Items_With_Multiple_Parents_In_Source_Graph()
+		{
+			// Arrange
+			var root = new MultiParentRoot();
+
+			var parent1 = new ParentType1();
+			root.Parent1Items.Add(parent1);
+
+			var parent2 = new ParentType2();
+			root.Parent2Items.Add(parent2);
+
+			var childItem = new MultiParentChild();
+			parent1.Children.Add(childItem);
+			parent2.Children.Add(childItem);
+
+            root.Parent1Items.Tracking = true;
+            root.Parent2Items.Tracking = true;
+
+            // Act
+            parent1.Children.Remove(childItem);
+			parent2.Children.Remove(childItem);
+
+            // Work with each parent independently to avoid interference
+            var changes1 = root.Parent1Items.GetChanges();
+            var changes2 = root.Parent2Items.GetChanges();
+
+            // Assert
+            Assert.Equal(0, parent1.Children.Count);
+			Assert.Equal(0, parent2.Children.Count);
+		}
         #endregion
 
         #region EntityChanged Event Tests
