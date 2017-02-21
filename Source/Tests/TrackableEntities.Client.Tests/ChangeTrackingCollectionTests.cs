@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TrackableEntities.Client.Tests.Entities.Mocks;
+using TrackableEntities.Client.Tests.Entities.MultiParentModels;
 using TrackableEntities.Client.Tests.Entities.NorthwindModels;
 using Xunit;
 
@@ -354,6 +355,39 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(TrackingState.Unchanged, product.TrackingState);
         }
 
+		[Fact]
+		public void Removed_Added_Items_With_Multiple_Parents_Should_Not_Be_Marked_As_Deleted_Or_Modified()
+		{
+			// Arrange
+			var root = new MultiParentRoot();
+			var changeTracker = new ChangeTrackingCollection<MultiParentRoot>(false);
+			changeTracker.Add(root);
+
+			var parent1 = new ParentType1();
+			root.Parent1Items.Add(parent1);
+
+			var parent2 = new ParentType2();
+			root.Parent2Items.Add(parent2);
+
+			// Act
+			changeTracker.Tracking = true;
+			var childItem = new MultiParentChild();
+			parent1.Children.Add(childItem);
+			parent2.Children.Add(childItem);
+
+			parent1.Children.Remove(childItem);
+			parent2.Children.Remove(childItem);
+
+			// Assert
+			Assert.NotEqual(TrackingState.Deleted, childItem.TrackingState);
+			Assert.NotEqual(TrackingState.Modified, childItem.TrackingState);
+
+			// Alternately, as I don't know a way to ensure that any method that would modify
+			// the TrackingState of a multiple-parent deletion correctly and consistently,
+			// we could test that it was left unaltered as TrackingState.Added
+			//Assert.Equal(TrackingState.Added, childItem.TrackingState);
+		}
+
         [Fact]
         public void Removed_Added_Items_Should_Not_Have_ModifiedProperties()
         {
@@ -693,6 +727,35 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(TrackingState.Deleted, changes[0].Territories[2].TrackingState);
         }
 
+		[Fact]
+		public void GetChanges_Should_Not_Leave_Restored_Deleted_Items_With_Multiple_Parents_In_Source_Graph()
+		{
+			// Arrange
+			var root = new MultiParentRoot();
+			var changeTracker = new ChangeTrackingCollection<MultiParentRoot>(false);
+			changeTracker.Add(root);
+
+			var parent1 = new ParentType1();
+			root.Parent1Items.Add(parent1);
+
+			var parent2 = new ParentType2();
+			root.Parent2Items.Add(parent2);
+
+			var childItem = new MultiParentChild();
+			parent1.Children.Add(childItem);
+			parent2.Children.Add(childItem);
+
+			// Act
+			changeTracker.Tracking = true;
+			parent1.Children.Remove(childItem);
+			parent2.Children.Remove(childItem);
+
+			var changes = changeTracker.GetChanges();
+
+			// Assert
+			Assert.Equal(0, parent1.Children.Count);
+			Assert.Equal(0, parent2.Children.Count);
+		}
         #endregion
 
         #region EntityChanged Event Tests

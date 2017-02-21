@@ -51,6 +51,10 @@
     <Compile Include="FamilyModels\Parent.cs" />
     <Compile Include="Mocks\MockFamily.cs" />
     <Compile Include="Mocks\MockNorthwind.cs" />
+    <Compile Include="MultiParentModels\ParentType1.cs" />
+    <Compile Include="MultiParentModels\ParentType2.cs" />
+    <Compile Include="MultiParentModels\MultiParentChild.cs" />
+    <Compile Include="MultiParentModels\MultiParentRoot.cs" />
     <Compile Include="NorthwindModels\Area.cs" />
     <Compile Include="NorthwindModels\CustomerSetting.cs" />
     <Compile Include="NorthwindModels\PriorityOrder.cs" />
