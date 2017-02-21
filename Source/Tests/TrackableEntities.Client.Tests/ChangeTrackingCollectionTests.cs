@@ -693,6 +693,62 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(TrackingState.Deleted, changes[0].Territories[2].TrackingState);
         }
 
+        [Test]
+        public void GetChanges_Issue56_1()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            
+            var customer = database.Customers[0];
+            customer.CustomerSetting = new CustomerSetting() { Setting = "Setting1" };
+            customer.CustomerSetting.Customer = customer;
+            customer.CustomerSetting.CustomerId = customer.CustomerId; 
+            var order = database.Orders[0];
+            order.Customer = customer;
+            order.CustomerId = customer.CustomerId;
+            customer.Orders = new ChangeTrackingCollection<Order>() { order };
+
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+            customer.CustomerSetting.Setting = "Setting2";
+            customer.Orders.Remove(customer.Orders[0]);
+
+            // Act
+            var changes = changeTracker.GetChanges();
+            
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, changes.ElementAt(0).TrackingState);
+            Assert.AreEqual(TrackingState.Modified, changes.ElementAt(0).CustomerSetting.TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, changes.ElementAt(0).Orders[0].TrackingState);
+        }
+
+        [Test]
+        public void GetChanges_Issue56_2()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+
+            var customer = database.Customers[0];
+            customer.CustomerSetting = new CustomerSetting() { Setting = "Setting1" };
+            customer.CustomerSetting.Customer = customer;
+            customer.CustomerSetting.CustomerId = customer.CustomerId;
+            var order = database.Orders[0];
+            order.Customer = customer;
+            order.CustomerId = customer.CustomerId;
+            customer.Orders = new ChangeTrackingCollection<Order>() { order };
+
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+            customer.Orders.Remove(customer.Orders[0]);
+            customer.CustomerSetting.Setting = "Setting2";
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.AreEqual(TrackingState.Unchanged, changes.ElementAt(0).TrackingState);
+            Assert.AreEqual(TrackingState.Modified, changes.ElementAt(0).CustomerSetting.TrackingState);
+            Assert.AreEqual(TrackingState.Deleted, changes.ElementAt(0).Orders[0].TrackingState);
+        }
+
         #endregion
 
         #region EntityChanged Event Tests

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
 {
@@ -94,6 +92,19 @@ namespace TrackableEntities.Client.Tests.Entities.NorthwindModels
             if (propertyName == "Territory")
                 return TerritoryChangeTracker;
             return null;
+        }
+
+
+        private ChangeTrackingCollection<Order> _orders;
+        public ChangeTrackingCollection<Order> Orders
+        {
+            get { return _orders; }
+            set
+            {
+                if (Equals(value, _orders)) return;
+                _orders = value;
+                NotifyPropertyChanged(() => Orders);
+            }
         }
     }
 }
