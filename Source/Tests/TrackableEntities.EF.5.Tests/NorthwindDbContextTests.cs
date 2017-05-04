@@ -1152,7 +1152,7 @@ namespace TrackableEntities.EF5.Tests
 			var territory3 = employee.Territories[2];
 			var territory4 = nw.Territories[3];
 			territory4.TrackingState = TrackingState.Added;
-			employee.Territories.Add(territory4);
+            employee.Territories.Add(territory4);
 
 			// Act
 			context.ApplyChanges(employee);
@@ -1251,37 +1251,85 @@ namespace TrackableEntities.EF5.Tests
 			Assert.True(context.RelatedItemHasBeenAdded(employee, territory3));
 		}
 
-		[Fact]
-		public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Added_Territories_As_Unchanged()
-		{
-			// NOTE: Because parent is added, added children will be marked as unchanged
-			// but added to the M-M relation
+        [Fact]
+        public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Added_Territories_As_Unchanged()
+        {
+            // NOTE: Because parent is added, added children will be marked as unchanged
+            // but added to the M-M relation
 
-			// Arrange
-			var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
-			var nw = new MockNorthwind();
-			var employee = nw.Employees[0];
-			employee.TrackingState = TrackingState.Added;
-			var territory1 = employee.Territories[0];
-			var territory2 = employee.Territories[1];
-			var territory3 = employee.Territories[2];
-			var territory4 = nw.Territories[3];
-			territory4.TrackingState = TrackingState.Added;
-			employee.Territories.Add(territory4);
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+            var employee = nw.Employees[0];
+            employee.TrackingState = TrackingState.Added;
+            var territory1 = employee.Territories[0];
+            var territory2 = employee.Territories[1];
+            var territory3 = employee.Territories[2];
+            var territory4 = nw.Territories[3];
+            territory4.TrackingState = TrackingState.Added;
+            employee.Territories.Add(territory4);
 
-			// Act
-			context.ApplyChanges(employee);
+            // Act
+            context.ApplyChanges(employee);
 
-			// Assert
-			Assert.Equal(EntityState.Added, context.Entry(employee).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
-			Assert.Equal(EntityState.Unchanged, context.Entry(territory4).State);
-			Assert.True(context.RelatedItemHasBeenAdded(employee, territory4));
-		}
+            // Assert
+            Assert.Equal(EntityState.Added, context.Entry(employee).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory1).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory2).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory3).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(territory4).State);
+            Assert.True(context.RelatedItemHasBeenAdded(employee, territory4));
+        }
 
-		[Fact]
+
+        [Fact]
+	    public void Apply_Changes_Should_Mark_Added_Territories_And_Same_Removed_Territory_As_Unchanged()
+	    {
+            // Arrange
+            var context = TestsHelper.CreateNorthwindDbContext(CreateNorthwindDbOptions);
+            var nw = new MockNorthwind();
+
+            var employee1 = nw.Employees[0];
+
+	        var employee2 = nw.Employees[1];
+
+            // We have a company with 2 Employees
+            var company = new List<ITrackable>
+            {
+                employee1,
+                employee2
+             };
+
+            var territory1 = employee1.Territories[0];
+
+            var sameTerritoryButOtherObj = new Territory
+            {
+                TrackingState = TrackingState.Added,
+                TerritoryId = territory1.TerritoryId,
+                TerritoryDescription = territory1.TerritoryDescription,
+                Area = territory1.Area,
+                AreaId = territory1.AreaId
+            };
+
+            // We remove Territitory 1 from employee1
+            territory1.TrackingState = TrackingState.Deleted;
+
+            // Add same Territory to employee2 but not Object is not ReferenceEquals
+            employee2.Territories.Add(sameTerritoryButOtherObj);
+
+            // Act
+            context.ApplyChanges(company);
+
+            // Assert
+            Assert.Equal(EntityState.Unchanged, context.Entry(employee1).State);
+            Assert.Equal(EntityState.Unchanged, context.Entry(employee2).State);
+            Assert.Equal(EntityState.Deleted, context.Entry(territory1).State);
+            Assert.True(context.RelatedItemHasBeenAdded(employee2, sameTerritoryButOtherObj));
+        }
+
+
+
+	    [Fact]
 		public void Apply_Changes_Should_Mark_Added_Employee_As_Added_And_Deleted_Territories_As_Deleted()
 		{
 			// NOTE: If a deleted child is assocated with an added parent, 
