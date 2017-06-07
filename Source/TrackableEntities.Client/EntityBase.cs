@@ -1,6 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq.Expressions;
+#if !(SILVERLIGHT || NET40)
+using System.Runtime.CompilerServices;
+#endif
 
 namespace TrackableEntities.Client
 {
@@ -23,11 +26,44 @@ namespace TrackableEntities.Client
             (Expression<Func<TResult>> property)
         {
             string propertyName = ((MemberExpression)property.Body).Member.Name;
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            NotifyPropertyChanged(propertyName);
         }
+
+        /// <summary>
+        /// Raises this object's PropertyChanged event.
+        /// </summary>
+        /// <param name="propertyName">Name of the property used to notify listeners.</param>
+#if SILVERLIGHT || NET40
+        protected void NotifyPropertyChanged(string propertyName) =>
+#else
+        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = null) =>
+#endif
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+
+#if !(SILVERLIGHT || NET40)
+        /// <summary>
+        /// Checks if a property already matches a desired value. Sets the property and
+        /// notifies listeners only when necessary.
+        /// </summary>
+        /// <typeparam name="T">Type of the property.</typeparam>
+        /// <param name="storage">Reference to a property with both getter and setter.</param>
+        /// <param name="value">Desired value for the property.</param>
+        /// <param name="propertyName">Name of the property used to notify listeners. This
+        /// value is optional and can be provided automatically when invoked from compilers that
+        /// support CallerMemberName.</param>
+        /// <returns>True if the value was changed, false if the existing value matched the
+        /// desired value.</returns>
+        protected virtual bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (Equals(storage, value)) return false;
+
+            storage = value;
+            NotifyPropertyChanged(propertyName);
+
+            return true;
+        }
+#endif 
 
         /// <summary>
         /// Generate entity identifier used for correlation with MergeChanges (if not yet done)
@@ -44,8 +80,7 @@ namespace TrackableEntities.Client
         /// <param name="other">Other trackable object</param>
         public void SetEntityIdentifier(IIdentifiable other)
         {
-            var otherEntity = other as EntityBase;
-            if (otherEntity != null)
+            if (other is EntityBase otherEntity)
                 EntityIdentifier = otherEntity.EntityIdentifier;
         }
 
