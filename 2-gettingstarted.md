@@ -21,3 +21,7 @@ Step-by-step tutorial for using Trackable Entities with **Repository and Unit of
 Step-by-step tutorial for using Trackable Entities with **Windows Communication Foundation**.
 
 [Windows Communication Foundation](2c-gettingstarted-wcf.html)
+
+## Existing projects / General requirements of Trackable Entities
+A brief summary of the requirements a projects has to comply to for *Trackable Entities* to work properly.
+[Shared Entities](2d-gettingstarted-shared-entities.html)
