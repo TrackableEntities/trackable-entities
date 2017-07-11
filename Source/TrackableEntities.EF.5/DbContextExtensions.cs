@@ -209,8 +209,9 @@ namespace TrackableEntities.EF5
                     SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
                     foreach (var property in item.ModifiedProperties)
                     {                        
-                        if(item.GetType().GetRuntimeProperty(property)?.GetCustomAttribute<NotMappedAttribute>() != null)
-                        context.Entry(item).Property(property).IsModified = true;
+                        var propertyInfo = item.GetType().GetRuntimeProperty(property);
+                        if(propertyInfo != null && propertyInfo.GetCustomAttribute<NotMappedAttribute>() == null)
+                            context.Entry(item).Property(property).IsModified = true;
                     }
                 }
                 else
