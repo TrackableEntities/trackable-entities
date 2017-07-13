@@ -13,6 +13,9 @@ namespace TrackableEntities.EF.Tests.FamilyModels
 
         [Key]
         public string Name { get; set; }
+
+        public string Nickname { get; set; }
+
         public List<Child> Children { get; set; }
 
         public TrackingState TrackingState { get; set; }

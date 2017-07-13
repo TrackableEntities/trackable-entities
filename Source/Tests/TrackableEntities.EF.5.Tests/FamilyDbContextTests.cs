@@ -55,23 +55,19 @@ namespace TrackableEntities.EF5.Tests
         }
 
         [Fact]
-        public void Apply_Changes_Skip_NotMapped_Properties()
+        public void Apply_Changes_Should_Skip_NotMapped_Properties()
         {
             //Arrange
             var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
-            var child = new ChildTestClass();
-            child.FullName = "Tony";
+            var parent = new Parent("Parent");
+            parent.Nickname = "Tony";
+            parent.TrackingState = TrackingState.Modified;
+            parent.ModifiedProperties = new HashSet<string>(new[] { nameof(Parent.Nickname) });
 
             //Act
-            context.ApplyChanges(child);
+            context.ApplyChanges(parent);
 
-            Assert.Equal(EntityState.Unchanged, context.Entry(child).State);
-        }
-
-        public class ChildTestClass : Child
-        {
-            [NotMapped]
-            public string FullName { get; set; }
+            Assert.Equal(EntityState.Unchanged, context.Entry(parent).State);
         }
 
         [Fact]
