@@ -67,6 +67,7 @@ namespace TrackableEntities.EF5.Tests
             //Act
             context.ApplyChanges(parent);
 
+            //Assert
             Assert.Equal(EntityState.Unchanged, context.Entry(parent).State);
         }
 

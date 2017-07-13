@@ -7,6 +7,7 @@ using System.Data.Entity.Infrastructure;
 using System.Reflection;
 using System.Threading;
 using TrackableEntities.Common;
+using System.ComponentModel.DataAnnotations.Schema;
 #if EF_6
 using System.Threading.Tasks;
 using System.Data.Entity.Core.Objects;
@@ -207,8 +208,16 @@ namespace TrackableEntities.EF5
                 {
                     // Mark modified properties
                     SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
-                    foreach (var property in item.ModifiedProperties)
-                        context.Entry(item).Property(property).IsModified = true;
+                    var entry = context.Entry(item);
+                    // Exclude properties attributed as NotMapped
+                    var notMappedProps = item.GetType()
+                        .GetRuntimeProperties()
+                        .Where(p => p.GetCustomAttribute<NotMappedAttribute>() != null)
+                        .Select(p => p.Name)
+                        .ToArray();
+                    var modifiedProperties = item.ModifiedProperties.Except(notMappedProps);
+                    foreach (var property in modifiedProperties)
+                        entry.Property(property).IsModified = true;
                 }
                 else
                 {
@@ -225,7 +234,7 @@ namespace TrackableEntities.EF5
                 else
                 {
                     context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Modified, interceptors); // Clone to avoid interference
-                    context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Deleted, interceptors); 
+                    context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Deleted, interceptors);
                 }
             }
         }
@@ -258,7 +267,7 @@ namespace TrackableEntities.EF5
         public static void LoadRelatedEntities(this DbContext context,
             ITrackable item, bool loadAll = false)
         {
-            LoadRelatedEntities(context, new[] {item}, null, CreateVisitationHelperWithIdMatching(context), loadAll);
+            LoadRelatedEntities(context, new[] { item }, null, CreateVisitationHelperWithIdMatching(context), loadAll);
         }
 
         /// <summary>
@@ -378,9 +387,9 @@ namespace TrackableEntities.EF5
                 // Avoid endless recursion
                 if (!visitationHelper.TryVisit(item)) continue;
 
-                bool loadAllRelated = loadAll 
+                bool loadAllRelated = loadAll
                     || item.TrackingState == TrackingState.Added
-                    || (parent  != null && parent.TrackingState == TrackingState.Added);
+                    || (parent != null && parent.TrackingState == TrackingState.Added);
                 context.LoadRelatedEntitiesOnProperties(item, visitationHelper, loadAllRelated);
             }
         }
@@ -538,8 +547,8 @@ namespace TrackableEntities.EF5
                         ? trackableChild.TrackingState == stateFilter
                         : trackableChild.TrackingState != stateFilter;
                     if (condition)
-                        context.ApplyChanges(trackableChild, item, visitationHelper, navProp.Property.Name, state, interceptors);                    
-                } 
+                        context.ApplyChanges(trackableChild, item, visitationHelper, navProp.Property.Name, state, interceptors);
+                }
             }
         }
 
@@ -803,14 +812,14 @@ namespace TrackableEntities.EF5
 
             // Then get base entity types
             var baseType = entityType.BaseType;
-            while (baseType != null && baseType != typeof (object))
+            while (baseType != null && baseType != typeof(object))
             {
                 yield return dbContext.GetEdmSpaceType(baseType);
                 baseType = baseType.BaseType;
             }
         }
 
-        private static void SetRelatedEntities(this DbContext context, 
+        private static void SetRelatedEntities(this DbContext context,
             IEnumerable<object> entities, IEnumerable<object> relatedEntities, PropertyInfo referenceProperty,
             Type entityType, string propertyName, Type propertyType)
         {
@@ -828,9 +837,9 @@ namespace TrackableEntities.EF5
 
                 // Get related entity
                 var relatedEntity = (from e in relatedEntities
-                    let relatedKeyValues = GetKeyValuesFromEntity(foreignKeyNames, e)
-                    where KeyValuesAreEqual(relatedKeyValues, foreignKeyValues)
-                    select e).SingleOrDefault();
+                                     let relatedKeyValues = GetKeyValuesFromEntity(foreignKeyNames, e)
+                                     where KeyValuesAreEqual(relatedKeyValues, foreignKeyValues)
+                                     select e).SingleOrDefault();
 
                 // Set reference prop to related entity
                 if (relatedEntity != null)
@@ -888,7 +897,7 @@ namespace TrackableEntities.EF5
             // Compare normalized strings
             if (primaryKeyValue is string && foreignKeyValue is string)
             {
-                return ((string)primaryKeyValue).Normalize() 
+                return ((string)primaryKeyValue).Normalize()
                     == ((string)foreignKeyValue).Normalize();
             }
 
@@ -962,7 +971,7 @@ namespace TrackableEntities.EF5
             List<Dictionary<string, object>> primaryKeysList)
         {
             string whereSql = GetWhereSql(primaryKeysList);
-            string entitySql = string.Format("SELECT VALUE x FROM {0} AS x {1}", 
+            string entitySql = string.Format("SELECT VALUE x FROM {0} AS x {1}",
                 entitySetName, whereSql);
             return entitySql;
         }

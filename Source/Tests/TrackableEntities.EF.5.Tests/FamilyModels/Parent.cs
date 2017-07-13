@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrackableEntities.EF.Tests.FamilyModels
 {
@@ -14,6 +15,7 @@ namespace TrackableEntities.EF.Tests.FamilyModels
         [Key]
         public string Name { get; set; }
 
+        [NotMapped]
         public string Nickname { get; set; }
 
         public List<Child> Children { get; set; }
