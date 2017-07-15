@@ -15,6 +15,12 @@ namespace TrackableEntities.Client
         event EventHandler EntityChanged;
 
         /// <summary>
+        /// Occurs when any entity in graph has changed its tracking state.
+        /// </summary>
+        event EventHandler GraphChanged;
+    
+    
+        /// <summary>
         /// Turn change-tracking on and off.
         /// </summary>
         bool Tracking { get; set; }
