@@ -18,6 +18,8 @@ namespace TrackableEntities.EF.Tests.FamilyModels
         [NotMapped]
         public string Nickname { get; set; }
 
+        public string Nickname2 { get; set; }
+
         public List<Child> Children { get; set; }
 
         public TrackingState TrackingState { get; set; }

@@ -61,8 +61,9 @@ namespace TrackableEntities.EF5.Tests
             var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
             var parent = new Parent("Parent");
             parent.Nickname = "Tony";
+            parent.Nickname2 = "Sneed";
             parent.TrackingState = TrackingState.Modified;
-            parent.ModifiedProperties = new HashSet<string>(new[] { nameof(Parent.Nickname) });
+            parent.ModifiedProperties = new HashSet<string>(new[] { nameof(Parent.Nickname), nameof(parent.Nickname2) });
 
             //Act
             context.ApplyChanges(parent);
