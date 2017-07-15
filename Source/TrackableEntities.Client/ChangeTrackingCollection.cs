@@ -28,6 +28,11 @@ namespace TrackableEntities.Client
         public event EventHandler EntityChanged;
 
         /// <summary>
+        /// Occurs when any entity in graph has changed its tracking state.
+        /// </summary>
+        public event EventHandler GraphChanged;
+
+        /// <summary>
         /// Default contstructor with change-tracking disabled
         /// </summary>
         public ChangeTrackingCollection() : this(false) { }
