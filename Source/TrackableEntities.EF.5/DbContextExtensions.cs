@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Reflection;
@@ -208,7 +209,11 @@ namespace TrackableEntities.EF5
                     // Mark modified properties
                     SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
                     foreach (var property in item.ModifiedProperties)
-                        context.Entry(item).Property(property).IsModified = true;
+                    {                        
+                        var propertyInfo = item.GetType().GetRuntimeProperty(property);
+                        if(propertyInfo != null && propertyInfo.GetCustomAttribute<NotMappedAttribute>() == null)
+                            context.Entry(item).Property(property).IsModified = true;
+                    }
                 }
                 else
                 {
