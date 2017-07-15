@@ -209,13 +209,9 @@ namespace TrackableEntities.EF5
                     // Mark modified properties
                     SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
                     var entry = context.Entry(item);
-                    // Exclude properties attributed as NotMapped
-                    var notMappedProps = item.GetType()
-                        .GetRuntimeProperties()
-                        .Where(p => p.GetCustomAttribute<NotMappedAttribute>() != null)
-                        .Select(p => p.Name)
-                        .ToArray();
-                    var modifiedProperties = item.ModifiedProperties.Except(notMappedProps);
+                    // Exclude properties attributed as NotMapped or ignored via Fluent API
+                    var edmSpaceType = GetEdmSpaceType(context, item.GetType());
+                    var modifiedProperties = item.ModifiedProperties.Where(prop => edmSpaceType.Members.Contains(prop));
                     foreach (var property in modifiedProperties)
                         entry.Property(property).IsModified = true;
                 }
