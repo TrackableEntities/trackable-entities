@@ -21,16 +21,31 @@ namespace TrackableEntities.Client
     {
         // Deleted entities cache
         private readonly Collection<TEntity> _deletedEntities = new Collection<TEntity>();
-
+        
+        //private event EventHandler _EntityChanged;
         /// <summary>
         /// Event for when an entity in the collection graph has changed its tracking state.
         /// </summary>
         public event EventHandler EntityChanged;
+    //{
+    //    add
+    //    {
+    //        _EntityChanged += value;
+    //        // TODO avoid recursive call
+    //        SetTracking(Tracking, new ObjectVisitationHelper(), false, _EntityChanged);
+    //    }
+    //    remove
+    //    {
+    //        _EntityChanged -= value;
+    //        // TODO avoid recursive call
+    //        SetTracking(Tracking, new ObjectVisitationHelper(), false, _EntityChanged);         
+    //    }
+    //}
 
-        /// <summary>
-        /// Default contstructor with change-tracking disabled
-        /// </summary>
-        public ChangeTrackingCollection() : this(false) { }
+    /// <summary>
+    /// Default contstructor with change-tracking disabled
+    /// </summary>
+    public ChangeTrackingCollection() : this(false) { }
 
         /// <summary>
         /// Change-tracking will not begin after entities are added, 
@@ -90,7 +105,7 @@ namespace TrackableEntities.Client
             }
             set
             {
-                SetTracking(value, new ObjectVisitationHelper(), false);
+                SetTracking(value, new ObjectVisitationHelper(), false, EntityChanged);
             }
         }
 
@@ -98,7 +113,7 @@ namespace TrackableEntities.Client
         /// For internal use.
         /// Turn change-tracking on and off with proper circular reference checking.
         /// </summary>
-        public void SetTracking(bool value, ObjectVisitationHelper visitationHelper, bool oneToManyOnly)
+        public void SetTracking(bool value, ObjectVisitationHelper visitationHelper, bool oneToManyOnly, EventHandler entityChanged)
         {
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
 
@@ -116,7 +131,7 @@ namespace TrackableEntities.Client
                 else item.PropertyChanged -= OnPropertyChanged;
 
                 // Enable tracking on trackable collection properties
-                item.SetTracking(value, visitationHelper, oneToManyOnly);
+                item.SetTracking(value, visitationHelper, oneToManyOnly, entityChanged);
 
                 // Set entity identifier
                 if (item is IIdentifiable)
@@ -195,7 +210,7 @@ namespace TrackableEntities.Client
                 visitationHelper.TryVisit(this);
 
                 // Enable tracking on trackable properties
-                item.SetTracking(Tracking, visitationHelper.Clone());
+                item.SetTracking(Tracking, visitationHelper.Clone(), entityChanged: EntityChanged);
 
                 // Mark item and trackable collection properties
                 item.SetState(TrackingState.Added, visitationHelper.Clone());
@@ -232,7 +247,7 @@ namespace TrackableEntities.Client
                 item.PropertyChanged -= OnPropertyChanged;
 
                 // Disable tracking on trackable properties
-                item.SetTracking(false, visitationHelper.Clone(), true);
+                item.SetTracking(false, visitationHelper.Clone(), true, EntityChanged);
 
                 // Mark item and trackable collection properties
                 bool manyToManyAdded = Parent != null && item.TrackingState == TrackingState.Added;
