@@ -10,16 +10,10 @@ namespace TrackableEntities.Client
     public interface ITrackingCollection : ICollection
     {
         /// <summary>
-        /// Notification that an entity has changed.
+        /// Notification that an entity in the graph has changed.
         /// </summary>
         event EventHandler EntityChanged;
-
-        /// <summary>
-        /// Occurs when any entity in graph has changed its tracking state.
-        /// </summary>
-        event EventHandler GraphChanged;
-    
-    
+  
         /// <summary>
         /// Turn change-tracking on and off.
         /// </summary>

@@ -23,14 +23,9 @@ namespace TrackableEntities.Client
         private readonly Collection<TEntity> _deletedEntities = new Collection<TEntity>();
 
         /// <summary>
-        /// Event for when an entity in the collection has changed its tracking state.
+        /// Event for when an entity in the collection graph has changed its tracking state.
         /// </summary>
         public event EventHandler EntityChanged;
-
-        /// <summary>
-        /// Occurs when any entity in graph has changed its tracking state.
-        /// </summary>
-        public event EventHandler GraphChanged;
 
         /// <summary>
         /// Default contstructor with change-tracking disabled

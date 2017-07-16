@@ -722,18 +722,24 @@ namespace TrackableEntities.Client.Tests
         [Fact]
         public void GraphChanged_Event_Should_Fire_When_Graph_Items_Added_Modified_Deleted()
         {
-          //Arrange
+          // Arrange
           var database = new MockNorthwind();
-          var product = database.Products[0];
-          var changeTracker = new ChangeTrackingCollection<Product>(product);
-          var raised = false;
-          changeTracker.GraphChanged += (s, e) => raised = true;
+          var order = database.Orders[0];
+          var changeTracker = new ChangeTrackingCollection<Order>(order);
+          var raiseCount = 0;
+          changeTracker.EntityChanged += (s, e) => raiseCount++;
 
-          //Act
-          product.Category.CategoryName = "Foo";
+          // Act
 
-          //Assert
-          Assert.True(raised);
+          // Added
+          order.OrderDetails.Add(new OrderDetail());
+          // Modified
+          order.Customer.CustomerName = "Tony sneed";
+          // Deleted
+          order.OrderDetails.RemoveAt(0);   
+
+          // Assert
+          Assert.Equal(3, raiseCount);
         }        
 
         #endregion
