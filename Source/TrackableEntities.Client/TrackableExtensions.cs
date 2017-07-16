@@ -43,7 +43,7 @@ namespace TrackableEntities.Client
                         {
                             // Set tracking on ref prop change tracker
                             refChangeTracker.SetTracking(enableTracking, visitationHelper, oneToManyOnly, entityChanged);
-                            SetHandler(enableTracking, refChangeTracker, entityChanged);
+                            refChangeTracker.SetHandler(enableTracking, entityChanged);
                         }
                     } 
                 }
@@ -55,13 +55,13 @@ namespace TrackableEntities.Client
                     if (!oneToManyOnly || isOneToMany)
                     {
                         colProp.EntityCollection.SetTracking(enableTracking, visitationHelper, oneToManyOnly, entityChanged);
-                        SetHandler(enableTracking, colProp.EntityCollection, entityChanged);
+                        colProp.EntityCollection.SetHandler(enableTracking, entityChanged);
                     }
                 }
             }            
         }
 
-        private static void SetHandler(bool handle, ITrackingCollection trackableCollection, EventHandler entityChanged)
+        private static void SetHandler(this ITrackingCollection trackableCollection, bool handle, EventHandler entityChanged)
         {
             if (entityChanged == null) return;
 
