@@ -734,10 +734,11 @@ namespace TrackableEntities.Client.Tests
           // Act
           order.OrderDetails.Add(new OrderDetail());
           order.Customer.CustomerName = "Tony sneed";
-          order.OrderDetails.RemoveAt(0);   
+          order.OrderDetails.RemoveAt(0);
+          order.OrderDetails[0].Product.Category.CategoryName = "Lorem ipsum";
 
           // Assert
-          Assert.Equal(3, changeCount);
+          Assert.Equal(4, changeCount);
         }        
 
         #endregion

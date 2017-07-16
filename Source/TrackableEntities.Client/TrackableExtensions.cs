@@ -42,7 +42,7 @@ namespace TrackableEntities.Client
                         if (refChangeTracker != null)
                         {
                             // Set tracking on ref prop change tracker
-                            refChangeTracker.SetTracking(enableTracking, visitationHelper, oneToManyOnly, entityChanged);
+                            refChangeTracker.SetTracking(enableTracking, visitationHelper, oneToManyOnly);
                             refChangeTracker.SetHandler(enableTracking, entityChanged);
                         }
                     } 
@@ -54,7 +54,7 @@ namespace TrackableEntities.Client
                     bool isOneToMany = !IsManyToManyChildCollection(colProp.EntityCollection);
                     if (!oneToManyOnly || isOneToMany)
                     {
-                        colProp.EntityCollection.SetTracking(enableTracking, visitationHelper, oneToManyOnly, entityChanged);
+                        colProp.EntityCollection.SetTracking(enableTracking, visitationHelper, oneToManyOnly);
                         colProp.EntityCollection.SetHandler(enableTracking, entityChanged);
                     }
                 }

@@ -27,8 +27,7 @@ namespace TrackableEntities.Client
         /// <summary>
         /// For internal use.
         /// </summary>
-        void SetTracking(bool value, Common.ObjectVisitationHelper visitationHelper, 
-            bool oneToManyOnly, EventHandler entityChanged);
+        void SetTracking(bool value, Common.ObjectVisitationHelper visitationHelper, bool oneToManyOnly);
 
         /// <summary>
         /// Get entities that have been marked as Added, Modified or Deleted.

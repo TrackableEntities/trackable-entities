@@ -105,7 +105,7 @@ namespace TrackableEntities.Client
             }
             set
             {
-                SetTracking(value, new ObjectVisitationHelper(), false, EntityChanged);
+                SetTracking(value, new ObjectVisitationHelper(), false);
             }
         }
 
@@ -113,7 +113,7 @@ namespace TrackableEntities.Client
         /// For internal use.
         /// Turn change-tracking on and off with proper circular reference checking.
         /// </summary>
-        public void SetTracking(bool value, ObjectVisitationHelper visitationHelper, bool oneToManyOnly, EventHandler entityChanged)
+        public void SetTracking(bool value, ObjectVisitationHelper visitationHelper, bool oneToManyOnly)
         {
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
 
@@ -131,7 +131,7 @@ namespace TrackableEntities.Client
                 else item.PropertyChanged -= OnPropertyChanged;
 
                 // Enable tracking on trackable collection properties
-                item.SetTracking(value, visitationHelper, oneToManyOnly, entityChanged);
+                item.SetTracking(value, visitationHelper, oneToManyOnly, EntityChanged);
 
                 // Set entity identifier
                 if (item is IIdentifiable)
