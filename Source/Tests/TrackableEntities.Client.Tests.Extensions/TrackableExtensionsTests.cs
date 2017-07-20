@@ -366,6 +366,28 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.NotSame(productOrig.Category, productCopy.Category);
         }
 
+        [Fact]
+        public void Collection_Clone_Should_Deep_Copy_Dictionary_in_Base_Class()
+        {
+            // Arrange
+            var productOrig = new SpecialProduct
+            {
+                ProductId = 2,
+                ProductName = "Chang",
+                UnitPrice = 20
+            };
+
+            // Act
+            var productCopy = productOrig.Clone<SpecialProduct>();
+
+            // Assert
+            Assert.NotSame(productOrig, productCopy);
+            Assert.NotSame(productOrig.DeletedEntities, productCopy.DeletedEntities);
+            var deletedOrig = productOrig.DeletedEntities["item1"] as Product;
+            var deletedCopy = productCopy.DeletedEntities["item1"] as Product;
+            Assert.Equal(deletedOrig.ProductName, deletedCopy.ProductName);
+        }
+
         #endregion
 
         #region Restore and Remove Deletes Tests
