@@ -223,6 +223,7 @@ namespace TrackableEntities.EF5.Tests
             var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
             var parent = new MockFamily().Parent;              
             parent.Address.StreetName = "123 Lee Ave.";
+            parent.Address.ModifiedProperties = new[] { nameof(Address.StreetName) };
                         
             // Act
             context.ApplyChanges(parent);

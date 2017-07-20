@@ -199,16 +199,31 @@ namespace TrackableEntities.EF5
                     context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Deleted, interceptors);
                 }
 
+                var isComplex = context.IsComplexType(item.GetType());
+                bool isParentEligible(TrackingState parentState) => parentState == TrackingState.Modified || parentState == TrackingState.Unchanged;
+                var isModifiable = 
+                          (isComplex 
+                            ? isParentEligible(parent.TrackingState) 
+                            : (item.TrackingState == TrackingState.Modified && (state == null || state == TrackingState.Modified)))                          
+                          && item.ModifiedProperties?.Count > 0;
+
                 // Set modified properties
-                if (item.TrackingState == TrackingState.Modified
-                    && (state == null || state == TrackingState.Modified)
-                    && item.ModifiedProperties != null
-                    && item.ModifiedProperties.Count > 0)
+                if (isModifiable)
                 {
                     // Mark modified properties
                     SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
                     foreach (var property in item.ModifiedProperties)
-                        context.Entry(item).Property(property).IsModified = true;
+                    {
+                        if(isComplex)
+                        {
+                            var parentEntry = context.Entry(parent);
+                            if(parentEntry.State == EntityState.Detached)
+                              parentEntry.State = parent.TrackingState.ToEntityState();
+                            parentEntry.ComplexProperty(propertyName).Property(property).IsModified = true;                           
+                        }
+                        else
+                            context.Entry(item).Property(property).IsModified = true;
+                    }
                 }
                 else
                 {
@@ -229,6 +244,7 @@ namespace TrackableEntities.EF5
                 }
             }
         }
+
 
         /// <summary>
         /// For the given entity type return the EntitySet name qualified by container name.
