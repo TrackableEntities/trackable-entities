@@ -220,16 +220,15 @@ namespace TrackableEntities.EF5.Tests
         public void Apply_Changes_Should_Mark_ComplexType_Modified()
         {
             // Arrange
-            var context = TestsHelper.CreateNorthwindDbContext(CreateFamilyDbOptions);
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
             var parent = new MockFamily().Parent;              
             parent.Address.StreetName = "123 Lee Ave.";
-            parent.Address.TrackingState = TrackingState.Modified;
-            
+                        
             // Act
             context.ApplyChanges(parent);
 
             // Assert
-            // An exception will be thrown by calling ApplyChanges, to be fixed.
+            Assert.True(context.Entry(parent).ComplexProperty(p => p.Address).IsModified);
         }
     }
 }

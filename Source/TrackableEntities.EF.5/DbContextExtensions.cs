@@ -496,9 +496,21 @@ namespace TrackableEntities.EF5
             return workspace.GetEdmSpaceType(oType) as EntityType;
         }
 
-        #region ApplyChanges Helpers
+        private static bool IsComplexType(this DbContext dbContext, Type entityType)
+        {
+            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
+                .ObjectContext.MetadataWorkspace;
 
-        private static void ApplyChangesOnProperties(this DbContext context,
+            StructuralType oType = workspace.GetItems<StructuralType>(DataSpace.OSpace)
+                .Where(e => e.FullName == entityType.FullName).SingleOrDefault();
+
+            return oType.BuiltInTypeKind == BuiltInTypeKind.ComplexType;
+        }
+
+
+    #region ApplyChanges Helpers
+
+    private static void ApplyChangesOnProperties(this DbContext context,
             ITrackable item, ObjectVisitationHelper visitationHelper,
             TrackingState? state, IEnumerable<IStateInterceptor> interceptors)
         {
@@ -724,6 +736,9 @@ namespace TrackableEntities.EF5
             ITrackable item, ITrackable parent, string propertyName,
             EntityState state, IEnumerable<IStateInterceptor> interceptors)
         {
+
+            if (context.IsComplexType(item.GetType())) return;
+              
             // Set state normally if we cannot perform interception
             if (interceptors == null)
             {
@@ -735,7 +750,7 @@ namespace TrackableEntities.EF5
             // If no interceptor has changed the state, set state normally
             if (!TrySetEntityState(context, item, parent, propertyName, interceptors))
                 context.Entry(item).State = state;
-        }
+        }       
 
         #endregion
 

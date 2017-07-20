@@ -32,7 +32,15 @@ namespace TrackableEntities.EF.Tests.Contexts
             //Children = Set<Child>();
         }
 
-        public DbSet<Parent> Parents { get; set; }
+#if EF_6
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            foreach (var property in typeof(ITrackable).GetProperties())
+              modelBuilder.Types().Configure(m => m.Ignore(property.Name));
+        }
+#endif
+
+    public DbSet<Parent> Parents { get; set; }
         public DbSet<Child> Children { get; set; }
     }
 }
