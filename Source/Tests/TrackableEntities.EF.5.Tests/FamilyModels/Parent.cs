@@ -15,6 +15,8 @@ namespace TrackableEntities.EF.Tests.FamilyModels
         public string Name { get; set; }
         public List<Child> Children { get; set; }
 
+        public Address Address { get; set; } = new Address();
+
         public TrackingState TrackingState { get; set; }
         public ICollection<string> ModifiedProperties { get; set; }
     }
