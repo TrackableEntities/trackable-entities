@@ -224,6 +224,7 @@ namespace TrackableEntities.EF5.Tests
             var parent = new MockFamily().Parent;              
             parent.Address.StreetName = "123 Lee Ave.";
             parent.Address.ModifiedProperties = new[] { nameof(Address.StreetName) };
+            parent.Address.TrackingState = TrackingState.Modified;
                         
             // Act
             context.ApplyChanges(parent);
