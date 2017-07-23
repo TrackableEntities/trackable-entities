@@ -236,8 +236,8 @@ namespace TrackableEntities.EF5
         static bool IsModifiable(DbContext context, ITrackable item, TrackingState? state, ITrackable parent)
         {
             if (item.TrackingState == TrackingState.Modified
-                && (state == null || state == TrackingState.Modified)
-                && item.ModifiedProperties?.Count > 0)
+                && (state == null || state == TrackingState.Modified) 
+                && item.ModifiedProperties != null && item.ModifiedProperties.Count > 0)
             {
                 if (!context.IsComplexType(item.GetType())) return true;
                 return parent.TrackingState == TrackingState.Modified || parent.TrackingState == TrackingState.Unchanged;
