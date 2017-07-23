@@ -215,5 +215,22 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(EntityState.Deleted, context.Entry(child).State);
             Assert.Equal(EntityState.Deleted, context.Entry(grandchild).State);
         }
+
+        [Fact]
+        public void Apply_Changes_Should_Mark_ComplexType_Modified()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var parent = new MockFamily().Parent;              
+            parent.Address.StreetName = "123 Lee Ave.";
+            parent.Address.ModifiedProperties = new[] { nameof(Address.StreetName) };
+            parent.Address.TrackingState = TrackingState.Modified;
+                        
+            // Act
+            context.ApplyChanges(parent);
+
+            // Assert
+            Assert.True(context.Entry(parent).ComplexProperty(p => p.Address).IsModified);
+        }
     }
 }

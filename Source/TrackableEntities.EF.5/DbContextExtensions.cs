@@ -199,16 +199,20 @@ namespace TrackableEntities.EF5
                     context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Deleted, interceptors);
                 }
 
+                var isComplex = context.IsComplexType(item.GetType());                
+                
                 // Set modified properties
-                if (item.TrackingState == TrackingState.Modified
-                    && (state == null || state == TrackingState.Modified)
-                    && item.ModifiedProperties != null
-                    && item.ModifiedProperties.Count > 0)
+                if (isModifiable(isComplex))
                 {
                     // Mark modified properties
                     SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
-                    foreach (var property in item.ModifiedProperties)
-                        context.Entry(item).Property(property).IsModified = true;
+                    var entry = isComplex ? context.Entry(parent) : context.Entry(item);
+                    foreach (var property in item.ModifiedProperties
+                            .Select(prop => 
+                                isComplex 
+                                ? entry.ComplexProperty(propertyName).Property(prop) 
+                                : entry.Property(prop)))
+                        property.IsModified = true;
                 }
                 else
                 {
@@ -228,7 +232,19 @@ namespace TrackableEntities.EF5
                     context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Deleted, interceptors); 
                 }
             }
+
+        bool isModifiable(bool isComplex)
+        {
+          if (item.TrackingState == TrackingState.Modified
+              && (state == null || state == TrackingState.Modified)
+              && item.ModifiedProperties?.Count > 0)
+          {
+            if (!context.IsComplexType(item.GetType())) return true;
+            return parent.TrackingState == TrackingState.Modified || parent.TrackingState == TrackingState.Unchanged;
+          }
+          return false;
         }
+    }
 
         /// <summary>
         /// For the given entity type return the EntitySet name qualified by container name.
@@ -496,9 +512,20 @@ namespace TrackableEntities.EF5
             return workspace.GetEdmSpaceType(oType) as EntityType;
         }
 
+        private static bool IsComplexType(this DbContext dbContext, Type entityType)
+        {
+            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
+                .ObjectContext.MetadataWorkspace;
+
+            StructuralType oType = workspace.GetItems<StructuralType>(DataSpace.OSpace)
+                .Where(e => e.FullName == entityType.FullName).SingleOrDefault();
+
+            return oType.BuiltInTypeKind == BuiltInTypeKind.ComplexType;
+        }   
+
         #region ApplyChanges Helpers
 
-        private static void ApplyChangesOnProperties(this DbContext context,
+    private static void ApplyChangesOnProperties(this DbContext context,
             ITrackable item, ObjectVisitationHelper visitationHelper,
             TrackingState? state, IEnumerable<IStateInterceptor> interceptors)
         {
@@ -724,6 +751,9 @@ namespace TrackableEntities.EF5
             ITrackable item, ITrackable parent, string propertyName,
             EntityState state, IEnumerable<IStateInterceptor> interceptors)
         {
+
+            if (context.IsComplexType(item.GetType())) return;
+              
             // Set state normally if we cannot perform interception
             if (interceptors == null)
             {
@@ -735,7 +765,7 @@ namespace TrackableEntities.EF5
             // If no interceptor has changed the state, set state normally
             if (!TrySetEntityState(context, item, parent, propertyName, interceptors))
                 context.Entry(item).State = state;
-        }
+        }       
 
         #endregion
 
