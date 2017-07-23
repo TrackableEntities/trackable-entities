@@ -44,7 +44,7 @@ namespace TrackableEntities.EF5.Tests
 
             // Assert
             var states = parent.GetTrackingStates(TrackingState.Unchanged).ToList();
-            Assert.Equal(26, states.Count());
+            Assert.Equal(27, states.Count());
         }
 
         [Fact]
