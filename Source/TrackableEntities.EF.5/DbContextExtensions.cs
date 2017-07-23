@@ -207,7 +207,6 @@ namespace TrackableEntities.EF5
                     // Mark modified properties
                     SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
                     var entry = isComplex ? context.Entry(parent) : context.Entry(item);
-                    if(isComplex && entry.State == EntityState.Detached) entry.State = parent.TrackingState.ToEntityState();
                     foreach (var property in item.ModifiedProperties
                             .Select(prop => 
                                 isComplex 
