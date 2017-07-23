@@ -200,7 +200,7 @@ namespace TrackableEntities.EF5
                 }
                 
                 // Set modified properties
-                if (isModifiable())
+                if (IsModifiable(context, item, state, parent))
                 {
                     // Mark modified properties
                     var isComplex = context.IsComplexType(item.GetType());
@@ -231,19 +231,19 @@ namespace TrackableEntities.EF5
                     context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Deleted, interceptors); 
                 }
             }
-
-        bool isModifiable()
-        {
-          if (item.TrackingState == TrackingState.Modified
-              && (state == null || state == TrackingState.Modified)
-              && item.ModifiedProperties?.Count > 0)
-          {
-            if (!context.IsComplexType(item.GetType())) return true;
-            return parent.TrackingState == TrackingState.Modified || parent.TrackingState == TrackingState.Unchanged;
-          }
-          return false;
         }
-    }
+
+        static bool IsModifiable(DbContext context, ITrackable item, TrackingState? state, ITrackable parent)
+        {
+            if (item.TrackingState == TrackingState.Modified
+                && (state == null || state == TrackingState.Modified)
+                && item.ModifiedProperties?.Count > 0)
+            {
+                if (!context.IsComplexType(item.GetType())) return true;
+                return parent.TrackingState == TrackingState.Modified || parent.TrackingState == TrackingState.Unchanged;
+            }
+            return false;
+        }
 
         /// <summary>
         /// For the given entity type return the EntitySet name qualified by container name.
