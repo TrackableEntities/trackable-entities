@@ -577,7 +577,7 @@ namespace TrackableEntities.Client.Tests
             var database = new MockNorthwind();
             var changeTracker = new ChangeTrackingCollection<Product>(true);
             var product = database.Products[0];
-            changeTracker.Add(product);
+            changeTracker.Add(product);    
 
             // Act
             var changes = changeTracker.GetChanges();
@@ -616,6 +616,25 @@ namespace TrackableEntities.Client.Tests
 
             // Assert
             Assert.Equal(TrackingState.Deleted, changes.First().TrackingState);
+        }
+
+        [Fact]
+        public void GetChanges_Should_Return_Deleted_References()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var product = database.Products[0];
+            var category = product.Category;
+            var changeTracker = new ChangeTrackingCollection<Product>(product);
+
+            // Act
+            product.Category = new Category();
+
+            // Assert
+            Assert.Equal(TrackingState.Added, product.Category.TrackingState);
+            // We should add another property in the ITrackable interface that returns the deleted interface.
+            // Maybe as a dictionary specifying property name
+            Assert.True(false); //product.DeletedReferences[nameof(Product.Category)].Contains(category);
         }
 
         [Fact]
