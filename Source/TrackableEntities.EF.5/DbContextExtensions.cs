@@ -359,7 +359,7 @@ namespace TrackableEntities.EF5
             var selectedItems = loadAll ? items
                 : items.Where(t => t.TrackingState == TrackingState.Added
                     || (parent != null && parent.TrackingState == TrackingState.Added));
-            var entities = selectedItems.Cast<object>().Where(i => !visitationHelper.IsVisited(i));
+            var entities = selectedItems.Cast<object>().Where(i => !IsComplexType(context, i.GetType()) && !visitationHelper.IsVisited(i));
 
             // Collection 'items' can contain entities of different types (due to inheritance)
             // We collect a superset of all properties of all items of type ITrackable
