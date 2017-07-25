@@ -391,8 +391,8 @@ namespace TrackableEntities.EF5
             // Recursively populate related entities on ref and child properties
             foreach (var item in items)
             {
-                // Avoid endless recursion
-                if (!visitationHelper.TryVisit(item)) continue;
+                // Avoid loading related entities of complext types, and avoid endless recursion
+                if (IsComplexType(context, item.GetType()) || !visitationHelper.TryVisit(item)) continue;
 
                 bool loadAllRelated = loadAll 
                     || item.TrackingState == TrackingState.Added
