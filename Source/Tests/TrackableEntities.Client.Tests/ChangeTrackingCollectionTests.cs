@@ -732,13 +732,11 @@ namespace TrackableEntities.Client.Tests
           changeTracker.Tracking = true;
 
           // Act
-          order.OrderDetails.Add(new OrderDetail());
-          order.Customer.CustomerName = "Tony sneed";
-          order.OrderDetails.RemoveAt(0);
+          order.OrderDetails[0].Product.Discontinued = !order.OrderDetails[0].Product.Discontinued;
           order.OrderDetails[0].Product.Category.CategoryName = "Lorem ipsum";
 
           // Assert
-          Assert.Equal(4, changeCount);
+          Assert.Equal(2, changeCount);
         }        
 
         #endregion
