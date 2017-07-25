@@ -10,10 +10,10 @@ namespace TrackableEntities.Client
     public interface ITrackingCollection : ICollection
     {
         /// <summary>
-        /// Notification that an entity has changed.
+        /// Notification that an entity in the graph has changed.
         /// </summary>
         event EventHandler EntityChanged;
-
+  
         /// <summary>
         /// Turn change-tracking on and off.
         /// </summary>
@@ -27,8 +27,7 @@ namespace TrackableEntities.Client
         /// <summary>
         /// For internal use.
         /// </summary>
-        void SetTracking(bool value, Common.ObjectVisitationHelper visitationHelper,
-            bool oneToManyOnly);
+        void SetTracking(bool value, Common.ObjectVisitationHelper visitationHelper, bool oneToManyOnly);
 
         /// <summary>
         /// Get entities that have been marked as Added, Modified or Deleted.
