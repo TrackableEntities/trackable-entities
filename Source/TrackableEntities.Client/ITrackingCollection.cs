@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TrackableEntities.Common;
 
 namespace TrackableEntities.Client
 {
@@ -27,8 +28,7 @@ namespace TrackableEntities.Client
         /// <summary>
         /// For internal use.
         /// </summary>
-        void SetTracking(bool value, Common.ObjectVisitationHelper visitationHelper,
-            bool oneToManyOnly);
+        void SetTracking(bool value, ObjectVisitationHelper visitationHelper, bool oneToManyOnly, EventHandler entityChanged = null);
 
         /// <summary>
         /// Get entities that have been marked as Added, Modified or Deleted.

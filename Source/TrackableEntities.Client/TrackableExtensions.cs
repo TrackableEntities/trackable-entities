@@ -20,8 +20,12 @@ namespace TrackableEntities.Client
         /// <param name="enableTracking">Enable or disable change-tracking</param>
         /// <param name="visitationHelper">Circular reference checking helper</param>
         /// <param name="oneToManyOnly">True if tracking should be set only for OneToMany relations</param>
+        /// <param name="entityChanged">
+        /// The parent <see cref="ChangeTrackingCollection{TEntity}"/> EntityChanged event handler
+        /// to be added/removed to all entities in the graph.
+        /// </param>
         public static void SetTracking(this ITrackable item, bool enableTracking, 
-            ObjectVisitationHelper visitationHelper = null, bool oneToManyOnly = false)
+            ObjectVisitationHelper visitationHelper = null, bool oneToManyOnly = false, EventHandler entityChanged = null)
         {
             // Iterator entity properties
             foreach (var navProp in item.GetNavigationProperties())
@@ -37,7 +41,8 @@ namespace TrackableEntities.Client
                         if (refChangeTracker != null)
                         {
                             // Set tracking on ref prop change tracker
-                            refChangeTracker.SetTracking(enableTracking, visitationHelper, oneToManyOnly);
+                            refChangeTracker.SetTracking(enableTracking, visitationHelper, oneToManyOnly, entityChanged);
+                            refChangeTracker.SetHandler(enableTracking, entityChanged);
                         }
                     } 
                 }
@@ -47,9 +52,22 @@ namespace TrackableEntities.Client
                 {
                     bool isOneToMany = !IsManyToManyChildCollection(colProp.EntityCollection);
                     if (!oneToManyOnly || isOneToMany)
-                        colProp.EntityCollection.SetTracking(enableTracking, visitationHelper, oneToManyOnly);
+                    {
+                        colProp.EntityCollection.SetTracking(enableTracking, visitationHelper, oneToManyOnly, entityChanged);
+                        colProp.EntityCollection.SetHandler(enableTracking, entityChanged);
+                    }
                 }
             }
+        }
+
+        private static void SetHandler(this ITrackingCollection trackableCollection, bool handle,
+            EventHandler entityChanged)
+        {
+            if (entityChanged == null) return;
+            if (handle)
+                trackableCollection.EntityChanged += entityChanged;
+            else
+                trackableCollection.EntityChanged -= entityChanged;
         }
 
         /// <summary>
