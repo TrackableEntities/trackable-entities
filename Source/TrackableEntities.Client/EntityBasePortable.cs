@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-#if !(SILVERLIGHT || NET40)
-using System.Runtime.CompilerServices;
-#endif
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
@@ -30,16 +26,5 @@ namespace TrackableEntities.Client
         /// </summary>
         [DataMember]
         public Guid EntityIdentifier { get; set; }
-
-#if !(SILVERLIGHT || NET40)
-        /// <summary>
-        /// Fire PropertyChanged event.
-        /// </summary>
-        /// <param name="propertyName">Property name.</param>
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-#endif
     }
 }
