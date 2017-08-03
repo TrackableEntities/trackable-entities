@@ -32,17 +32,5 @@ namespace TrackableEntities.Client
         [NotMapped]
         [DataMember]
         public Guid EntityIdentifier { get; set; }
-
-        /// <summary>
-        /// Fire PropertyChanged event.
-        /// </summary>
-        /// <param name="propertyName">Property name.</param>
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
     }
 }

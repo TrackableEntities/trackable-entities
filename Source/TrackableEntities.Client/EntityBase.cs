@@ -23,11 +23,24 @@ namespace TrackableEntities.Client
             (Expression<Func<TResult>> property)
         {
             string propertyName = ((MemberExpression)property.Body).Member.Name;
+            NotifyPropertyChanged(propertyName);
+        }
+
+        /// <summary>
+        /// Fire PropertyChanged event.
+        /// </summary>
+        /// <param name="propertyName">Property name.</param>
+#if NET40
+        protected virtual void NotifyPropertyChanged(string propertyName)
+#else
+        protected virtual void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+#endif
+        {
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
+        }              
 
         /// <summary>
         /// Generate entity identifier used for correlation with MergeChanges (if not yet done)
