@@ -719,6 +719,39 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(3, changesCount);
         }
 
+        [Fact]
+        public void EntityChanged_Event_Should_Fire_When_Graph_Items_Added_Modified_Deleted()
+        {
+            // Arrange
+            int changesCount = 0;
+
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order> { order };
+            changeTracker.EntityChanged += (s, e) => changesCount++;
+            changeTracker.Tracking = true;
+
+            // Act
+            order.OrderDate = order.OrderDate.AddDays(1);
+            order.Customer.CustomerName = "John Doe";
+            order.OrderDetails.RemoveAt(2);
+            order.OrderDetails.Add(new OrderDetail
+            {
+                ProductId = 1,
+                Product = database.Products[0],
+                Quantity = 10,
+                UnitPrice = 20M,
+                OrderId = order.OrderId,
+                Order = order
+            });
+            order.OrderDetails[0].Quantity = order.OrderDetails[0].Quantity + 1;
+            order.OrderDetails[0].Product.Discontinued = true;
+            order.OrderDetails[0].Product.Category.CategoryName = "Lorem ipsum";
+
+            // Assert
+            Assert.Equal(7, changesCount);
+        }
+
         #endregion
     }
 }
