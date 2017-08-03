@@ -32,6 +32,11 @@ namespace TrackableEntities.EF.Tests.Contexts
             //Children = Set<Child>();
         }
 
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+          modelBuilder.Entity<Parent>().Ignore(parent => parent.Nickname2);
+        }
+
         public DbSet<Parent> Parents { get; set; }
         public DbSet<Child> Children { get; set; }
     }

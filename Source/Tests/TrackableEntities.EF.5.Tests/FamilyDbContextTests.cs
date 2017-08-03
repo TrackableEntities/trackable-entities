@@ -12,6 +12,7 @@ using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.FamilyModels;
 using TrackableEntities.EF.Tests.Mocks;
 using TrackableEntities.EF.Tests.NorthwindModels;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #if EF_6
 namespace TrackableEntities.EF6.Tests
@@ -54,6 +55,26 @@ namespace TrackableEntities.EF5.Tests
         }
 
         [Fact]
+        public void Apply_Changes_Should_Skip_NotMapped_Properties()
+        {
+            //Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var parent = new Parent("Parent")
+            {
+              Nickname = "Tony",
+              Nickname2 = "Sneed",
+              TrackingState = TrackingState.Modified
+            };
+            parent.ModifiedProperties = new HashSet<string>(new[] { nameof(Parent.Nickname), nameof(parent.Nickname2) });
+
+            //Act
+            context.ApplyChanges(parent);
+
+            //Assert
+            Assert.Equal(EntityState.Unchanged, context.Entry(parent).State);
+        }
+
+        [Fact]
         public void Apply_Changes_Should_Mark_Modified_Parent_Properties()
         {
             // Arrange
@@ -61,7 +82,7 @@ namespace TrackableEntities.EF5.Tests
             var parent = new Parent("Parent");
             parent.Name += "_Changed";
             parent.TrackingState = TrackingState.Modified;
-            parent.ModifiedProperties = new List<string> {"Name"};
+            parent.ModifiedProperties = new List<string> { "Name" };
 
             // Act
             context.ApplyChanges(parent);
@@ -95,7 +116,7 @@ namespace TrackableEntities.EF5.Tests
             {
                 Children = new List<Child>
                     {
-                        new Child("Child1"), 
+                        new Child("Child1"),
                         new Child("Child2"),
                         new Child("Child3")
                     }
