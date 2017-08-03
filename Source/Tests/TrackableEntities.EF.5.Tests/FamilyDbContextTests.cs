@@ -88,8 +88,8 @@ namespace TrackableEntities.EF5.Tests
             context.ApplyChanges(child);
 
             // Assert
-            // Success - no exception has been thrown.
-            // In the future, let's consider marking state to unchanged if modified properties only contained unmapped-properties
+            Assert.False(context.Entry(child).Property(nameof(Child.Nickname1)).IsModified);
+            Assert.False(context.Entry(child).Property(nameof(Child.Nickname2)).IsModified);
         }         
 
         [Fact]
