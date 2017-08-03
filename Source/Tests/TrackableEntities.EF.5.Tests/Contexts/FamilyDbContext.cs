@@ -38,7 +38,7 @@ namespace TrackableEntities.EF.Tests.Contexts
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Parent>().Ignore(parent => parent.Nickname2);
+            modelBuilder.Entity<Child>().Ignore(child => child.Nickname2);
         }   
     }
 }

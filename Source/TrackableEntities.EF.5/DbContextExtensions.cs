@@ -206,7 +206,8 @@ namespace TrackableEntities.EF5
                     var isComplex = context.IsComplexType(item.GetType());
                     SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
                     var entry = isComplex ? context.Entry(parent) : context.Entry(item);
-                    foreach (var property in item.ModifiedProperties
+                    var modifiedProperties = item.ModifiedProperties.Where(prop => context.IsMappedProperty(item.GetType(), prop));
+                    foreach (var property in modifiedProperties
                             .Select(prop => 
                                 isComplex 
                                 ? entry.ComplexProperty(propertyName).Property(prop) 
@@ -522,6 +523,18 @@ namespace TrackableEntities.EF5
 
             return oType.BuiltInTypeKind == BuiltInTypeKind.ComplexType;
         }   
+
+        private static bool IsMappedProperty(this DbContext dbContext, Type entityType, string propertyName)
+        {
+            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
+                .ObjectContext.MetadataWorkspace;
+
+            StructuralType oType = workspace.GetItems<StructuralType>(DataSpace.OSpace)
+                .Where(e => e.FullName == entityType.FullName).SingleOrDefault();
+
+            return oType.Members.Any(member => member.Name == propertyName);
+        }
+
 
         #region ApplyChanges Helpers
 
