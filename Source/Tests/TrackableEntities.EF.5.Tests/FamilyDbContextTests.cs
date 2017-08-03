@@ -72,6 +72,26 @@ namespace TrackableEntities.EF5.Tests
         }
 
         [Fact]
+        public void Apply_Changes_Should_Skip_NotMapped_Properties()
+        {
+            //Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var parent = new Parent("Parent")
+            { 
+                Nickname1 = "Tony",
+                Nickname2 = "Sneed",
+                TrackingState = TrackingState.Modified,
+                ModifiedProperties = new HashSet<string>(new[] { nameof(Parent.Nickname1), nameof(Parent.Nickname2) })
+            };                                                                           
+
+            //Act
+            context.ApplyChanges(parent);
+
+            //Assert
+            Assert.Equal(EntityState.Unchanged, context.Entry(parent).State);
+        }
+
+        [Fact]
         public void Apply_Changes_Should_Mark_Deleted_Parent()
         {
             // Arrange
