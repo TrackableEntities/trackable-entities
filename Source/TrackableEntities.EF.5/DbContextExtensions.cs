@@ -392,7 +392,7 @@ namespace TrackableEntities.EF5
             foreach (var item in items)
             {
                 // Avoid loading related entities of complext types, and avoid endless recursion
-                if (!visitationHelper.TryVisit(item) || IsComplexType(context, item.GetType())) continue;
+                if (IsComplexType(context, item.GetType()) || !visitationHelper.TryVisit(item)) continue;
                 bool loadAllRelated = loadAll 
                     || item.TrackingState == TrackingState.Added
                     || (parent  != null && parent.TrackingState == TrackingState.Added);

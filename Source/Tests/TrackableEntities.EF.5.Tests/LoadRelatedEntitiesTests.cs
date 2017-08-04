@@ -17,6 +17,7 @@ using System.Data.EntityClient;
 using TrackableEntities.EF.Tests;
 using TrackableEntities.EF.Tests.Mocks;
 using TrackableEntities.EF.Tests.NorthwindModels;
+using TrackableEntities.EF.Tests.FamilyModels;
 
 #if EF_6
 namespace TrackableEntities.EF6.Tests
@@ -829,6 +830,27 @@ namespace TrackableEntities.EF5.Tests
 
 #endif
 
-        #endregion
-    }
+    #endregion
+
+        #region Complex Types
+
+        [Fact]
+        public void LoadRelatedEntities_With_Complex_Types()
+        {
+            var context = TestsHelper.CreateFamilyDbContext(CreateDbOptions.DropCreateDatabaseIfModelChanges);
+            var parent = new Parent(Guid.NewGuid().ToString());
+            parent.Address = new Address();
+            context.Parents.Add(parent);
+            context.SaveChanges();
+
+            // Act
+            context.LoadRelatedEntities(parent);
+
+            // Assert
+            // previous call throws exception if not implemented properly.
+            Assert.True(true);
+        }
+
+        #endregion Complex Types
+  }
 }
