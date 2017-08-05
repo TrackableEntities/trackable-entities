@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace TrackableEntities.Client
 {
@@ -23,18 +24,32 @@ namespace TrackableEntities.Client
             (Expression<Func<TResult>> property)
         {
             string propertyName = ((MemberExpression)property.Body).Member.Name;
+            // ReSharper disable once ExplicitCallerInfoArgument
+            NotifyPropertyChanged(propertyName);
+        }
+
+    /// <summary>
+    /// Fire PropertyChanged event.
+    /// </summary>
+    /// <param name="propertyName">Property name.</param>
+#if NET40
+    protected virtual void NotifyPropertyChanged(string propertyName)
+#else
+        protected virtual void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+#endif
+        {
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
+        }              
 
         /// <summary>
         /// Generate entity identifier used for correlation with MergeChanges (if not yet done)
         /// </summary>
         public void SetEntityIdentifier()
         {
-            if (EntityIdentifier == default(Guid))
+            if (EntityIdentifier == Guid.Empty)
                 EntityIdentifier = Guid.NewGuid();
         }
 
