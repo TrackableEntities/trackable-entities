@@ -235,6 +235,34 @@ namespace TrackableEntities.Client.Tests.Extensions
             Assert.Empty(cachedDeletes); // Cached deletes have been removed
         }
 
+        [Fact]
+        public void MergeChanges_Should_Merge_Updates_For_Unchanged_Order_With_DB_Added_OrderDetails()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var origOrder = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order>(origOrder);
+            origOrder.OrderDetails[0].Quantity++;
+            var product = database.Products.Single(p => p.ProductId == 15);
+            var dbAddedDetail = new OrderDetail
+            {
+                ProductId = 15,
+                OrderId = 10249,
+                Quantity = 10,
+                UnitPrice = 19.6000M,
+                Product = product
+            };
+
+            var changes = changeTracker.GetChanges();
+            var updatedOrder = UpdateOrdersWithDetails(database, changes, dbAddedDetail)[0];
+
+            // Act
+            changeTracker.MergeChanges(updatedOrder);
+
+            // Assert
+            Assert.Same(dbAddedDetail, origOrder.OrderDetails.Single(d => d.ProductId == 15)); // Ref equality
+        }
+
         #endregion
 
         #region MergeChanges: Many-to-One
@@ -1214,6 +1242,24 @@ namespace TrackableEntities.Client.Tests.Extensions
 
                 // Simulate db-generated values
                 updatedOrder.OrderDetails[1].UnitPrice++;
+                updatedOrder.AcceptChanges();
+                updatedOrders.Add(updatedOrder);
+            }
+            return updatedOrders;
+        }
+
+        private List<Order> UpdateOrdersWithDetails(MockNorthwind database, IEnumerable<Order> changes, OrderDetail dbAddedDetail = null)
+        {
+            var updatedOrders = new List<Order>();
+            foreach (var origOrder in changes)
+            {
+                // Simulate serialization
+                var updatedOrder = origOrder.Clone<Order>();
+
+                // Simulate db-generated values
+                updatedOrder.OrderDetails[0].UnitPrice++;
+                if (dbAddedDetail != null)
+                    updatedOrder.OrderDetails.Add(dbAddedDetail);
                 updatedOrder.AcceptChanges();
                 updatedOrders.Add(updatedOrder);
             }

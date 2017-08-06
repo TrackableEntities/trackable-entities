@@ -9,3 +9,4 @@ obj
 /Build/Output
 /Build/Logs
 /Source/.vs/config/applicationhost.config
+/Samples/VS2013/WebApiSample/.vs/config/applicationhost.config
