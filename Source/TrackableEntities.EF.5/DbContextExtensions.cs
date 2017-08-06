@@ -391,8 +391,8 @@ namespace TrackableEntities.EF5
             // Recursively populate related entities on ref and child properties
             foreach (var item in items)
             {
-                // Avoid endless recursion
-                if (!visitationHelper.TryVisit(item)) continue;
+                // Avoid loading related entities of complext types, and avoid endless recursion
+                if (IsComplexType(context, item.GetType()) || !visitationHelper.TryVisit(item)) continue;
 
                 bool loadAllRelated = loadAll 
                     || item.TrackingState == TrackingState.Added
@@ -413,7 +413,8 @@ namespace TrackableEntities.EF5
             var selectedItems = loadAll ? items
                 : items.Where(t => t.TrackingState == TrackingState.Added
                     || (parent != null && parent.TrackingState == TrackingState.Added));
-            var entities = selectedItems.Cast<object>().Where(i => !visitationHelper.IsVisited(i));
+            var entities = selectedItems.Cast<object>().
+                Where(i => !IsComplexType(context, i.GetType()) && !visitationHelper.IsVisited(i));
 
             // Collection 'items' can contain entities of different types (due to inheritance)
             // We collect a superset of all properties of all items of type ITrackable
@@ -445,8 +446,8 @@ namespace TrackableEntities.EF5
             // Recursively populate related entities on ref and child properties
             foreach (var item in items)
             {
-                // Avoid endless recursion
-                if (!visitationHelper.TryVisit(item)) continue;
+                // Avoid loading related entities of complext types, and avoid endless recursion
+                if (IsComplexType(context, item.GetType()) || !visitationHelper.TryVisit(item)) continue;
 
                 bool loadAllRelated = loadAll
                     || item.TrackingState == TrackingState.Added
