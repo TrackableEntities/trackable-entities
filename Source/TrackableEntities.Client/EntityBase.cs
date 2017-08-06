@@ -32,8 +32,8 @@ namespace TrackableEntities.Client
     /// Fire PropertyChanged event.
     /// </summary>
     /// <param name="propertyName">Property name.</param>
-#if NET40
-    protected virtual void NotifyPropertyChanged(string propertyName)
+#if SILVERLIGHT || NET40
+        protected virtual void NotifyPropertyChanged(string propertyName)
 #else
         protected virtual void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
 #endif
