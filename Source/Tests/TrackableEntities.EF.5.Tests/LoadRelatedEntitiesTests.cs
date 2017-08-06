@@ -851,6 +851,25 @@ namespace TrackableEntities.EF5.Tests
             Assert.True(true);
         }
 
-        #endregion Complex Types
+#if EF_6
+        [Fact]
+        public async void LoadRelatedEntitiesAsync_With_Complex_Types()
+        {
+            var context = TestsHelper.CreateFamilyDbContext(CreateDbOptions.DropCreateDatabaseIfModelChanges);
+            var parent = new Parent(Guid.NewGuid().ToString());
+            parent.Address = new Address();
+            context.Parents.Add(parent);
+            context.SaveChanges();
+
+            // Act
+            await context.LoadRelatedEntitiesAsync(parent);
+
+            // Assert
+            // previous call throws exception if not implemented properly.
+            Assert.True(true);
+        }
+#endif 
+
+#endregion Complex Types
   }
 }
