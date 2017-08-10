@@ -157,7 +157,7 @@ namespace TrackableEntities.Client
                     if (entity.TrackingState == TrackingState.Unchanged)
                     {
                         entity.TrackingState = TrackingState.Modified;
-                        if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
+                        if (EntityChanged != null) EntityChanged(this, new EntityChangedEventArgs(entity, null, e.PropertyName));
                     }
 
                     // Add prop to modified props, and fire EntityChanged event
@@ -171,7 +171,7 @@ namespace TrackableEntities.Client
                     }
                 }
             }
-        }
+        }        
 
         /// <summary>
         /// Insert item at specified index.
@@ -201,7 +201,7 @@ namespace TrackableEntities.Client
                 item.SetState(TrackingState.Added, visitationHelper.Clone());
 
                 // Fire EntityChanged event
-                if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
+                if (EntityChanged != null) EntityChanged(this, new EntityChangedEventArgs(item, Parent, null));
             }
             base.InsertItem(index, item);
         }
@@ -239,7 +239,7 @@ namespace TrackableEntities.Client
                 item.SetState(TrackingState.Deleted, visitationHelper.Clone());
 
                 // Fire EntityChanged event
-                if (EntityChanged != null) EntityChanged(this, EventArgs.Empty);
+                if (EntityChanged != null) EntityChanged(this, new EntityChangedEventArgs(item, Parent, null));
 
                 // Cache deleted item if not added or already cached
                 if (item.TrackingState != TrackingState.Added

@@ -752,6 +752,22 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(7, changesCount);
         }
 
+        [Fact]
+        public void EntityChanged_Event_Should_Provide_Better_EventArgs()
+        {
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order> { order };
+            changeTracker.EntityChanged += (s, e) =>
+            {
+              var ecea = (EntityChangedEventArgs)e;
+              Assert.Same(order, ecea.Entity);
+              Assert.Equal(nameof(Order.OrderId), ecea.PropertyName);
+            };
+
+            order.OrderId++;
+        }
+
         #endregion
     }
 }

@@ -70,6 +70,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="EntityBase.cs" />
     <Compile Include="EntityBasePortable.cs" />
+    <Compile Include="EntityChangedEventArgs.cs" />
     <Compile Include="IIdentifiable.cs" />
     <Compile Include="IRefPropertyChangeTrackerResolver.cs" />
     <Compile Include="ITrackingCollection.cs" />
