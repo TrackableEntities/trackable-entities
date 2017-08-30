@@ -148,6 +148,10 @@ namespace WebApiSample.Mvvm.WpfClient
                     var changedOrder = ChangeTracker.GetChanges().SingleOrDefault();
                     if (changedOrder == null) return;
 
+                    // We're not changing customer
+                    if (changedOrder.Customer != null)
+                        changedOrder.Customer = null;
+
                     // Save changes
                     var updatedOrder = await _orderServiceAgent.UpdateOrder(changedOrder);
                     ChangeTracker.MergeChanges(updatedOrder);

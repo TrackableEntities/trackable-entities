@@ -25,8 +25,7 @@ namespace TrackableEntities.EF5
         /// <param name="interceptor">Instance of <see cref="IStateInterceptor"/></param>
         public static InterceptorPool WithInterceptor(this DbContext dbContext, IStateInterceptor interceptor)
         {
-            var pool = new InterceptorPool(dbContext);
-            return WithInterceptor(pool, interceptor);
+            return new InterceptorPool(dbContext, interceptor);
         }
 
         /// <summary>
@@ -36,8 +35,7 @@ namespace TrackableEntities.EF5
         /// <param name="interceptor">Instance of <see cref="IStateInterceptor"/></param>
         public static InterceptorPool WithInterceptor(this InterceptorPool pool, IStateInterceptor interceptor)
         {
-            pool.Interceptors.Add(interceptor);
-            return pool;
+            return new InterceptorPool(pool, interceptor);
         }
 
         /// <summary>
@@ -49,8 +47,7 @@ namespace TrackableEntities.EF5
             Func<TEntity, RelationshipType?, EntityState?> stateSelector)
             where TEntity : class, ITrackable
         {
-            var pool = new InterceptorPool(dbContext);
-            return WithStateChangeInterceptor(pool, stateSelector);
+            return WithInterceptor(dbContext, new StateChangeInterceptor<TEntity>(stateSelector));
         }
 
         /// <summary>
@@ -62,8 +59,7 @@ namespace TrackableEntities.EF5
             Func<TEntity, RelationshipType?, EntityState?> stateSelector)
             where TEntity : class, ITrackable
         {
-            pool.Interceptors.Add(new StateChangeInterceptor<TEntity>(stateSelector));
-            return pool;
+            return WithInterceptor(pool, new StateChangeInterceptor<TEntity>(stateSelector));
         }
     }
 }

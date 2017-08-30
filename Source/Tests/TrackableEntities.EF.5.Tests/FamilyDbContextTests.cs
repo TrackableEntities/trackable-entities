@@ -72,6 +72,27 @@ namespace TrackableEntities.EF5.Tests
         }
 
         [Fact]
+        public void Apply_Changes_Should_Skip_NotMapped_Properties()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var child = new Child("Child")
+            { 
+                Nickname1 = "Tony",
+                Nickname2 = "Sneed",
+                TrackingState = TrackingState.Modified,
+                ModifiedProperties = new HashSet<string>(new[] { nameof(Child.Nickname1), nameof(Child.Nickname2) })
+            };                                                                           
+
+            // Act
+            context.ApplyChanges(child);
+
+            // Assert
+            Assert.False(context.Entry(child).Property(nameof(Child.Nickname1)).IsModified);
+            Assert.False(context.Entry(child).Property(nameof(Child.Nickname2)).IsModified);
+        }         
+
+        [Fact]
         public void Apply_Changes_Should_Mark_Deleted_Parent()
         {
             // Arrange
@@ -214,6 +235,23 @@ namespace TrackableEntities.EF5.Tests
             Assert.Equal(EntityState.Unchanged, context.Entry(parent).State);
             Assert.Equal(EntityState.Deleted, context.Entry(child).State);
             Assert.Equal(EntityState.Deleted, context.Entry(grandchild).State);
+        }
+
+        [Fact]
+        public void Apply_Changes_Should_Mark_ComplexType_Modified()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var parent = new MockFamily().Parent;              
+            parent.Address.StreetName = "123 Lee Ave.";
+            parent.Address.ModifiedProperties = new[] { nameof(Address.StreetName) };
+            parent.Address.TrackingState = TrackingState.Modified;
+                        
+            // Act
+            context.ApplyChanges(parent);
+
+            // Assert
+            Assert.True(context.Entry(parent).ComplexProperty(p => p.Address).IsModified);
         }
     }
 }

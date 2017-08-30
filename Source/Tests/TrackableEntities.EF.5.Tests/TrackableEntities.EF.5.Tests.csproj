@@ -70,6 +70,7 @@
     <Compile Include="..\..\TrackableEntities.EF.5\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>
+    <Compile Include="FamilyModels\Address.cs" />
     <Compile Include="StateInterceptorTests.cs" />
     <Compile Include="StateChangeInterceptorTests.cs" />
     <Compile Include="Contexts\NorthwindDbContext.cs" />

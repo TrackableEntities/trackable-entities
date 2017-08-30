@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TrackableEntities.Common;
 
 namespace TrackableEntities.Client
 {
@@ -20,17 +21,25 @@ namespace TrackableEntities.Client
         bool Tracking { get; set; }
 
         /// <summary>
+        /// Turn change-tracking on and off without graph traversal (internal use).
+        /// </summary>
+        bool InternalTracking { set; }
+
+        /// <summary>
         /// For internal use.
         /// </summary>
-        void SetTracking(bool value, Common.ObjectVisitationHelper visitationHelper,
-            bool oneToManyOnly);
+        void SetTracking(bool value, ObjectVisitationHelper visitationHelper, bool oneToManyOnly, EventHandler entityChanged = null);
 
         /// <summary>
         /// Get entities that have been marked as Added, Modified or Deleted.
         /// </summary>
-        /// <param name="cachedDeletesOnly">True to return only cached deletes</param>
         /// <returns>Collection containing only changed entities</returns>
-        ITrackingCollection GetChanges(bool cachedDeletesOnly);
+        ITrackingCollection GetChanges();
+
+        /// <summary>
+        /// Get deleted entities which have been cached. 
+        /// </summary>
+        ICollection CachedDeletes { get; }
 
         /// <summary>
         /// Remove deleted entities which have been cached.

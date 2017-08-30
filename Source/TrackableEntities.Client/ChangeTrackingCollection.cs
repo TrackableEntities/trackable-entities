@@ -20,7 +20,7 @@ namespace TrackableEntities.Client
         where TEntity : class, ITrackable, INotifyPropertyChanged
     {
         // Deleted entities cache
-        readonly private Collection<TEntity> _deletedEntities = new Collection<TEntity>();
+        private readonly Collection<TEntity> _deletedEntities = new Collection<TEntity>();
 
         /// <summary>
         /// Event for when an entity in the collection has changed its tracking state.
@@ -90,7 +90,7 @@ namespace TrackableEntities.Client
             }
             set
             {
-                SetTracking(value, new ObjectVisitationHelper(), false);
+                SetTracking(value, new ObjectVisitationHelper(), false, EntityChanged);
             }
         }
 
@@ -98,7 +98,7 @@ namespace TrackableEntities.Client
         /// For internal use.
         /// Turn change-tracking on and off with proper circular reference checking.
         /// </summary>
-        public void SetTracking(bool value, ObjectVisitationHelper visitationHelper, bool oneToManyOnly)
+        public void SetTracking(bool value, ObjectVisitationHelper visitationHelper, bool oneToManyOnly, EventHandler entityChanged = null)
         {
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
 
@@ -116,7 +116,7 @@ namespace TrackableEntities.Client
                 else item.PropertyChanged -= OnPropertyChanged;
 
                 // Enable tracking on trackable collection properties
-                item.SetTracking(value, visitationHelper, oneToManyOnly);
+                item.SetTracking(value, visitationHelper, oneToManyOnly, entityChanged);
 
                 // Set entity identifier
                 if (item is IIdentifiable)
@@ -235,6 +235,7 @@ namespace TrackableEntities.Client
                 item.SetTracking(false, visitationHelper.Clone(), true);
 
                 // Mark item and trackable collection properties
+                bool manyToManyAdded = Parent != null && item.TrackingState == TrackingState.Added;
                 item.SetState(TrackingState.Deleted, visitationHelper.Clone());
 
                 // Fire EntityChanged event
@@ -242,6 +243,7 @@ namespace TrackableEntities.Client
 
                 // Cache deleted item if not added or already cached
                 if (item.TrackingState != TrackingState.Added
+                    && !manyToManyAdded
                     && !_deletedEntities.Contains(item))
                     _deletedEntities.Add(item);
             }
@@ -376,8 +378,7 @@ namespace TrackableEntities.Client
                             // if already visited and unchanged, set to null
                             if (visitationHelper.IsVisited(trackableRef))
                             {
-                                if ((trackableRef.TrackingState == TrackingState.Unchanged
-                                     || trackableRef.TrackingState == TrackingState.Deleted))
+                                if (trackableRef.TrackingState == TrackingState.Unchanged)
                                 {
                                     EntityInfo(item).RefNavPropUnchanged.Add(refProp.Property);
                                 }
@@ -398,10 +399,9 @@ namespace TrackableEntities.Client
                                     trackableRef.TrackingState == TrackingState.Added ||
                                     trackableRef.TrackingState == TrackingState.Modified;
 
-                                // Set ref prop to null if unchanged or deleted
+                                // Set ref prop to null if unchanged
                                 if (!hasLocalDownstreamChanges &&
-                                    (trackableRef.TrackingState == TrackingState.Unchanged
-                                        || trackableRef.TrackingState == TrackingState.Deleted))
+                                    trackableRef.TrackingState == TrackingState.Unchanged)
                                 {
                                     EntityInfo(item).RefNavPropUnchanged.Add(refProp.Property);
                                     continue;
@@ -539,20 +539,31 @@ namespace TrackableEntities.Client
         /// <summary>
         /// Get entities that have been added, modified or deleted.
         /// </summary>
-        /// <param name="cachedDeletesOnly">True to return only cached deletes</param>
         /// <returns>Collection containing only changed entities</returns>
-        ITrackingCollection ITrackingCollection.GetChanges(bool cachedDeletesOnly)
+        ITrackingCollection ITrackingCollection.GetChanges()
         {
-            // Get removed deletes only
-            if (cachedDeletesOnly)
-                return new ChangeTrackingCollection<TEntity>(_deletedEntities, true);
-
             // Get changed items in this tracking collection
             var changes = (from existing in this
                            where existing.TrackingState != TrackingState.Unchanged
                            select existing)
                           .Union(_deletedEntities);
             return new ChangeTrackingCollection<TEntity>(changes, true);
+        }
+
+        /// <summary>
+        /// Turn change-tracking on and off without graph traversal (internal use).
+        /// </summary>
+        bool ITrackingCollection.InternalTracking
+        {
+            set { _tracking = value; }
+        }
+
+        /// <summary>
+        /// Get deleted entities which have been cached.
+        /// </summary>
+        ICollection ITrackingCollection.CachedDeletes
+        {
+            get { return _deletedEntities; }
         }
 
         /// <summary>

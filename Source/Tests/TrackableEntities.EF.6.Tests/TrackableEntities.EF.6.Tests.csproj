@@ -88,6 +88,9 @@
     <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyDbContextTests.cs">
       <Link>FamilyDbContextTests.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\Address.cs">
+      <Link>FamilyModels\Address.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\Child.cs">
       <Link>FamilyModels\Child.cs</Link>
     </Compile>

@@ -1487,7 +1487,7 @@ namespace TrackableEntities.Client.Tests
         }
 
         [Fact]
-        public void GetChanges_On_Existing_Order_With_Modified_Customer_With_Deleted_Territory_Should_Set_Territory_To_Null()
+        public void GetChanges_On_Existing_Order_With_Modified_Customer_With_Deleted_Territory_Should_Return_Marked_Territory()
         {
             // Arrange
             var database = new MockNorthwind();
@@ -1509,7 +1509,7 @@ namespace TrackableEntities.Client.Tests
             Assert.NotEmpty(changes);
             Assert.Equal(TrackingState.Unchanged, changes.First().TrackingState);
             Assert.Equal(TrackingState.Modified, changes.First().Customer.TrackingState);
-            Assert.Null(changes.First().Customer.Territory);
+            Assert.Equal(TrackingState.Deleted, changes.First().Customer.Territory.TrackingState);
         }
 
         [Fact]
@@ -1836,6 +1836,31 @@ namespace TrackableEntities.Client.Tests
             // Assert
             Assert.Empty(changes);
             Assert.Equal(TrackingState.Unchanged, customerSetting.TrackingState);
+        }
+
+        [Fact]
+        public void GetChanges_On_Deleted_Customer_With_Deleted_CustomerSetting_Should_Return_CustomerSetting_Marked_As_Deleted()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var customer = database.Customers[0];
+            customer.CustomerSetting = new CustomerSetting
+            {
+                CustomerId = customer.CustomerId,
+                Setting = "Setting1",
+                Customer = customer
+            };
+            var changeTracker = new ChangeTrackingCollection<Customer>(customer);
+
+            // Act
+            customer.CustomerSetting.TrackingState = TrackingState.Deleted;
+            changeTracker.Remove(customer);
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.NotEmpty(changes);
+            Assert.Equal(TrackingState.Deleted, changes.First().TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes.First().CustomerSetting.TrackingState);
         }
 
         #endregion

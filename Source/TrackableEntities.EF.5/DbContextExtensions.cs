@@ -79,7 +79,7 @@ namespace TrackableEntities.EF5
         private static void ApplyChanges(this DbContext context,
             ITrackable item, ITrackable parent, ObjectVisitationHelper visitationHelper,
             string propertyName, TrackingState? state,
-            IList<IStateInterceptor> interceptors)
+            IEnumerable<IStateInterceptor> interceptors)
         {
             // Prevent endless recursion
             if (!visitationHelper.TryVisit(item)) return;
@@ -198,17 +198,21 @@ namespace TrackableEntities.EF5
                 {
                     context.ApplyChangesOnProperties(item, visitationHelper.Clone(), TrackingState.Deleted, interceptors);
                 }
-
+                
                 // Set modified properties
-                if (item.TrackingState == TrackingState.Modified
-                    && (state == null || state == TrackingState.Modified)
-                    && item.ModifiedProperties != null
-                    && item.ModifiedProperties.Count > 0)
+                if (IsModifiable(context, item, state, parent))
                 {
                     // Mark modified properties
+                    var isComplex = context.IsComplexType(item.GetType());
                     SetEntityState(context, item, parent, propertyName, EntityState.Unchanged, interceptors);
-                    foreach (var property in item.ModifiedProperties)
-                        context.Entry(item).Property(property).IsModified = true;
+                    var entry = isComplex ? context.Entry(parent) : context.Entry(item);
+                    var modifiedProperties = item.ModifiedProperties.Where(prop => context.IsMappedProperty(item.GetType(), prop));
+                    foreach (var property in modifiedProperties
+                            .Select(prop => 
+                                isComplex 
+                                ? entry.ComplexProperty(propertyName).Property(prop) 
+                                : entry.Property(prop)))
+                        property.IsModified = true;
                 }
                 else
                 {
@@ -228,6 +232,18 @@ namespace TrackableEntities.EF5
                     context.ApplyChangesOnProperties(item, visitationHelper, TrackingState.Deleted, interceptors); 
                 }
             }
+        }
+
+        static bool IsModifiable(DbContext context, ITrackable item, TrackingState? state, ITrackable parent)
+        {
+            if (item.TrackingState == TrackingState.Modified
+                && (state == null || state == TrackingState.Modified) 
+                && item.ModifiedProperties != null && item.ModifiedProperties.Count > 0)
+            {
+                if (!context.IsComplexType(item.GetType())) return true;
+                return parent.TrackingState == TrackingState.Modified || parent.TrackingState == TrackingState.Unchanged;
+            }
+            return false;
         }
 
         /// <summary>
@@ -343,7 +359,8 @@ namespace TrackableEntities.EF5
             var selectedItems = loadAll ? items
                 : items.Where(t => t.TrackingState == TrackingState.Added
                     || (parent != null && parent.TrackingState == TrackingState.Added));
-            var entities = selectedItems.Cast<object>().Where(i => !visitationHelper.IsVisited(i));
+            var entities = selectedItems.Cast<object>()
+                .Where(i => !IsComplexType(context, i.GetType()) && !visitationHelper.IsVisited(i));
 
             // Collection 'items' can contain entities of different types (due to inheritance)
             // We collect a superset of all properties of all items of type ITrackable
@@ -375,8 +392,8 @@ namespace TrackableEntities.EF5
             // Recursively populate related entities on ref and child properties
             foreach (var item in items)
             {
-                // Avoid endless recursion
-                if (!visitationHelper.TryVisit(item)) continue;
+                // Avoid loading related entities of complext types, and avoid endless recursion
+                if (IsComplexType(context, item.GetType()) || !visitationHelper.TryVisit(item)) continue;
 
                 bool loadAllRelated = loadAll 
                     || item.TrackingState == TrackingState.Added
@@ -397,7 +414,8 @@ namespace TrackableEntities.EF5
             var selectedItems = loadAll ? items
                 : items.Where(t => t.TrackingState == TrackingState.Added
                     || (parent != null && parent.TrackingState == TrackingState.Added));
-            var entities = selectedItems.Cast<object>().Where(i => !visitationHelper.IsVisited(i));
+            var entities = selectedItems.Cast<object>().
+                Where(i => !IsComplexType(context, i.GetType()) && !visitationHelper.IsVisited(i));
 
             // Collection 'items' can contain entities of different types (due to inheritance)
             // We collect a superset of all properties of all items of type ITrackable
@@ -429,8 +447,8 @@ namespace TrackableEntities.EF5
             // Recursively populate related entities on ref and child properties
             foreach (var item in items)
             {
-                // Avoid endless recursion
-                if (!visitationHelper.TryVisit(item)) continue;
+                // Avoid loading related entities of complext types, and avoid endless recursion
+                if (IsComplexType(context, item.GetType()) || !visitationHelper.TryVisit(item)) continue;
 
                 bool loadAllRelated = loadAll
                     || item.TrackingState == TrackingState.Added
@@ -496,11 +514,34 @@ namespace TrackableEntities.EF5
             return workspace.GetEdmSpaceType(oType) as EntityType;
         }
 
+        private static bool IsComplexType(this DbContext dbContext, Type entityType)
+        {
+            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
+                .ObjectContext.MetadataWorkspace;
+
+            StructuralType oType = workspace.GetItems<StructuralType>(DataSpace.OSpace)
+                .Where(e => e.FullName == entityType.FullName).SingleOrDefault();
+
+            return oType.BuiltInTypeKind == BuiltInTypeKind.ComplexType;
+        }   
+
+        private static bool IsMappedProperty(this DbContext dbContext, Type entityType, string propertyName)
+        {
+            MetadataWorkspace workspace = ((IObjectContextAdapter)dbContext)
+                .ObjectContext.MetadataWorkspace;
+
+            StructuralType oType = workspace.GetItems<StructuralType>(DataSpace.OSpace)
+                .Where(e => e.FullName == entityType.FullName).SingleOrDefault();
+
+            return oType.Members.Any(member => member.Name == propertyName);
+        }
+
+
         #region ApplyChanges Helpers
 
-        private static void ApplyChangesOnProperties(this DbContext context,
+    private static void ApplyChangesOnProperties(this DbContext context,
             ITrackable item, ObjectVisitationHelper visitationHelper,
-            TrackingState? state, IList<IStateInterceptor> interceptors)
+            TrackingState? state, IEnumerable<IStateInterceptor> interceptors)
         {
             // Recursively apply changes
             foreach (var navProp in item.GetNavigationProperties())
@@ -525,7 +566,7 @@ namespace TrackableEntities.EF5
         private static void ApplyChangesOnCollectionProperties(TrackingState stateFilter, bool includeState,
             EntityNavigationProperty navProp, EntityCollectionProperty<IList> colProp,
             DbContext context, ITrackable item, ObjectVisitationHelper visitationHelper,
-            TrackingState? state, IList<IStateInterceptor> interceptors)
+            TrackingState? state, IEnumerable<IStateInterceptor> interceptors)
         {
             // Apply changes to 1-M and M-M properties filtering by tracking state
             var count = colProp.EntityCollection.Count;
@@ -547,7 +588,7 @@ namespace TrackableEntities.EF5
             ITrackable item, EntityState state,
             ObjectVisitationHelper visitationHelper,
             ITrackable parent, string propertyName,
-            IList<IStateInterceptor> interceptors)
+            IEnumerable<IStateInterceptor> interceptors)
         {
             // Set state for child collections
             foreach (var navProp in item.GetNavigationProperties())
@@ -694,10 +735,10 @@ namespace TrackableEntities.EF5
 
         private static bool TrySetEntityState(DbContext context,
             ITrackable item, ITrackable parent, string propertyName,
-            IList<IStateInterceptor> interceptors)
+            IEnumerable<IStateInterceptor> interceptors)
         {
             // If there are no state interceptors, do not use them
-            if (interceptors == null || interceptors.Count <= 0)
+            if (interceptors == null)
                 return false;
 
             var interceptionStateUsed = false;
@@ -722,10 +763,13 @@ namespace TrackableEntities.EF5
 
         private static void SetEntityState(DbContext context,
             ITrackable item, ITrackable parent, string propertyName,
-            EntityState state, IList<IStateInterceptor> interceptors)
+            EntityState state, IEnumerable<IStateInterceptor> interceptors)
         {
+
+            if (context.IsComplexType(item.GetType())) return;
+              
             // Set state normally if we cannot perform interception
-            if (interceptors == null || interceptors.Count == 0)
+            if (interceptors == null)
             {
                 context.Entry(item).State = state;
                 return;
@@ -735,7 +779,7 @@ namespace TrackableEntities.EF5
             // If no interceptor has changed the state, set state normally
             if (!TrySetEntityState(context, item, parent, propertyName, interceptors))
                 context.Entry(item).State = state;
-        }
+        }       
 
         #endregion
 

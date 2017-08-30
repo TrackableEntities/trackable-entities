@@ -5,7 +5,6 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
 using TrackableEntities.Common;
 using Newtonsoft.Json.Serialization;
 
@@ -20,8 +19,12 @@ namespace TrackableEntities.Client
         /// <param name="enableTracking">Enable or disable change-tracking</param>
         /// <param name="visitationHelper">Circular reference checking helper</param>
         /// <param name="oneToManyOnly">True if tracking should be set only for OneToMany relations</param>
+        /// <param name="entityChanged">
+        /// The parent <see cref="ChangeTrackingCollection{TEntity}"/> EntityChanged event handler
+        /// to be added/removed to all entities in the graph.
+        /// </param>
         public static void SetTracking(this ITrackable item, bool enableTracking, 
-            ObjectVisitationHelper visitationHelper = null, bool oneToManyOnly = false)
+            ObjectVisitationHelper visitationHelper = null, bool oneToManyOnly = false, EventHandler entityChanged = null)
         {
             // Iterator entity properties
             foreach (var navProp in item.GetNavigationProperties())
@@ -37,7 +40,8 @@ namespace TrackableEntities.Client
                         if (refChangeTracker != null)
                         {
                             // Set tracking on ref prop change tracker
-                            refChangeTracker.SetTracking(enableTracking, visitationHelper, oneToManyOnly);
+                            refChangeTracker.SetTracking(enableTracking, visitationHelper, oneToManyOnly, entityChanged);
+                            refChangeTracker.SetHandler(enableTracking, entityChanged);
                         }
                     } 
                 }
@@ -47,9 +51,22 @@ namespace TrackableEntities.Client
                 {
                     bool isOneToMany = !IsManyToManyChildCollection(colProp.EntityCollection);
                     if (!oneToManyOnly || isOneToMany)
-                        colProp.EntityCollection.SetTracking(enableTracking, visitationHelper, oneToManyOnly);
+                    {
+                        colProp.EntityCollection.SetTracking(enableTracking, visitationHelper, oneToManyOnly, entityChanged);
+                        colProp.EntityCollection.SetHandler(enableTracking, entityChanged);
+                    }
                 }
             }
+        }
+
+        private static void SetHandler(this ITrackingCollection trackableCollection, bool handle,
+            EventHandler entityChanged)
+        {
+            if (entityChanged == null) return;
+            if (handle)
+                trackableCollection.EntityChanged += entityChanged;
+            else
+                trackableCollection.EntityChanged -= entityChanged;
         }
 
         /// <summary>
@@ -154,37 +171,36 @@ namespace TrackableEntities.Client
                 if (item == null) continue;
 
                 // Prevent endless recursion
-                if (!visitationHelper.TryVisit(item)) continue;
-
-                // Iterate entity properties
-                foreach (var navProp in item.GetNavigationProperties())
+                if (visitationHelper.TryVisit(item))
                 {
-                    // Process 1-1 and M-1 properties
-                    foreach (var refProp in navProp.AsReferenceProperty())
+                    // Iterate entity properties
+                    foreach (var navProp in item.GetNavigationProperties())
                     {
-                        // Get changed ref prop
-                        ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
+                        // Process 1-1 and M-1 properties
+                        foreach (var refProp in navProp.AsReferenceProperty())
+                        {
+                            // Get changed ref prop
+                            ITrackingCollection refChangeTracker = item.GetRefPropertyChangeTracker(refProp.Property.Name);
 
-                        // Remove deletes on rep prop
-                        if (refChangeTracker != null) refChangeTracker.RemoveRestoredDeletes(visitationHelper);
-                    }
+                            // Remove deletes on rep prop
+                            if (refChangeTracker != null) refChangeTracker.RemoveRestoredDeletes(visitationHelper);
+                        }
 
-                    // Process 1-M and M-M properties
-                    foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
-                    {
-                        colProp.EntityCollection.RemoveRestoredDeletes(visitationHelper);
+                        // Process 1-M and M-M properties
+                        foreach (var colProp in navProp.AsCollectionProperty<ITrackingCollection>())
+                        {
+                            colProp.EntityCollection.RemoveRestoredDeletes(visitationHelper);
+                        }
                     }
                 }
 
                 // Remove item if marked as deleted
-                var removedDeletes = changeTracker.GetChanges(true).Cast<ITrackable>().ToList();
                 if (item.TrackingState == TrackingState.Deleted)
                 {
                     var isTracking = changeTracker.Tracking;
-                    changeTracker.Tracking = false;
-                    if (removedDeletes.Contains(item))
-                        items.Remove(item);
-                    changeTracker.Tracking = isTracking;
+                    changeTracker.InternalTracking = false;
+                    items.RemoveAt(i);
+                    changeTracker.InternalTracking = isTracking;
                 }
             }
         }
@@ -199,20 +215,20 @@ namespace TrackableEntities.Client
             ObjectVisitationHelper.EnsureCreated(ref visitationHelper);
 
             // Get cached deletes
-            var removedDeletes = changeTracker.GetChanges(true).Cast<ITrackable>().ToList();
+            var removedDeletes = changeTracker.CachedDeletes;
 
             // Restore deleted items
-            if (removedDeletes.Any())
+            if (removedDeletes.Count > 0)
             {
                 var isTracking = changeTracker.Tracking;
-                changeTracker.Tracking = false;
+                changeTracker.InternalTracking = false;
                 foreach (var delete in removedDeletes)
                 {
                     var items = changeTracker as IList;
                     if (items != null && !items.Contains(delete))
                         items.Add(delete);
                 }
-                changeTracker.Tracking = isTracking;
+                changeTracker.InternalTracking = isTracking;
             }
 
             foreach (var item in changeTracker.Cast<ITrackable>())
@@ -277,7 +293,8 @@ namespace TrackableEntities.Client
         {
             using (var stream = new MemoryStream())
             {
-                using (var writer = new BsonWriter(stream))
+                var writer = new StreamWriter(stream);
+                using (var jsonWriter = new JsonTextWriter(writer))
                 {
                     var settings = new JsonSerializerSettings
                     {
@@ -286,16 +303,16 @@ namespace TrackableEntities.Client
                         PreserveReferencesHandling = PreserveReferencesHandling.All
                     };
                     var serWr = JsonSerializer.Create(settings);
-                    serWr.Serialize(writer, item);
+                    serWr.Serialize(jsonWriter, item);
+                    writer.Flush();
 
                     stream.Position = 0;
-                    using (var reader = new BsonReader(stream))
-                    {
-                        settings.ContractResolver = new EntityNavigationPropertyResolver();
-                        var serRd = JsonSerializer.Create(settings);
-                        var copy = serRd.Deserialize<T>(reader);
-                        return copy;
-                    }
+                    var reader = new StreamReader(stream);
+                    var jsonReader = new JsonTextReader(reader);
+                    settings.ContractResolver = new EntityNavigationPropertyResolver();
+                    var serRd = JsonSerializer.Create(settings);
+                    var copy = serRd.Deserialize<T>(jsonReader);
+                    return copy;
                 }
             }
         }

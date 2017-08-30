@@ -152,6 +152,24 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(TrackingState.Added, employee.TrackingState);
             Assert.True(employee.Territories.All(t => t.TrackingState == TrackingState.Added));
         }
+        
+        [Fact]
+        public void Adding_And_Removing_The_Same_Territory_Should_Not_Keep_Added_Territory_In_Territory_Collection()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+
+            // Act
+            employee.Territories.Add(database.Territories[4]);
+            employee.Territories.Remove(database.Territories[4]);
+
+            // Assert
+            var changes = changeTracker.GetChanges();
+            Assert.Equal(0, changes.Count);
+            Assert.Equal(3, employee.Territories.Count);
+        }
 
         #endregion
 
@@ -623,6 +641,57 @@ namespace TrackableEntities.Client.Tests
             Assert.Equal(TrackingState.Modified, changes.ElementAt(0).TrackingState);
             Assert.Equal(TrackingState.Deleted, changes.ElementAt(2).TrackingState);
         }
+        
+        [Fact]
+        public void GetChanges_Should_Not_Change_Territory_Collection_Of_Tracked_Employee()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+
+            // Delete all territories, so employee.Territories.Count is 0
+            employee.Territories.Remove(employee.Territories[2]);
+            employee.Territories.Remove(employee.Territories[1]);
+            employee.Territories.Remove(employee.Territories[0]);
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.Equal(0, employee.Territories.Count);
+            Assert.Equal(3, changes[0].Territories.Count);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[0].TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[1].TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[2].TrackingState);
+        }
+
+        [Fact]
+        public void Calling_Get_Changes_Multiple_Times_Should_Be_Possible()
+        {
+            // Arrange
+            var database = new MockNorthwind();
+            var employee = database.Employees[0];
+            var changeTracker = new ChangeTrackingCollection<Employee>(employee);
+
+            // Delete all territories, so employee.Territories.Count is 0
+            employee.Territories.Remove(employee.Territories[2]);
+            var changesA = changeTracker.GetChanges();
+            employee.Territories.Remove(employee.Territories[1]);
+            var changesB = changeTracker.GetChanges();
+            employee.Territories.Remove(employee.Territories[0]);
+            var changesC = changeTracker.GetChanges();
+
+            // Act
+            var changes = changeTracker.GetChanges();
+
+            // Assert
+            Assert.Equal(0, employee.Territories.Count);
+            Assert.Equal(3, changes[0].Territories.Count);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[0].TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[1].TrackingState);
+            Assert.Equal(TrackingState.Deleted, changes[0].Territories[2].TrackingState);
+        }
 
         #endregion
 
@@ -648,6 +717,39 @@ namespace TrackableEntities.Client.Tests
 
             // Assert
             Assert.Equal(3, changesCount);
+        }
+
+        [Fact]
+        public void EntityChanged_Event_Should_Fire_When_Graph_Items_Added_Modified_Deleted()
+        {
+            // Arrange
+            int changesCount = 0;
+
+            var database = new MockNorthwind();
+            var order = database.Orders[0];
+            var changeTracker = new ChangeTrackingCollection<Order> { order };
+            changeTracker.EntityChanged += (s, e) => changesCount++;
+            changeTracker.Tracking = true;
+
+            // Act
+            order.OrderDate = order.OrderDate.AddDays(1);
+            order.Customer.CustomerName = "John Doe";
+            order.OrderDetails.RemoveAt(2);
+            order.OrderDetails.Add(new OrderDetail
+            {
+                ProductId = 1,
+                Product = database.Products[0],
+                Quantity = 10,
+                UnitPrice = 20M,
+                OrderId = order.OrderId,
+                Order = order
+            });
+            order.OrderDetails[0].Quantity = order.OrderDetails[0].Quantity + 1;
+            order.OrderDetails[0].Product.Discontinued = true;
+            order.OrderDetails[0].Product.Category.CategoryName = "Lorem ipsum";
+
+            // Assert
+            Assert.Equal(7, changesCount);
         }
 
         #endregion
