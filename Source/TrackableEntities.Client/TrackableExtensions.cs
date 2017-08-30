@@ -5,7 +5,6 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
 using TrackableEntities.Common;
 using Newtonsoft.Json.Serialization;
 
@@ -294,7 +293,8 @@ namespace TrackableEntities.Client
         {
             using (var stream = new MemoryStream())
             {
-                using (var writer = new BsonWriter(stream))
+                var writer = new StreamWriter(stream);
+                using (var jsonWriter = new JsonTextWriter(writer))
                 {
                     var settings = new JsonSerializerSettings
                     {
@@ -303,16 +303,16 @@ namespace TrackableEntities.Client
                         PreserveReferencesHandling = PreserveReferencesHandling.All
                     };
                     var serWr = JsonSerializer.Create(settings);
-                    serWr.Serialize(writer, item);
+                    serWr.Serialize(jsonWriter, item);
+                    writer.Flush();
 
                     stream.Position = 0;
-                    using (var reader = new BsonReader(stream))
-                    {
-                        settings.ContractResolver = new EntityNavigationPropertyResolver();
-                        var serRd = JsonSerializer.Create(settings);
-                        var copy = serRd.Deserialize<T>(reader);
-                        return copy;
-                    }
+                    var reader = new StreamReader(stream);
+                    var jsonReader = new JsonTextReader(reader);
+                    settings.ContractResolver = new EntityNavigationPropertyResolver();
+                    var serRd = JsonSerializer.Create(settings);
+                    var copy = serRd.Deserialize<T>(jsonReader);
+                    return copy;
                 }
             }
         }
