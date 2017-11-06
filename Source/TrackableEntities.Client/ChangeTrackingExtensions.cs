@@ -52,14 +52,6 @@ namespace TrackableEntities.Client
             changeTracker.MergeChanges(updatedItems, null);
         }
 
-
-        private class DummyIdentifiable : IIdentifiable
-        { 
-            public bool Equals(IIdentifiable other) => throw new NotImplementedException();
-            public void SetEntityIdentifier() => throw new NotImplementedException();
-            public void SetEntityIdentifier(IIdentifiable other) => throw new NotImplementedException();
-        }
-
         private static void MergeChanges(this ITrackingCollection originalChangeTracker,
             IEnumerable<ITrackable> updatedItems, ObjectVisitationHelper visitationHelper, bool isTrackableRef = false)
         {
