@@ -15,29 +15,7 @@ namespace TrackableEntities.Client.Tests.Extensions
         #region MergeChanges Tests
 
         #region MergeChanges: Single Entity
-    
-        [Fact]
-        public void MergeChanges_Skip_EmptyIDs()
-        {
-            // Arrange
-            var database = new MockNorthwind();
-            var origOrder = database.Orders[0];
-            var changeTracker = new ChangeTrackingCollection<Order>(origOrder);
-            origOrder.CustomerId = "ALFKI";
-            var updatedOrder = UpdateOrders(database, origOrder)[0];
-
-            updatedOrder.Customer.EntityIdentifier = Guid.Empty;
-            updatedOrder.Customer.CustomerId = string.Empty;
-
-            // Act
-            changeTracker.MergeChanges(updatedOrder);
-
-            // Assert
-            Assert.Equal(updatedOrder.CustomerId, origOrder.CustomerId);
-            Assert.NotEqual(updatedOrder.Customer.CustomerId, origOrder.Customer.CustomerId);
-            Assert.Equal(updatedOrder.OrderDate, origOrder.OrderDate);
-        }
-
+        
         [Fact]
         public void MergeChanges_Should_Set_Properties_For_Modified_Order_With_Updated_Customer()
         {
