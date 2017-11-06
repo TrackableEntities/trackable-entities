@@ -67,6 +67,8 @@ namespace TrackableEntities.Client
                 var origItem = originalChangeTracker.Cast<ITrackable>()
                     .GetEquatableItem(updatedItem, isTrackableRef);
                 if (origItem == null) continue;
+                if (!(origItem is IEquatable<IIdentifiable> identifiable && identifiable.Equals(updatedItem as IIdentifiable)))
+                    continue;
 
                 // Back fill entity identity on trackable ref
                 if (isTrackableRef)
