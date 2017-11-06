@@ -52,6 +52,14 @@ namespace TrackableEntities.Client
             changeTracker.MergeChanges(updatedItems, null);
         }
 
+
+        private class DummyIdentifiable : IIdentifiable
+        { 
+            public bool Equals(IIdentifiable other) => throw new NotImplementedException();
+            public void SetEntityIdentifier() => throw new NotImplementedException();
+            public void SetEntityIdentifier(IIdentifiable other) => throw new NotImplementedException();
+        }
+
         private static void MergeChanges(this ITrackingCollection originalChangeTracker,
             IEnumerable<ITrackable> updatedItems, ObjectVisitationHelper visitationHelper, bool isTrackableRef = false)
         {
@@ -67,6 +75,8 @@ namespace TrackableEntities.Client
                 var origItem = originalChangeTracker.Cast<ITrackable>()
                     .GetEquatableItem(updatedItem, isTrackableRef);
                 if (origItem == null) continue;
+                if (!(origItem is IEquatable<IIdentifiable> identifiable && identifiable.Equals(updatedItem as IIdentifiable)))
+                    continue;
 
                 // Back fill entity identity on trackable ref
                 if (isTrackableRef)
