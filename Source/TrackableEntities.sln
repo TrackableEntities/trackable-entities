@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{320BE240-F2E9-493B-959A-ECDA9A06123E}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,9 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Common", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0BFE25A8-3630-4B2F-B46A-C5A60AD94157}"
 	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackableEntities.Client", "TrackableEntities.Client\TrackableEntities.Client.csproj", "{FF4A77E7-2F00-426F-B626-07251756E0BB}"
@@ -142,5 +140,8 @@ Global
 		{42C02508-423B-4F89-8D23-682A89B5E74D} = {320BE240-F2E9-493B-959A-ECDA9A06123E}
 		{466B88DA-A57C-4950-A958-294F3535004A} = {320BE240-F2E9-493B-959A-ECDA9A06123E}
 		{AEE17C26-E66E-4783-BB54-32168986B8DC} = {35F6760C-210E-4BBF-909F-85FB2243D506}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B32497D9-C708-4712-9780-F673BB8A2699}
 	EndGlobalSection
 EndGlobal
