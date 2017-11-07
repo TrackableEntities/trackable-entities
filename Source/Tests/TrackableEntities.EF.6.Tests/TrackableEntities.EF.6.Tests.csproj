@@ -93,6 +93,12 @@
     <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\Child.cs">
       <Link>FamilyModels\Child.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\Contact.cs">
+      <Link>FamilyModels\Contact.cs</Link>
+    </Compile>
+    <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\ContactDetail.cs">
+      <Link>FamilyModels\ContactDetail.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.EF.5.Tests\FamilyModels\Parent.cs">
       <Link>FamilyModels\Parent.cs</Link>
     </Compile>

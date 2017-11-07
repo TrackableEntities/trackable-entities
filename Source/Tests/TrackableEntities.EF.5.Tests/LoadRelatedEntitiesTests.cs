@@ -37,6 +37,7 @@ namespace TrackableEntities.EF5.Tests
         private const int ProductInfo2A = 1;
         private const int ProductInfo2B = 3;
         private const CreateDbOptions CreateNorthwindDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
+        private const CreateDbOptions CreateFamilyDbOptions = CreateDbOptions.DropCreateDatabaseIfModelChanges;
 
         #region Setup
 
@@ -331,6 +332,33 @@ namespace TrackableEntities.EF5.Tests
 
             // Return entities
             return new List<Product> { product1 };
+        }
+
+        private List<Contact> CreateTestContactsWithDetails(FamilyDbContext context)
+        {
+            // Create test entities
+            var detail1 = new ContactDetail
+            {
+                Data = "Foo",
+            };
+            var contact1 = new Contact
+            {
+                ContactDetail = detail1
+            };
+
+            // Persist entities
+            context.Contacts.Add(contact1);
+            context.SaveChanges();
+
+            // Detach entities
+            var objContext = ((IObjectContextAdapter)context).ObjectContext;
+            objContext.Detach(contact1);
+
+            // Clear reference properties
+            contact1.ContactDetail = null;
+
+            // Return entities
+            return new List<Contact> { contact1 };
         }
 
         #endregion
@@ -830,7 +858,27 @@ namespace TrackableEntities.EF5.Tests
 
 #endif
 
-    #endregion
+        #endregion
+
+        #region Contact-ContactDetails: Non-Matching ForeignKeys
+
+        [Fact]
+        public void LoadRelatedEntities_Should_Populate_Entities_With_NonMatching_Foreign_Keys()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var contact = CreateTestContactsWithDetails(context)[0];
+            contact.TrackingState = TrackingState.Added;
+
+            // Act
+            context.LoadRelatedEntities(contact);
+
+            // Assert
+            Assert.NotNull(contact.ContactDetail);
+            Assert.Equal(contact.ContactDetailId, contact.ContactDetail.Id);
+        }
+
+        #endregion
 
         #region Complex Types
 

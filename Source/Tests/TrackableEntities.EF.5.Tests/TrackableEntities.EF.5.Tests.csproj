@@ -70,6 +70,8 @@
       <Link>Constants.cs</Link>
     </Compile>
     <Compile Include="FamilyModels\Address.cs" />
+    <Compile Include="FamilyModels\Contact.cs" />
+    <Compile Include="FamilyModels\ContactDetail.cs" />
     <Compile Include="StateInterceptorTests.cs" />
     <Compile Include="StateChangeInterceptorTests.cs" />
     <Compile Include="Contexts\NorthwindDbContext.cs" />
