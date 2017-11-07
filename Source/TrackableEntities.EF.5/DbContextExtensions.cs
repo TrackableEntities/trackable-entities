@@ -984,7 +984,7 @@ namespace TrackableEntities.EF5
             if (assoc == null) return null;
 
             // Get foreign key names
-            var fkPropNames = assoc.ReferentialConstraints[0].FromProperties
+            var fkPropNames = assoc.ReferentialConstraints[0].ToProperties
                 .Select(p => p.Name).ToArray();
             return fkPropNames;
         }
