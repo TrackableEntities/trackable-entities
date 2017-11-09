@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>TrackableEntities.CodeTemplates.Client.TypeScript</id>
+    <version>2.5.2</version>
+    <title>Trackable Entities TypeScript Client Code Templates</title>
+    <authors>Tony Sneed</authors>
+    <owners>Tony Sneed</owners>
+    <licenseUrl>http://github.com/TrackableEntities/trackable-entities/blob/master/License.txt</licenseUrl>
+    <projectUrl>http://trackableentities.github.io</projectUrl>
+    <iconUrl>http://bit.ly/tracking-logo-small</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Adds T4 templates used to generate TypeScript trackable entity classes from a database using EF 6.x Tools for Visual Studio.</description>
+    <language>en-US</language>
+    <tags>change-tracking entity-framework n-tier code-generation t4 typescript</tags>
+  </metadata>
+</package>

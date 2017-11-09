@@ -1,0 +1,13 @@
+Trackable Client TypeScript Entities ReadMe
+
+This project demonstrates generation of TypeScript client entities using
+the EF 6.x Tools for Visual Studio.
+
+To get started, add a new ADO.NET Entity Data Model to the project,
+either creating or selecting a data connection.  
+
+After running the tool, delete the generated DbContext, then change
+the file extensions from .cs to .ts and copy the TypeScript files
+into your client project.
+
+

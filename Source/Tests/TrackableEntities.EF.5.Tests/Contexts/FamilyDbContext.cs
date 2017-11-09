@@ -34,6 +34,8 @@ namespace TrackableEntities.EF.Tests.Contexts
 
         public DbSet<Parent> Parents { get; set; }
         public DbSet<Child> Children { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<ContactDetail> ContactDetails { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

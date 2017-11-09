@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Service.Entities", "WebApiSample.Service.Entities\WebApiSample.Service.Entities.csproj", "{8556C7C8-72A6-4857-BAFD-489E42A2A453}"
 EndProject
@@ -32,6 +32,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Shared.Entities.Portable", "WebApiSample.Shared.Entities.Portable\WebApiSample.Shared.Entities.Portable.csproj", "{67A4CFEC-9AA5-4DE3-B694-71C3B4F6C975}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Shared.Entities.Data", "WebApiSample.Shared.Entities.Data\WebApiSample.Shared.Entities.Data.csproj", "{0D8FD15B-8ED1-453E-B416-CB538A3B5E5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSample.Client.Entities.TypeScript", "WebApiSample.Client.Entities.TypeScript\WebApiSample.Client.Entities.TypeScript.csproj", "{F6516601-3649-4A72-A48A-45158DB29E9E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{0D8FD15B-8ED1-453E-B416-CB538A3B5E5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D8FD15B-8ED1-453E-B416-CB538A3B5E5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D8FD15B-8ED1-453E-B416-CB538A3B5E5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6516601-3649-4A72-A48A-45158DB29E9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6516601-3649-4A72-A48A-45158DB29E9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6516601-3649-4A72-A48A-45158DB29E9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6516601-3649-4A72-A48A-45158DB29E9E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,5 +88,9 @@ Global
 		{98F8C001-E6A2-4692-A2A1-8AE6E1D1EC62} = {BA958210-AB65-4A8F-AEB8-DAF8DD0CB5F1}
 		{67A4CFEC-9AA5-4DE3-B694-71C3B4F6C975} = {BA958210-AB65-4A8F-AEB8-DAF8DD0CB5F1}
 		{0D8FD15B-8ED1-453E-B416-CB538A3B5E5E} = {BA958210-AB65-4A8F-AEB8-DAF8DD0CB5F1}
+		{F6516601-3649-4A72-A48A-45158DB29E9E} = {BA958210-AB65-4A8F-AEB8-DAF8DD0CB5F1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5762A87B-312D-42A6-A5F9-FF8027A90131}
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,140 @@
+﻿<#@ template visibility="internal" linePragmas="false" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="Microsoft.Data.Entity.Design" #>
+<#@ assembly name="EntityFramework" #>
+<#@ import namespace="System.Data.Entity.Core.Metadata.Edm" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="Microsoft.Data.Entity.Design.CodeGeneration" #>
+<#@ parameter type="System.Data.Entity.Core.Metadata.Edm.EntitySet" name="EntitySet" #>
+<#@ parameter type="System.Data.Entity.Infrastructure.DbModel" name="Model" #>
+<#@ parameter type="System.String" name="Namespace" #>
+<#
+    var code = new CSharpCodeHelper();
+    var edm = new EdmHelper(code);
+
+    if (EntitySet == null)
+    {
+        throw new ArgumentNullException("EntitySet");
+    }
+
+    if (Model == null)
+    {
+        throw new ArgumentNullException("Model");
+    }
+
+    var entityType = EntitySet.ElementType;
+
+	Func<string, string> getTypeSriptProp = csProp =>
+	{
+		return char.ToLower(csProp[0]) + csProp.Substring(1);
+    };
+
+	Func<string, string> getTypeSriptType = csType =>
+	{
+		string rootType = csType;
+		if (csType.Contains("?"))
+			rootType = csType.TrimEnd('?');
+		else if (csType.Contains("[]"))
+			rootType = csType.TrimEnd('[', ']');
+		string tsType;
+        switch (rootType)
+        {
+			case "bool":
+				tsType = "boolean";
+				break;
+			case "string": case "char":
+				tsType = "string";
+				break;
+			case "byte":
+            case "sbyte":
+			case "short":
+			case "int":
+			case "long":
+			case "ushort":
+			case "uint":
+			case "ulong":
+			case "single":
+			case "double":
+			case "decimal":
+			case "IntPtr":
+			case "UIntPtr":
+				tsType = "number";
+				break;
+			case "DateTime":
+            case "DateTimeOffset":
+				tsType = "Date";
+				break;
+            default:
+				tsType = csType;
+				break;
+        }
+		if (csType.Contains("?"))
+			tsType += " | null";
+		if (csType.Contains("[]"))
+			tsType += "[]";
+		return tsType;
+	};
+
+#>
+import { TrackableEntity, TrackableSet } from 'trackable-entities';
+<#
+    foreach (var navProperty in entityType.NavigationProperties)
+    {
+		var navPropType = code.Type(navProperty.ToEndMember.GetEntityType());
+#>
+import { <#= navPropType #> } from './<#= navPropType.ToLower() #>';
+<#
+    }
+#>
+
+export class <#= code.Type(entityType) #> extends TrackableEntity {
+<#
+    var first = true;
+    foreach (var property in entityType.Properties)
+    {
+        if (first)
+            WriteLine(string.Empty);
+        first = false;
+
+		string tsType = code.Type(property);
+		string tsProp = getTypeSriptProp(code.Property(property));
+
+		tsType = getTypeSriptType(code.Type(property));
+#>
+  <#= tsProp #>: <#= tsType #>;
+<#
+    }
+
+    var refProperties = from p in entityType.NavigationProperties
+                        where p.ToEndMember.RelationshipMultiplicity != RelationshipMultiplicity.Many
+                        select p;
+
+	foreach (var refProperty in refProperties)
+    {
+		string tsType = code.Type(refProperty.ToEndMember.GetEntityType());
+		string tsProp = getTypeSriptProp(code.Property(refProperty));
+#>
+  <#= tsProp #>: <#= tsType #>;
+<#
+    }
+
+    var colProperties = from p in entityType.NavigationProperties
+                        where p.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many
+                        select p;
+
+	foreach (var colProperty in colProperties)
+    {
+		var colPropType = code.Type(colProperty.ToEndMember.GetEntityType());
+		string tsType = "TrackableSet<" + colPropType + ">";
+		string tsProp = getTypeSriptProp(code.Property(colProperty));
+#>
+  <#= tsProp #>: <#= tsType #>;
+<#
+    }
+#>
+
+  constructor() {
+    super();
+    return super.proxify(this);
+  }
+}
