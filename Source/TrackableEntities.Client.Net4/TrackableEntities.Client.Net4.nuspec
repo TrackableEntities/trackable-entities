@@ -6,8 +6,8 @@
         <title>Trackable Entities Client for .NET 4.0</title>
         <authors>Tony Sneed</authors>
         <owners>Tony Sneed</owners>
-        <licenseUrl>https://github.com/tonysneed/trackable-entities/blob/master/License.txt</licenseUrl>
-        <projectUrl>http://tonysneed.github.io/trackable-entities</projectUrl>
+        <licenseUrl>https://github.com/TrackableEntities/trackable-entities/blob/master/License.txt</licenseUrl>
+        <projectUrl>http://trackableentities.github.io</projectUrl>
         <iconUrl>http://bit.ly/tracking-logo-small</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Change-tracking utility for client applications that wish to transmit entities to a web service for batch updates.</description>

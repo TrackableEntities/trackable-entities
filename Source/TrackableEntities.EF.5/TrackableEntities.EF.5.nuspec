@@ -6,8 +6,8 @@
         <title>Trackable Entities for EF5</title>
         <authors>Tony Sneed</authors>
         <owners>Tony Sneed</owners>
-        <licenseUrl>https://github.com/tonysneed/trackable-entities/blob/master/License.txt</licenseUrl>
-        <projectUrl>http://tonysneed.github.io/trackable-entities</projectUrl>
+        <licenseUrl>https://github.com/TrackableEntities/trackable-entities/blob/master/License.txt</licenseUrl>
+        <projectUrl>http://trackableentities.github.io</projectUrl>
         <iconUrl>http://bit.ly/tracking-logo-small</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Provides an ApplyChanges extension method for DbContext that sets EntityState on trackable entities, so they can be saved in a single transaction as part of a batch update.</description>
