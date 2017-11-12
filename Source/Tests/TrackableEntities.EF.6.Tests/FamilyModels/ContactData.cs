@@ -4,17 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrackableEntities.EF.Tests.FamilyModels
 {
-    public class Contact : ITrackable
+    public class ContactData : ITrackable
     {
-        [Key]
-        public int Id { get; set; }
+        [Key, ForeignKey(nameof(Contact))]
+        public int ContactId { get; set; }
 
-        [ForeignKey(nameof(ContactDetail))]
-        public int ContactDetailId { get; set; }
+        public string Data { get; set; }
 
-        public ContactCategory ContactDetail { get; set; }
-
-        public ContactData ContactData { get; set; }
+        public Contact Contact { get; set; }
 
         [NotMapped]
         public TrackingState TrackingState { get; set; }
