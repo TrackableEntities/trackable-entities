@@ -337,9 +337,9 @@ namespace TrackableEntities.EF5.Tests
         private List<Contact> CreateTestContactsWithDetails(FamilyDbContext context)
         {
             // Create test entities
-            var detail1 = new ContactDetail
+            var detail1 = new ContactCategory
             {
-                Data = "Foo",
+                CategoryName = "Friends",
             };
             var contact1 = new Contact
             {
@@ -350,12 +350,23 @@ namespace TrackableEntities.EF5.Tests
             context.Contacts.Add(contact1);
             context.SaveChanges();
 
+            // Create one-to-one related entity
+            var data1 = new ContactData
+            {
+                Data = "Data 1",
+                ContactId = contact1.Id,
+                Contact = contact1
+            };
+            context.ContactDatas.Add(data1);
+            context.SaveChanges();
+
             // Detach entities
             var objContext = ((IObjectContextAdapter)context).ObjectContext;
             objContext.Detach(contact1);
 
             // Clear reference properties
             contact1.ContactDetail = null;
+            contact1.ContactData = null;
 
             // Return entities
             return new List<Contact> { contact1 };
@@ -876,6 +887,8 @@ namespace TrackableEntities.EF5.Tests
             // Assert
             Assert.NotNull(contact.ContactDetail);
             Assert.Equal(contact.ContactDetailId, contact.ContactDetail.Id);
+            Assert.NotNull(contact.ContactData);
+            Assert.Equal(contact.Id, contact.ContactData.ContactId);
         }
 
         #endregion

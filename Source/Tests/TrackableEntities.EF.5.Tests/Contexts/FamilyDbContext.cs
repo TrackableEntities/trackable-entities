@@ -28,14 +28,13 @@ namespace TrackableEntities.EF.Tests.Contexts
                     Database.SetInitializer(new CreateDatabaseIfNotExists<FamilyDbContext>());
                     break;
             }
-            //Parents = Set<Parent>();
-            //Children = Set<Child>();
         }
 
         public DbSet<Parent> Parents { get; set; }
         public DbSet<Child> Children { get; set; }
         public DbSet<Contact> Contacts { get; set; }
-        public DbSet<ContactDetail> ContactDetails { get; set; }
+        public DbSet<ContactCategory> ContactCategories { get; set; }
+        public DbSet<ContactData> ContactDatas { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
