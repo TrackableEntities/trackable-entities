@@ -711,7 +711,8 @@ namespace TrackableEntities.EF5
             if (navProp == null)
                 throw new ArgumentException("Getting navigation property failed.", "propertyName");
 
-            if (navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One
+            if ((navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One
+                    || navProp.FromEndMember.RelationshipMultiplicity == RelationshipMultiplicity.ZeroOrOne)
                 && (navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.ZeroOrOne
                     || navProp.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.One))
                 return RelationshipType.OneToOne;
@@ -984,8 +985,14 @@ namespace TrackableEntities.EF5
             if (assoc == null) return null;
 
             // Get foreign key names
-            var fkPropNames = assoc.ReferentialConstraints[0].FromProperties
-                .Select(p => p.Name).ToArray();
+            string[] fkPropNames;
+            var relType = dbContext.GetRelationshipType(entityType, propertyName);
+            if (relType == RelationshipType.OneToOne)
+                fkPropNames = assoc.ReferentialConstraints[0].ToProperties
+                    .Select(p => p.Name).ToArray();
+            else
+                fkPropNames = assoc.ReferentialConstraints[0].FromProperties
+                    .Select(p => p.Name).ToArray();
             return fkPropNames;
         }
 
