@@ -1,7 +1,7 @@
 # **Trackable Entities**
 ## N-Tier Support for Entity Framework with WCF or ASP.NET Web API
 
-[![trackable-entities-ci MyGet Build Status](https://www.myget.org/BuildSource/Badge/trackable-entities-ci?identifier=3e829f78-43c0-48e7-804b-a1381797fbc3)](https://www.myget.org/)
+[![trackable-entities-ci MyGet Build Status](https://www.myget.org/BuildSource/Badge/trackable-entities-ci?identifier=3e829f78-43c0-48e7-804b-a1381797fbc3)](https://www.myget.org/F/trackable-entities-ci)
 
 [![Join the chat at https://gitter.im/TrackableEntities/trackable-entities](https://badges.gitter.im/TrackableEntities/trackable-entities.svg)](https://gitter.im/TrackableEntities/trackable-entities?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
