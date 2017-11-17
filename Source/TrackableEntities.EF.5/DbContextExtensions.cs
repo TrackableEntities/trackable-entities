@@ -5,6 +5,7 @@ using System.Collections;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using TrackableEntities.Common;
 #if EF_6
@@ -271,10 +272,12 @@ namespace TrackableEntities.EF5
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="item">Object that implement ITrackable</param>
         /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
-        public static void LoadRelatedEntities(this DbContext context,
-            ITrackable item, bool loadAll = false)
+        /// <param name="onLoading">Return true to load related entities after preprocessing, false to skip or replace loading.</param>
+        /// <param name="onError">Return true to continue, false to throw exception</param>
+        public static void LoadRelatedEntities(this DbContext context, ITrackable item, bool loadAll = false,
+            Func<IEnumerable<ITrackable>, bool> onLoading = null, Func<Exception, IEnumerable<ITrackable>, bool> onError = null)
         {
-            LoadRelatedEntities(context, new[] {item}, null, CreateVisitationHelperWithIdMatching(context), loadAll);
+            LoadRelatedEntities(context, new[] {item}, null, CreateVisitationHelperWithIdMatching(context), loadAll, onLoading, onError);
         }
 
         /// <summary>
@@ -283,10 +286,12 @@ namespace TrackableEntities.EF5
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="items">Objects that implements ITrackable</param>
         /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
+        /// <param name="onLoading">Return true to load related entities after preprocessing, false to skip or replace loading.</param>
+        /// <param name="onError">Return true to continue, false to throw exception</param>
         public static void LoadRelatedEntities(this DbContext context, IEnumerable<ITrackable> items,
-            bool loadAll = false)
+            bool loadAll = false, Func<IEnumerable<ITrackable>, bool> onLoading = null, Func<Exception, IEnumerable<ITrackable>, bool> onError = null)
         {
-            LoadRelatedEntities(context, items, null, CreateVisitationHelperWithIdMatching(context), loadAll);
+            LoadRelatedEntities(context, items, null, CreateVisitationHelperWithIdMatching(context), loadAll, onLoading, onError);
         }
 
 #if EF_6
@@ -296,12 +301,15 @@ namespace TrackableEntities.EF5
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="item">Object that implement ITrackable</param>
         /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
+        /// <param name="onLoading">Return true to load related entities after preprocessing, false to skip or replace loading.</param>
+        /// <param name="onError">Return true to continue, false to throw exception</param>
         /// <returns>A task that represents the asynchronous operation</returns>
         public static Task LoadRelatedEntitiesAsync(this DbContext context,
-            ITrackable item, bool loadAll = false)
+            ITrackable item, bool loadAll = false,
+            Func<IEnumerable<ITrackable>, Task<bool>> onLoading = null, Func<Exception, IEnumerable<ITrackable>, Task<bool>> onError = null)
         {
             return LoadRelatedEntitiesAsync(context, new[] {item}, null, CreateVisitationHelperWithIdMatching(context),
-                CancellationToken.None, loadAll);
+                CancellationToken.None, loadAll, onLoading, onError);
         }
 
         /// <summary>
@@ -311,12 +319,15 @@ namespace TrackableEntities.EF5
         /// <param name="item">Object that implement ITrackable</param>
         /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
         /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
+        /// <param name="onLoading">Return true to load related entities after preprocessing, false to skip or replace loading.</param>
+        /// <param name="onError">Return true to continue, false to throw exception</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         public static Task LoadRelatedEntitiesAsync(this DbContext context,
-            ITrackable item, CancellationToken cancellationToken, bool loadAll = false)
+            ITrackable item, CancellationToken cancellationToken, bool loadAll = false,
+            Func<IEnumerable<ITrackable>, Task<bool>> onLoading = null, Func<Exception, IEnumerable<ITrackable>, Task<bool>> onError = null)
         {
             return LoadRelatedEntitiesAsync(context, new[] { item }, null, CreateVisitationHelperWithIdMatching(context),
-                cancellationToken, loadAll);
+                cancellationToken, loadAll, onLoading, onError);
         }
 
         /// <summary>
@@ -325,12 +336,15 @@ namespace TrackableEntities.EF5
         /// <param name="context">Used to query and save changes to a database</param>
         /// <param name="items">Objects that implements ITrackable</param>
         /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
+        /// <param name="onLoading">Return true to load related entities after preprocessing, false to skip or replace loading.</param>
+        /// <param name="onError">Return true to continue, false to throw exception</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         public static Task LoadRelatedEntitiesAsync(this DbContext context,
-            IEnumerable<ITrackable> items, bool loadAll = false)
+            IEnumerable<ITrackable> items, bool loadAll = false,
+            Func<IEnumerable<ITrackable>, Task<bool>> onLoading = null, Func<Exception, IEnumerable<ITrackable>, Task<bool>> onError = null)
         {
             return LoadRelatedEntitiesAsync(context, items, null, CreateVisitationHelperWithIdMatching(context),
-                CancellationToken.None, loadAll);
+                CancellationToken.None, loadAll, onLoading, onError);
         }
 
         /// <summary>
@@ -340,17 +354,21 @@ namespace TrackableEntities.EF5
         /// <param name="items">Objects that implements ITrackable</param>
         /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
         /// <param name="loadAll">True to load all related entities, false to load only added entities</param>
+        /// <param name="onLoading">Return true to load related entities after preprocessing, false to skip or replace loading.</param>
+        /// <param name="onError">Return true to continue, false to throw exception</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
         public static Task LoadRelatedEntitiesAsync(this DbContext context, IEnumerable<ITrackable> items,
-            CancellationToken cancellationToken, bool loadAll = false)
+            CancellationToken cancellationToken, bool loadAll = false,
+            Func<IEnumerable<ITrackable>, Task<bool>> onLoading = null, Func<Exception, IEnumerable<ITrackable>, Task<bool>> onError = null)
         {
             return LoadRelatedEntitiesAsync(context, items, null, CreateVisitationHelperWithIdMatching(context),
-                cancellationToken, loadAll);
+                cancellationToken, loadAll, onLoading, onError);
         }
 #endif
 
         private static void LoadRelatedEntities(this DbContext context,
-            IEnumerable<ITrackable> items, ITrackable parent, ObjectVisitationHelper visitationHelper, bool loadAll)
+            IEnumerable<ITrackable> items, ITrackable parent, ObjectVisitationHelper visitationHelper, bool loadAll,
+            Func<IEnumerable<ITrackable>, bool> onLoading, Func<Exception, IEnumerable<ITrackable>, bool> onError)
         {
             // Return if no items
             if (items == null) return;
@@ -362,31 +380,35 @@ namespace TrackableEntities.EF5
             var entities = selectedItems.Cast<object>()
                 .Where(i => !IsComplexType(context, i.GetType()) && !visitationHelper.IsVisited(i));
 
-            // Collection 'items' can contain entities of different types (due to inheritance)
-            // We collect a superset of all properties of all items of type ITrackable
-            var allProps = (from entity in entities
-                            from prop in entity.GetType().GetProperties()
-                            where typeof(ITrackable).IsAssignableFrom(prop.PropertyType)
-                            select prop).Distinct();
-
-            // Populate related entities on all items
-            foreach (var prop in allProps)
+            // Pre-loading hook
+            if (onLoading == null || onLoading(entities.OfType<ITrackable>()))
             {
-                // Get related entities
-                string propertyName = prop.Name;
-                Type propertyType = prop.PropertyType;
-                IEnumerable<object> relatedEntities = context.GetRelatedEntities(entities,
-                    prop.DeclaringType, propertyName, propertyType);
+                // Collection 'items' can contain entities of different types (due to inheritance)
+                // We collect a superset of all properties of all items of type ITrackable
+                var allProps = (from entity in entities
+                    from prop in entity.GetType().GetProperties()
+                    where typeof(ITrackable).IsAssignableFrom(prop.PropertyType)
+                    select prop).Distinct();
 
-                // Continue if there are no related entities
-                if (!relatedEntities.Any()) continue;
+                // Populate related entities on all items
+                foreach (var prop in allProps)
+                {
+                    // Get related entities
+                    string propertyName = prop.Name;
+                    Type propertyType = prop.PropertyType;
+                    IEnumerable<object> relatedEntities = context.GetRelatedEntities(entities,
+                        prop.DeclaringType, propertyName, propertyType, onError);
 
-                // ObjectVisitationHelper serves here as an identity cache
-                relatedEntities = relatedEntities.Select(e => visitationHelper.FindVisited(e) ?? e);
+                    // Continue if there are no related entities
+                    if (!relatedEntities.Any()) continue;
 
-                // Set related entities
-                context.SetRelatedEntities(entities, relatedEntities, prop,
-                    prop.DeclaringType, propertyName, propertyType);
+                    // ObjectVisitationHelper serves here as an identity cache
+                    relatedEntities = relatedEntities.Select(e => visitationHelper.FindVisited(e) ?? e);
+
+                    // Set related entities
+                    context.SetRelatedEntities(entities, relatedEntities, prop,
+                        prop.DeclaringType, propertyName, propertyType);
+                }
             }
 
             // Recursively populate related entities on ref and child properties
@@ -398,14 +420,15 @@ namespace TrackableEntities.EF5
                 bool loadAllRelated = loadAll 
                     || item.TrackingState == TrackingState.Added
                     || (parent  != null && parent.TrackingState == TrackingState.Added);
-                context.LoadRelatedEntitiesOnProperties(item, visitationHelper, loadAllRelated);
+                context.LoadRelatedEntitiesOnProperties(item, visitationHelper, loadAllRelated, onLoading, onError);
             }
         }
 
 #if EF_6
         private static async Task LoadRelatedEntitiesAsync(this DbContext context,
             IEnumerable<ITrackable> items, ITrackable parent, ObjectVisitationHelper visitationHelper,
-            CancellationToken cancellationToken, bool loadAll)
+            CancellationToken cancellationToken, bool loadAll,
+            Func<IEnumerable<ITrackable>, Task<bool>> onLoading, Func<Exception, IEnumerable<ITrackable>, Task<bool>> onError)
         {
             // Return if no items
             if (items == null) return;
@@ -417,49 +440,54 @@ namespace TrackableEntities.EF5
             var entities = selectedItems.Cast<object>().
                 Where(i => !IsComplexType(context, i.GetType()) && !visitationHelper.IsVisited(i));
 
-            // Collection 'items' can contain entities of different types (due to inheritance)
-            // We collect a superset of all properties of all items of type ITrackable
-            var allProps = (from entity in entities
-                            from prop in entity.GetType().GetProperties()
-                            where typeof(ITrackable).IsAssignableFrom(prop.PropertyType)
-                            select prop).Distinct();
-
-            // Populate related entities on all items
-            foreach (var prop in allProps)
+            // Pre-loading hook
+            if (onLoading == null || await onLoading(entities.OfType<ITrackable>()))
             {
-                // Get related entities
-                string propertyName = prop.Name;
-                Type propertyType = prop.PropertyType;
-                IEnumerable<object> relatedEntities = await context.GetRelatedEntitiesAsync(entities,
-                    prop.DeclaringType, propertyName, propertyType, cancellationToken);
+                // Collection 'items' can contain entities of different types (due to inheritance)
+                // We collect a superset of all properties of all items of type ITrackable
+                var allProps = (from entity in entities
+                                from prop in entity.GetType().GetProperties()
+                                where typeof(ITrackable).IsAssignableFrom(prop.PropertyType)
+                                select prop).Distinct();
 
-                // Continue if there are no related entities
-                if (!relatedEntities.Any()) continue;
+                // Populate related entities on all items
+                foreach (var prop in allProps)
+                {
+                    // Get related entities
+                    string propertyName = prop.Name;
+                    Type propertyType = prop.PropertyType;
+                    IEnumerable<object> relatedEntities = await context.GetRelatedEntitiesAsync(entities,
+                        prop.DeclaringType, propertyName, propertyType, cancellationToken, onError);
 
-                // ObjectVisitationHelper serves here as an identity cache
-                relatedEntities = relatedEntities.Select(e => visitationHelper.FindVisited(e) ?? e);
+                    // Continue if there are no related entities
+                    if (!relatedEntities.Any()) continue;
 
-                // Set related entities
-                context.SetRelatedEntities(entities, relatedEntities, prop,
-                    prop.DeclaringType, propertyName, propertyType);
-            }
+                    // ObjectVisitationHelper serves here as an identity cache
+                    relatedEntities = relatedEntities.Select(e => visitationHelper.FindVisited(e) ?? e);
 
-            // Recursively populate related entities on ref and child properties
-            foreach (var item in items)
-            {
-                // Avoid loading related entities of complext types, and avoid endless recursion
-                if (IsComplexType(context, item.GetType()) || !visitationHelper.TryVisit(item)) continue;
+                    // Set related entities
+                    context.SetRelatedEntities(entities, relatedEntities, prop,
+                        prop.DeclaringType, propertyName, propertyType);
+                }
 
-                bool loadAllRelated = loadAll
-                    || item.TrackingState == TrackingState.Added
-                    || (parent != null && parent.TrackingState == TrackingState.Added);
-                await context.LoadRelatedEntitiesOnPropertiesAsync(item, visitationHelper,
-                    cancellationToken, loadAllRelated);
+                // Recursively populate related entities on ref and child properties
+                foreach (var item in items)
+                {
+                    // Avoid loading related entities of complext types, and avoid endless recursion
+                    if (IsComplexType(context, item.GetType()) || !visitationHelper.TryVisit(item)) continue;
+
+                    bool loadAllRelated = loadAll
+                        || item.TrackingState == TrackingState.Added
+                        || (parent != null && parent.TrackingState == TrackingState.Added);
+                    await context.LoadRelatedEntitiesOnPropertiesAsync(item, visitationHelper,
+                        cancellationToken, loadAllRelated, onLoading, onError);
+                }
             }
         }
 
         private async static Task LoadRelatedEntitiesOnPropertiesAsync(this DbContext context,
-            ITrackable item, ObjectVisitationHelper visitationHelper, CancellationToken cancellationToken, bool loadAll)
+            ITrackable item, ObjectVisitationHelper visitationHelper, CancellationToken cancellationToken, bool loadAll,
+            Func<IEnumerable<ITrackable>, Task<bool>> onLoading, Func<Exception, IEnumerable<ITrackable>, Task<bool>> onError)
         {
             // Recursively load related entities
             foreach (var navProp in item.GetNavigationProperties())
@@ -468,21 +496,22 @@ namespace TrackableEntities.EF5
                 foreach (var refProp in navProp.AsReferenceProperty())
                 {
                     await context.LoadRelatedEntitiesAsync(new[] { refProp.EntityReference }, item, visitationHelper,
-                        cancellationToken, loadAll);
+                        cancellationToken, loadAll, onLoading, onError);
                 }
 
                 // Apply changes to 1-M and M-M properties
                 foreach (var colProp in navProp.AsCollectionProperty())
                 {
                     await context.LoadRelatedEntitiesAsync(colProp.EntityCollection, item, visitationHelper,
-                        cancellationToken, loadAll);
+                        cancellationToken, loadAll, onLoading, onError);
                 }
             }
         }
 #endif
 
         private static void LoadRelatedEntitiesOnProperties(this DbContext context,
-            ITrackable item, ObjectVisitationHelper visitationHelper, bool loadAll)
+            ITrackable item, ObjectVisitationHelper visitationHelper, bool loadAll,
+            Func<IEnumerable<ITrackable>, bool> onLoading, Func<Exception, IEnumerable<ITrackable>, bool> onError)
         {
             // Recursively load related entities
             foreach (var navProp in item.GetNavigationProperties())
@@ -490,13 +519,13 @@ namespace TrackableEntities.EF5
                 // Apply changes to 1-1 and M-1 properties
                 foreach (var refProp in navProp.AsReferenceProperty())
                 {
-                    context.LoadRelatedEntities(new[] { refProp.EntityReference }, item, visitationHelper, loadAll);
+                    context.LoadRelatedEntities(new[] { refProp.EntityReference }, item, visitationHelper, loadAll, onLoading, onError);
                 }
 
                 // Apply changes to 1-M and M-M properties
                 foreach (var colProp in navProp.AsCollectionProperty())
                 {
-                    context.LoadRelatedEntities(colProp.EntityCollection, item, visitationHelper, loadAll);
+                    context.LoadRelatedEntities(colProp.EntityCollection, item, visitationHelper, loadAll, onLoading, onError);
                 }
             }
         }
@@ -787,30 +816,67 @@ namespace TrackableEntities.EF5
         #region LoadRelatedEntities Helpers
 
         private static List<object> GetRelatedEntities(this DbContext context,
-            IEnumerable<object> items, Type entityType, string propertyName, Type propertyType)
+            IEnumerable<object> items, Type entityType, string propertyName,
+            Type propertyType, Func<Exception, IEnumerable<ITrackable>, bool> onError)
         {
             // Get entity sql
+            List<object> entities = new List<object>();
             string entitySql = context.GetRelatedEntitiesSql(items, entityType, propertyName, propertyType);
             if (string.IsNullOrWhiteSpace(entitySql)) return new List<object>();
 
-            // Get related entities
-            List<object> entities = context.ExecuteQueryEntitySql(entitySql);
-            return entities;
+            try
+            {
+                // Get related entities
+                entities = context.ExecuteQueryEntitySql(entitySql);
+                return entities;
+            }
+            catch (Exception ex)
+            {
+                if (onError != null)
+                {
+                    if (onError(ex, items.OfType<ITrackable>()))
+                        return entities;
+                    throw;
+                }
+                throw;
+            }
         }
 
 #if EF_6
         private static async Task<List<object>> GetRelatedEntitiesAsync(this DbContext context,
             IEnumerable<object> items, Type entityType, string propertyName, Type propertyType,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken, Func<Exception, IEnumerable<ITrackable>, Task<bool>> onError)
         {
             // Get entity sql
+            List<object> entities = new List<object>();
             string entitySql = context.GetRelatedEntitiesSql(items, entityType, propertyName, propertyType);
             if (string.IsNullOrWhiteSpace(entitySql)) return new List<object>();
 
-            // Get related entities
-            List<object> entities = await context.ExecuteQueryEntitySqlAsync(entitySql, cancellationToken);
+            ExceptionDispatchInfo capturedException = null;
+
+            try
+            {
+                // Get related entities
+                entities = await context.ExecuteQueryEntitySqlAsync(entitySql, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                capturedException = ExceptionDispatchInfo.Capture(ex);
+            }
+
+            if (capturedException != null)
+            {
+                if (onError != null)
+                {
+                    if (await onError(capturedException.SourceException, items.OfType<ITrackable>()))
+                        return entities;
+                    capturedException.Throw();
+                }
+                capturedException.Throw();
+            }
             return entities;
-        } 
+        }
+
 #endif
 
         private static string GetRelatedEntitiesSql(this DbContext context,
@@ -985,14 +1051,8 @@ namespace TrackableEntities.EF5
             if (assoc == null) return null;
 
             // Get foreign key names
-            string[] fkPropNames;
-            var relType = dbContext.GetRelationshipType(entityType, propertyName);
-            if (relType == RelationshipType.OneToOne)
-                fkPropNames = assoc.ReferentialConstraints[0].ToProperties
-                    .Select(p => p.Name).ToArray();
-            else
-                fkPropNames = assoc.ReferentialConstraints[0].FromProperties
-                    .Select(p => p.Name).ToArray();
+            var fkPropNames = assoc.ReferentialConstraints[0].FromProperties
+                .Select(p => p.Name).ToArray();
             return fkPropNames;
         }
 
