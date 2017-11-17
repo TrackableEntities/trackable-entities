@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
-using TrackableEntities.EF.Tests.Contexts;
 #if EF_6
-using TrackableEntities.EF6;
-using System.Data.Entity.Core.EntityClient;
+using System.Data.Entity.Core;
 #else
-using TrackableEntities.EF5;
-using System.Data.EntityClient;
+using System.Data;
 #endif
 using TrackableEntities.EF.Tests;
-using TrackableEntities.EF.Tests.Mocks;
+using TrackableEntities.EF.Tests.Contexts;
 using TrackableEntities.EF.Tests.NorthwindModels;
 using TrackableEntities.EF.Tests.FamilyModels;
 
@@ -337,13 +333,13 @@ namespace TrackableEntities.EF5.Tests
         private List<Contact> CreateTestContactsWithDetails(FamilyDbContext context)
         {
             // Create test entities
-            var detail1 = new ContactCategory
+            var category1 = new ContactCategory
             {
                 CategoryName = "Friends",
             };
             var contact1 = new Contact
             {
-                ContactDetail = detail1
+                ContactCategory = category1
             };
 
             // Persist entities
@@ -365,7 +361,7 @@ namespace TrackableEntities.EF5.Tests
             objContext.Detach(contact1);
 
             // Clear reference properties
-            contact1.ContactDetail = null;
+            contact1.ContactCategory = null;
             contact1.ContactData = null;
 
             // Return entities
@@ -871,27 +867,184 @@ namespace TrackableEntities.EF5.Tests
 
         #endregion
 
-        #region Contact-ContactDetails: Non-Matching ForeignKeys
+        #region LoadRelatedEntities Callbacks
 
         [Fact]
-        public void LoadRelatedEntities_Should_Populate_Entities_With_NonMatching_Foreign_Keys()
+        public void LoadRelatedEntities_OnLoading_Should_Continue()
         {
             // Arrange
             var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
             var contact = CreateTestContactsWithDetails(context)[0];
-            contact.TrackingState = TrackingState.Added;
+            context.Contacts.Attach(contact);
 
             // Act
-            context.LoadRelatedEntities(contact);
+            context.LoadRelatedEntities(contact, true, entities =>
+            {
+                contact.TrackingState = TrackingState.Added;
+                return true;
+            }, (ex, entities) => true);
 
             // Assert
-            Assert.NotNull(contact.ContactDetail);
-            Assert.Equal(contact.ContactDetailId, contact.ContactDetail.Id);
-
-            // These will pass when 1-1 relations with non-matching keys are supported
-            //Assert.NotNull(contact.ContactData);
-            //Assert.Equal(contact.Id, contact.ContactData.ContactId);
+            Assert.NotNull(contact.ContactCategory);
+            Assert.Equal(contact.ContactCategoryId, contact.ContactCategory.Id);
+            Assert.Equal(TrackingState.Added, contact.TrackingState);
         }
+
+        [Fact]
+        public void LoadRelatedEntities_OnLoading_Should_Replace()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var contact = CreateTestContactsWithDetails(context)[0];
+            context.Contacts.Attach(contact);
+
+            // Act
+            context.LoadRelatedEntities(contact, true, entities =>
+            {
+                var contact1 = entities.OfType<Contact>().FirstOrDefault(e => e.Id == contact.Id);
+                if (contact1 != null)
+                {
+                    context.Entry(contact1).Reference(e => e.ContactCategory).Load();
+                    context.Entry(contact1).Reference(e => e.ContactData).Load();
+                    return false;
+                }
+                return true;
+            });
+
+            // Assert
+            Assert.NotNull(contact.ContactCategory);
+            Assert.Equal(contact.ContactCategoryId, contact.ContactCategory.Id);
+            Assert.NotNull(contact.ContactData);
+            Assert.Equal(contact.Id, contact.ContactData.ContactId);
+        }
+
+        [Fact]
+        public void LoadRelatedEntities_OnError_Should_Throw()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var contact = CreateTestContactsWithDetails(context)[0];
+
+            // Act and Assert
+            Assert.Throws<EntitySqlException>(() =>
+            {
+                context.LoadRelatedEntities(contact, true, null, (ex, entities) => false);
+            });
+        }
+
+        [Fact]
+        public void LoadRelatedEntities_OnError_Should_Continue()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var contact = CreateTestContactsWithDetails(context)[0];
+            context.Contacts.Attach(contact);
+
+            // Act
+            context.LoadRelatedEntities(contact, true, null, (ex, entities) =>
+            {
+                var contact1 = entities.OfType<Contact>().FirstOrDefault(e => e.Id == contact.Id);
+                if (contact1 != null)
+                    context.Entry(contact1).Reference(e => e.ContactData).Load();
+                return true;
+            });
+
+            // Assert
+            Assert.NotNull(contact.ContactCategory);
+            Assert.Equal(contact.ContactCategoryId, contact.ContactCategory.Id);
+            Assert.NotNull(contact.ContactData);
+            Assert.Equal(contact.Id, contact.ContactData.ContactId);
+        }
+
+#if EF_6
+        [Fact]
+        public async Task LoadRelatedEntitiesAsync_OnLoading_Should_Continue()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var contact = CreateTestContactsWithDetails(context)[0];
+            context.Contacts.Attach(contact);
+
+            // Act
+            await context.LoadRelatedEntitiesAsync(contact, true, entities =>
+            {
+                contact.TrackingState = TrackingState.Added;
+                return Task.FromResult(true);
+            }, (ex, entities) => Task.FromResult(true));
+
+            // Assert
+            Assert.NotNull(contact.ContactCategory);
+            Assert.Equal(contact.ContactCategoryId, contact.ContactCategory.Id);
+            Assert.Equal(TrackingState.Added, contact.TrackingState);
+        }
+
+        [Fact]
+        public async Task LoadRelatedEntitiesAsync_OnLoading_Should_Replace()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var contact = CreateTestContactsWithDetails(context)[0];
+            context.Contacts.Attach(contact);
+
+            // Act
+            await context.LoadRelatedEntitiesAsync(contact, true, async entities =>
+            {
+                var contact1 = entities.OfType<Contact>().FirstOrDefault(e => e.Id == contact.Id);
+                if (contact1 != null)
+                {
+                    await context.Entry(contact1).Reference(e => e.ContactCategory).LoadAsync();
+                    await context.Entry(contact1).Reference(e => e.ContactData).LoadAsync();
+                    return false;
+                }
+                return true;
+            });
+
+            // Assert
+            Assert.NotNull(contact.ContactCategory);
+            Assert.Equal(contact.ContactCategoryId, contact.ContactCategory.Id);
+            Assert.NotNull(contact.ContactData);
+            Assert.Equal(contact.Id, contact.ContactData.ContactId);
+        }
+
+        [Fact]
+        public async Task LoadRelatedEntitiesAsync_OnError_Should_Throw()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var contact = CreateTestContactsWithDetails(context)[0];
+
+            // Act and Assert
+            await Assert.ThrowsAsync<EntitySqlException>(async () =>
+            {
+                await context.LoadRelatedEntitiesAsync(contact, true, null,
+                    (ex, entities) => Task.FromResult(false));
+            });
+        }
+
+        [Fact]
+        public async Task LoadRelatedEntitiesAsync_OnError_Should_Continue()
+        {
+            // Arrange
+            var context = TestsHelper.CreateFamilyDbContext(CreateFamilyDbOptions);
+            var contact = CreateTestContactsWithDetails(context)[0];
+            context.Contacts.Attach(contact);
+
+            // Act
+            await context.LoadRelatedEntitiesAsync(contact, true, null, async (ex, entities) =>
+            {
+                var contact1 = entities.OfType<Contact>().FirstOrDefault(e => e.Id == contact.Id);
+                if (contact1 != null)
+                    await context.Entry(contact1).Reference(e => e.ContactData).LoadAsync();
+                return true;
+            });
+
+            // Assert
+            Assert.NotNull(contact.ContactCategory);
+            Assert.Equal(contact.ContactCategoryId, contact.ContactCategory.Id);
+            Assert.NotNull(contact.ContactData);
+            Assert.Equal(contact.Id, contact.ContactData.ContactId);
+        }
+#endif
 
         #endregion
 
@@ -931,8 +1084,8 @@ namespace TrackableEntities.EF5.Tests
             // previous call throws exception if not implemented properly.
             Assert.True(true);
         }
-#endif 
+#endif
 
-#endregion Complex Types
+        #endregion
   }
 }

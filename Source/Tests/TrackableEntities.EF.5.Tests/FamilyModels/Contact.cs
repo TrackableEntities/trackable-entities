@@ -9,10 +9,10 @@ namespace TrackableEntities.EF.Tests.FamilyModels
         [Key]
         public int Id { get; set; }
 
-        [ForeignKey(nameof(ContactDetail))]
-        public int ContactDetailId { get; set; }
+        [ForeignKey(nameof(ContactCategory))]
+        public int ContactCategoryId { get; set; }
 
-        public ContactCategory ContactDetail { get; set; }
+        public ContactCategory ContactCategory { get; set; }
 
         public ContactData ContactData { get; set; }
 
