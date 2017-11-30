@@ -165,9 +165,8 @@ namespace TrackableEntities.Client
                         || entity.TrackingState == TrackingState.Modified)
                     {
                         if (entity.ModifiedProperties == null)
-                            entity.ModifiedProperties = new List<string>();
-                        if (!entity.ModifiedProperties.Contains(e.PropertyName))
-                            entity.ModifiedProperties.Add(e.PropertyName);
+                            entity.ModifiedProperties = new HashSet<string>();
+                        entity.ModifiedProperties.Add(e.PropertyName);
                     }
                 }
             }
