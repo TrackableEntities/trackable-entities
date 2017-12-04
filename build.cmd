@@ -37,8 +37,8 @@ call Build\Scripts\TrackableEntities.Patterns.EF.6.cmd %debug%
 if not "%errorlevel%"=="0" goto failure
 
 REM TrackableEntities.CodeTemplates:
-call Build\Scripts\TrackableEntities.CodeTemplates.cmd %debug%
-if not "%errorlevel%"=="0" goto failure
+rem call Build\Scripts\TrackableEntities.CodeTemplates.cmd %debug%
+rem if not "%errorlevel%"=="0" goto failure
 
 :success
 if "%debug%"=="0" exit 0
