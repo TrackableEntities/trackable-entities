@@ -1,4 +1,4 @@
-set PackageVersion=2.5.6.1
+set PackageVersion=2.5.7
 rem set Configuration=Debug
 rem build.cmd -debug
 build.cmd
