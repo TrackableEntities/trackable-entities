@@ -166,7 +166,9 @@ namespace TrackableEntities.Client
                     {
                         if (entity.ModifiedProperties == null)
                             entity.ModifiedProperties = new HashSet<string>();
-                        entity.ModifiedProperties.Add(e.PropertyName);
+                        
+                        if(!entity.ModifiedProperties.Contains(e.PropertyName)
+                            entity.ModifiedProperties.Add(e.PropertyName);
                     }
                 }
             }
