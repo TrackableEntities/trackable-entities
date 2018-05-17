@@ -551,7 +551,7 @@ namespace TrackableEntities.EF5
             StructuralType oType = workspace.GetItems<StructuralType>(DataSpace.OSpace)
                 .Where(e => e.FullName == entityType.FullName).SingleOrDefault();
 
-            return oType.BuiltInTypeKind == BuiltInTypeKind.ComplexType;
+            return oType != null && oType.BuiltInTypeKind == BuiltInTypeKind.ComplexType;
         }   
 
         private static bool IsMappedProperty(this DbContext dbContext, Type entityType, string propertyName)
