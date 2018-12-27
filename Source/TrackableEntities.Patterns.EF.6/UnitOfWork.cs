@@ -19,20 +19,23 @@ namespace TrackableEntities.Patterns.EF6
         /// Constructs a new general unit of work.
         /// </summary>
         protected UnitOfWork() { }
-
+        
         /// <summary>
         /// Constructs a new general unit of work.
         /// </summary>
         /// <param name="context">Entity Framework DbContext-derived class.</param>
-        protected UnitOfWork(DbContext context)
+        protected UnitOfWork(DbContext context,IRepositoryFactory repositoryFactory)
         {
             Context = context;
+            RepositoryFactory=repositoryFactory;
         }
 
         /// <summary>
         /// Gets the DbContext for the unit of work.
         /// </summary>
         protected DbContext Context { get; set; }
+        
+        protected IRepositoryFactory RepositoryFactory {get;set;}
 
         /// <summary>
         /// Disposes the DbContext.

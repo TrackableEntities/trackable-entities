@@ -1,0 +1,93 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+namespace TrackableEntities.Client
+{
+    public abstract class ServiceBase<T,TKey> where T:class
+    {
+        public string Request { get; set; }
+        public string BaseAddress { get; }
+
+
+        public HttpClient Client { get; }
+
+
+        protected ServiceBase(string baseAddress, string request,string token=null)
+        {
+            Request = request;
+            BaseAddress = baseAddress;
+            Client = new HttpClient() { BaseAddress = new Uri(baseAddress) };
+            if (token != null)
+            {
+                Client.SetBearerToken(token);
+            }
+        }
+
+        public async Task<IEnumerable<T>> GetAll()
+        {
+            var response = await Client.GetAsync(Request);
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<IEnumerable<T>>();
+        }
+
+        public async Task<IEnumerable<T>> GetAll(string route,ExpandoObject parameters)
+        {
+            StringBuilder uri =new StringBuilder();
+            uri.Append($"{Request}").Append("/").Append(route);
+           
+            if (parameters != null)
+            {
+                uri.Append("?");
+                foreach (KeyValuePair<string, object> parameter in parameters)
+                {
+                    uri.Append($"{parameter.Key}={parameter.Value}").Append("&");
+                }
+            }
+            var response = await Client.GetAsync(uri.ToString().Substring(0,uri.ToString().Length-1));
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<IEnumerable<T>>();
+        }
+
+        public async Task<T> Update(T entity)
+        {
+            var response = await Client.PutAsJsonAsync(Request, entity);
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<T>();
+        }
+
+        public async Task<T> Create(T entity)
+        {
+            var response = await Client.PostAsJsonAsync(Request, entity);
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<T>();
+        }
+
+        public async Task<T> Find(TKey id)
+        {
+            var response = await Client.GetAsync($"{Request}/{id}");
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsAsync<T>();
+        }
+
+        public async Task<bool> VerifyDeleted(TKey id)
+        {
+            string request = Request + id;
+            var response = await Client.GetAsync(request);
+            if (response.IsSuccessStatusCode) return await Task.FromResult(false);
+            return await Task.FromResult(true);
+        }
+
+    }
+}
