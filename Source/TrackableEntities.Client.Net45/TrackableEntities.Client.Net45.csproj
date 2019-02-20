@@ -69,6 +69,9 @@
     <Compile Include="..\TrackableEntities.Client\EntityBase.cs">
       <Link>EntityBase.cs</Link>
     </Compile>
+    <Compile Include="..\TrackableEntities.Client\EntityChangedEventArgs.cs">
+      <Link>EntityChangedEventArgs.cs</Link>
+    </Compile>
     <Compile Include="..\TrackableEntities.Client\IIdentifiable.cs">
       <Link>IIdentifiable.cs</Link>
     </Compile>
